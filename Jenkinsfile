@@ -464,7 +464,7 @@ def notifySlack(String info = '' ) {
     """.stripIndent()
 
     return slackSend(tokenCredentialId: "slack_token",
-            channel: "#notif-helloabes",
+            channel: "#notif-periscope",
             color: colorCode,
             message: message)
 }
