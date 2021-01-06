@@ -36,7 +36,7 @@ node {
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
                     choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV'),
-                    string(name: 'FINAL_NAME', defaultValue: 'Hello_Abes_back_end', description: 'Nom du war/jar à déployer', ),
+                    string(name: 'FINAL_NAME', defaultValue: 'Periscope_back_end', description: 'Nom du war/jar à déployer', ),
                     booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests')
             ])
     ])
