@@ -43,7 +43,7 @@ node {
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
                     choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV'),
-                    string(name: 'FINAL_NAME', defaultValue: ${warName} , description: 'Nom du war/jar à déployer', ),
+                    string(name: 'FINAL_NAME', defaultValue: "${warName}" , description: 'Nom du war/jar à déployer', ),
                     booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests')
             ])
     ])
@@ -102,7 +102,7 @@ node {
                     doGenerateSubmoduleConfigurations: false,
                     extensions                       : [],
                     submoduleCfg                     : [],
-                    userRemoteConfigs                : [[credentialsId: ${gitCredentials}, url: ${gitURL}]]
+                    userRemoteConfigs                : [[credentialsId: "${gitCredentials}", url: "${gitURL}"]]
             ])
 
         } catch (e) {
