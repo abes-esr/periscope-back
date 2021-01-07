@@ -29,4 +29,9 @@ public class NoticeStoreService {
         return noticeRepository.findNoticesByPcp(code, PageRequest.of(page, size,
                 Sort.by(Sort.Direction.ASC, "ppn")));
     }
+
+    public List<Notice> findNoticesByPcpComplex(String code, int page, int size) {
+        return noticeRepository.findNoticesByPcpComplex(code, PageRequest.of(page, size,
+                Sort.by(Sort.Direction.ASC, "ppn")));
+    }
 }

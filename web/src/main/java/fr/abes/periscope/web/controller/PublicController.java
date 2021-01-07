@@ -59,6 +59,20 @@ public class PublicController {
         }
     }
 
+    @GetMapping("/pcp/complex/{page}/{size}")
+    public List<NoticeDto> byPcpComplex(@RequestParam String pcp, @PathVariable int page, @PathVariable int size) throws Exception {
+
+        List<Notice> candidate = noticeStoreService.findNoticesByPcpComplex(pcp,page,size);
+
+        log.debug("List size is "+candidate.size());
+
+        if (candidate != null) {
+            return dtoMapper.mapList(candidate, NoticeDto.class);
+        } else {
+            throw new Exception("Pcp introuvable");
+        }
+    }
+
     @GetMapping("/pcp/entity")
     public List<Notice> byPcpEntity(@RequestParam String pcp, @PathVariable int page, @PathVariable int size) throws Exception {
 
