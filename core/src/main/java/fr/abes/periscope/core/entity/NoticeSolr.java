@@ -1,20 +1,19 @@
-package fr.abes.periscope.core.entities;
+package fr.abes.periscope.core.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
-import java.util.Date;
-import java.util.List;
+import java.io.Serializable;
+import java.util.HashSet;
 
 @NoArgsConstructor
 @Getter @Setter
 @SolrDocument
-public class Notice {
+public class NoticeSolr implements Serializable {
 
     @Id
     @Indexed(name = "001_s", type = "string")
@@ -27,10 +26,10 @@ public class Notice {
     //private String keyTitle;
 
     @Indexed(name = "930-z_t", type = "string")
-    private List<String> pcpList;
+    private HashSet<String> pcpList;
 
     @Indexed(name = "930-b_t", type = "string")
-    private List<String> rcrList;
+    private HashSet<String> rcrList;
 
     @Indexed(name = "210-c_z", type = "string")
     private String editor;
@@ -65,12 +64,8 @@ public class Notice {
     @Indexed(name = "110-a_z", type = "string")
     private String continiousType;
 
-    public Notice(String ppn) {
-        this.ppn = ppn;
-    }
-
     @Override
     public String toString() {
-        return "Notice {"+ "ppn="+ ppn+", issn="+issn+"}";
+        return "NoticeSolr {"+ "ppn="+ ppn+", issn="+issn+"}";
     }
 }

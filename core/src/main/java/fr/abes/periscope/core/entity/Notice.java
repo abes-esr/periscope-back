@@ -1,28 +1,24 @@
-package fr.abes.periscope.web.dto;
+package fr.abes.periscope.core.entity;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.solr.core.mapping.Indexed;
 
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 
-@Getter @Setter
-public class NoticeDto {
+@Getter
+@Setter
+public class Notice {
 
-    @JsonProperty("ppn")
     private String ppn;
 
     private String issn;
 
-    private List<String> pcpList;
+    private HashSet<String> pcpList;
 
-    private List<String> rcrList;
+    private HashSet<String> rcrList;
 
     private String editor;
-
-    private String processingGlobalData;
 
     private String keyTitle;
 
@@ -41,5 +37,14 @@ public class NoticeDto {
     private String keyTitleQualifer;
 
     private String continiousType;
+
+    private Date startDate;
+
+    private Date endDate;
+
+    @Override
+    public String toString() {
+        return "Notice {"+ "ppn="+ ppn+", issn="+issn+", startDate="+startDate+", endDate="+endDate+"}";
+    }
 
 }

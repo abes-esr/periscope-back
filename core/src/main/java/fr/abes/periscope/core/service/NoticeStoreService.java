@@ -1,7 +1,10 @@
 package fr.abes.periscope.core.service;
 
-import fr.abes.periscope.core.entities.Notice;
+import fr.abes.periscope.core.entity.Notice;
+import fr.abes.periscope.core.entity.NoticeSolr;
 import fr.abes.periscope.core.repository.NoticeRepository;
+import fr.abes.periscope.core.util.NoticeMapper;
+import fr.abes.periscope.core.util.TrackExecutionTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
@@ -16,22 +19,31 @@ public class NoticeStoreService {
 
     private final NoticeRepository noticeRepository;
 
+    private final NoticeMapper noticeMapper;
+
     @Autowired
-    public NoticeStoreService(NoticeRepository noticeRepository) {
+    public NoticeStoreService(NoticeRepository noticeRepository, NoticeMapper mapper) {
         this.noticeRepository = noticeRepository;
-    }   
+        this.noticeMapper = mapper;
+    }
 
+    @TrackExecutionTime
     public Notice findByPpn(String code) {
-        return noticeRepository.findByPpn(code);
+        NoticeSolr notice = noticeRepository.findByPpn(code);
+        return noticeMapper.map(notice);
     }
 
+    @TrackExecutionTime
     public List<Notice> findNoticesByPcp(String code, int page, int size) {
-        return noticeRepository.findNoticesByPcp(code, PageRequest.of(page, size,
+        List<NoticeSolr> notices = noticeRepository.findNoticesByPcp(code, PageRequest.of(page, size,
                 Sort.by(Sort.Direction.ASC, "ppn")));
+        return noticeMapper.mapList(notices);
     }
 
+    @TrackExecutionTime
     public List<Notice> findNoticesByPcpComplex(String code, int page, int size) {
-        return noticeRepository.findNoticesByPcpComplex(code, PageRequest.of(page, size,
+        List<NoticeSolr> notices = noticeRepository.findNoticesByPcpComplex(code, PageRequest.of(page, size,
                 Sort.by(Sort.Direction.ASC, "ppn")));
+        return noticeMapper.mapList(notices);
     }
 }

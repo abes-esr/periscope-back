@@ -1,5 +1,6 @@
-package fr.abes.periscope.web.configuration;
+package fr.abes.periscope.web.util;
 
+import fr.abes.periscope.core.util.TrackExecutionTime;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-public class DtoMapperUtility {
+public class DtoMapper {
 
     @Autowired
     private ModelMapper modelMapper;
@@ -19,6 +20,7 @@ public class DtoMapperUtility {
         return new ModelMapper();
     }
 
+    @TrackExecutionTime
     public <S, T> List<T> mapList(List<S> source, Class<T> targetClass) {
         return source
                 .stream()

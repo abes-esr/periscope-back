@@ -1,13 +1,11 @@
 package fr.abes.periscope.core;
 
-import fr.abes.periscope.core.entities.Notice;
+import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-
-import java.util.List;
 
 @SpringBootApplication
 public class MainApplication {
