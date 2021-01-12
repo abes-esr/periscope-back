@@ -42,7 +42,14 @@ public class NoticeStoreService {
 
     @TrackExecutionTime
     public List<Notice> findNoticesByPcpComplex(String code, int page, int size) {
-        List<NoticeSolr> notices = noticeRepository.findNoticesByPcpComplex(code, PageRequest.of(page, size,
+        List<NoticeSolr> notices = noticeRepository.findNoticesByMultiplePcp(code, PageRequest.of(page, size,
+                Sort.by(Sort.Direction.ASC, "ppn")));
+        return noticeMapper.mapList(notices);
+    }
+
+    @TrackExecutionTime
+    public List<Notice> findNoticesByMultipleCriterion(String containsValue,int page, int size) {
+        List<NoticeSolr> notices = noticeRepository.findNoticesByMultipleCriterion(containsValue,PageRequest.of(page, size,
                 Sort.by(Sort.Direction.ASC, "ppn")));
         return noticeMapper.mapList(notices);
     }

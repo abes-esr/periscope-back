@@ -6,9 +6,9 @@ node {
     //Configuration
     def gitURL = "https://github.com/abes-esr/periscope-back.git"
     def gitCredentials = ''
-    def warName = "periscope_back_end"
-    def tomcatWebappsDir = "/usr/local/tomcat9-abes-hello/webapps/"
-    def tomcatServiceName = "tomcat9-abes-hello.service"
+    def warName = "periscope"
+    def tomcatWebappsDir = "/usr/local/tomcat9-periscope/webapps/"
+    def tomcatServiceName = "tomcat9-periscope.service"
     def slackChannel = "#notif-periscope"
 
     // Variables globales

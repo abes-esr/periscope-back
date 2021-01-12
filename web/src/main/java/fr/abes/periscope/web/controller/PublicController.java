@@ -42,6 +42,17 @@ public class PublicController {
     }
 
     @TrackExecutionTime
+    @GetMapping("/pcp/entity")
+    public List<Notice> byPcpEntity(@RequestParam String pcp, @PathVariable int page, @PathVariable int size) throws Exception {
+
+        List<Notice> candidate = noticeStoreService.findNoticesByPcp(pcp,page,size);
+
+        log.debug("List size is "+candidate.size());
+
+        return candidate;
+    }
+
+    @TrackExecutionTime
     @GetMapping("/pcp/dto/{page}/{size}")
     public List<NoticeWebDto> byPcp(@RequestParam String pcp, @PathVariable int page, @PathVariable int size) throws Exception {
 
@@ -65,14 +76,16 @@ public class PublicController {
     }
 
     @TrackExecutionTime
-    @GetMapping("/pcp/entity")
-    public List<Notice> byPcpEntity(@RequestParam String pcp, @PathVariable int page, @PathVariable int size) throws Exception {
+    @GetMapping("/pcp/{page}/{size}")
+    public List<NoticeWebDto> byMultipleCriterion(@RequestParam String constainsValue,@PathVariable int page, @PathVariable int size) throws Exception {
 
-        List<Notice> candidate = noticeStoreService.findNoticesByPcp(pcp,page,size);
+        List<Notice> candidate = noticeStoreService.findNoticesByMultipleCriterion(constainsValue,page,size);
 
         log.debug("List size is "+candidate.size());
 
-        return candidate;
+        return dtoMapper.mapList(candidate, NoticeWebDto.class);
     }
+
+
 
 }

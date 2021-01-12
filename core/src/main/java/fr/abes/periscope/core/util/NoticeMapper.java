@@ -51,6 +51,7 @@ public class NoticeMapper {
         try {
             notice.setStartDate(extractStartDate(source.getProcessingGlobalData()));
         } catch (ParseException e) {
+            //log.debug("SolR startdate : '"+source.getProcessingGlobalData().substring(0,8)+"'");
             //log.debug("Unable to parse start date :"+e.getLocalizedMessage());
             notice.setStartDate(null);
         }
@@ -59,6 +60,7 @@ public class NoticeMapper {
         try {
             notice.setEndDate(extractEndDate(source.getProcessingGlobalData()));
         } catch (ParseException e) {
+            //log.debug("SolR enddate : '"+source.getProcessingGlobalData().substring(9,17)+"'");
             //log.debug("Unable to parse end date :"+e.getLocalizedMessage());
             notice.setEndDate(null);
         }
