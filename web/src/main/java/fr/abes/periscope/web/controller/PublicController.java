@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -76,16 +77,19 @@ public class PublicController {
     }
 
     @TrackExecutionTime
-    @GetMapping("/pcp/{page}/{size}")
-    public List<NoticeWebDto> byMultipleCriterion(@RequestParam String constainsValue,@PathVariable int page, @PathVariable int size) throws Exception {
+    @GetMapping("/pcp/{req}/{page}/{size}")
+    public List<NoticeWebDto> byMultipleCriterion(@RequestParam String constainsValue,@PathVariable int req,@PathVariable int page, @PathVariable int size) throws Exception {
 
-        List<Notice> candidate = noticeStoreService.findNoticesByMultipleCriterion(constainsValue,page,size);
+        List<Notice> candidate = new ArrayList<>();
+        if (req==1) {
+            candidate = noticeStoreService.findNoticesByMultipleCriterion(constainsValue, page, size);
+        } else if (req==2) {
+            candidate = noticeStoreService.findNoticesBySecondMultipleCriterion(constainsValue, page, size);
+        }
 
         log.debug("List size is "+candidate.size());
 
         return dtoMapper.mapList(candidate, NoticeWebDto.class);
     }
-
-
 
 }

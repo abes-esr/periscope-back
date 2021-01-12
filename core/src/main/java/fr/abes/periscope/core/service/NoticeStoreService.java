@@ -53,4 +53,11 @@ public class NoticeStoreService {
                 Sort.by(Sort.Direction.ASC, "ppn")));
         return noticeMapper.mapList(notices);
     }
+
+    @TrackExecutionTime
+    public List<Notice> findNoticesBySecondMultipleCriterion(String containsValue,int page, int size) {
+        List<NoticeSolr> notices = noticeRepository.findNoticesBySecondMultipleCriterion(containsValue,PageRequest.of(page, size,
+                Sort.by(Sort.Direction.ASC, "ppn")));
+        return noticeMapper.mapList(notices);
+    }
 }
