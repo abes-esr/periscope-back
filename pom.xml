@@ -27,6 +27,7 @@
     <!-- ===================================================== -->
     <properties>
         <finalName>periscope-${project.artifactId}-${project.version}</finalName>
+        <baseDir>./target/</baseDir>
     </properties>
 
     <!-- =========================================================== -->

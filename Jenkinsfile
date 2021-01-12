@@ -136,17 +136,17 @@ node {
             sh 'cd '
             if (ENV == 'DEV') {
                 echo 'compile for dev profile'
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${finalName}' -Pdev"
+                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${finalName}' -DbaseDir='${tomcatWebappsDir}' -Pdev"
             }
 
             if (ENV == 'TEST') {
                 echo 'compile for test profile'
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${finalName}' -Ptest"
+                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${finalName}' -DbaseDir='${tomcatWebappsDir}' -Ptest"
             }
 
             if (ENV == 'PROD') {
                 echo 'compile for prod profile'
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${finalName}' -Pprod"
+                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${finalName}' -DbaseDir='${tomcatWebappsDir}' -Pprod"
             }
 
         } catch(e) {
