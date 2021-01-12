@@ -9,6 +9,7 @@ node {
     def warName = "periscope_back_end"
     def tomcatWebappsDir = "/usr/local/tomcat9-abes-hello/webapps/"
     def tomcatServiceName = "tomcat9-abes-hello.service"
+    def slackChannel = "#notif-periscope"
 
     // Variables globales
     def maventool
@@ -471,7 +472,7 @@ def notifySlack(String info = '' ) {
     """.stripIndent()
 
     return slackSend(tokenCredentialId: "slack_token",
-            channel: "#notif-periscope",
+            channel: "${slackChannel}",
             color: colorCode,
             message: message)
 }
