@@ -6,6 +6,7 @@ node {
     //Configuration
     def gitURL = "https://github.com/abes-esr/periscope-back.git"
     def gitCredentials = ''
+    def warDir = "web/target/"
     def warName = "periscope"
     def tomcatWebappsDir = "/usr/local/tomcat9-periscope/webapps/"
     def tomcatServiceName = "tomcat9-periscope.service"
@@ -164,9 +165,7 @@ node {
 
     stage('artifact') {
         try {
-            //we have to put the war in the workspace/target directory (see on the server Jacinthe)
-            //the path is /var/lib/jenkins/jobs/indexationsolr_test_multibranch_pipeline/branches/develop/workspace/target/indexationsolr.war
-            archive 'web/target/*.war'
+            archive "${warDir}${warName}.war"
 
         } catch(e) {
             currentBuild.result = hudson.model.Result.FAILURE.toString()
@@ -361,39 +360,39 @@ node {
                 echo 'deployment on cirse1-dev'
                 sshagent(credentials: ['cirse1-dev-ssh-key']) { //one key per tomcat
                     sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                    sh "scp web/target/*.war tomcat@cirse1-dev.v3.abes.fr:${tomcatWebappsDir}"
+                    sh "scp ${warDir}${warName}.war tomcat@cirse1-dev.v3.abes.fr:${tomcatWebappsDir}"
                 }
 
                 echo 'deployment on cirse2-dev'
                 sshagent(credentials: ['cirse2-dev-ssh-key']) {
                     sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                    sh "scp web/target/*.war tomcat@cirse2-dev.v3.abes.fr:${tomcatWebappsDir}"
+                    sh "scp ${warDir}${warName}.war tomcat@cirse2-dev.v3.abes.fr:${tomcatWebappsDir}"
                 }
             }
             if (ENV == 'TEST') {
                 echo 'deployment on cirse1-test'
                 sshagent(credentials: ['cirse1-test-ssh-key']) {
                     sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                    sh "scp web/target/*.war tomcat@cirse1-test.v3.abes.fr:${tomcatWebappsDir}"
+                    sh "scp ${warDir}${warName}.war tomcat@cirse1-test.v3.abes.fr:${tomcatWebappsDir}"
                 }
 
                 echo 'deployment on cirse2-test'
                 sshagent(credentials: ['cirse2-test-ssh-key']) {
                     sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                    sh "scp web/target/*.war tomcat@cirse2-test.v3.abes.fr:${tomcatWebappsDir}"
+                    sh "scp ${warDir}${warName}.war tomcat@cirse2-test.v3.abes.fr:${tomcatWebappsDir}"
                 }
             }
             if (ENV == 'PROD') {
                 echo 'deployment on cirse1-prod'
                 sshagent(credentials: ['cirse1-prod-ssh-key']) {
                     sh "ssh -tt tomcat@cirse1.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                    sh "scp web/target/*.war tomcat@cirse1.v3.abes.fr:${tomcatWebappsDir}"
+                    sh "scp ${warDir}${warName}.war tomcat@cirse1.v3.abes.fr:${tomcatWebappsDir}"
                 }
 
                 echo 'deployment on cirse2-prod'
                 sshagent(credentials: ['cirse2-prod-ssh-key']) {
                     sh "ssh -tt tomcat@cirse2.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                    sh "scp web/target/*.war tomcat@cirse2.v3.abes.fr:${tomcatWebappsDir}"
+                    sh "scp ${warDir}${warName}.war tomcat@cirse2.v3.abes.fr:${tomcatWebappsDir}"
                 }
             }
 
