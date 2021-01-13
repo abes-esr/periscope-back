@@ -19,7 +19,6 @@ node {
     def server
     def ENV
     def executeTests
-    def finalName
 
     // Configuration du job Jenkins
     // On garde les 5 derniers builds par branche
