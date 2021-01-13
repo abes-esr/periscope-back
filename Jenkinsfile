@@ -175,6 +175,181 @@ node {
         }
     }
 
+    stage ('stop tomcat'){
+
+        try {
+
+            if (ENV == 'DEV') {
+                echo 'stop tomcat on cirse1-dev'
+                sshagent(credentials: ['cirse1-dev-ssh-key']) {
+                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
+
+                        try {
+                            echo 'get status cirse1 dev (should be running)'
+                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+
+                            echo 'stop cirse1 dev'
+                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+
+                        } catch(e) {
+                            // Maybe the tomcat is not running
+                            echo 'cirse1 dev is not running'
+
+                            echo 'we try to start cirse1 dev'
+                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
+
+                            echo 'get status cirse1 dev'
+                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+
+                            echo 'stop cirse1 dev'
+                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                        }
+                    }
+                }
+
+                echo 'stop tomcat on cirse2-dev'
+                sshagent(credentials: ['cirse2-dev-ssh-key']) {
+
+                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
+                        try {
+                            echo 'get status cirse2 dev (should be running)'
+                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+
+                            echo 'stop cirse2 dev'
+                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+
+                        } catch(e) {
+                            // Maybe the tomcat is not running
+                            echo 'cirse2 dev is not running'
+
+                            echo 'we try to start cirse2 dev'
+                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
+
+                            echo 'get status cirse2 dev'
+                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+
+                            echo 'stop cirse2 dev'
+                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                        }
+                    }
+                }
+            }
+
+            if (ENV == 'TEST') {
+                echo 'stop tomcat on cirse1-test'
+                sshagent(credentials: ['cirse1-test-ssh-key']) {
+                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
+
+                        try {
+                            echo 'get status cirse1 test (should be running)'
+                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+
+                            echo 'stop cirse1 test'
+                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                        } catch(e) {
+                            // Maybe the tomcat is not running
+                            echo 'cirse1 test is not running'
+
+                            echo 'we try to start cirse1 test'
+                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
+
+                            echo 'get status cirse1 test'
+                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+
+                            echo 'stop cirse1 test'
+                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                        }
+                    }
+                }
+
+                echo 'stop tomcat on cirse2-test'
+                sshagent(credentials: ['cirse2-test-ssh-key']) {
+                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
+
+                        try {
+                            echo 'get status cirse2 test (should be running)'
+                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+
+                            echo 'stop cirse2 test'
+                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                        } catch(e) {
+                            // Maybe the tomcat is not running
+                            echo 'cirse2 test is not running'
+
+                            echo 'we try to start cirse2 test'
+                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
+
+                            echo 'get status cirse2 test'
+                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+
+                            echo 'stop cirse2 test'
+                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                        }
+                    }
+                }
+            }
+
+            if (ENV == 'PROD') {
+                echo 'stop tomcat on cirse1-prod'
+                sshagent(credentials: ['cirse1-prod-ssh-key']) {
+                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
+
+                        try {
+                            echo 'get status cirse1 prod (should be running)'
+                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+
+                            echo 'stop cirse1 prod'
+                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                        } catch(e) {
+                            // Maybe the tomcat is not running
+                            echo 'cirse1 prod is not running'
+
+                            echo 'we try to start cirse1 prod'
+                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
+
+                            echo 'get status cirse1 prod'
+                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+
+                            echo 'stop cirse1 prod'
+                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                        }
+                    }
+                }
+
+                echo 'stop tomcat on cirse2-prod'
+                sshagent(credentials: ['cirse2-prod-ssh-key']) {
+                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
+
+                        try {
+                            echo 'get status cirse2 prod (should be running)'
+                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+
+                            echo 'stop cirse2 prod'
+                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                        } catch(e) {
+                            // Maybe the tomcat is not running
+                            echo 'cirse2 prod is not running'
+
+                            echo 'we try to start cirse2 prod'
+                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
+
+                            echo 'get status cirse2 prod'
+                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+
+                            echo 'stop cirse2 prod'
+                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                        }
+                    }
+                }
+            }
+
+        } catch(e) {
+            currentBuild.result = hudson.model.Result.FAILURE.toString()
+            notifySlack(slackChannel,e.getLocalizedMessage())
+            throw e
+        }
+    }
+
     stage ('deploy to tomcat'){
         try {
 
@@ -185,33 +360,39 @@ node {
 
                 echo 'deployment on cirse1-dev'
                 sshagent(credentials: ['cirse1-dev-ssh-key']) { //one key per tomcat
+                    sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
                     sh "scp web/target/*.war tomcat@cirse1-dev.v3.abes.fr:${tomcatWebappsDir}"
                 }
 
                 echo 'deployment on cirse2-dev'
                 sshagent(credentials: ['cirse2-dev-ssh-key']) {
+                    sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
                     sh "scp web/target/*.war tomcat@cirse2-dev.v3.abes.fr:${tomcatWebappsDir}"
                 }
             }
             if (ENV == 'TEST') {
                 echo 'deployment on cirse1-test'
                 sshagent(credentials: ['cirse1-test-ssh-key']) {
+                    sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
                     sh "scp web/target/*.war tomcat@cirse1-test.v3.abes.fr:${tomcatWebappsDir}"
                 }
 
                 echo 'deployment on cirse2-test'
                 sshagent(credentials: ['cirse2-test-ssh-key']) {
+                    sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
                     sh "scp web/target/*.war tomcat@cirse2-test.v3.abes.fr:${tomcatWebappsDir}"
                 }
             }
             if (ENV == 'PROD') {
                 echo 'deployment on cirse1-prod'
                 sshagent(credentials: ['cirse1-prod-ssh-key']) {
+                    sh "ssh -tt tomcat@cirse1.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
                     sh "scp web/target/*.war tomcat@cirse1.v3.abes.fr:${tomcatWebappsDir}"
                 }
 
                 echo 'deployment on cirse2-prod'
                 sshagent(credentials: ['cirse2-prod-ssh-key']) {
+                    sh "ssh -tt tomcat@cirse2.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
                     sh "scp web/target/*.war tomcat@cirse2.v3.abes.fr:${tomcatWebappsDir}"
                 }
             }
@@ -232,27 +413,6 @@ node {
                 sshagent(credentials: ['cirse1-dev-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
 
-                        try {
-                            echo 'get status cirse1 dev (should be running)'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'cirse1 dev is not running'
-
-                            echo 'we try to start cirse1 dev'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                            echo 'get status cirse1 dev'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                        }
-
-                        echo 'stop cirse1 dev'
-                        sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-                        //here, I wanted to get the status but since the status returned is code=exited, status=143 (normal because tomcat has been stopped)
-                        //groovy is understanding that the script returned an error 143 and then stop the process
-                        //so apart checking the logs, I don't so which manner allows us to get the stopped tomcat status
-                        //echo 'get status 2 (should not be running)'
-                        //sh 'ssh -tt tomcat@cirse1-dev.v3.abes.fr  "cd /usr/local/ && systemctl status tomcat9-indexationSolr.service"'
                         echo 'start cirse1 dev'
                         sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
@@ -265,23 +425,6 @@ node {
                 sshagent(credentials: ['cirse2-dev-ssh-key']) {
 
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-                        try {
-                            echo 'beginning : get status cirse2 dev (should be running)'
-                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'cirse2 dev is not running'
-
-                            echo 'we try to start cirse2 dev'
-                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                            echo 'get status cirse2 dev'
-                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                        }
-
-                        echo 'stop cirse2 dev'
-                        sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
 
                         echo 'start cirse2 dev'
                         sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
@@ -297,24 +440,6 @@ node {
                 sshagent(credentials: ['cirse1-test-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
 
-                        try {
-                            echo 'beginning : get status cirse1 test (should be running)'
-                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'cirse1 test is not running'
-
-                            echo 'we try to start cirse1 test'
-                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                            echo 'get status cirse1 test'
-                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                        }
-
-                        echo 'stop cirse1 test'
-                        sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-
                         echo 'start cirse1 test'
                         sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
@@ -326,23 +451,6 @@ node {
                 echo 'restart tomcat on cirse2-test'
                 sshagent(credentials: ['cirse2-test-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-
-                        try {
-                            echo 'beginning : get status cirse2 test (should be running)'
-                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'cirse2 test is not running'
-
-                            echo 'we try to start cirse2 test'
-                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                            echo 'get status cirse2 test'
-                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                        }
-
-                        echo 'stop cirse2 test'
-                        sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
 
                         echo 'start cirse2 test'
                         sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
@@ -358,23 +466,6 @@ node {
                 sshagent(credentials: ['cirse1-prod-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
 
-                        try {
-                            echo 'beginning : get status cirse1 prod (should be running)'
-                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'cirse1 prod is not running'
-
-                            echo 'we try to start cirse1 prod'
-                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                            echo 'get status cirse1 prod'
-                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                        }
-
-                        echo 'stop cirse1 prod'
-                        sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-
                         echo 'start cirse1 prod'
                         sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
 
@@ -386,23 +477,6 @@ node {
                 echo 'restart tomcat on cirse2-prod'
                 sshagent(credentials: ['cirse2-prod-ssh-key']) {
                     withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-
-                        try {
-                            echo 'beginning : get status cirse2 prod (should be running)'
-                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'cirse2 prod is not running'
-
-                            echo 'we try to start cirse2 prod'
-                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                            echo 'get status cirse2 prod'
-                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                        }
-
-                        echo 'stop cirse2 prod'
-                        sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
 
                         echo 'start cirse2 prod'
                         sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
