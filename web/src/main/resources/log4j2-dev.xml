@@ -3,7 +3,7 @@
 <Configuration>
     <Properties>
         <!-- Les proprietes suivantes correspondent a des cles dans les fichiers application.properties et application-dev.properties -->
-        <Property name="logBaseDir">${bundle:application-dev:application.basedir}${bundle:application:application.finalname}/${bundle:application-dev:log4j2.logdir}</Property>
+        <Property name="logBaseDir">${bundle:application:application.basedir}/${bundle:application:log4j2.logdir}</Property>
         <Property name="logFileName">${bundle:application:application.name}</Property>
         <Property name="errorFileName">${bundle:application:application.name}_error</Property>
         <Property name="debugFileName">${bundle:application:application.name}_debug</Property>

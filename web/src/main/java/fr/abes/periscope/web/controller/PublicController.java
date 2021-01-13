@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
-@CrossOrigin(origins = "${application.crossorigin}")
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api")
 public class PublicController {
@@ -80,6 +80,7 @@ public class PublicController {
     @GetMapping("/pcp/{req}/{page}/{size}")
     public List<NoticeWebDto> byMultipleCriterion(@RequestParam String constainsValue,@PathVariable int req,@PathVariable int page, @PathVariable int size) throws Exception {
 
+        log.debug(Integer.toString(req));
         List<Notice> candidate = new ArrayList<>();
         if (req==1) {
             candidate = noticeStoreService.findNoticesByMultipleCriterion(constainsValue, page, size);

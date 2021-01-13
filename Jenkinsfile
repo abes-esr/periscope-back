@@ -45,7 +45,6 @@ node {
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
                     choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV'),
-                    string(name: 'FINAL_NAME', defaultValue: "${warName}" , description: 'Nom du war/jar à déployer', ),
                     booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests')
             ])
     ])
@@ -72,13 +71,6 @@ node {
             } else {
                 ENV = params.ENV
                 echo "Target environnement =  ${ENV}"
-            }
-
-            if (params.FINAL_NAME == null || params.FINAL_NAME == '' || !(params.FINAL_NAME ==~ /^[a-zA-Z0-9_-]+/)) {
-                throw new Exception("Variable FINAL_NAME is null or empty or contains special characters or whitespaces")
-            } else {
-                finalName = params.FINAL_NAME
-                echo "Final WAR/JAR name =  ${params.FINAL_NAME}"
             }
 
             if (params.executeTests == null) {
@@ -137,17 +129,17 @@ node {
             sh 'cd '
             if (ENV == 'DEV') {
                 echo 'compile for dev profile'
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${finalName}' -DbaseDir='${tomcatWebappsDir}' -Pdev"
+                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pdev"
             }
 
             if (ENV == 'TEST') {
                 echo 'compile for test profile'
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${finalName}' -DbaseDir='${tomcatWebappsDir}' -Ptest"
+                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Ptest"
             }
 
             if (ENV == 'PROD') {
                 echo 'compile for prod profile'
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${finalName}' -DbaseDir='${tomcatWebappsDir}' -Pprod"
+                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pprod"
             }
 
         } catch(e) {
