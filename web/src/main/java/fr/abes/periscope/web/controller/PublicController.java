@@ -1,7 +1,14 @@
 package fr.abes.periscope.web.controller;
 
+import fr.abes.periscope.core.criterion.Criterion;
+import fr.abes.periscope.core.criterion.CriterionPcp;
+import fr.abes.periscope.core.criterion.CriterionRcr;
 import fr.abes.periscope.core.entity.Notice;
+import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.service.NoticeStoreService;
+import fr.abes.periscope.web.dto.CriterionRcrWebDto;
+import fr.abes.periscope.web.dto.CriterionWebDto;
+import fr.abes.periscope.web.dto.CriterionPcpWebDto;
 import fr.abes.periscope.web.util.DtoMapper;
 import fr.abes.periscope.web.dto.NoticeWebDto;
 import fr.abes.periscope.core.util.TrackExecutionTime;
@@ -9,13 +16,16 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 @Slf4j
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 public class PublicController {
 
     private final NoticeStoreService noticeStoreService;
@@ -30,67 +40,33 @@ public class PublicController {
     }
 
     @TrackExecutionTime
-    @GetMapping("/ppn")
-    public NoticeWebDto plan(@RequestParam String ppn) throws Exception {
+    @PostMapping("/notice/findByCriteria")
+    public List<NoticeWebDto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size,@RequestBody @Valid LinkedList<CriterionWebDto> userCriteria) {
 
-        Notice candidate = noticeStoreService.findByPpn(ppn);
+        List<Criterion> criteria = new LinkedList<>();
 
-        if (candidate != null) {
-            return dtoMapper.map(candidate, NoticeWebDto.class);
-        } else {
-            throw new Exception("Pcp introuvable");
-        }
-    }
+        Iterator<CriterionWebDto> criteriaIterator = userCriteria.iterator();
+        while (criteriaIterator.hasNext()) {
+            CriterionWebDto userCriterion = criteriaIterator.next();
 
-    @TrackExecutionTime
-    @GetMapping("/pcp/entity")
-    public List<Notice> byPcpEntity(@RequestParam String pcp, @PathVariable int page, @PathVariable int size) throws Exception {
+            if (userCriterion instanceof CriterionPcpWebDto) {
+                try {
+                    criteria.add(dtoMapper.map(userCriterion, CriterionPcp.class));
+                } catch (IllegalOperatorException ex) {
+                    log.debug(ex.getLocalizedMessage());
+                }
+            }
 
-        List<Notice> candidate = noticeStoreService.findNoticesByPcp(pcp,page,size);
-
-        log.debug("List size is "+candidate.size());
-
-        return candidate;
-    }
-
-    @TrackExecutionTime
-    @GetMapping("/pcp/dto/{page}/{size}")
-    public List<NoticeWebDto> byPcp(@RequestParam String pcp, @PathVariable int page, @PathVariable int size) throws Exception {
-
-        List<Notice> candidate = noticeStoreService.findNoticesByPcp(pcp,page,size);
-
-        log.debug("List size is "+candidate.size());
-
-        return dtoMapper.mapList(candidate, NoticeWebDto.class);
-
-    }
-
-    @TrackExecutionTime
-    @GetMapping("/pcp/complex/{page}/{size}")
-    public List<NoticeWebDto> byPcpComplex(@RequestParam String pcp, @PathVariable int page, @PathVariable int size) throws Exception {
-
-        List<Notice> candidate = noticeStoreService.findNoticesByPcpComplex(pcp,page,size);
-
-        log.debug("List size is "+candidate.size());
-
-        return dtoMapper.mapList(candidate, NoticeWebDto.class);
-    }
-
-    @TrackExecutionTime
-    @GetMapping("/pcp/{req}/{page}/{size}")
-    public List<NoticeWebDto> byMultipleCriterion(@RequestParam String constainsValue,@PathVariable int req,@PathVariable int page, @PathVariable int size) throws Exception {
-
-        log.debug(Integer.toString(req));
-        List<Notice> candidate = new ArrayList<>();
-        if (req==1) {
-            candidate = noticeStoreService.findNoticesByMultipleCriterion(constainsValue, page, size);
-        } else if (req==2) {
-            candidate = noticeStoreService.findNoticesBySecondMultipleCriterion(constainsValue, page, size);
+            if (userCriterion instanceof CriterionRcrWebDto) {
+                criteria.add(dtoMapper.map(userCriterion, CriterionRcr.class));
+            }
         }
 
+        List<Notice> candidate = noticeStoreService.findNoticesByCriteria(criteria,page,size);
+
         log.debug("List size is "+candidate.size());
 
         return dtoMapper.mapList(candidate, NoticeWebDto.class);
-    }
 
+    }
 }

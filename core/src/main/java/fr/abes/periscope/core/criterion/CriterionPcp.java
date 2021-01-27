@@ -1,0 +1,24 @@
+package fr.abes.periscope.core.criterion;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Représente un critère de recherche par code PCP
+ */
+@Getter
+public class CriterionPcp extends Criterion {
+
+    /** Liste des codes PCP à rechercher. Les connecteurs
+     * logiques entre les codes sont des OU */
+    private List<String> pcp = new ArrayList<>();
+
+    public CriterionPcp(String blocOperator, List<String> candidatePcp) {
+        super(blocOperator);
+        this.pcp = candidatePcp;
+    }
+}

@@ -2,11 +2,14 @@ package fr.abes.periscope.core;
 
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.service.NoticeStoreService;
+import org.apache.commons.math3.stat.descriptive.summary.Product;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 @SpringBootApplication
@@ -23,15 +26,12 @@ public class MainApplication {
     }
 
 
-    @Bean
+    /*@Bean
     public ApplicationRunner init() {
         return args -> {
-
-            Notice notice  = noticeStoreService.findByPpn("039513025");
-            System.out.println(notice);
-
-            List<Notice> notices = noticeStoreService.findNoticesByPcp("PCLim",0,25);
+            List<String> pcp = Arrays.asList("PCLim","PCAq");
+            List<Notice> notices = noticeStoreService.findNoticesByPcp(pcp,0,25);
             notices.forEach(a -> System.out.println(a));
         };
-    }
+    }*/
 }

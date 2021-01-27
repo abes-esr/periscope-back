@@ -6,6 +6,9 @@ import lombok.Setter;
 import java.util.Date;
 import java.util.HashSet;
 
+/**
+ * Représente une Notice au format Periscope
+ */
 @Getter
 @Setter
 public class Notice {
