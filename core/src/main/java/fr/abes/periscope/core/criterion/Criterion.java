@@ -13,6 +13,10 @@ public abstract class Criterion {
     /** Connecteur logique pour le bloc (ET/OU/SAUF) */
     protected String blocOperator;
 
+    /**
+     * Constrcteur de critère de recherche avec un connecteur de bloc
+     * @param operator String Connecteur logique
+     */
     public Criterion(String operator) {
 
         switch (operator) {

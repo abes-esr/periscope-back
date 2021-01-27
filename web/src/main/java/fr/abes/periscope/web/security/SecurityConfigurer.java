@@ -14,9 +14,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
  */
 @Configuration
 @EnableWebSecurity
-public class SecurityConfigurer extends WebSecurityConfigurerAdapter {   
-   
-
+public class SecurityConfigurer extends WebSecurityConfigurerAdapter { 
     /**
      * Permet de configurer la politique de sécurité du service web tel que :
      * <ul>

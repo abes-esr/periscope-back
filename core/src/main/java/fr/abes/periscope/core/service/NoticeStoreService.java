@@ -15,8 +15,11 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
+/**
+ * Représente la couche service pour les Notices
+ */
 @Slf4j
+@Service
 public class NoticeStoreService {
 
     private final NoticeRepository noticeRepository;
@@ -29,6 +32,13 @@ public class NoticeStoreService {
         this.noticeMapper = mapper;
     }
 
+    /**
+     * Retourne une liste de Notice en fonction des critères de recherche et du numéro de page
+     * @param criteria Critères de recherche
+     * @param page Numéro de page
+     * @param size Nombre d'élément
+     * @return List<Notice> Liste de Notice répondant aux critères de recherche
+     */
     @TrackExecutionTime
     public List<Notice> findNoticesByCriteria(List<Criterion> criteria, int page, int size) {
 
