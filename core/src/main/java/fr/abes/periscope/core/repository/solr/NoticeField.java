@@ -5,8 +5,10 @@ package fr.abes.periscope.core.repository.solr;
  */
 public interface NoticeField {
 
-    public static final String PCP = "930-z_s";
-    public static final String RCR = "930-b_z";
+    public static final String PCP_S = "930-z_s";
+    public static final String PCP_T = "930-z_t";
+    public static final String RCR_S = "930-b_s";
+    public static final String RCR_T = "930-b_t";
     public static final String PPN = "001_s";
     public static final String ISSN = "011-a_z";
     public static final String ISSN_T = "011-a_t";

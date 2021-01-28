@@ -41,8 +41,38 @@ public class AdvancedNoticeRepositoryImpl implements AdvancedNoticeRepository {
         solrQuery.addProjectionOnFields(
                 NoticeField.PPN,
                 NoticeField.ISSN_T,
-                NoticeField.PCP,
-                NoticeField.RCR,
+                NoticeField.PCP_T,
+                NoticeField.RCR_T,
+                NoticeField.EDITOR,
+                NoticeField.PROCESSING_GLOBAL_DATA,
+                NoticeField.KEY_TITLE,
+                NoticeField.ISSN,
+                NoticeField.KEY_SHORTED_TITLE,
+                NoticeField.PROPER_TITLE,
+                NoticeField.TITLE_FROM_DIFFERENT_AUTHOR,
+                NoticeField.PARALLEL_TITLE,
+                NoticeField.TITLE_COMPLEMENT,
+                NoticeField.SECTION_TITLE,
+                NoticeField.KEY_TITLE_QUALIFIER,
+                NoticeField.CONTINIOUS_TYPE);
+
+        // Debug query
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        log.debug("SolR query : "+actualQuery);
+
+        Page results = solrTemplate.queryForPage("notice",solrQuery, NoticeSolr.class);
+        return results.getContent();
+    }
+
+    public List<NoticeSolr> findNoticesBySolrQuery(String query, Pageable page) {
+
+        SimpleQuery solrQuery = new SimpleQuery(query,page);
+        solrQuery.addProjectionOnFields(
+                NoticeField.PPN,
+                NoticeField.ISSN_T,
+                NoticeField.PCP_T,
+                NoticeField.RCR_T,
                 NoticeField.EDITOR,
                 NoticeField.PROCESSING_GLOBAL_DATA,
                 NoticeField.KEY_TITLE,

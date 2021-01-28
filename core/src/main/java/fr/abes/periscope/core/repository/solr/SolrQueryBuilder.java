@@ -62,11 +62,11 @@ public class SolrQueryBuilder {
             Iterator<String> pcpIterator = pcp.getPcp().iterator();
             String pcpCode = pcpIterator.next();
 
-            Criteria myCriteria = new Criteria(NoticeField.PCP).is(pcpCode);
+            Criteria myCriteria = new Criteria(NoticeField.PCP_S).is(pcpCode);
 
             while (pcpIterator.hasNext()) {
                 pcpCode = pcpIterator.next();
-                myCriteria = myCriteria.or(NoticeField.PCP).is(pcpCode);
+                myCriteria = myCriteria.or(NoticeField.PCP_S).is(pcpCode);
             }
 
             switch (pcp.getBlocOperator()) {
@@ -100,27 +100,40 @@ public class SolrQueryBuilder {
             Iterator<String> rcrIterator = rcr.getRcr().iterator();
             Iterator<String> rcrOperatorIterator = rcr.getRcrOperator().iterator();
 
+            Criteria myCriteria = null;
+
             String rcrCode = rcrIterator.next();
+            String rcrOperator = rcrOperatorIterator.next();
 
-            Criteria myCriteria = new Criteria(NoticeField.RCR).is(rcrCode).connect();
+            // 1er critère
+            switch (rcrOperator) {
+                case LogicalOperator.EXCEPT:
+                    myCriteria = new Criteria(NoticeField.RCR_S).is(rcrCode).not().connect();
+                    break;
+                default:
+                    myCriteria = new Criteria(NoticeField.RCR_S).is(rcrCode).connect();
+                    break;
+            }
 
+            // les autres
             while (rcrIterator.hasNext()) {
                 rcrCode = rcrIterator.next();
-                String rcrOperator = rcrOperatorIterator.next();
+                rcrOperator = rcrOperatorIterator.next();
 
                 switch (rcrOperator) {
                     case LogicalOperator.AND:
-                        myCriteria = myCriteria.connect().and(NoticeField.RCR).is(rcrCode);
+                        myCriteria = myCriteria.connect().and(NoticeField.RCR_S).is(rcrCode);
                         break;
                     case LogicalOperator.OR:
-                        myCriteria = myCriteria.connect().or(NoticeField.RCR).is(rcrCode);
+                        myCriteria = myCriteria.connect().or(NoticeField.RCR_S).is(rcrCode);
                         break;
                     case LogicalOperator.EXCEPT:
-                        myCriteria = myCriteria.connect().and(NoticeField.RCR).is(rcrCode).not();
+                        myCriteria = myCriteria.connect().and(NoticeField.RCR_S).is(rcrCode).not();
                         break;
                 }
             }
 
+            // pour le bloc entier
             switch (rcr.getBlocOperator()) {
                 case LogicalOperator.AND:
                     // AND par défaut, on ne fait rien

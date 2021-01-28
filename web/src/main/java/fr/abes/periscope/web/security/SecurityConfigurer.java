@@ -9,12 +9,10 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 /**
  * La classe {@code SecurityConfigurer} permet de configurer la sécurité du service web.
  * Cette classe est basée sur le framework Spring avec le module Spring Security.
- * @since 0.0.1
- * @author Duy Tran
  */
 @Configuration
 @EnableWebSecurity
-public class SecurityConfigurer extends WebSecurityConfigurerAdapter { 
+public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     /**
      * Permet de configurer la politique de sécurité du service web tel que :
      * <ul>

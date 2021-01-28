@@ -66,6 +66,28 @@ public class NoticeSolr implements Serializable {
     private String continiousType;
 
     @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return ppn != null && ppn.equals(((NoticeSolr) obj).ppn);
+    }
+
+    @Override
+    public int hashCode() {
+        return 2020;
+    }
+
+    @Override
     public String toString() {
         return "NoticeSolr {"+ "ppn="+ ppn+", issn="+issn+"}";
     }

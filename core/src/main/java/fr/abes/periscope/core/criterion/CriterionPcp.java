@@ -26,4 +26,14 @@ public class CriterionPcp extends Criterion {
         super(blocOperator);
         this.pcp = candidatePcp;
     }
+
+    /**
+     * Constructeur de critère de recherche par code PCP.
+     * Le connecteur logique du bloc par défaut est ET
+     * @param candidatePcp Liste de code PCP
+     */
+    public CriterionPcp(List<String> candidatePcp) {
+        super(LogicalOperator.AND);
+        this.pcp = candidatePcp;
+    }
 }

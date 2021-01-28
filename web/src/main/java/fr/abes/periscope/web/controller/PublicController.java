@@ -50,11 +50,7 @@ public class PublicController {
             CriterionWebDto userCriterion = criteriaIterator.next();
 
             if (userCriterion instanceof CriterionPcpWebDto) {
-                try {
                     criteria.add(dtoMapper.map(userCriterion, CriterionPcp.class));
-                } catch (IllegalOperatorException ex) {
-                    log.debug(ex.getLocalizedMessage());
-                }
             }
 
             if (userCriterion instanceof CriterionRcrWebDto) {
