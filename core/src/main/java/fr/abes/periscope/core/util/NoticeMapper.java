@@ -27,13 +27,13 @@ public class NoticeMapper {
     }
 
     public Date extractStartDate(String value) throws ParseException {
-        //log.debug("SolR startdate : "+value.substring(0,8));
-        return new SimpleDateFormat("yyyyMMdd").parse(value.substring(0,8));
+        log.debug("SolR startdate : "+value.substring(9,13));
+        return new SimpleDateFormat("yyyy").parse(value.substring(9,13));
     }
 
     public Date extractEndDate(String value) throws ParseException {
-        //log.debug("SolR enddate : "+value.substring(9,17));
-        return new SimpleDateFormat("yyyyMMdd").parse(value.substring(9,17));
+        log.debug("SolR enddate : "+value.substring(13,17));
+        return new SimpleDateFormat("yyyy").parse(value.substring(13,17));
     }
 
     @TrackExecutionTime

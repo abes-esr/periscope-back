@@ -1,5 +1,6 @@
 package fr.abes.periscope.core.entity;
 
+import fr.abes.periscope.core.repository.solr.NoticeField;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -10,59 +11,81 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 import java.io.Serializable;
 import java.util.HashSet;
 
+/**
+ * Représente une notice au format SolR
+ */
 @NoArgsConstructor
 @Getter @Setter
 @SolrDocument
 public class NoticeSolr implements Serializable {
 
     @Id
-    @Indexed(name = "001_s", type = "string")
+    @Indexed(name = NoticeField.PPN, type = "string")
     private String ppn;
 
-    @Indexed(name = "011-a_z", type = "string")
+    @Indexed(name = NoticeField.ISSN, type = "string")
     private String issn;
 
-    //@Indexed(name = "011-a_t", type = "string")
-    //private String keyTitle;
-
-    @Indexed(name = "930-z_t", type = "string")
+    @Indexed(name = NoticeField.PCP_LIST, type = "string")
     private HashSet<String> pcpList;
 
-    @Indexed(name = "930-b_t", type = "string")
+    @Indexed(name = NoticeField.RCR_LIST, type = "string")
     private HashSet<String> rcrList;
 
-    @Indexed(name = "210-c_z", type = "string")
+    @Indexed(name = NoticeField.EDITOR, type = "string")
     private String editor;
 
-    @Indexed(name = "100-a_t", type = "string")
+    @Indexed(name = NoticeField.PROCESSING_GLOBAL_DATA, type = "string")
     private String processingGlobalData;
 
-    @Indexed(name = "530-a_z", type = "string")
+    @Indexed(name = NoticeField.KEY_TITLE, type = "string")
     private String keyTitle;
 
-    @Indexed(name = "531-a_z", type = "string")
+    @Indexed(name = NoticeField.KEY_SHORTED_TITLE, type = "string")
     private String keyShortedTitle;
 
-    @Indexed(name = "200-a_z", type = "string")
+    @Indexed(name = NoticeField.PROPER_TITLE, type = "string")
     private String properTitle;
 
-    @Indexed(name = "200-c_z", type = "string")
+    @Indexed(name = NoticeField.TITLE_FROM_DIFFERENT_AUTHOR, type = "string")
     private String titleFromDifferentAuthor;
 
-    @Indexed(name = "200-d_z", type = "string")
+    @Indexed(name = NoticeField.PARALLEL_TITLE, type = "string")
     private String parallelTitle;
 
-    @Indexed(name = "200-e_z", type = "string")
+    @Indexed(name = NoticeField.TITLE_COMPLEMENT, type = "string")
     private String titleComplement;
 
-    @Indexed(name = "200-i_z", type = "string")
+    @Indexed(name = NoticeField.SECTION_TITLE, type = "string")
     private String sectionTitle;
 
-    @Indexed(name = "530-d_z", type = "string")
+    @Indexed(name = NoticeField.KEY_TITLE_QUALIFIER, type = "string")
     private String keyTitleQualifer;
 
-    @Indexed(name = "110-a_z", type = "string")
+    @Indexed(name = NoticeField.CONTINIOUS_TYPE, type = "string")
     private String continiousType;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return ppn != null && ppn.equals(((NoticeSolr) obj).ppn);
+    }
+
+    @Override
+    public int hashCode() {
+        return 2020;
+    }
 
     @Override
     public String toString() {

@@ -6,6 +6,9 @@ import lombok.Setter;
 import java.util.Date;
 import java.util.HashSet;
 
+/**
+ * Représente une Notice au format Periscope
+ */
 @Getter
 @Setter
 public class Notice {
@@ -41,6 +44,28 @@ public class Notice {
     private Date startDate;
 
     private Date endDate;
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+
+        return ppn != null && ppn.equals(((Notice) obj).ppn);
+    }
+
+    @Override
+    public int hashCode() {
+        return 2020;
+    }
 
     @Override
     public String toString() {

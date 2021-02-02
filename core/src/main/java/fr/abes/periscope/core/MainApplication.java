@@ -1,5 +1,7 @@
 package fr.abes.periscope.core;
 
+import fr.abes.periscope.core.criterion.Criterion;
+import fr.abes.periscope.core.criterion.CriterionPcp;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import org.springframework.boot.ApplicationRunner;
@@ -7,6 +9,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
+import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 @SpringBootApplication
@@ -22,15 +26,16 @@ public class MainApplication {
         SpringApplication.run(MainApplication.class, args);
     }
 
-
     @Bean
     public ApplicationRunner init() {
         return args -> {
+            List<Criterion> criteria = new LinkedList<>();
 
-            Notice notice  = noticeStoreService.findByPpn("039513025");
-            System.out.println(notice);
+            List<String> pcp = Arrays.asList("PCCor","PCPACA");
+            CriterionPcp criterionPcp = new CriterionPcp("OU",pcp);
 
-            List<Notice> notices = noticeStoreService.findNoticesByPcp("PCLim",0,25);
+            criteria.add(criterionPcp);
+            List<Notice> notices = noticeStoreService.findNoticesByCriteria(criteria,0,25);
             notices.forEach(a -> System.out.println(a));
         };
     }

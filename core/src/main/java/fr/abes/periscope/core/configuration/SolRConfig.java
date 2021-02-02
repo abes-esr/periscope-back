@@ -1,5 +1,6 @@
 package fr.abes.periscope.core.configuration;
 
+import fr.abes.periscope.core.repository.solr.SolrQueryBuilder;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
@@ -8,6 +9,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.solr.core.SolrTemplate;
 
+/**
+ * Configuration du client SolR
+ */
 @Configuration
 public class SolRConfig {
 
@@ -40,6 +44,11 @@ public class SolRConfig {
         public String getContentType() {
             return "text/xml; charset=UTF-8";
         }
+    }
+
+    @Bean
+    public SolrQueryBuilder builderQuery() {
+        return new SolrQueryBuilder();
     }
 }
 

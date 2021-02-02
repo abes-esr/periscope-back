@@ -1,6 +1,7 @@
 package fr.abes.periscope.web.exception;
 
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.MappingException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -36,7 +37,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         String error = "Malformed JSON request";
-        log.error(error);
+        log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
@@ -51,7 +52,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleHttpRequestMethodNotSupported(HttpRequestMethodNotSupportedException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "Method is not supported for this request";
-        log.error(error);
+        log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.METHOD_NOT_ALLOWED, error, ex));
     }
 
@@ -66,7 +67,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "The credentials are not valid";
-        log.error(error);
+        log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
@@ -81,20 +82,20 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "Page not found";
-        log.error(error);
+        log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.NOT_FOUND, error, ex));
     }
 
     /**
-     * Si l'authentification d'un utilisateur a echoué
-     * @param ex AuthenticationException
+     * Si la transformation DTO a échoué
+     * @param ex MappingException
      * @return
      */
-    @ExceptionHandler(Exception.class)
-    protected ResponseEntity<Object> handleException(Exception ex) {
-        String error = "Error";
-        log.error(error);
-        return buildResponseEntity(new ApiReturnError(HttpStatus.NOT_FOUND, error, ex));
+    @ExceptionHandler(MappingException.class)
+    protected ResponseEntity<Object> handleMappingException(MappingException ex) {
+        String error = "Malformed JSON request";
+        log.error(ex.getCause().getLocalizedMessage());
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex.getCause()));
     }
 
 
