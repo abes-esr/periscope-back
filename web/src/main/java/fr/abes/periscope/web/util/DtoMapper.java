@@ -1,11 +1,13 @@
 package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.CriterionPcp;
+import fr.abes.periscope.core.criterion.CriterionPpn;
 import fr.abes.periscope.core.criterion.CriterionRcr;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.util.TrackExecutionTime;
 import fr.abes.periscope.web.dto.CriterionPcpWebDto;
+import fr.abes.periscope.web.dto.CriterionPpnWebDto;
 import fr.abes.periscope.web.dto.CriterionRcrWebDto;
 import fr.abes.periscope.web.dto.CriterionTypeName;
 import org.modelmapper.Converter;
@@ -59,18 +61,15 @@ public class DtoMapper {
     @Bean
     public void converterPcp() {
 
-        Converter<CriterionPcpWebDto, CriterionPcp> myConverter = new Converter<CriterionPcpWebDto, CriterionPcp>() {
-
-            public CriterionPcp convert(MappingContext<CriterionPcpWebDto, CriterionPcp> context) {
-                CriterionPcpWebDto s = context.getSource();
-                try {
-                    CriterionPcp d = new CriterionPcp(s.getBlocOperator(), s.getPcp());
-                    return d;
-                } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_PCP+": "+ex.getLocalizedMessage());
-                }
-
+        Converter<CriterionPcpWebDto, CriterionPcp> myConverter = context -> {
+            CriterionPcpWebDto s = context.getSource();
+            try {
+                CriterionPcp d = new CriterionPcp(s.getBlocOperator(), s.getPcp());
+                return d;
+            } catch (IllegalOperatorException ex) {
+                throw new IllegalOperatorException(CriterionTypeName.CRITERION_PCP+": "+ex.getLocalizedMessage());
             }
+
         };
         modelMapper.addConverter(myConverter);
     }
@@ -81,20 +80,36 @@ public class DtoMapper {
     @Bean
     public void converterRcr() {
 
-        Converter<CriterionRcrWebDto, CriterionRcr> myConverter = new Converter<CriterionRcrWebDto, CriterionRcr>() {
-            public CriterionRcr convert(MappingContext<CriterionRcrWebDto, CriterionRcr> context) {
-                CriterionRcrWebDto s = context.getSource();
-                try {
-                    CriterionRcr d = new CriterionRcr(s.getBlocOperator(), s.getRcr(), s.getRcrOperator());
-                    return d;
-                } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_RCR+": "+ex.getLocalizedMessage());
-                } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_RCR+": "+ex.getLocalizedMessage());
-                }
+        Converter<CriterionRcrWebDto, CriterionRcr> myConverter = context -> {
+            CriterionRcrWebDto s = context.getSource();
+            try {
+                CriterionRcr d = new CriterionRcr(s.getBlocOperator(), s.getRcr(), s.getRcrOperator());
+                return d;
+            } catch (IllegalOperatorException ex) {
+                throw new IllegalOperatorException(CriterionTypeName.CRITERION_RCR+": "+ex.getLocalizedMessage());
+            } catch (CriterionOperatorMismatchException ex) {
+                throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_RCR+": "+ex.getLocalizedMessage());
             }
         };
         modelMapper.addConverter(myConverter);
     }
 
+    /**
+     * Convertisseur pour les critères PPN (DTO vers objet métier)
+     */
+    @Bean
+    public void converterPpn() {
+        Converter<CriterionPpnWebDto, CriterionPpn> myConverter = mappingContext -> {
+            CriterionPpnWebDto s = mappingContext.getSource();
+            try {
+                CriterionPpn d = new CriterionPpn(s.getBlocOperator(), s.getPpn(), s.getPpnOperator());
+                return d;
+            } catch (IllegalOperatorException ex) {
+                throw new IllegalOperatorException(CriterionTypeName.CRITERION_PPN+": "+ex.getLocalizedMessage());
+            } catch (CriterionOperatorMismatchException ex) {
+                throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_PPN+": "+ex.getLocalizedMessage());
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
 }
