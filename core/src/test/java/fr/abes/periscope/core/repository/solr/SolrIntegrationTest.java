@@ -101,7 +101,7 @@ public class SolrIntegrationTest {
         criteria.add(criterionPpn);
 
         List<String> pcp = Arrays.asList("PCCor");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        CriterionPcp criterionPcp = new CriterionPcp("ET",pcp);
         criteria.add(criterionPcp);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
