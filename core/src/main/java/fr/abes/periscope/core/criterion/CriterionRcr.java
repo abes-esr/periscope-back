@@ -25,7 +25,7 @@ public class CriterionRcr extends Criterion {
     private List<String> rcrOperator = new ArrayList<>();
 
     /**
-     * Instancie un critère de recherche par code RCR
+     * Instancie un critère de recherche par code RCR à connecter avec un autre bloc
      * @param blocOperator Connecteur logique du bloc
      * @param candidatesRcr Liste des codes RCR à rechercher
      * @param candidatesOperator Liste des connecteurs logiques entre les code RCR. Note: le premier critère n'a pas de connecteur.
@@ -53,7 +53,7 @@ public class CriterionRcr extends Criterion {
     }
 
     /**
-     * Instancie un critère de recherche par code RCR.
+     * Instancie un critère de recherche par code RCR (1er bloc).
      * Le connecteur logique du bloc par défaut est ET
      * @param candidatesRcr Liste des codes RCR à rechercher
      * @param candidatesOperator Liste des connecteurs logiques entre les code RCR. Note: le premier critère n'a pas de connecteur.
@@ -61,7 +61,7 @@ public class CriterionRcr extends Criterion {
      * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
      */
     public CriterionRcr(List<String> candidatesRcr, List<String> candidatesOperator) {
-        super(LogicalOperator.AND);
+        super();
 
         if (candidatesOperator.size() != candidatesRcr.size()) {
             throw new CriterionOperatorMismatchException("Criteria list size mismatch the operators list size");

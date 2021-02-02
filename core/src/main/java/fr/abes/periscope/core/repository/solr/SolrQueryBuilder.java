@@ -81,7 +81,7 @@ public class SolrQueryBuilder {
                     break;
             }
 
-            return myCriteria;
+            return myCriteria.connect();
 
         } else {
             return null;
@@ -108,10 +108,10 @@ public class SolrQueryBuilder {
             // 1er critère
             switch (rcrOperator) {
                 case LogicalOperator.EXCEPT:
-                    myCriteria = new Criteria(NoticeField.RCR_S).is(rcrCode).not().connect();
+                    myCriteria = new Criteria(NoticeField.RCR_S).is(rcrCode).not();
                     break;
                 default:
-                    myCriteria = new Criteria(NoticeField.RCR_S).is(rcrCode).connect();
+                    myCriteria = new Criteria(NoticeField.RCR_S).is(rcrCode);
                     break;
             }
 
@@ -122,13 +122,13 @@ public class SolrQueryBuilder {
 
                 switch (rcrOperator) {
                     case LogicalOperator.AND:
-                        myCriteria = myCriteria.connect().and(NoticeField.RCR_S).is(rcrCode);
+                        myCriteria = myCriteria.and(NoticeField.RCR_S).is(rcrCode);
                         break;
                     case LogicalOperator.OR:
-                        myCriteria = myCriteria.connect().or(NoticeField.RCR_S).is(rcrCode);
+                        myCriteria = myCriteria.or(NoticeField.RCR_S).is(rcrCode);
                         break;
                     case LogicalOperator.EXCEPT:
-                        myCriteria = myCriteria.connect().and(NoticeField.RCR_S).is(rcrCode).not();
+                        myCriteria = myCriteria.and(NoticeField.RCR_S).is(rcrCode).not();
                         break;
                 }
             }
@@ -136,7 +136,7 @@ public class SolrQueryBuilder {
             // pour le bloc entier
             switch (rcr.getBlocOperator()) {
                 case LogicalOperator.AND:
-                    // AND par défaut, on ne fait rien
+                    myCriteria = myCriteria.connect();
                     break;
                 case LogicalOperator.OR:
                     myCriteria.setPartIsOr(true);

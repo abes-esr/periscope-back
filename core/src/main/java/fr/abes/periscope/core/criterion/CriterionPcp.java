@@ -18,7 +18,7 @@ public class CriterionPcp extends Criterion {
     private List<String> pcp = new ArrayList<>();
 
     /**
-     * Constructeur de critère de recherche par code PCP
+     * Constructeur de critère de recherche par code PCP à connecter avec un autre bloc
      * @param blocOperator Connecteur logique du bloc
      * @param candidatePcp Liste de code PCP
      */
@@ -28,12 +28,11 @@ public class CriterionPcp extends Criterion {
     }
 
     /**
-     * Constructeur de critère de recherche par code PCP.
-     * Le connecteur logique du bloc par défaut est ET
+     * Constructeur de critère de recherche par code PCP (1er bloc)
      * @param candidatePcp Liste de code PCP
      */
     public CriterionPcp(List<String> candidatePcp) {
-        super(LogicalOperator.AND);
+        super();
         this.pcp = candidatePcp;
     }
 }

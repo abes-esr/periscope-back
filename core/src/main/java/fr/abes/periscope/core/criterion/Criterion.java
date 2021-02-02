@@ -10,14 +10,28 @@ import lombok.Setter;
 @Getter
 public abstract class Criterion {
 
+    /** Vrai si le bloc est le premier bloc de la requête.
+     *  Faux si le bloc est connecté avec un autre bloc via @link{#blocOperator} */
+    protected Boolean isFirst;
+
     /** Connecteur logique pour le bloc (ET/OU/SAUF) */
     protected String blocOperator;
+
+    /**
+     * Constrcteur de critère de recherche pour un premier bloc
+     */
+    public Criterion() {
+        this.isFirst = true;
+        this.blocOperator = LogicalOperator.AND; //Par defaut
+    }
 
     /**
      * Constrcteur de critère de recherche avec un connecteur de bloc
      * @param operator String Connecteur logique
      */
     public Criterion(String operator) {
+
+        this.isFirst = false;
 
         switch (operator) {
             case LogicalOperator.AND:
