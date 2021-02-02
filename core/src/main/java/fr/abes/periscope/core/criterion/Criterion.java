@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 public abstract class Criterion {
 
-    /** Vrai si le bloc est le premier bloc de la requête.
+    /** Vrai si le bloc est le premier bloc de la requête
      *  Faux si le bloc est connecté avec un autre bloc via @link{#blocOperator} */
     protected Boolean isFirst;
 
