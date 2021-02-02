@@ -6,6 +6,9 @@ package fr.abes.periscope.web.dto;
  */
 public interface CriterionTypeName {
 
-    public static final String CRITERION_PCP = "CriterionPcp";
-    public static final String CRITERION_RCR = "CriterionRcr";
+    String CRITERION_PCP = "CriterionPcp";
+    String CRITERION_RCR = "CriterionRcr";
+    String CRITERION_PPN = "CriterionPpn";
+    String CRITERION_TITLE_WORDS = "CriterionTitleWords";
+
 }

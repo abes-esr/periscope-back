@@ -1,16 +1,11 @@
 package fr.abes.periscope.web.controller;
 
-import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionRcr;
+import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.service.NoticeStoreService;
-import fr.abes.periscope.web.dto.CriterionRcrWebDto;
-import fr.abes.periscope.web.dto.CriterionWebDto;
-import fr.abes.periscope.web.dto.CriterionPcpWebDto;
+import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.util.DtoMapper;
-import fr.abes.periscope.web.dto.NoticeWebDto;
 import fr.abes.periscope.core.util.TrackExecutionTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +50,14 @@ public class PublicController {
 
             if (userCriterion instanceof CriterionRcrWebDto) {
                 criteria.add(dtoMapper.map(userCriterion, CriterionRcr.class));
+            }
+
+            if (userCriterion instanceof CriterionPpnWebDto) {
+                criteria.add(dtoMapper.map(userCriterion, CriterionPpn.class));
+            }
+
+            if (userCriterion instanceof CriterionTitleWordsWebDto) {
+                criteria.add(dtoMapper.map(userCriterion, CriterionTitleWords.class));
             }
         }
 

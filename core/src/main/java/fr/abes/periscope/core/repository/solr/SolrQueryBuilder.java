@@ -31,7 +31,7 @@ public class SolrQueryBuilder {
             // Bloc de critère PCP
             if (criterion instanceof CriterionPcp) {
 
-                Criteria pcpQuery = buildPcpQuery((CriterionPcp)criterion);
+                Criteria pcpQuery = buildPcpQuery((CriterionPcp) criterion);
                 if (pcpQuery != null) {
                     filterQuery.addCriteria(pcpQuery);
                 }
@@ -40,7 +40,7 @@ public class SolrQueryBuilder {
             // Bloc de critère RCR
             if (criterion instanceof CriterionRcr) {
 
-                Criteria rcrQuery = buildRcrQuery((CriterionRcr)criterion);
+                Criteria rcrQuery = buildRcrQuery((CriterionRcr) criterion);
                 if (rcrQuery != null) {
                     filterQuery.addCriteria(rcrQuery);
                 }
@@ -52,14 +52,24 @@ public class SolrQueryBuilder {
                 try {
                     Criteria titleWordsQuery = buildTitleWordsQuery((CriterionTitleWords) criterion);
                     filterQuery.addCriteria(titleWordsQuery);
-                } catch(IllegalCriterionException ex) {
+                } catch (IllegalCriterionException ex) {
                     log.error(ex.getLocalizedMessage());
                 }
+            }
+
+            //Bloc de critère PPN
+            if (criterion instanceof CriterionPpn) {
+                Criteria ppnQuery = buildPpnQuery((CriterionPpn) criterion);
+                if (ppnQuery != null) {
+                    filterQuery.addCriteria(ppnQuery);
+                }
+
             }
         }
 
         return filterQuery.getCriteria();
     }
+
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par PCP
@@ -213,7 +223,7 @@ public class SolrQueryBuilder {
 
             switch (operator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect().and(NoticeField.KEY_TITLE_T).expression("\"*"+value+"\"").
+                    myCriteria = myCriteria.connect().and(NoticeField.KEY_TITLE_T).is(value).
                             or(NoticeField.KEY_SHORTED_TITLE_T).is(value).
                             or(NoticeField.PROPER_TITLE_T).is(value).
                             or(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).
@@ -222,7 +232,7 @@ public class SolrQueryBuilder {
                             or(NoticeField.SECTION_TITLE_T).is(value);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.connect().or(NoticeField.KEY_TITLE_T).expression("\"*"+value+"\"").
+                    myCriteria = myCriteria.connect().or(NoticeField.KEY_TITLE_T).is(value).
                             or(NoticeField.KEY_SHORTED_TITLE_T).is(value).
                             or(NoticeField.PROPER_TITLE_T).is(value).
                             or(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).
@@ -257,5 +267,68 @@ public class SolrQueryBuilder {
         return myCriteria;
     }
 
+    /**
+     * Construit la requête SolR à partir d'un critère de recherche par PPN
+     * @param ppn Les critères de recherche par PPN
+     * @return Criteria Requête SolR
+     */
+    private Criteria buildPpnQuery(CriterionPpn ppn) {
+        if (ppn.getPpn().size() > 0) {
+
+            Iterator<String> ppnIterator = ppn.getPpn().iterator();
+            Iterator<String> ppnOperatorIterator = ppn.getPpnOperator().iterator();
+
+            Criteria myCriteria;
+
+            String ppnCode = ppnIterator.next();
+            String ppnOperator = ppnOperatorIterator.next();
+
+            // 1er critère
+            switch (ppnOperator) {
+                case LogicalOperator.EXCEPT:
+                    myCriteria = new Criteria(NoticeField.PPN).is(ppnCode).not();
+                    break;
+                default:
+                    myCriteria = new Criteria(NoticeField.PPN).is(ppnCode);
+                    break;
+            }
+
+            // les autres
+            while (ppnIterator.hasNext()) {
+                ppnCode = ppnIterator.next();
+                ppnOperator = ppnOperatorIterator.next();
+
+                switch (ppnOperator) {
+                    case LogicalOperator.AND:
+                        myCriteria = myCriteria.and(NoticeField.PPN).is(ppnCode);
+                        break;
+                    case LogicalOperator.OR:
+                        myCriteria = myCriteria.or(NoticeField.PPN).is(ppnCode);
+                        break;
+                    case LogicalOperator.EXCEPT:
+                        myCriteria = myCriteria.and(NoticeField.PPN).is(ppnCode).not();
+                        break;
+                }
+            }
+
+            // pour le bloc entier
+            switch (ppn.getBlocOperator()) {
+                case LogicalOperator.AND:
+                    myCriteria = myCriteria.connect();
+                    break;
+                case LogicalOperator.OR:
+                    myCriteria.setPartIsOr(true);
+                    break;
+                case LogicalOperator.EXCEPT:
+                    myCriteria = myCriteria.notOperator();
+                    break;
+            }
+
+            return myCriteria;
+
+        } else {
+            return null;
+        }
+    }
 
 }
