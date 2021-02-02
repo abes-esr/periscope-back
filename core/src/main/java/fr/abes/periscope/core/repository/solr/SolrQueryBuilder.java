@@ -1,9 +1,6 @@
 package fr.abes.periscope.core.repository.solr;
 
-import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionRcr;
-import fr.abes.periscope.core.criterion.LogicalOperator;
+import fr.abes.periscope.core.criterion.*;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.FilterQuery;
 import org.springframework.data.solr.core.query.SimpleFilterQuery;
@@ -45,10 +42,19 @@ public class SolrQueryBuilder {
                     filterQuery.addCriteria(rcrQuery);
                 }
             }
+
+            // bloc de critère ISSN
+            if (criterion instanceof CriterionIssn) {
+                Criteria issnQuery = buildIssnQuery((CriterionIssn)criterion);
+                if (issnQuery != null) {
+                    filterQuery.addCriteria(issnQuery);
+                }
+            }
         }
 
         return filterQuery.getCriteria();
     }
+
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par PCP
@@ -152,6 +158,71 @@ public class SolrQueryBuilder {
             return null;
         }
     }
+
+    /**
+     * Construit la requête SolR à partir d'un critère de recherche par ISSN
+     * @param issn Les critères de recherche par ISSN
+     * @return Criteria Requête SolR
+     */
+    private Criteria buildIssnQuery(CriterionIssn issn) {
+        if (issn.getIssn().size() > 0) {
+
+            Iterator<String> issnIterator = issn.getIssn().iterator();
+            Iterator<String> issnOperatorIterator = issn.getIssnOperator().iterator();
+
+            Criteria myCriteria;
+
+            String issnCode = issnIterator.next();
+            String issnOperator = issnOperatorIterator.next();
+
+            // 1er critère
+            switch (issnOperator) {
+                case LogicalOperator.EXCEPT:
+                    myCriteria = new Criteria(NoticeField.RCR_S).is(issnCode).not();
+                    break;
+                default:
+                    myCriteria = new Criteria(NoticeField.RCR_S).is(issnCode);
+                    break;
+            }
+
+            // les autres
+            while (issnIterator.hasNext()) {
+                issnCode = issnIterator.next();
+                issnOperator = issnOperatorIterator.next();
+
+                switch (issnOperator) {
+                    case LogicalOperator.AND:
+                        myCriteria = myCriteria.and(NoticeField.ISSN).is(issnCode);
+                        break;
+                    case LogicalOperator.OR:
+                        myCriteria = myCriteria.or(NoticeField.ISSN).is(issnCode);
+                        break;
+                    case LogicalOperator.EXCEPT:
+                        myCriteria = myCriteria.and(NoticeField.ISSN).is(issnCode).not();
+                        break;
+                }
+            }
+
+            // pour le bloc entier
+            switch (issn.getBlocOperator()) {
+                case LogicalOperator.AND:
+                    myCriteria = myCriteria.connect();
+                    break;
+                case LogicalOperator.OR:
+                    myCriteria.setPartIsOr(true);
+                    break;
+                case LogicalOperator.EXCEPT:
+                    myCriteria = myCriteria.notOperator();
+                    break;
+            }
+
+            return myCriteria;
+
+        } else {
+            return null;
+        }
+    }
+
 
 
 }
