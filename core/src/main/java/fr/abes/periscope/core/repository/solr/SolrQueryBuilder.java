@@ -1,9 +1,6 @@
 package fr.abes.periscope.core.repository.solr;
 
-import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionRcr;
-import fr.abes.periscope.core.criterion.LogicalOperator;
+import fr.abes.periscope.core.criterion.*;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.FilterQuery;
 import org.springframework.data.solr.core.query.SimpleFilterQuery;
@@ -45,10 +42,20 @@ public class SolrQueryBuilder {
                     filterQuery.addCriteria(rcrQuery);
                 }
             }
+
+            //Bloc de critère PPN
+            if (criterion instanceof CriterionPpn) {
+                Criteria ppnQuery = buildPpnQuery((CriterionPpn)criterion);
+                if (ppnQuery != null) {
+                    filterQuery.addCriteria(ppnQuery);
+                }
+
+            }
         }
 
         return filterQuery.getCriteria();
     }
+
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par PCP
@@ -153,5 +160,68 @@ public class SolrQueryBuilder {
         }
     }
 
+    /**
+     * Construit la requête SolR à partir d'un critère de recherche par PPN
+     * @param ppn Les critères de recherche par PPN
+     * @return Criteria Requête SolR
+     */
+    private Criteria buildPpnQuery(CriterionPpn ppn) {
+        if (ppn.getPpn().size() > 0) {
+
+            Iterator<String> ppnIterator = ppn.getPpn().iterator();
+            Iterator<String> ppnOperatorIterator = ppn.getPpnOperator().iterator();
+
+            Criteria myCriteria;
+
+            String ppnCode = ppnIterator.next();
+            String ppnOperator = ppnOperatorIterator.next();
+
+            // 1er critère
+            switch (ppnOperator) {
+                case LogicalOperator.EXCEPT:
+                    myCriteria = new Criteria(NoticeField.PPN).is(ppnCode).not();
+                    break;
+                default:
+                    myCriteria = new Criteria(NoticeField.PPN).is(ppnCode);
+                    break;
+            }
+
+            // les autres
+            while (ppnIterator.hasNext()) {
+                ppnCode = ppnIterator.next();
+                ppnOperator = ppnOperatorIterator.next();
+
+                switch (ppnOperator) {
+                    case LogicalOperator.AND:
+                        myCriteria = myCriteria.and(NoticeField.PPN).is(ppnCode);
+                        break;
+                    case LogicalOperator.OR:
+                        myCriteria = myCriteria.or(NoticeField.PPN).is(ppnCode);
+                        break;
+                    case LogicalOperator.EXCEPT:
+                        myCriteria = myCriteria.and(NoticeField.PPN).is(ppnCode).not();
+                        break;
+                }
+            }
+
+            // pour le bloc entier
+            switch (ppn.getBlocOperator()) {
+                case LogicalOperator.AND:
+                    myCriteria = myCriteria.connect();
+                    break;
+                case LogicalOperator.OR:
+                    myCriteria.setPartIsOr(true);
+                    break;
+                case LogicalOperator.EXCEPT:
+                    myCriteria = myCriteria.notOperator();
+                    break;
+            }
+
+            return myCriteria;
+
+        } else {
+            return null;
+        }
+    }
 
 }

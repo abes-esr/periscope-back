@@ -4,6 +4,7 @@ import fr.abes.periscope.core.EnableOnIntegrationTest;
 import fr.abes.periscope.core.configuration.SolRConfig;
 import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionPcp;
+import fr.abes.periscope.core.criterion.CriterionPpn;
 import fr.abes.periscope.core.criterion.CriterionRcr;
 import fr.abes.periscope.core.entity.NoticeSolr;
 import fr.abes.periscope.core.repository.solr.impl.AdvancedNoticeRepositoryImpl;
@@ -14,6 +15,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.solr.core.DefaultQueryParser;
+import org.springframework.data.solr.core.query.SimpleQuery;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -71,6 +74,96 @@ public class SolrIntegrationTest {
         List<String> pcp = Arrays.asList("PCCor","PCPACA");
         CriterionPcp criterionPcp = new CriterionPcp(pcp);
         criteria.add(criterionPcp);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates,newCandidates);
+    }
+
+    /**
+     * Test de l'historiette #id202
+     */
+    @Test
+    @DisplayName("historiette #id 202")
+    public void testId202() {
+        // Requête de Periscope V1
+        String originalQuery = "001_s:038640139 AND (930-z_s:PCCor)";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        // Requête par Periscope V2
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> ppn = Arrays.asList("038640139");
+        List<String> operatorPpn = Arrays.asList("ET");
+        CriterionPpn criterionPpn = new CriterionPpn(ppn, operatorPpn);
+        criteria.add(criterionPpn);
+
+        List<String> pcp = Arrays.asList("PCCor");
+        CriterionPcp criterionPcp = new CriterionPcp("ET",pcp);
+        criteria.add(criterionPcp);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates,newCandidates);
+    }
+
+    /**
+     * Test de l'historiette #id203
+     */
+    @Test
+    @DisplayName("historiette #id 203")
+    public void testId203() {
+        // Requête de Periscope V1
+        String originalQuery = "930-z_s:PCCor AND -(001_s:038640140)";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        // Requête par Periscope V2
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+
+        criteria.add(criterionPcp);
+
+        List<String> ppn = Arrays.asList("038640140");
+        List<String> operatorPpn = Arrays.asList("ET");
+        CriterionPpn criterionPpn = new CriterionPpn("SAUF", ppn, operatorPpn);
+
+        criteria.add(criterionPpn);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates,newCandidates);
+    }
+
+    /**
+     * Test de l'historiette #id204
+     */
+    @Test
+    @DisplayName("historiette #id 204")
+    public void testId204() {
+        // Requête de Periscope V1
+        String originalQuery = "930-z_s:PCCor OR 001_s:039612473";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+
+        criteria.add(criterionPcp);
+
+        List<String> ppn = Arrays.asList("039612473");
+        List<String> operatorPpn = Arrays.asList("ET");
+        CriterionPpn criterionPpn = new CriterionPpn("OU", ppn, operatorPpn);
+
+        criteria.add(criterionPpn);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
                 Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
