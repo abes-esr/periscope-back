@@ -85,7 +85,7 @@ public class SolrQueryBuilderTest {
         criteria.add(criterionPpn);
 
         List<String> pcp = Arrays.asList("PCCor");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        CriterionPcp criterionPcp = new CriterionPcp("ET", pcp);
 
         criteria.add(criterionPcp);
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
@@ -106,7 +106,7 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        CriterionPcp criterionPcp = new CriterionPcp("ET", pcp);
 
         criteria.add(criterionPcp);
 
@@ -134,7 +134,7 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        CriterionPcp criterionPcp = new CriterionPcp("ET", pcp);
 
         criteria.add(criterionPcp);
 
