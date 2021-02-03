@@ -1,9 +1,6 @@
 package fr.abes.periscope.web.controller;
 
-import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionRcr;
+import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.service.NoticeStoreService;
@@ -57,6 +54,10 @@ public class PublicController {
 
             if (userCriterion instanceof CriterionPpnWebDto) {
                 criteria.add(dtoMapper.map(userCriterion, CriterionPpn.class));
+            }
+
+            if (userCriterion instanceof CriterionTitleWordsWebDto) {
+                criteria.add(dtoMapper.map(userCriterion, CriterionTitleWords.class));
             }
         }
 

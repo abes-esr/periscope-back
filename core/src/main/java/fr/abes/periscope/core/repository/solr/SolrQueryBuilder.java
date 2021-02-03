@@ -1,6 +1,8 @@
 package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.criterion.*;
+import fr.abes.periscope.core.exception.IllegalCriterionException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.FilterQuery;
 import org.springframework.data.solr.core.query.SimpleFilterQuery;
@@ -11,6 +13,7 @@ import java.util.List;
 /**
  * Représente un constructeur de requête SolR pour Periscope
  */
+@Slf4j
 public class SolrQueryBuilder {
 
     /**
@@ -28,7 +31,7 @@ public class SolrQueryBuilder {
             // Bloc de critère PCP
             if (criterion instanceof CriterionPcp) {
 
-                Criteria pcpQuery = buildPcpQuery((CriterionPcp)criterion);
+                Criteria pcpQuery = buildPcpQuery((CriterionPcp) criterion);
                 if (pcpQuery != null) {
                     filterQuery.addCriteria(pcpQuery);
                 }
@@ -37,15 +40,26 @@ public class SolrQueryBuilder {
             // Bloc de critère RCR
             if (criterion instanceof CriterionRcr) {
 
-                Criteria rcrQuery = buildRcrQuery((CriterionRcr)criterion);
+                Criteria rcrQuery = buildRcrQuery((CriterionRcr) criterion);
                 if (rcrQuery != null) {
                     filterQuery.addCriteria(rcrQuery);
                 }
             }
 
+            // Bloc de critère Mots du titre
+            if (criterion instanceof CriterionTitleWords) {
+
+                try {
+                    Criteria titleWordsQuery = buildTitleWordsQuery((CriterionTitleWords) criterion);
+                    filterQuery.addCriteria(titleWordsQuery);
+                } catch (IllegalCriterionException ex) {
+                    log.error(ex.getLocalizedMessage());
+                }
+            }
+
             //Bloc de critère PPN
             if (criterion instanceof CriterionPpn) {
-                Criteria ppnQuery = buildPpnQuery((CriterionPpn)criterion);
+                Criteria ppnQuery = buildPpnQuery((CriterionPpn) criterion);
                 if (ppnQuery != null) {
                     filterQuery.addCriteria(ppnQuery);
                 }
@@ -158,6 +172,99 @@ public class SolrQueryBuilder {
         } else {
             return null;
         }
+    }
+
+    /**
+     * Construit la requête SolR à partir d'un critère de recherche par mots du titre
+     * @param titleWords Les critères de recherche par mots du titre
+     * @return Criteria Requête SolR
+     * @exception IllegalCriterionException Si la liste des critères est vide.
+     */
+    private Criteria buildTitleWordsQuery(CriterionTitleWords titleWords) throws IllegalCriterionException {
+
+        if (titleWords.getTitleWords().isEmpty()) {
+            throw new IllegalCriterionException("Criteria list cannot be empty");
+        }
+
+        Iterator<String> valueIterator = titleWords.getTitleWords().iterator();
+        Iterator<String> operatorIterator = titleWords.getTitleWordsOperator().iterator();
+
+        Criteria myCriteria = null;
+
+        String value = valueIterator.next();
+        String operator = operatorIterator.next();
+
+        // 1er critère
+        switch (operator) {
+            case LogicalOperator.EXCEPT:
+                myCriteria = new Criteria(NoticeField.KEY_TITLE_T).is(value).not().
+                        or(NoticeField.KEY_SHORTED_TITLE_T).is(value).not().
+                        or(NoticeField.PROPER_TITLE_T).is(value).not().
+                        or(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).not().
+                        or(NoticeField.PARALLEL_TITLE_T).is(value).not().
+                        or(NoticeField.TITLE_COMPLEMENT_T).is(value).not().
+                        or(NoticeField.SECTION_TITLE_T).is(value).not().connect();
+                break;
+            default:
+                myCriteria = new Criteria(NoticeField.KEY_TITLE_T).is(value).
+                        or(NoticeField.KEY_SHORTED_TITLE_T).is(value).
+                        or(NoticeField.PROPER_TITLE_T).is(value).
+                        or(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).
+                        or(NoticeField.PARALLEL_TITLE_T).is(value).
+                        or(NoticeField.TITLE_COMPLEMENT_T).is(value).
+                        or(NoticeField.SECTION_TITLE_T).is(value).connect();
+                break;
+        }
+
+        // les autres
+        while (valueIterator.hasNext()) {
+            value = valueIterator.next();
+            operator = operatorIterator.next();
+
+            switch (operator) {
+                case LogicalOperator.AND:
+                    myCriteria = myCriteria.connect().and(NoticeField.KEY_TITLE_T).is(value).
+                            or(NoticeField.KEY_SHORTED_TITLE_T).is(value).
+                            or(NoticeField.PROPER_TITLE_T).is(value).
+                            or(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).
+                            or(NoticeField.PARALLEL_TITLE_T).is(value).
+                            or(NoticeField.TITLE_COMPLEMENT_T).is(value).
+                            or(NoticeField.SECTION_TITLE_T).is(value);
+                    break;
+                case LogicalOperator.OR:
+                    myCriteria = myCriteria.connect().or(NoticeField.KEY_TITLE_T).is(value).
+                            or(NoticeField.KEY_SHORTED_TITLE_T).is(value).
+                            or(NoticeField.PROPER_TITLE_T).is(value).
+                            or(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).
+                            or(NoticeField.PARALLEL_TITLE_T).is(value).
+                            or(NoticeField.TITLE_COMPLEMENT_T).is(value).
+                            or(NoticeField.SECTION_TITLE_T).is(value);
+                    break;
+                case LogicalOperator.EXCEPT:
+                    myCriteria = myCriteria.connect().and(NoticeField.KEY_TITLE_T).is(value).not().
+                            or(NoticeField.KEY_SHORTED_TITLE_T).is(value).not().
+                            or(NoticeField.PROPER_TITLE_T).is(value).not().
+                            or(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).not().
+                            or(NoticeField.PARALLEL_TITLE_T).is(value).not().
+                            or(NoticeField.TITLE_COMPLEMENT_T).is(value).not().
+                            or(NoticeField.SECTION_TITLE_T).is(value).not();
+                    break;
+            }
+        }
+
+        // pour le bloc entier
+        switch (titleWords.getBlocOperator()) {
+            case LogicalOperator.AND:
+                break;
+            case LogicalOperator.OR:
+                myCriteria.setPartIsOr(true);
+                break;
+            case LogicalOperator.EXCEPT:
+                myCriteria = myCriteria.notOperator();
+                break;
+        }
+
+        return myCriteria;
     }
 
     /**
