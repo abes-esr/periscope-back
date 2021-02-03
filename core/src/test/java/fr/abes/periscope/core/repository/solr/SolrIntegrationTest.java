@@ -640,4 +640,20 @@ public class SolrIntegrationTest {
         Assert.assertEquals(originalCandidates,newCandidates);
     }
 
+    @Test
+    @DisplayName("Test Critère ISSN")
+    public void testIssn() {
+        String originalQuery = "011-a_t:1146-7665";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0, 25, Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> issn = Arrays.asList("1146-7665");
+        CriterionIssn criterionIssn = new CriterionIssn(issn);
+        criteria.add(criterionIssn);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0, 25, Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates, newCandidates);
+    }
 }

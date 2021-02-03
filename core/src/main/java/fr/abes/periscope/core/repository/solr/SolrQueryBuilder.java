@@ -31,7 +31,7 @@ public class SolrQueryBuilder {
             // Bloc de critère PCP
             if (criterion instanceof CriterionPcp) {
 
-                Criteria pcpQuery = buildPcpQuery((CriterionPcp) criterion);
+                Criteria pcpQuery = buildPcpQuery((CriterionPcp)criterion);
                 if (pcpQuery != null) {
                     filterQuery.addCriteria(pcpQuery);
                 }
@@ -40,7 +40,7 @@ public class SolrQueryBuilder {
             // Bloc de critère RCR
             if (criterion instanceof CriterionRcr) {
 
-                Criteria rcrQuery = buildRcrQuery((CriterionRcr) criterion);
+                Criteria rcrQuery = buildRcrQuery((CriterionRcr)criterion);
                 if (rcrQuery != null) {
                     filterQuery.addCriteria(rcrQuery);
                 }
@@ -73,6 +73,14 @@ public class SolrQueryBuilder {
                     filterQuery.addCriteria(countryQuery);
                 } catch (IllegalCriterionException ex) {
                     log.error(ex.getLocalizedMessage());
+                }
+            }
+
+            // bloc de critère ISSN
+            if (criterion instanceof CriterionIssn) {
+                Criteria issnQuery = buildIssnQuery((CriterionIssn)criterion);
+                if (issnQuery != null) {
+                    filterQuery.addCriteria(issnQuery);
                 }
             }
         }
@@ -320,6 +328,7 @@ public class SolrQueryBuilder {
     }
 
     /**
+<<<<<<< HEAD
      * Construit la requête SolR à partir d'un critère de recherche par éditeur
      * @param criterion Les critères de recherche par editeur
      * @return Criteria Requête SolR
@@ -383,4 +392,43 @@ public class SolrQueryBuilder {
         return myCriteria;
     }
 
+     /* Construit la requête SolR à partir d'un critère de recherche par ISSN
+     * @param issn Les critères de recherche par ISSN
+     * @return Criteria Requête SolR
+     */
+    private Criteria buildIssnQuery(CriterionIssn issn) {
+        if (issn.getIssn().size() > 0) {
+
+            Iterator<String> issnIterator = issn.getIssn().iterator();
+
+            Criteria myCriteria;
+
+            String issnCode = issnIterator.next();
+            myCriteria = new Criteria(NoticeField.ISSN_T).is(issnCode);
+
+            // les autres
+            while (issnIterator.hasNext()) {
+                issnCode = issnIterator.next();
+                myCriteria = myCriteria.or(NoticeField.ISSN_T).is(issnCode);
+            }
+
+            // pour le bloc entier
+            switch (issn.getBlocOperator()) {
+                case LogicalOperator.AND:
+                    myCriteria = myCriteria.connect();
+                    break;
+                case LogicalOperator.OR:
+                    myCriteria.setPartIsOr(true);
+                    break;
+                case LogicalOperator.EXCEPT:
+                    myCriteria = myCriteria.notOperator();
+                    break;
+            }
+
+            return myCriteria;
+
+        } else {
+            return null;
+        }
+    }
 }

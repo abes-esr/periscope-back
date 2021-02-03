@@ -577,4 +577,22 @@ public class SolrQueryBuilderTest {
                 "(930-z_s:PCDroit OR 930-z_s:PCPhilo) OR (930-b_s:212312101 OR 930-b_s:341722102)";
         assertEquals(expectedQuery, actualQuery);
     }
+
+    @Test
+    @DisplayName("Test Critère ISSN")
+    public void testIssn() {
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> issn = Arrays.asList("1146-7665");
+        CriterionIssn criterionIssn = new CriterionIssn(issn);
+        criteria.add(criterionIssn);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "011-a_t:1146\\-7665";
+        assertEquals(expectedQuery, actualQuery);
+    }
 }
