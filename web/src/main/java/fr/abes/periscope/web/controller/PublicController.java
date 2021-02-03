@@ -3,17 +3,14 @@ package fr.abes.periscope.web.controller;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
-import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.util.DtoMapper;
-import fr.abes.periscope.core.util.TrackExecutionTime;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -35,7 +32,6 @@ public class PublicController {
         noticeStoreService = service;
     }
 
-    @TrackExecutionTime
     @PostMapping("/notice/findByCriteria")
     public List<NoticeWebDto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size,@RequestBody @Valid LinkedList<CriterionWebDto> userCriteria) throws IllegalCriterionException {
 
@@ -78,9 +74,6 @@ public class PublicController {
         }
 
         List<Notice> candidate = noticeStoreService.findNoticesByCriteria(criteria,page,size);
-
-        log.debug("List size is "+candidate.size());
-
         return dtoMapper.mapList(candidate, NoticeWebDto.class);
 
     }

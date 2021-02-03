@@ -4,7 +4,6 @@ import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
-import fr.abes.periscope.core.util.TrackExecutionTime;
 import fr.abes.periscope.web.dto.*;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -34,7 +33,6 @@ public class DtoMapper {
      * @param targetClass Classe des objets cibles
      * @return Liste des objets cibles
      */
-    @TrackExecutionTime
     public <S, T> List<T> mapList(List<S> source, Class<T> targetClass) {
         return source
                 .stream()
