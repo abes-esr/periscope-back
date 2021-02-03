@@ -1,14 +1,14 @@
 package fr.abes.periscope.core.repository.solr;
 
-import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionRcr;
-import fr.abes.periscope.core.criterion.CriterionTitleWords;
+import fr.abes.periscope.core.criterion.*;
+import fr.abes.periscope.core.entity.NoticeSolr;
+import org.junit.Assert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.query.SimpleQuery;
 
@@ -415,6 +415,24 @@ public class SolrQueryBuilderTest {
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
                 "(930-z_s:PCDroit OR 930-z_s:PCPhilo) OR (930-b_s:212312101 OR 930-b_s:341722102)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    @DisplayName("Test Critère ISSN")
+    public void testIssn() {
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> issn = Arrays.asList("1146-7665");
+        CriterionIssn criterionIssn = new CriterionIssn(issn);
+        criteria.add(criterionIssn);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "011-a_t:1146\\-7665";
         assertEquals(expectedQuery, actualQuery);
     }
 }

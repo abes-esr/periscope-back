@@ -1,9 +1,6 @@
 package fr.abes.periscope.web.util;
 
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionRcr;
-import fr.abes.periscope.core.criterion.CriterionTitleWords;
+import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.util.TrackExecutionTime;
@@ -31,7 +28,8 @@ public class DtoMapper {
 
     /**
      * Fonction de mapping générique pour des listes
-     * @param source Liste source
+     *
+     * @param source      Liste source
      * @param targetClass Classe des objets cibles
      * @return Liste des objets cibles
      */
@@ -45,7 +43,8 @@ public class DtoMapper {
 
     /**
      * Fonction de mapping générique pour un objet
-     * @param source Objet source
+     *
+     * @param source      Objet source
      * @param targetClass Classe de l'objet cible
      * @return Objet cible
      */
@@ -64,10 +63,10 @@ public class DtoMapper {
             public CriterionPcp convert(MappingContext<CriterionPcpWebDto, CriterionPcp> context) {
                 CriterionPcpWebDto s = context.getSource();
                 try {
-                    CriterionPcp d = new CriterionPcp(s.getBlocOperator(), s.getPcp(),s.getPcpOperator());
+                    CriterionPcp d = new CriterionPcp(s.getBlocOperator(), s.getPcp(), s.getPcpOperator());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_PCP+": "+ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_PCP + ": " + ex.getLocalizedMessage());
                 }
 
             }
@@ -88,9 +87,9 @@ public class DtoMapper {
                     CriterionRcr d = new CriterionRcr(s.getBlocOperator(), s.getRcr(), s.getRcrOperator());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_RCR+": "+ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_RCR + ": " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_RCR+": "+ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_RCR + ": " + ex.getLocalizedMessage());
                 }
             }
         };
@@ -110,9 +109,9 @@ public class DtoMapper {
                     CriterionPpn d = new CriterionPpn(s.getBlocOperator(), s.getPpn());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_PPN+": "+ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_PPN + ": " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_PPN+": "+ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_PPN + ": " + ex.getLocalizedMessage());
                 }
             }
         };
@@ -132,9 +131,32 @@ public class DtoMapper {
                     CriterionTitleWords d = new CriterionTitleWords(s.getBlocOperator(), s.getTitleWords(), s.getTitleWordsOperator());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_TITLE_WORDS+": "+ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_TITLE_WORDS + ": " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_TITLE_WORDS+": "+ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_TITLE_WORDS + ": " + ex.getLocalizedMessage());
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
+
+    /**
+     * Convertisseur pour les critères ISSN (DTO vers objet métier)
+     */
+    @Bean
+    public void converterIssn() {
+
+        Converter<CriterionIssnWebDto, CriterionIssn> myConverter = new Converter<CriterionIssnWebDto, CriterionIssn>() {
+            @Override
+            public CriterionIssn convert(MappingContext<CriterionIssnWebDto, CriterionIssn> mappingContext) {
+                CriterionIssnWebDto s = mappingContext.getSource();
+                try {
+                    CriterionIssn d = new CriterionIssn(s.getBlocOperator(), s.getIssn());
+                    return d;
+                } catch (IllegalOperatorException ex) {
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_ISSN + ": " + ex.getLocalizedMessage());
+                } catch (CriterionOperatorMismatchException ex) {
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_ISSN + ": " + ex.getLocalizedMessage());
                 }
             }
         };

@@ -2,11 +2,7 @@ package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.EnableOnIntegrationTest;
 import fr.abes.periscope.core.configuration.SolRConfig;
-import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionRcr;
-import fr.abes.periscope.core.criterion.CriterionTitleWords;
+import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.NoticeSolr;
 import fr.abes.periscope.core.repository.solr.impl.AdvancedNoticeRepositoryImpl;
 import org.junit.Assert;
@@ -464,4 +460,20 @@ public class SolrIntegrationTest {
         Assert.assertEquals(originalCandidates,newCandidates);
     }
 
+    @Test
+    @DisplayName("Test Critère ISSN")
+    public void testIssn() {
+        String originalQuery = "011-a_t:1146-7665";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0, 25, Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> issn = Arrays.asList("1146-7665");
+        CriterionIssn criterionIssn = new CriterionIssn(issn);
+        criteria.add(criterionIssn);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0, 25, Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates, newCandidates);
+    }
 }
