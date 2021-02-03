@@ -2,11 +2,7 @@ package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.EnableOnIntegrationTest;
 import fr.abes.periscope.core.configuration.SolRConfig;
-import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionRcr;
-import fr.abes.periscope.core.criterion.CriterionTitleWords;
+import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.NoticeSolr;
 import fr.abes.periscope.core.repository.solr.impl.AdvancedNoticeRepositoryImpl;
 import org.junit.Assert;
@@ -332,6 +328,186 @@ public class SolrIntegrationTest {
         List<String> tileWordsOperator = Arrays.asList("ET");
         CriterionTitleWords criterionTitleWords = new CriterionTitleWords("SAUF",titleWords,tileWordsOperator);
         criteria.add(criterionTitleWords);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates,newCandidates);
+    }
+
+    /**
+     * Test de l'historiette #id218
+     */
+    @Test
+    @DisplayName("historiette #id 218")
+    public void testId218() {
+
+        // Requête de Periscope V1
+        String originalQuery = "930-z_s:PCCor AND (210-c_t:\"corse\")";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        // Requête par Periscope V2
+        List<Criterion> criteria = new LinkedList<>();
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("ET");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("ET",editors,editorsOperator);
+        criteria.add(criterionEditor);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates,newCandidates);
+    }
+
+    /**
+     * Test de l'historiette #id219
+     */
+    @Test
+    @DisplayName("historiette #id 219")
+    public void testId219() {
+
+        // Requête de Periscope V1
+        String originalQuery = "930-z_s:PCCor OR (210-c_t:\"corse\")";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        // Requête par Periscope V2
+        List<Criterion> criteria = new LinkedList<>();
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("ET");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("OU",editors,editorsOperator);
+        criteria.add(criterionEditor);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates,newCandidates);
+    }
+
+    /**
+     * Test de l'historiette #id220
+     */
+    @Test
+    @DisplayName("historiette #id 220")
+    public void testId220() {
+
+        // Requête de Periscope V1
+        String originalQuery = "930-z_s:PCCor AND NOT (210-c_t:\"corse\")";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        // Requête par Periscope V2
+        List<Criterion> criteria = new LinkedList<>();
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("ET");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("SAUF",editors,editorsOperator);
+        criteria.add(criterionEditor);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates,newCandidates);
+    }
+
+    /**
+     * Test de l'historiette #id222
+     */
+    @Test
+    @DisplayName("historiette #id 222")
+    public void testId222() {
+
+        // Requête de Periscope V1
+        String originalQuery = "930-b_t:200962101 AND (210-c_t:\"corse\")";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        // Requête par Periscope V2
+        List<Criterion> criteria = new LinkedList<>();
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("ET",editors,editorsOperator);
+        criteria.add(criterionEditor);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates,newCandidates);
+    }
+
+    /**
+     * Test de l'historiette #id223
+     */
+    @Test
+    @DisplayName("historiette #id 223")
+    public void testId223() {
+
+        // Requête de Periscope V1
+        String originalQuery = "930-b_t:200962101 OR (210-c_t:\"corse\")";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        // Requête par Periscope V2
+        List<Criterion> criteria = new LinkedList<>();
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("OU",editors,editorsOperator);
+        criteria.add(criterionEditor);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates,newCandidates);
+    }
+
+    /**
+     * Test de l'historiette #id224
+     */
+    @Test
+    @DisplayName("historiette #id 224")
+    public void testId224() {
+
+        // Requête de Periscope V1
+        String originalQuery = "930-b_t:200962101 AND NOT (210-c_t:\"corse\")";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        // Requête par Periscope V2
+        List<Criterion> criteria = new LinkedList<>();
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("SAUF",editors,editorsOperator);
+        criteria.add(criterionEditor);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
                 Sort.by(Sort.Direction.ASC, NoticeField.PPN)));

@@ -15,6 +15,7 @@ public interface NoticeField {
     String PCP_LIST = "930-z_t";
     String RCR_LIST = "930-b_t";
     String EDITOR = "210-c_z";
+    String EDITOR_T = "210-c_t";
     String PROCESSING_GLOBAL_DATA = "100-a_t";
     String KEY_TITLE = "530-a_z";
     String KEY_TITLE_T = "530-a_t";

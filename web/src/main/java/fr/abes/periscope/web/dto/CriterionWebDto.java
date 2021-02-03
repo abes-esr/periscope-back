@@ -18,7 +18,8 @@ import javax.validation.constraints.NotNull;
 @JsonSubTypes({@JsonSubTypes.Type(value = CriterionPcpWebDto.class, name = CriterionTypeName.CRITERION_PCP),
         @JsonSubTypes.Type(value = CriterionRcrWebDto.class, name = CriterionTypeName.CRITERION_RCR),
         @JsonSubTypes.Type(value = CriterionPpnWebDto.class, name = CriterionTypeName.CRITERION_PPN),
-        @JsonSubTypes.Type(value = CriterionTitleWordsWebDto.class, name = CriterionTypeName.CRITERION_TITLE_WORDS)})
+        @JsonSubTypes.Type(value = CriterionTitleWordsWebDto.class, name = CriterionTypeName.CRITERION_TITLE_WORDS),
+        @JsonSubTypes.Type(value = CriterionEditorWebDto.class, name = CriterionTypeName.CRITERION_EDITOR)})
 public abstract class CriterionWebDto {
 
     @JsonProperty(value="bloc_operator")
