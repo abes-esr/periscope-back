@@ -1,5 +1,8 @@
 package fr.abes.periscope.core.criterion;
 
+import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
+import fr.abes.periscope.core.exception.IllegalCriterionException;
+import fr.abes.periscope.core.exception.IllegalOperatorException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,22 +20,74 @@ public class CriterionPcp extends Criterion {
      * logiques entre les codes sont des OU */
     private List<String> pcp = new ArrayList<>();
 
+    /** Liste des connecteurs logiques entre les codes RCR
+     * Exemple :
+     * pcpOperator[0] pour connecter pcp[0]
+     * pcpOperator[1] pour connecter pcp[0] et pcp[1] */
+    private List<String> pcpOperator = new ArrayList<>();
+
     /**
      * Constructeur de critère de recherche par code PCP à connecter avec un autre bloc
      * @param blocOperator Connecteur logique du bloc
-     * @param candidatePcp Liste de code PCP
+     * @param candidatesPcp Liste de code PCP
+     * @param candidatesOperator Liste des connecteurs logiques entre les code PCP.
+     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent.
+     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
+     * @exception IllegalCriterionException Si la liste des critères est vide.
      */
-    public CriterionPcp(String blocOperator, List<String> candidatePcp) {
+    public CriterionPcp(String blocOperator, List<String> candidatesPcp, List<String> candidatesOperator) {
         super(blocOperator);
-        this.pcp = candidatePcp;
+
+        if (candidatesPcp.isEmpty()) {
+            throw new IllegalCriterionException("Criteria list cannot be empty");
+        }
+
+        if (candidatesOperator.size() != candidatesPcp.size()) {
+            throw new CriterionOperatorMismatchException("Criteria list size mismatch the operators list size");
+        }
+
+        boolean onlyAcceptedOperator = candidatesOperator.stream().allMatch(operator -> (
+                LogicalOperator.AND.equals(operator) ||
+                        LogicalOperator.OR.equals(operator) ||
+                        LogicalOperator.EXCEPT.equals(operator)));
+
+        if (!onlyAcceptedOperator) {
+            throw new IllegalOperatorException("Operators contains illegal values. Accepted value : "+LogicalOperator.AND+"/"+LogicalOperator.OR+"/"+LogicalOperator.EXCEPT);
+        }
+
+        this.pcp = candidatesPcp;
+        this.pcpOperator = candidatesOperator;
     }
 
     /**
      * Constructeur de critère de recherche par code PCP (1er bloc)
-     * @param candidatePcp Liste de code PCP
+     * @param candidatesPcp Liste de code PCP
+     * @param candidatesOperator Liste des connecteurs logiques entre les codes PCP.
+     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent.
+     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
+     * @exception IllegalCriterionException Si la liste des critères est vide.
      */
-    public CriterionPcp(List<String> candidatePcp) {
+    public CriterionPcp(List<String> candidatesPcp, List<String> candidatesOperator) {
         super();
-        this.pcp = candidatePcp;
+
+        if (candidatesPcp.isEmpty()) {
+            throw new IllegalCriterionException("Criteria list cannot be empty");
+        }
+
+        if (candidatesOperator.size() != candidatesPcp.size()) {
+            throw new CriterionOperatorMismatchException("Criteria list size mismatch the operators list size");
+        }
+
+        boolean onlyAcceptedOperator = candidatesOperator.stream().allMatch(operator -> (
+                LogicalOperator.AND.equals(operator) ||
+                        LogicalOperator.OR.equals(operator) ||
+                        LogicalOperator.EXCEPT.equals(operator)));
+
+        if (!onlyAcceptedOperator) {
+            throw new IllegalOperatorException("Operators contains illegal values. Accepted value : "+LogicalOperator.AND+"/"+LogicalOperator.OR+"/"+LogicalOperator.EXCEPT);
+        }
+
+        this.pcp = candidatesPcp;
+        this.pcpOperator = candidatesOperator;
     }
 }

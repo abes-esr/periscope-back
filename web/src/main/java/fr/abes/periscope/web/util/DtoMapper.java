@@ -64,7 +64,7 @@ public class DtoMapper {
             public CriterionPcp convert(MappingContext<CriterionPcpWebDto, CriterionPcp> context) {
                 CriterionPcpWebDto s = context.getSource();
                 try {
-                    CriterionPcp d = new CriterionPcp(s.getBlocOperator(), s.getPcp());
+                    CriterionPcp d = new CriterionPcp(s.getBlocOperator(), s.getPcp(),s.getPcpOperator());
                     return d;
                 } catch (IllegalOperatorException ex) {
                     throw new IllegalOperatorException(CriterionTypeName.CRITERION_PCP+": "+ex.getLocalizedMessage());
@@ -107,7 +107,7 @@ public class DtoMapper {
             public CriterionPpn convert(MappingContext<CriterionPpnWebDto, CriterionPpn> context) {
                 CriterionPpnWebDto s = context.getSource();
                 try {
-                    CriterionPpn d = new CriterionPpn(s.getBlocOperator(), s.getPpn(), s.getPpnOperator());
+                    CriterionPpn d = new CriterionPpn(s.getBlocOperator(), s.getPpn());
                     return d;
                 } catch (IllegalOperatorException ex) {
                     throw new IllegalOperatorException(CriterionTypeName.CRITERION_PPN+": "+ex.getLocalizedMessage());

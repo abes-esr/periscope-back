@@ -276,39 +276,17 @@ public class SolrQueryBuilder {
         if (ppn.getPpn().size() > 0) {
 
             Iterator<String> ppnIterator = ppn.getPpn().iterator();
-            Iterator<String> ppnOperatorIterator = ppn.getPpnOperator().iterator();
 
             Criteria myCriteria;
 
             String ppnCode = ppnIterator.next();
-            String ppnOperator = ppnOperatorIterator.next();
 
-            // 1er critère
-            switch (ppnOperator) {
-                case LogicalOperator.EXCEPT:
-                    myCriteria = new Criteria(NoticeField.PPN).is(ppnCode).not();
-                    break;
-                default:
-                    myCriteria = new Criteria(NoticeField.PPN).is(ppnCode);
-                    break;
-            }
+            myCriteria = new Criteria(NoticeField.PPN).is(ppnCode);
 
             // les autres
             while (ppnIterator.hasNext()) {
                 ppnCode = ppnIterator.next();
-                ppnOperator = ppnOperatorIterator.next();
-
-                switch (ppnOperator) {
-                    case LogicalOperator.AND:
-                        myCriteria = myCriteria.and(NoticeField.PPN).is(ppnCode);
-                        break;
-                    case LogicalOperator.OR:
-                        myCriteria = myCriteria.or(NoticeField.PPN).is(ppnCode);
-                        break;
-                    case LogicalOperator.EXCEPT:
-                        myCriteria = myCriteria.and(NoticeField.PPN).is(ppnCode).not();
-                        break;
-                }
+                myCriteria = myCriteria.or(NoticeField.PPN).is(ppnCode);
             }
 
             // pour le bloc entier

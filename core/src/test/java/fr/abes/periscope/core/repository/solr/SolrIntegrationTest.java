@@ -48,7 +48,8 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> pcp = Arrays.asList("PCCor");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -73,7 +74,8 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> pcp = Arrays.asList("PCCor","PCPACA");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU","OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -97,12 +99,12 @@ public class SolrIntegrationTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> ppn = Arrays.asList("038640139");
-        List<String> operatorPpn = Arrays.asList("ET");
-        CriterionPpn criterionPpn = new CriterionPpn(ppn, operatorPpn);
+        CriterionPpn criterionPpn = new CriterionPpn(ppn);
         criteria.add(criterionPpn);
 
         List<String> pcp = Arrays.asList("PCCor");
-        CriterionPcp criterionPcp = new CriterionPcp("ET",pcp);
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp("ET",pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -126,13 +128,13 @@ public class SolrIntegrationTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
 
         criteria.add(criterionPcp);
 
         List<String> ppn = Arrays.asList("038640140");
-        List<String> operatorPpn = Arrays.asList("ET");
-        CriterionPpn criterionPpn = new CriterionPpn("SAUF", ppn, operatorPpn);
+        CriterionPpn criterionPpn = new CriterionPpn("SAUF", ppn);
 
         criteria.add(criterionPpn);
 
@@ -156,13 +158,13 @@ public class SolrIntegrationTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
 
         criteria.add(criterionPcp);
 
         List<String> ppn = Arrays.asList("039612473");
-        List<String> operatorPpn = Arrays.asList("ET");
-        CriterionPpn criterionPpn = new CriterionPpn("OU", ppn, operatorPpn);
+        CriterionPpn criterionPpn = new CriterionPpn("OU", ppn);
 
         criteria.add(criterionPpn);
 
@@ -187,8 +189,8 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> rcr = Arrays.asList("200336201","200962101");
-        List<String> operator = Arrays.asList("ET","OU");
-        CriterionRcr criterionRcr = new CriterionRcr(rcr,operator);
+        List<String> rcrOperator = Arrays.asList("ET","OU");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
         criteria.add(criterionRcr);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -212,8 +214,8 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> rcr = Arrays.asList("200336201","200962101");
-        List<String> operator = Arrays.asList("ET","OU");
-        CriterionRcr criterionRcr = new CriterionRcr(rcr,operator);
+        List<String> rcrOperator = Arrays.asList("ET","OU");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
         criteria.add(criterionRcr);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -237,8 +239,8 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> rcr = Arrays.asList("200336201","200962101");
-        List<String> operator = Arrays.asList("ET","ET");
-        CriterionRcr criterionRcr = new CriterionRcr(rcr,operator);
+        List<String> rcrOperator = Arrays.asList("ET","ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
         criteria.add(criterionRcr);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -262,12 +264,13 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> pcp = Arrays.asList("PCCor");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<String> titleWords = Arrays.asList("corse");
-        List<String> operator = Arrays.asList("ET");
-        CriterionTitleWords criterionTitleWords = new CriterionTitleWords("OU",titleWords,operator);
+        List<String> titleWordsOperator = Arrays.asList("ET");
+        CriterionTitleWords criterionTitleWords = new CriterionTitleWords("OU",titleWords,titleWordsOperator);
         criteria.add(criterionTitleWords);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -291,12 +294,13 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> pcp = Arrays.asList("PCCor");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<String> titleWords = Arrays.asList("corse");
-        List<String> operator = Arrays.asList("ET");
-        CriterionTitleWords criterionTitleWords = new CriterionTitleWords("ET",titleWords,operator);
+        List<String> titleWordsOperator = Arrays.asList("ET");
+        CriterionTitleWords criterionTitleWords = new CriterionTitleWords("ET",titleWords,titleWordsOperator);
         criteria.add(criterionTitleWords);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -320,12 +324,13 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> pcp = Arrays.asList("PCCor");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<String> titleWords = Arrays.asList("corse");
-        List<String> operator = Arrays.asList("ET");
-        CriterionTitleWords criterionTitleWords = new CriterionTitleWords("SAUF",titleWords,operator);
+        List<String> tileWordsOperator = Arrays.asList("ET");
+        CriterionTitleWords criterionTitleWords = new CriterionTitleWords("SAUF",titleWords,tileWordsOperator);
         criteria.add(criterionTitleWords);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -350,11 +355,12 @@ public class SolrIntegrationTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCAq","PCAuv","PCBo","PCBre","PCCA","PCCAPI","PCCor","PCFC","PCLR","PCLim","PCLor","PCMP","PCNPDC","PCPACA","PCPCh","PCPL","PCPic","PCRA","PCSAM","PCSCen","PCUP","PCUR","PCAM","PCAS","PCAnt","PCChimie","PCDroit","PCEBCO","PCGer","PCGéo","PCIta","PCMath","PCMed","PCMedieval","PCNum","PCPhilo","PCPhy", "PCPsy", "PCSTAPS");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<String> rcr = Arrays.asList("751052105");
-        List<String> operator = Arrays.asList("ET");
+        List<String> operator = Arrays.asList("OU");
         CriterionRcr criterionRcr = new CriterionRcr("SAUF",rcr,operator);
         criteria.add(criterionRcr);
 
@@ -383,12 +389,13 @@ public class SolrIntegrationTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCAq","PCAuv","PCBo","PCBre","PCCA","PCCAPI","PCCor","PCFC","PCLR","PCLim","PCLor","PCMP","PCNPDC","PCPACA","PCPCh","PCPL","PCPic","PCRA","PCSAM","PCSCen","PCUP","PCUR","PCAM","PCAS","PCAnt","PCChimie","PCDroit","PCEBCO","PCGer","PCGéo","PCIta","PCMath","PCMed","PCMedieval","PCNum","PCPhilo","PCPhy", "PCPsy", "PCSTAPS");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<String> rcr = Arrays.asList("674821001");
-        List<String> operator = Arrays.asList("ET");
-        CriterionRcr criterionRcr = new CriterionRcr("ET",rcr,operator);
+        List<String> rcrOperator = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr("ET",rcr,rcrOperator);
         criteria.add(criterionRcr);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -413,12 +420,13 @@ public class SolrIntegrationTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCDroit");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<String> rcr = Arrays.asList("212312101","341722102");
-        List<String> operator = Arrays.asList("ET","OU");
-        CriterionRcr criterionRcr = new CriterionRcr("OU",rcr,operator);
+        List<String> rcrOperator = Arrays.asList("ET","OU");
+        CriterionRcr criterionRcr = new CriterionRcr("OU",rcr,rcrOperator);
         criteria.add(criterionRcr);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -441,12 +449,13 @@ public class SolrIntegrationTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCDroit","PCPhilo");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU","OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<String> rcr = Arrays.asList("212312101","341722102");
-        List<String> operator = Arrays.asList("ET","OU");
-        CriterionRcr criterionRcr = new CriterionRcr("OU",rcr,operator);
+        List<String> rcrOperator = Arrays.asList("ET","OU");
+        CriterionRcr criterionRcr = new CriterionRcr("OU",rcr,rcrOperator);
         criteria.add(criterionRcr);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
