@@ -1,6 +1,8 @@
 package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.criterion.*;
+import fr.abes.periscope.core.exception.IllegalCriterionException;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.FilterQuery;
 import org.springframework.data.solr.core.query.SimpleFilterQuery;
@@ -11,6 +13,7 @@ import java.util.List;
 /**
  * Représente un constructeur de requête SolR pour Periscope
  */
+@Slf4j
 public class SolrQueryBuilder {
 
     /**
@@ -41,6 +44,26 @@ public class SolrQueryBuilder {
                 if (rcrQuery != null) {
                     filterQuery.addCriteria(rcrQuery);
                 }
+            }
+
+            // Bloc de critère Mots du titre
+            if (criterion instanceof CriterionTitleWords) {
+
+                try {
+                    Criteria titleWordsQuery = buildTitleWordsQuery((CriterionTitleWords) criterion);
+                    filterQuery.addCriteria(titleWordsQuery);
+                } catch (IllegalCriterionException ex) {
+                    log.error(ex.getLocalizedMessage());
+                }
+            }
+
+            //Bloc de critère PPN
+            if (criterion instanceof CriterionPpn) {
+                Criteria ppnQuery = buildPpnQuery((CriterionPpn) criterion);
+                if (ppnQuery != null) {
+                    filterQuery.addCriteria(ppnQuery);
+                }
+
             }
 
             // bloc de critère ISSN
@@ -160,6 +183,141 @@ public class SolrQueryBuilder {
     }
 
     /**
+     * Construit la requête SolR à partir d'un critère de recherche par mots du titre
+     * @param titleWords Les critères de recherche par mots du titre
+     * @return Criteria Requête SolR
+     * @exception IllegalCriterionException Si la liste des critères est vide.
+     */
+    private Criteria buildTitleWordsQuery(CriterionTitleWords titleWords) throws IllegalCriterionException {
+
+        if (titleWords.getTitleWords().isEmpty()) {
+            throw new IllegalCriterionException("Criteria list cannot be empty");
+        }
+
+        Iterator<String> valueIterator = titleWords.getTitleWords().iterator();
+        Iterator<String> operatorIterator = titleWords.getTitleWordsOperator().iterator();
+
+        Criteria myCriteria = null;
+
+        String value = valueIterator.next();
+        String operator = operatorIterator.next();
+
+        // 1er critère
+        switch (operator) {
+            case LogicalOperator.EXCEPT:
+                myCriteria = new Criteria(NoticeField.KEY_TITLE_T).is(value).not().
+                        or(NoticeField.KEY_SHORTED_TITLE_T).is(value).not().
+                        or(NoticeField.PROPER_TITLE_T).is(value).not().
+                        or(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).not().
+                        or(NoticeField.PARALLEL_TITLE_T).is(value).not().
+                        or(NoticeField.TITLE_COMPLEMENT_T).is(value).not().
+                        or(NoticeField.SECTION_TITLE_T).is(value).not().connect();
+                break;
+            default:
+                myCriteria = new Criteria(NoticeField.KEY_TITLE_T).is(value).
+                        or(NoticeField.KEY_SHORTED_TITLE_T).is(value).
+                        or(NoticeField.PROPER_TITLE_T).is(value).
+                        or(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).
+                        or(NoticeField.PARALLEL_TITLE_T).is(value).
+                        or(NoticeField.TITLE_COMPLEMENT_T).is(value).
+                        or(NoticeField.SECTION_TITLE_T).is(value).connect();
+                break;
+        }
+
+        // les autres
+        while (valueIterator.hasNext()) {
+            value = valueIterator.next();
+            operator = operatorIterator.next();
+
+            switch (operator) {
+                case LogicalOperator.AND:
+                    myCriteria = myCriteria.connect().and(NoticeField.KEY_TITLE_T).is(value).
+                            or(NoticeField.KEY_SHORTED_TITLE_T).is(value).
+                            or(NoticeField.PROPER_TITLE_T).is(value).
+                            or(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).
+                            or(NoticeField.PARALLEL_TITLE_T).is(value).
+                            or(NoticeField.TITLE_COMPLEMENT_T).is(value).
+                            or(NoticeField.SECTION_TITLE_T).is(value);
+                    break;
+                case LogicalOperator.OR:
+                    myCriteria = myCriteria.connect().or(NoticeField.KEY_TITLE_T).is(value).
+                            or(NoticeField.KEY_SHORTED_TITLE_T).is(value).
+                            or(NoticeField.PROPER_TITLE_T).is(value).
+                            or(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).
+                            or(NoticeField.PARALLEL_TITLE_T).is(value).
+                            or(NoticeField.TITLE_COMPLEMENT_T).is(value).
+                            or(NoticeField.SECTION_TITLE_T).is(value);
+                    break;
+                case LogicalOperator.EXCEPT:
+                    myCriteria = myCriteria.connect().and(NoticeField.KEY_TITLE_T).is(value).not().
+                            or(NoticeField.KEY_SHORTED_TITLE_T).is(value).not().
+                            or(NoticeField.PROPER_TITLE_T).is(value).not().
+                            or(NoticeField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).not().
+                            or(NoticeField.PARALLEL_TITLE_T).is(value).not().
+                            or(NoticeField.TITLE_COMPLEMENT_T).is(value).not().
+                            or(NoticeField.SECTION_TITLE_T).is(value).not();
+                    break;
+            }
+        }
+
+        // pour le bloc entier
+        switch (titleWords.getBlocOperator()) {
+            case LogicalOperator.AND:
+                break;
+            case LogicalOperator.OR:
+                myCriteria.setPartIsOr(true);
+                break;
+            case LogicalOperator.EXCEPT:
+                myCriteria = myCriteria.notOperator();
+                break;
+        }
+
+        return myCriteria;
+    }
+
+    /**
+     * Construit la requête SolR à partir d'un critère de recherche par PPN
+     * @param ppn Les critères de recherche par PPN
+     * @return Criteria Requête SolR
+     */
+    private Criteria buildPpnQuery(CriterionPpn ppn) {
+        if (ppn.getPpn().size() > 0) {
+
+            Iterator<String> ppnIterator = ppn.getPpn().iterator();
+
+            Criteria myCriteria;
+
+            String ppnCode = ppnIterator.next();
+
+            myCriteria = new Criteria(NoticeField.PPN).is(ppnCode);
+
+            // les autres
+            while (ppnIterator.hasNext()) {
+                ppnCode = ppnIterator.next();
+                myCriteria = myCriteria.or(NoticeField.PPN).is(ppnCode);
+            }
+
+            // pour le bloc entier
+            switch (ppn.getBlocOperator()) {
+                case LogicalOperator.AND:
+                    myCriteria = myCriteria.connect();
+                    break;
+                case LogicalOperator.OR:
+                    myCriteria.setPartIsOr(true);
+                    break;
+                case LogicalOperator.EXCEPT:
+                    myCriteria = myCriteria.notOperator();
+                    break;
+            }
+
+            return myCriteria;
+
+        } else {
+            return null;
+        }
+    }
+
+    /**
      * Construit la requête SolR à partir d'un critère de recherche par ISSN
      * @param issn Les critères de recherche par ISSN
      * @return Criteria Requête SolR
@@ -168,39 +326,16 @@ public class SolrQueryBuilder {
         if (issn.getIssn().size() > 0) {
 
             Iterator<String> issnIterator = issn.getIssn().iterator();
-            Iterator<String> issnOperatorIterator = issn.getIssnOperator().iterator();
 
             Criteria myCriteria;
 
             String issnCode = issnIterator.next();
-            String issnOperator = issnOperatorIterator.next();
-
-            // 1er critère
-            switch (issnOperator) {
-                case LogicalOperator.EXCEPT:
-                    myCriteria = new Criteria(NoticeField.RCR_S).is(issnCode).not();
-                    break;
-                default:
-                    myCriteria = new Criteria(NoticeField.RCR_S).is(issnCode);
-                    break;
-            }
+            myCriteria = new Criteria(NoticeField.ISSN_T).is(issnCode);
 
             // les autres
             while (issnIterator.hasNext()) {
                 issnCode = issnIterator.next();
-                issnOperator = issnOperatorIterator.next();
-
-                switch (issnOperator) {
-                    case LogicalOperator.AND:
-                        myCriteria = myCriteria.and(NoticeField.ISSN).is(issnCode);
-                        break;
-                    case LogicalOperator.OR:
-                        myCriteria = myCriteria.or(NoticeField.ISSN).is(issnCode);
-                        break;
-                    case LogicalOperator.EXCEPT:
-                        myCriteria = myCriteria.and(NoticeField.ISSN).is(issnCode).not();
-                        break;
-                }
+                myCriteria = myCriteria.or(NoticeField.ISSN_T).is(issnCode);
             }
 
             // pour le bloc entier
@@ -222,7 +357,4 @@ public class SolrQueryBuilder {
             return null;
         }
     }
-
-
-
 }
