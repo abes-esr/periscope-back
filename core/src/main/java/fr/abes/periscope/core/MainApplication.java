@@ -32,7 +32,8 @@ public class MainApplication {
             List<Criterion> criteria = new LinkedList<>();
 
             List<String> pcp = Arrays.asList("PCCor","PCPACA");
-            CriterionPcp criterionPcp = new CriterionPcp("OU",pcp);
+            List<String> pcpOperator = Arrays.asList("ET","ET");
+            CriterionPcp criterionPcp = new CriterionPcp("OU",pcp,pcpOperator);
 
             criteria.add(criterionPcp);
             List<Notice> notices = noticeStoreService.findNoticesByCriteria(criteria,0,25);

@@ -2,6 +2,7 @@ package fr.abes.periscope.web.controller;
 
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.Notice;
+import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import fr.abes.periscope.web.dto.*;
@@ -36,8 +37,12 @@ public class PublicController {
 
     @TrackExecutionTime
     @PostMapping("/notice/findByCriteria")
-    public List<NoticeWebDto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size,@RequestBody @Valid LinkedList<CriterionWebDto> userCriteria) {
+    public List<NoticeWebDto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size,@RequestBody @Valid LinkedList<CriterionWebDto> userCriteria) throws IllegalCriterionException {
 
+        if (userCriteria.size() == 0) {
+            //TODO: attraper cette erreur dans le ExceptionControllerHandler
+            throw new IllegalCriterionException("Criteria list cannot be empty");
+        }
         List<Criterion> criteria = new LinkedList<>();
 
         Iterator<CriterionWebDto> criteriaIterator = userCriteria.iterator();

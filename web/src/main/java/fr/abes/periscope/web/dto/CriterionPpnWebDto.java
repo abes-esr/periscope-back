@@ -19,8 +19,4 @@ public class CriterionPpnWebDto extends CriterionWebDto {
     @JsonProperty(value="ppn")
     @NotNull(message = "La liste des PPN ne doit pas être nulle")
     private List<String> ppn = new ArrayList<>();
-
-    @JsonProperty(value="ppn_operator")
-    @NotNull(message = "La liste des connecteurs logiques ne doit pas être nulle")
-    private List<String> ppnOperator = new ArrayList<>();
 }
