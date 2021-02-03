@@ -2,11 +2,7 @@ package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.EnableOnIntegrationTest;
 import fr.abes.periscope.core.configuration.SolRConfig;
-import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionRcr;
-import fr.abes.periscope.core.criterion.CriterionTitleWords;
+import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.NoticeSolr;
 import fr.abes.periscope.core.repository.solr.impl.AdvancedNoticeRepositoryImpl;
 import org.junit.Assert;
@@ -332,6 +328,96 @@ public class SolrIntegrationTest {
         List<String> tileWordsOperator = Arrays.asList("ET");
         CriterionTitleWords criterionTitleWords = new CriterionTitleWords("SAUF",titleWords,tileWordsOperator);
         criteria.add(criterionTitleWords);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates,newCandidates);
+    }
+
+    /**
+     * Test de l'historiette #id230
+     */
+    @Test
+    @DisplayName("historiette #id 230")
+    public void testId230() {
+
+        // Requête de Periscope V1
+        String originalQuery = "930-b_t:200962101 AND (102-a_t:IT AND 530-a_t:[* TO *]) ";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        // Requête par Periscope V2
+        List<Criterion> criteria = new LinkedList<>();
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("OU");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> countries = Arrays.asList("IT");
+        List<String> countriesOperator = Arrays.asList("ET");
+        CriterionCountry criterionCountry = new CriterionCountry("ET",countries,countriesOperator);
+        criteria.add(criterionCountry);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates,newCandidates);
+    }
+
+    /**
+     * Test de l'historiette #id231
+     */
+    @Test
+    @DisplayName("historiette #id 231")
+    public void testId231() {
+
+        // Requête de Periscope V1
+        String originalQuery = "930-b_t:200962101 OR (102-a_t:IT AND 530-a_t:[* TO *]) ";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        // Requête par Periscope V2
+        List<Criterion> criteria = new LinkedList<>();
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("OU");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> countries = Arrays.asList("IT");
+        List<String> countriesOperator = Arrays.asList("ET");
+        CriterionCountry criterionCountry = new CriterionCountry("OU",countries,countriesOperator);
+        criteria.add(criterionCountry);
+
+        List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        Assert.assertEquals(originalCandidates,newCandidates);
+    }
+
+    /**
+     * Test de l'historiette #id232
+     */
+    @Test
+    @DisplayName("historiette #id 232")
+    public void testId232() {
+
+        // Requête de Periscope V1
+        String originalQuery = "930-b_t:200962101 AND NOT (102-a_t:IT AND 530-a_t:[* TO *]) ";
+        List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
+                Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
+
+        // Requête par Periscope V2
+        List<Criterion> criteria = new LinkedList<>();
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("OU");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> countries = Arrays.asList("IT");
+        List<String> countriesOperator = Arrays.asList("ET");
+        CriterionCountry criterionCountry = new CriterionCountry("SAUF",countries,countriesOperator);
+        criteria.add(criterionCountry);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
                 Sort.by(Sort.Direction.ASC, NoticeField.PPN)));

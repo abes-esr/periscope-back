@@ -64,6 +64,10 @@ public class PublicController {
             if (userCriterion instanceof CriterionTitleWordsWebDto) {
                 criteria.add(dtoMapper.map(userCriterion, CriterionTitleWords.class));
             }
+
+            if (userCriterion instanceof CriterionCountryWebDto) {
+                criteria.add(dtoMapper.map(userCriterion, CriterionCountry.class));
+            }
         }
 
         List<Notice> candidate = noticeStoreService.findNoticesByCriteria(criteria,page,size);

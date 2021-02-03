@@ -1,9 +1,6 @@
 package fr.abes.periscope.web.util;
 
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionRcr;
-import fr.abes.periscope.core.criterion.CriterionTitleWords;
+import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.util.TrackExecutionTime;
@@ -135,6 +132,28 @@ public class DtoMapper {
                     throw new IllegalOperatorException(CriterionTypeName.CRITERION_TITLE_WORDS+": "+ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
                     throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_TITLE_WORDS+": "+ex.getLocalizedMessage());
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
+
+    /**
+     * Convertisseur pour les critères pays (DTO vers objet métier)
+     */
+    @Bean
+    public void converterCountry() {
+
+        Converter<CriterionCountryWebDto, CriterionCountry> myConverter = new Converter<CriterionCountryWebDto, CriterionCountry>() {
+            public CriterionCountry convert(MappingContext<CriterionCountryWebDto, CriterionCountry> context) {
+                CriterionCountryWebDto s = context.getSource();
+                try {
+                    CriterionCountry d = new CriterionCountry(s.getBlocOperator(), s.getCountries(), s.getCountriesOperator());
+                    return d;
+                } catch (IllegalOperatorException ex) {
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_COUNTRIES+": "+ex.getLocalizedMessage());
+                } catch (CriterionOperatorMismatchException ex) {
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_COUNTRIES+": "+ex.getLocalizedMessage());
                 }
             }
         };

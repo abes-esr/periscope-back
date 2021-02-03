@@ -1,10 +1,6 @@
 package fr.abes.periscope.core.repository.solr;
 
-import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionRcr;
-import fr.abes.periscope.core.criterion.CriterionTitleWords;
+import fr.abes.periscope.core.criterion.*;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -301,6 +297,90 @@ public class SolrQueryBuilderTest {
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
                 "930-z_s:PCCor AND -((530-a_t:corse OR 531-a_t:corse OR 200-a_t:corse OR 200-c_t:corse OR 200-d_t:corse OR 200-e_t:corse OR 200-i_t:corse))";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
+     * Test de l'historiette #id230
+     */
+    @Test
+    @DisplayName("historiette #id 230")
+    public void testId230() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("OU");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> countries = Arrays.asList("IT");
+        List<String> countriesOperator = Arrays.asList("ET");
+        CriterionCountry criterionCountry = new CriterionCountry("ET",countries,countriesOperator);
+        criteria.add(criterionCountry);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-b_s:200962101 AND (102-a_t:IT)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
+     * Test de l'historiette #id231
+     */
+    @Test
+    @DisplayName("historiette #id 231")
+    public void testId231() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("OU");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> countries = Arrays.asList("IT");
+        List<String> countriesOperator = Arrays.asList("ET");
+        CriterionCountry criterionCountry = new CriterionCountry("OU",countries,countriesOperator);
+        criteria.add(criterionCountry);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-b_s:200962101 OR (102-a_t:IT)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
+     * Test de l'historiette #id232
+     */
+    @Test
+    @DisplayName("historiette #id 232")
+    public void testId232() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("OU");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> countries = Arrays.asList("IT");
+        List<String> countriesOperator = Arrays.asList("ET");
+        CriterionCountry criterionCountry = new CriterionCountry("SAUF",countries,countriesOperator);
+        criteria.add(criterionCountry);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-b_s:200962101 AND -(102-a_t:IT)";
         assertEquals(expectedQuery, actualQuery);
     }
 
