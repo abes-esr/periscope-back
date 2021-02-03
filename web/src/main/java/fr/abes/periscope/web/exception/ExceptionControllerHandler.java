@@ -108,7 +108,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleIllegalCriterionException(IllegalCriterionException ex) {
         String error = "Malformed JSON request";
         log.error(ex.getLocalizedMessage());
-        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex.getCause()));
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
 

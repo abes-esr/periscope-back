@@ -40,7 +40,6 @@ public class PublicController {
     public List<NoticeWebDto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size,@RequestBody @Valid LinkedList<CriterionWebDto> userCriteria) throws IllegalCriterionException {
 
         if (userCriteria.size() == 0) {
-            //TODO: attraper cette erreur dans le ExceptionControllerHandler
             throw new IllegalCriterionException("Criteria list cannot be empty");
         }
         List<Criterion> criteria = new LinkedList<>();
