@@ -21,4 +21,8 @@ public class CriterionPcpWebDto extends CriterionWebDto {
     @NotNull(message = "La liste des codes PCP ne doit pas être nulle")
     private List<String> pcp = new ArrayList<>();
 
+    @JsonProperty(value="pcp_operator")
+    @NotNull(message = "La liste des connecteurs logiques ne doit pas être nulle")
+    private List<String> pcpOperator = new ArrayList<>();
+
 }

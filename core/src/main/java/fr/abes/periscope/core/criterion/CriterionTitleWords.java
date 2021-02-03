@@ -4,45 +4,42 @@ import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Représente un critère de recherche par code PCP
+ * Représente un critère de recherche par mots du titre
  */
 @Getter
-public class CriterionPcp extends Criterion {
+public class CriterionTitleWords extends Criterion {
 
-    /** Liste des codes PCP à rechercher. Les connecteurs
-     * logiques entre les codes sont des OU */
-    private List<String> pcp = new ArrayList<>();
+    /** Liste des mots du titre à rechercher */
+    private List<String> titleWords = new ArrayList<>();
 
-    /** Liste des connecteurs logiques entre les codes RCR
+    /** Liste des connecteurs logiques entre les mots du titre
      * Exemple :
-     * pcpOperator[0] pour connecter pcp[0]
-     * pcpOperator[1] pour connecter pcp[0] et pcp[1] */
-    private List<String> pcpOperator = new ArrayList<>();
+     * titleWordsOperator[0] pour connecter titleWords[0]
+     * titleWordsOperator[1] pour connecter titleWords[0] et titleWords[1] */
+    private List<String> titleWordsOperator = new ArrayList<>();
 
     /**
-     * Constructeur de critère de recherche par code PCP à connecter avec un autre bloc
+     * Instancie un critère de recherche par mots du titre avec un autre bloc
      * @param blocOperator Connecteur logique du bloc
-     * @param candidatesPcp Liste de code PCP
-     * @param candidatesOperator Liste des connecteurs logiques entre les code PCP.
+     * @param candidatesTitleWords Liste des mots du titre à rechercher
+     * @param candidatesOperator Liste des connecteurs logiques entre les mots du tires.
      * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent.
      * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
      * @exception IllegalCriterionException Si la liste des critères est vide.
      */
-    public CriterionPcp(String blocOperator, List<String> candidatesPcp, List<String> candidatesOperator) {
+    public CriterionTitleWords(String blocOperator, List<String> candidatesTitleWords, List<String> candidatesOperator) {
         super(blocOperator);
 
-        if (candidatesPcp.isEmpty()) {
+        if (candidatesTitleWords.isEmpty()) {
             throw new IllegalCriterionException("Criteria list cannot be empty");
         }
 
-        if (candidatesOperator.size() != candidatesPcp.size()) {
+        if (candidatesOperator.size() != candidatesTitleWords.size()) {
             throw new CriterionOperatorMismatchException("Criteria list size mismatch the operators list size");
         }
 
@@ -55,26 +52,27 @@ public class CriterionPcp extends Criterion {
             throw new IllegalOperatorException("Operators contains illegal values. Accepted value : "+LogicalOperator.AND+"/"+LogicalOperator.OR+"/"+LogicalOperator.EXCEPT);
         }
 
-        this.pcp = candidatesPcp;
-        this.pcpOperator = candidatesOperator;
+        this.titleWords = candidatesTitleWords;
+        this.titleWordsOperator = candidatesOperator;
     }
 
     /**
-     * Constructeur de critère de recherche par code PCP (1er bloc)
-     * @param candidatesPcp Liste de code PCP
-     * @param candidatesOperator Liste des connecteurs logiques entre les codes PCP.
+     * Instancie un critère de recherche par mots du titre (1er bloc).
+     * Le connecteur logique du bloc par défaut est ET
+     * @param candidatesTitleWords Liste des mots du titre à rechercher
+     * @param candidatesOperator Liste des connecteurs logiques entre les mots du titre.
      * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent.
      * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
      * @exception IllegalCriterionException Si la liste des critères est vide.
      */
-    public CriterionPcp(List<String> candidatesPcp, List<String> candidatesOperator) {
+    public CriterionTitleWords(List<String> candidatesTitleWords, List<String> candidatesOperator) {
         super();
 
-        if (candidatesPcp.isEmpty()) {
+        if (candidatesTitleWords.isEmpty()) {
             throw new IllegalCriterionException("Criteria list cannot be empty");
         }
 
-        if (candidatesOperator.size() != candidatesPcp.size()) {
+        if (candidatesOperator.size() != candidatesTitleWords.size()) {
             throw new CriterionOperatorMismatchException("Criteria list size mismatch the operators list size");
         }
 
@@ -87,7 +85,7 @@ public class CriterionPcp extends Criterion {
             throw new IllegalOperatorException("Operators contains illegal values. Accepted value : "+LogicalOperator.AND+"/"+LogicalOperator.OR+"/"+LogicalOperator.EXCEPT);
         }
 
-        this.pcp = candidatesPcp;
-        this.pcpOperator = candidatesOperator;
+        this.titleWords = candidatesTitleWords;
+        this.titleWordsOperator = candidatesOperator;
     }
 }

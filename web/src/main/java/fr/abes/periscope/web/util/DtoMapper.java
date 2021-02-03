@@ -1,13 +1,13 @@
 package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.CriterionPcp;
+import fr.abes.periscope.core.criterion.CriterionPpn;
 import fr.abes.periscope.core.criterion.CriterionRcr;
+import fr.abes.periscope.core.criterion.CriterionTitleWords;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.util.TrackExecutionTime;
-import fr.abes.periscope.web.dto.CriterionPcpWebDto;
-import fr.abes.periscope.web.dto.CriterionRcrWebDto;
-import fr.abes.periscope.web.dto.CriterionTypeName;
+import fr.abes.periscope.web.dto.*;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
@@ -64,7 +64,7 @@ public class DtoMapper {
             public CriterionPcp convert(MappingContext<CriterionPcpWebDto, CriterionPcp> context) {
                 CriterionPcpWebDto s = context.getSource();
                 try {
-                    CriterionPcp d = new CriterionPcp(s.getBlocOperator(), s.getPcp());
+                    CriterionPcp d = new CriterionPcp(s.getBlocOperator(), s.getPcp(),s.getPcpOperator());
                     return d;
                 } catch (IllegalOperatorException ex) {
                     throw new IllegalOperatorException(CriterionTypeName.CRITERION_PCP+": "+ex.getLocalizedMessage());
@@ -97,4 +97,47 @@ public class DtoMapper {
         modelMapper.addConverter(myConverter);
     }
 
+    /**
+     * Convertisseur pour les critères PPN (DTO vers objet métier)
+     */
+    @Bean
+    public void converterPpn() {
+
+        Converter<CriterionPpnWebDto, CriterionPpn> myConverter = new Converter<CriterionPpnWebDto, CriterionPpn>() {
+            public CriterionPpn convert(MappingContext<CriterionPpnWebDto, CriterionPpn> context) {
+                CriterionPpnWebDto s = context.getSource();
+                try {
+                    CriterionPpn d = new CriterionPpn(s.getBlocOperator(), s.getPpn());
+                    return d;
+                } catch (IllegalOperatorException ex) {
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_PPN+": "+ex.getLocalizedMessage());
+                } catch (CriterionOperatorMismatchException ex) {
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_PPN+": "+ex.getLocalizedMessage());
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
+
+    /**
+     * Convertisseur pour les critères Mots du titre (DTO vers objet métier)
+     */
+    @Bean
+    public void converterTitleWords() {
+
+        Converter<CriterionTitleWordsWebDto, CriterionTitleWords> myConverter = new Converter<CriterionTitleWordsWebDto, CriterionTitleWords>() {
+            public CriterionTitleWords convert(MappingContext<CriterionTitleWordsWebDto, CriterionTitleWords> context) {
+                CriterionTitleWordsWebDto s = context.getSource();
+                try {
+                    CriterionTitleWords d = new CriterionTitleWords(s.getBlocOperator(), s.getTitleWords(), s.getTitleWordsOperator());
+                    return d;
+                } catch (IllegalOperatorException ex) {
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_TITLE_WORDS+": "+ex.getLocalizedMessage());
+                } catch (CriterionOperatorMismatchException ex) {
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_TITLE_WORDS+": "+ex.getLocalizedMessage());
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
 }

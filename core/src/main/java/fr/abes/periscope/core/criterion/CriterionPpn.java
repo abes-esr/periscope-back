@@ -1,0 +1,35 @@
+package fr.abes.periscope.core.criterion;
+
+import fr.abes.periscope.core.exception.IllegalOperatorException;
+import lombok.Getter;
+
+import java.util.List;
+
+@Getter
+public class CriterionPpn extends Criterion {
+    /** Liste des PPN à rechercher. Les connecteurs logiques entre les PPN sont forcément des OU */
+    private List<String> ppn;
+
+    /**
+     * Instancie un critère de recherche par code RCR à connecter avec un autre bloc
+     * @param blocOperator Connecteur logique du bloc
+     * @param candidatesPpn Liste des PPN à rechercher
+     * @exception IllegalOperatorException Si le connecteur du bloc est inexistant ou interdit.
+     */
+    public CriterionPpn(String blocOperator, List<String> candidatesPpn) {
+        super(blocOperator);
+        this.ppn = candidatesPpn;
+    }
+
+    /**
+     * Instancie un critère de recherche par PPN (1er bloc).
+     * Le connecteur logique du bloc par défaut est ET
+     * @param candidatesPpn Liste des PPN à rechercher
+     */
+    public CriterionPpn(List<String> candidatesPpn) {
+        super();
+        this.ppn = candidatesPpn;
+    }
+
+
+}

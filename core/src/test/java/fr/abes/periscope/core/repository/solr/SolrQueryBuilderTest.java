@@ -2,7 +2,9 @@ package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionPcp;
+import fr.abes.periscope.core.criterion.CriterionPpn;
 import fr.abes.periscope.core.criterion.CriterionRcr;
+import fr.abes.periscope.core.criterion.CriterionTitleWords;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +37,8 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
@@ -57,7 +60,8 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor","PCPACA");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU","OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
@@ -66,6 +70,82 @@ public class SolrQueryBuilderTest {
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
                 "(930-z_s:PCCor OR 930-z_s:PCPACA)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
+     * Test de l'historiette #id202
+     */
+    @Test
+    @DisplayName("historiette #id 202")
+    public void testId202() {
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> ppn = Arrays.asList("038640139");
+        CriterionPpn criterionPpn = new CriterionPpn(ppn);
+        criteria.add(criterionPpn);
+
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp("ET", pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "001_s:038640139 AND (930-z_s:PCCor)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
+     * Test de l'historiette #id203
+     */
+    @Test
+    @DisplayName("historiette #id 203")
+    public void testId203() {
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp("ET", pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> ppn = Arrays.asList("038640140");
+        CriterionPpn criterionPpn = new CriterionPpn("SAUF", ppn);
+        criteria.add(criterionPpn);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-z_s:PCCor AND -(001_s:038640140)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
+     * Test de l'historiette #id204
+     */
+    @Test
+    @DisplayName("historiette #id 204")
+    public void testId204() {
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp("ET", pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> ppn = Arrays.asList("039612473");
+        CriterionPpn criterionPpn = new CriterionPpn("OU", ppn);
+        criteria.add(criterionPpn);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-z_s:PCCor OR 001_s:039612473";
         assertEquals(expectedQuery, actualQuery);
     }
 
@@ -81,7 +161,6 @@ public class SolrQueryBuilderTest {
         List<String> rcr = Arrays.asList("200336201","200962101");
         List<String> operator = Arrays.asList("ET","ET");
         CriterionRcr criterionRcr = new CriterionRcr(rcr,operator);
-
         criteria.add(criterionRcr);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
@@ -142,6 +221,90 @@ public class SolrQueryBuilderTest {
     }
 
     /**
+     * Test de l'historiette #id214
+     */
+    @Test
+    @DisplayName("historiette #id 214")
+    public void testId214() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> titleWords = Arrays.asList("corse");
+        List<String> operator = Arrays.asList("ET");
+        CriterionTitleWords criterionTitleWords = new CriterionTitleWords("OU",titleWords,operator);
+        criteria.add(criterionTitleWords);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-z_s:PCCor OR ((530-a_t:corse OR 531-a_t:corse OR 200-a_t:corse OR 200-c_t:corse OR 200-d_t:corse OR 200-e_t:corse OR 200-i_t:corse))";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
+     * Test de l'historiette #id215
+     */
+    @Test
+    @DisplayName("historiette #id 215")
+    public void testId215() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> titleWords = Arrays.asList("corse");
+        List<String> operator = Arrays.asList("ET");
+        CriterionTitleWords criterionTitleWords = new CriterionTitleWords("ET",titleWords,operator);
+        criteria.add(criterionTitleWords);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-z_s:PCCor AND ((530-a_t:corse OR 531-a_t:corse OR 200-a_t:corse OR 200-c_t:corse OR 200-d_t:corse OR 200-e_t:corse OR 200-i_t:corse))";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
+     * Test de l'historiette #id216
+     */
+    @Test
+    @DisplayName("historiette #id 216")
+    public void testId216() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> titleWords = Arrays.asList("corse");
+        List<String> operator = Arrays.asList("ET");
+        CriterionTitleWords criterionTitleWords = new CriterionTitleWords("SAUF",titleWords,operator);
+        criteria.add(criterionTitleWords);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-z_s:PCCor AND -((530-a_t:corse OR 531-a_t:corse OR 200-a_t:corse OR 200-c_t:corse OR 200-d_t:corse OR 200-e_t:corse OR 200-i_t:corse))";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
      * Test de l'historiette #idX1
      */
     @Test
@@ -151,7 +314,8 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCAq","PCAuv","PCBo","PCBre","PCCA","PCCAPI","PCCor","PCFC","PCLR","PCLim","PCLor","PCMP","PCNPDC","PCPACA","PCPCh","PCPL","PCPic","PCRA","PCSAM","PCSCen","PCUP","PCUR","PCAM","PCAS","PCAnt","PCChimie","PCDroit","PCEBCO","PCGer","PCGéo","PCIta","PCMath","PCMed","PCMedieval","PCNum","PCPhilo","PCPhy", "PCPsy", "PCSTAPS");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<String> rcr = Arrays.asList("751052105");
@@ -179,17 +343,16 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCAq","PCAuv","PCBo","PCBre","PCCA","PCCAPI","PCCor","PCFC","PCLR","PCLim","PCLor","PCMP","PCNPDC","PCPACA","PCPCh","PCPL","PCPic","PCRA","PCSAM","PCSCen","PCUP","PCUR","PCAM","PCAS","PCAnt","PCChimie","PCDroit","PCEBCO","PCGer","PCGéo","PCIta","PCMath","PCMed","PCMedieval","PCNum","PCPhilo","PCPhy", "PCPsy", "PCSTAPS");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU","OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<String> rcr = Arrays.asList("674821001");
         List<String> operator = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr("ET",rcr,operator);
-
         criteria.add(criterionRcr);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
@@ -207,7 +370,8 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCDroit");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<String> rcr = Arrays.asList("212312101","341722102");
@@ -235,7 +399,8 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCDroit","PCPhilo");
-        CriterionPcp criterionPcp = new CriterionPcp(pcp);
+        List<String> pcpOperator = Arrays.asList("OU","OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
         List<String> rcr = Arrays.asList("212312101","341722102");
