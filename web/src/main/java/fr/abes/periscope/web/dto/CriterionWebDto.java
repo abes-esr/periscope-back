@@ -20,6 +20,7 @@ import javax.validation.constraints.NotNull;
         @JsonSubTypes.Type(value = CriterionRcrWebDto.class, name = CriterionTypeName.CRITERION_RCR),
         @JsonSubTypes.Type(value = CriterionPpnWebDto.class, name = CriterionTypeName.CRITERION_PPN),
         @JsonSubTypes.Type(value = CriterionTitleWordsWebDto.class, name = CriterionTypeName.CRITERION_TITLE_WORDS),
+        @JsonSubTypes.Type(value = CriterionEditorWebDto.class, name = CriterionTypeName.CRITERION_EDITOR),
         @JsonSubTypes.Type(value = CriterionIssnWebDto.class, name = CriterionTypeName.CRITERION_ISSN)})
 public abstract class CriterionWebDto {
 

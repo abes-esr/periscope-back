@@ -10,6 +10,6 @@ public interface CriterionTypeName {
     String CRITERION_RCR = "CriterionRcr";
     String CRITERION_PPN = "CriterionPpn";
     String CRITERION_TITLE_WORDS = "CriterionTitleWords";
+    String CRITERION_EDITOR = "CriterionEditor";
     String CRITERION_ISSN = "CriterionIssn";
-
 }

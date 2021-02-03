@@ -2,6 +2,7 @@ package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
+import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.util.TrackExecutionTime;
 import fr.abes.periscope.web.dto.*;
@@ -157,6 +158,30 @@ public class DtoMapper {
                     throw new IllegalOperatorException(CriterionTypeName.CRITERION_ISSN + ": " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
                     throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_ISSN + ": " + ex.getLocalizedMessage());
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
+
+    /**
+     * Convertisseur pour les critères éditeurs (DTO vers objet métier)
+     */
+    @Bean
+    public void converterEditors() {
+
+        Converter<CriterionEditorWebDto, CriterionEditor> myConverter = new Converter<CriterionEditorWebDto, CriterionEditor>() {
+            public CriterionEditor convert(MappingContext<CriterionEditorWebDto, CriterionEditor> context) {
+                CriterionEditorWebDto s = context.getSource();
+                try {
+                    CriterionEditor d = new CriterionEditor(s.getBlocOperator(), s.getEditors(), s.getEditorsOperator());
+                    return d;
+                } catch (IllegalOperatorException ex) {
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_EDITOR+": "+ex.getLocalizedMessage());
+                } catch (CriterionOperatorMismatchException ex) {
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_EDITOR+": "+ex.getLocalizedMessage());
+                } catch (IllegalCriterionException ex) {
+                    throw new IllegalCriterionException(CriterionTypeName.CRITERION_EDITOR+": "+ex.getLocalizedMessage());
                 }
             }
         };
