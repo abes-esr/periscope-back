@@ -300,6 +300,78 @@ public class SolrQueryBuilderTest {
         assertEquals(expectedQuery, actualQuery);
     }
 
+    @Test
+    @DisplayName("historiette #id226")
+    public void testId226() {
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> language = Arrays.asList("cos");
+        List<String> operator = Arrays.asList("ET");
+        CriterionLangue criterionLangue = new CriterionLangue("ET",language,operator);
+        criteria.add(criterionLangue);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-z_s:PCCor AND ((101-a_t:cos AND 530-a_t:[* TO *]))";
+        assertEquals(expectedQuery, actualQuery);
+
+    }
+
+    @Test
+    @DisplayName("historiette #id227")
+    public void testId227() {
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> language = Arrays.asList("cos");
+        List<String> operator = Arrays.asList("ET");
+        CriterionLangue criterionLangue = new CriterionLangue("OU",language,operator);
+        criteria.add(criterionLangue);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-z_s:PCCor OR (101-a_t:cos AND 530-a_t:[* TO *])";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    @DisplayName("historiette #id228")
+    public void testId228() {
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("OU");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> language = Arrays.asList("cos");
+        List<String> operator = Arrays.asList("ET");
+        CriterionLangue criterionLangue = new CriterionLangue("SAUF",language,operator);
+        criteria.add(criterionLangue);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-z_s:PCCor AND -(101-a_t:cos AND 530-a_t:[* TO *])";
+        assertEquals(expectedQuery, actualQuery);
+    }
     /**
      * Test de l'historiette #id218
      */

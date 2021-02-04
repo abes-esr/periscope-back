@@ -63,7 +63,15 @@ public class SolrQueryBuilder {
                 if (ppnQuery != null) {
                     filterQuery.addCriteria(ppnQuery);
                 }
+            }
 
+            //Bloc de critère code langue
+            if (criterion instanceof CriterionLangue) {
+
+                Criteria langueQuery = buildLangueQuery((CriterionLangue) criterion);
+                if (langueQuery != null) {
+                    filterQuery.addCriteria(langueQuery);
+                }
             }
 
             //Bloc de critère éditeur
@@ -87,6 +95,7 @@ public class SolrQueryBuilder {
 
         return filterQuery.getCriteria();
     }
+
 
 
     /**
@@ -309,6 +318,71 @@ public class SolrQueryBuilder {
 
             // pour le bloc entier
             switch (ppn.getBlocOperator()) {
+                case LogicalOperator.AND:
+                    myCriteria = myCriteria.connect();
+                    break;
+                case LogicalOperator.OR:
+                    myCriteria.setPartIsOr(true);
+                    break;
+                case LogicalOperator.EXCEPT:
+                    myCriteria = myCriteria.notOperator();
+                    break;
+            }
+
+            return myCriteria;
+
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Construit la requête SolR à partir d'un critère de recherche par code langue
+     * @param langue Les critères de recherche par code langue
+     * @return Criteria Requête SolR
+     */
+    private Criteria buildLangueQuery(CriterionLangue langue) {
+        if (langue.getLangue().size() > 0) {
+
+            Iterator<String> langueIterator = langue.getLangue().iterator();
+            Iterator<String> langueOperatorIterator = langue.getLangueOperator().iterator();
+
+            Criteria myCriteria = null;
+
+            String langueCode = langueIterator.next();
+            String langueOperator = langueOperatorIterator.next();
+
+            // 1er critère
+            switch (langueOperator) {
+                case LogicalOperator.EXCEPT:
+                    myCriteria = new Criteria(NoticeField.LANGUAGE).is(langueCode).not();
+                    break;
+                default:
+                    myCriteria = new Criteria(NoticeField.LANGUAGE).is(langueCode);
+                    break;
+            }
+
+            // les autres
+            while (langueIterator.hasNext()) {
+                langueCode = langueIterator.next();
+                langueOperator = langueOperatorIterator.next();
+
+                switch (langueOperator) {
+                    case LogicalOperator.AND:
+                        myCriteria = myCriteria.and(NoticeField.LANGUAGE).is(langueCode);
+                        break;
+                    case LogicalOperator.OR:
+                        myCriteria = myCriteria.or(NoticeField.LANGUAGE).is(langueCode);
+                        break;
+                    case LogicalOperator.EXCEPT:
+                        myCriteria = myCriteria.and(NoticeField.LANGUAGE).is(langueCode).not();
+                        break;
+                }
+            }
+            myCriteria = myCriteria.and(NoticeField.KEY_TITLE_T);
+
+            // pour le bloc entier
+            switch (langue.getBlocOperator()) {
                 case LogicalOperator.AND:
                     myCriteria = myCriteria.connect();
                     break;
