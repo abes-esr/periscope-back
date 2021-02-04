@@ -319,10 +319,10 @@ public class SolrQueryBuilder {
         // 1er critère
         switch (operator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = new Criteria(NoticeField.COUNTRY_T).is(value).not().connect();
+                myCriteria = new Criteria(NoticeField.COUNTRY_T).is(value).not().connect().and(NoticeField.KEY_TITLE_T);
                 break;
             default:
-                myCriteria = new Criteria(NoticeField.COUNTRY_T).is(value).connect();
+                myCriteria = new Criteria(NoticeField.COUNTRY_T).is(value).connect().and(NoticeField.KEY_TITLE_T);
                 break;
         }
 
@@ -333,13 +333,13 @@ public class SolrQueryBuilder {
 
             switch (operator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect().and(NoticeField.COUNTRY_T).is(value);
+                    myCriteria = myCriteria.connect().and(NoticeField.COUNTRY_T).is(value).and(NoticeField.KEY_TITLE_T);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.connect().or(NoticeField.COUNTRY_T).is(value);
+                    myCriteria = myCriteria.connect().or(NoticeField.COUNTRY_T).is(value).and(NoticeField.KEY_TITLE_T);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeField.COUNTRY_T).is(value).not();
+                    myCriteria = myCriteria.connect().and(NoticeField.COUNTRY_T).is(value).not().and(NoticeField.KEY_TITLE_T);
                     break;
             }
         }

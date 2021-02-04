@@ -37,7 +37,6 @@ public class SolrIntegrationTest {
 
         // Requête de Periscope V1
         String originalQuery = "930-z_t:PCCor";
-
         List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0,25,
                 Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
 
@@ -126,12 +125,10 @@ public class SolrIntegrationTest {
         List<String> pcp = Arrays.asList("PCCor");
         List<String> pcpOperator = Arrays.asList("OU");
         CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
-
         criteria.add(criterionPcp);
 
         List<String> ppn = Arrays.asList("038640140");
         CriterionPpn criterionPpn = new CriterionPpn("SAUF", ppn);
-
         criteria.add(criterionPpn);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -156,12 +153,10 @@ public class SolrIntegrationTest {
         List<String> pcp = Arrays.asList("PCCor");
         List<String> pcpOperator = Arrays.asList("OU");
         CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
-
         criteria.add(criterionPcp);
 
         List<String> ppn = Arrays.asList("039612473");
         CriterionPpn criterionPpn = new CriterionPpn("OU", ppn);
-
         criteria.add(criterionPpn);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -260,7 +255,7 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> pcp = Arrays.asList("PCCor");
-        List<String> pcpOperator = Arrays.asList("OU");
+        List<String> pcpOperator = Arrays.asList("ET");
         CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
@@ -290,7 +285,7 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> pcp = Arrays.asList("PCCor");
-        List<String> pcpOperator = Arrays.asList("OU");
+        List<String> pcpOperator = Arrays.asList("ET");
         CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
@@ -320,7 +315,7 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> pcp = Arrays.asList("PCCor");
-        List<String> pcpOperator = Arrays.asList("OU");
+        List<String> pcpOperator = Arrays.asList("ET");
         CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
@@ -520,7 +515,7 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> rcr = Arrays.asList("200962101");
-        List<String> rcrOperator = Arrays.asList("OU");
+        List<String> rcrOperator = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
         criteria.add(criterionRcr);
 
@@ -550,7 +545,7 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> rcr = Arrays.asList("200962101");
-        List<String> rcrOperator = Arrays.asList("OU");
+        List<String> rcrOperator = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
         criteria.add(criterionRcr);
 
@@ -580,7 +575,7 @@ public class SolrIntegrationTest {
         // Requête par Periscope V2
         List<Criterion> criteria = new LinkedList<>();
         List<String> rcr = Arrays.asList("200962101");
-        List<String> rcrOperator = Arrays.asList("OU");
+        List<String> rcrOperator = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
         criteria.add(criterionRcr);
 
@@ -727,7 +722,6 @@ public class SolrIntegrationTest {
         List<NoticeSolr> originalCandidates = noticeRepository.findNoticesBySolrQuery(originalQuery, PageRequest.of(0, 25, Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
 
         List<Criterion> criteria = new LinkedList<>();
-
         List<String> issn = Arrays.asList("1146-7665");
         CriterionIssn criterionIssn = new CriterionIssn(issn);
         criteria.add(criterionIssn);

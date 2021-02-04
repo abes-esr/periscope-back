@@ -33,7 +33,7 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor");
-        List<String> pcpOperator = Arrays.asList("OU");
+        List<String> pcpOperator = Arrays.asList("ET");
         CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
@@ -56,7 +56,7 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor","PCPACA");
-        List<String> pcpOperator = Arrays.asList("OU","OU");
+        List<String> pcpOperator = Arrays.asList("ET","OU");
         CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
@@ -82,7 +82,7 @@ public class SolrQueryBuilderTest {
         criteria.add(criterionPpn);
 
         List<String> pcp = Arrays.asList("PCCor");
-        List<String> pcpOperator = Arrays.asList("OU");
+        List<String> pcpOperator = Arrays.asList("ET");
         CriterionPcp criterionPcp = new CriterionPcp("ET", pcp,pcpOperator);
         criteria.add(criterionPcp);
 
@@ -103,7 +103,7 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor");
-        List<String> pcpOperator = Arrays.asList("OU");
+        List<String> pcpOperator = Arrays.asList("ET");
         CriterionPcp criterionPcp = new CriterionPcp("ET", pcp,pcpOperator);
         criteria.add(criterionPcp);
 
@@ -129,7 +129,7 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor");
-        List<String> pcpOperator = Arrays.asList("OU");
+        List<String> pcpOperator = Arrays.asList("ET");
         CriterionPcp criterionPcp = new CriterionPcp("ET", pcp,pcpOperator);
         criteria.add(criterionPcp);
 
@@ -160,7 +160,6 @@ public class SolrQueryBuilderTest {
         criteria.add(criterionRcr);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
@@ -180,11 +179,9 @@ public class SolrQueryBuilderTest {
         List<String> rcr = Arrays.asList("200336201","200962101");
         List<String> operator = Arrays.asList("ET","OU");
         CriterionRcr criterionRcr = new CriterionRcr(rcr,operator);
-
         criteria.add(criterionRcr);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
@@ -204,11 +201,9 @@ public class SolrQueryBuilderTest {
         List<String> rcr = Arrays.asList("200336201","200962101");
         List<String> operator = Arrays.asList("ET","ET");
         CriterionRcr criterionRcr = new CriterionRcr(rcr,operator);
-
         criteria.add(criterionRcr);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
@@ -226,7 +221,7 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor");
-        List<String> pcpOperator = Arrays.asList("OU");
+        List<String> pcpOperator = Arrays.asList("ET");
         CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
@@ -236,7 +231,6 @@ public class SolrQueryBuilderTest {
         criteria.add(criterionTitleWords);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
@@ -254,7 +248,7 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor");
-        List<String> pcpOperator = Arrays.asList("OU");
+        List<String> pcpOperator = Arrays.asList("ET");
         CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
@@ -264,7 +258,6 @@ public class SolrQueryBuilderTest {
         criteria.add(criterionTitleWords);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
@@ -282,7 +275,7 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCCor");
-        List<String> pcpOperator = Arrays.asList("OU");
+        List<String> pcpOperator = Arrays.asList("ET");
         CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
         criteria.add(criterionPcp);
 
@@ -292,7 +285,6 @@ public class SolrQueryBuilderTest {
         criteria.add(criterionTitleWords);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
@@ -381,64 +373,13 @@ public class SolrQueryBuilderTest {
         assertEquals(expectedQuery, actualQuery);
     }
 
+
     /**
      * Test de l'historiette #id222
      */
     @Test
     @DisplayName("historiette #id 222")
     public void testId222() {
-        List<Criterion> criteria = new LinkedList<>();
-
-        List<String> rcr = Arrays.asList("200962101");
-        List<String> rcrOperator = Arrays.asList("ET");
-        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
-        criteria.add(criterionRcr);
-
-        List<String> editors = Arrays.asList("corse");
-        List<String> editorsOperator = Arrays.asList("ET");
-        CriterionEditor criterionEditor = new CriterionEditor("SAUF",editors,editorsOperator);
-        criteria.add(criterionEditor);
-
-        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-        DefaultQueryParser dqp = new DefaultQueryParser(null);
-        String actualQuery = dqp.getQueryString(solrQuery, null);
-        String expectedQuery =
-                "930-b_s:200962101 AND -(210-c_t:corse)";
-    }
-
-    /**
-     * Test de l'historiette #id230
-     */
-    @Test
-    @DisplayName("historiette #id 230")
-    public void testId230() {
-        List<Criterion> criteria = new LinkedList<>();
-
-        List<String> rcr = Arrays.asList("200962101");
-        List<String> rcrOperator = Arrays.asList("OU");
-        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
-        criteria.add(criterionRcr);
-
-        List<String> countries = Arrays.asList("IT");
-        List<String> countriesOperator = Arrays.asList("ET");
-        CriterionCountry criterionCountry = new CriterionCountry("ET",countries,countriesOperator);
-        criteria.add(criterionCountry);
-
-        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
-        DefaultQueryParser dqp = new DefaultQueryParser(null);
-        String actualQuery = dqp.getQueryString(solrQuery, null);
-        String expectedQuery =
-                "930-b_s:200962101 AND (102-a_t:IT)";
-        assertEquals(expectedQuery, actualQuery);
-    }
-
-    /**
-     * Test de l'historiette #id231
-     */
-    @Test
-    @DisplayName("historiette #id 231")
-    public void testId231() {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> rcr = Arrays.asList("200962101");
@@ -468,35 +409,6 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> rcr = Arrays.asList("200962101");
-        List<String> rcrOperator = Arrays.asList("OU");
-        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
-        criteria.add(criterionRcr);
-
-        List<String> countries = Arrays.asList("IT");
-        List<String> countriesOperator = Arrays.asList("ET");
-        CriterionCountry criterionCountry = new CriterionCountry("OU",countries,countriesOperator);
-        criteria.add(criterionCountry);
-
-        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
-        DefaultQueryParser dqp = new DefaultQueryParser(null);
-        String actualQuery = dqp.getQueryString(solrQuery, null);
-        String expectedQuery =
-                "930-b_s:200962101 OR (102-a_t:IT)";
-        assertEquals(expectedQuery, actualQuery);
-    }
-
-    /**
-     * Test de l'historiette #id232
-     */
-    @Test
-    @DisplayName("historiette #id 232")
-    public void testId232() {
-
-        List<Criterion> criteria = new LinkedList<>();
-
-        List<String> rcr = Arrays.asList("200962101");
-
         List<String> rcrOperator = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
         criteria.add(criterionRcr);
@@ -514,7 +426,6 @@ public class SolrQueryBuilderTest {
         assertEquals(expectedQuery, actualQuery);
     }
 
-
     /**
      * Test de l'historiette #id224
      */
@@ -524,7 +435,87 @@ public class SolrQueryBuilderTest {
         List<Criterion> criteria = new LinkedList<>();
 
         List<String> rcr = Arrays.asList("200962101");
-        List<String> rcrOperator = Arrays.asList("OU");
+        List<String> rcrOperator = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("SAUF",editors,editorsOperator);
+        criteria.add(criterionEditor);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-b_s:200962101 AND -(210-c_t:corse)";
+    }
+
+    /**
+     * Test de l'historiette #id230
+     */
+    @Test
+    @DisplayName("historiette #id 230")
+    public void testId230() {
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> countries = Arrays.asList("IT");
+        List<String> countriesOperator = Arrays.asList("ET");
+        CriterionCountry criterionCountry = new CriterionCountry("ET",countries,countriesOperator);
+        criteria.add(criterionCountry);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-b_s:200962101 AND (102-a_t:IT AND 530-a_t:[* TO *])";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+
+    /**
+     * Test de l'historiette #id231
+     */
+    @Test
+    @DisplayName("historiette #id 231")
+    public void testId231() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> rcr = Arrays.asList("200962101");
+
+        List<String> rcrOperator = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> countries = Arrays.asList("IT");
+        List<String> countriesOperator = Arrays.asList("ET");
+        CriterionCountry criterionCountry = new CriterionCountry("OU",countries,countriesOperator);
+        criteria.add(criterionCountry);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-b_s:200962101 OR (102-a_t:IT AND 530-a_t:[* TO *])";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
+     * Test de l'historiette #id232
+     */
+    @Test
+    @DisplayName("historiette #id 232")
+    public void testId232() {
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
         criteria.add(criterionRcr);
 
@@ -534,11 +525,10 @@ public class SolrQueryBuilderTest {
         criteria.add(criterionCountry);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
-                "930-b_s:200962101 AND -(102-a_t:IT)";
+                "930-b_s:200962101 AND -(102-a_t:IT AND 530-a_t:[* TO *])";
         assertEquals(expectedQuery, actualQuery);
     }
 
@@ -562,7 +552,6 @@ public class SolrQueryBuilderTest {
         criteria.add(criterionRcr);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
@@ -615,11 +604,9 @@ public class SolrQueryBuilderTest {
         List<String> rcr = Arrays.asList("212312101","341722102");
         List<String> operator = Arrays.asList("ET","OU");
         CriterionRcr criterionRcr = new CriterionRcr("OU",rcr,operator);
-
         criteria.add(criterionRcr);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
@@ -644,11 +631,9 @@ public class SolrQueryBuilderTest {
         List<String> rcr = Arrays.asList("212312101","341722102");
         List<String> operator = Arrays.asList("ET","OU");
         CriterionRcr criterionRcr = new CriterionRcr("OU",rcr,operator);
-
         criteria.add(criterionRcr);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
@@ -666,7 +651,6 @@ public class SolrQueryBuilderTest {
         criteria.add(criterionIssn);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
-
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
