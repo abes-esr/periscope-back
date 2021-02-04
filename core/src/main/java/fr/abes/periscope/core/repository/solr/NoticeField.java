@@ -32,5 +32,6 @@ public interface NoticeField {
     String SECTION_TITLE_T = "200-i_t";
     String KEY_TITLE_QUALIFIER = "530-b_z";
     String CONTINIOUS_TYPE = "110-a_z";
+    String LANGUAGE = "101-a_t";
 
 }

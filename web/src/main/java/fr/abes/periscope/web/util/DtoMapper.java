@@ -1,9 +1,6 @@
 package fr.abes.periscope.web.util;
 
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionRcr;
-import fr.abes.periscope.core.criterion.CriterionTitleWords;
+import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.util.TrackExecutionTime;
@@ -135,6 +132,27 @@ public class DtoMapper {
                     throw new IllegalOperatorException(CriterionTypeName.CRITERION_TITLE_WORDS+": "+ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
                     throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_TITLE_WORDS+": "+ex.getLocalizedMessage());
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
+
+    /**
+     * Convertisseur pour les critères Langue (DTO vers objet métier)
+     */
+    @Bean
+    public void converterLangue() {
+        Converter<CriterionLangueWebDto, CriterionLangue> myConverter = new Converter<CriterionLangueWebDto, CriterionLangue>() {
+            public CriterionLangue convert(MappingContext<CriterionLangueWebDto, CriterionLangue> context) {
+                CriterionLangueWebDto s = context.getSource();
+                try {
+                    CriterionLangue d = new CriterionLangue(s.getBlocOperator(), s.getLangue(), s.getLangueOperator());
+                    return d;
+                } catch (IllegalOperatorException ex) {
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_LANGUE+": "+ex.getLocalizedMessage());
+                } catch (CriterionOperatorMismatchException ex) {
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_LANGUE+": "+ex.getLocalizedMessage());
                 }
             }
         };
