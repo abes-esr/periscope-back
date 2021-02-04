@@ -373,6 +373,170 @@ public class SolrQueryBuilderTest {
         assertEquals(expectedQuery, actualQuery);
     }
     /**
+     * Test de l'historiette #id218
+     */
+    @Test
+    @DisplayName("historiette #id 218")
+    public void testId218() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("ET");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("ET",editors,editorsOperator);
+        criteria.add(criterionEditor);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-z_s:PCCor AND (210-c_t:corse)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
+     * Test de l'historiette #id219
+     */
+    @Test
+    @DisplayName("historiette #id 219")
+    public void testId219() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("ET");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("OU",editors,editorsOperator);
+        criteria.add(criterionEditor);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-z_s:PCCor OR (210-c_t:corse)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
+     * Test de l'historiette #id220
+     */
+    @Test
+    @DisplayName("historiette #id 220")
+    public void testId220() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> pcp = Arrays.asList("PCCor");
+        List<String> pcpOperator = Arrays.asList("ET");
+        CriterionPcp criterionPcp = new CriterionPcp(pcp,pcpOperator);
+        criteria.add(criterionPcp);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("SAUF",editors,editorsOperator);
+        criteria.add(criterionEditor);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-z_s:PCCor AND -(210-c_t:corse)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
+     * Test de l'historiette #id222
+     */
+    @Test
+    @DisplayName("historiette #id 222")
+    public void testId222() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("ET",editors,editorsOperator);
+        criteria.add(criterionEditor);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-b_s:200962101 AND (210-c_t:corse)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+
+    /**
+     * Test de l'historiette #id223
+     */
+    @Test
+    @DisplayName("historiette #id 223")
+    public void testId223() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("OU",editors,editorsOperator);
+        criteria.add(criterionEditor);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-b_s:200962101 OR (210-c_t:corse)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+
+    /**
+     * Test de l'historiette #id224
+     */
+    @Test
+    @DisplayName("historiette #id 224")
+    public void testId224() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> rcr = Arrays.asList("200962101");
+        List<String> rcrOperator = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr,rcrOperator);
+        criteria.add(criterionRcr);
+
+        List<String> editors = Arrays.asList("corse");
+        List<String> editorsOperator = Arrays.asList("ET");
+        CriterionEditor criterionEditor = new CriterionEditor("SAUF",editors,editorsOperator);
+        criteria.add(criterionEditor);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "930-b_s:200962101 AND -(210-c_t:corse)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    /**
      * Test de l'historiette #idX1
      */
     @Test
@@ -483,6 +647,24 @@ public class SolrQueryBuilderTest {
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
                 "(930-z_s:PCDroit OR 930-z_s:PCPhilo) OR (930-b_s:212312101 OR 930-b_s:341722102)";
+        assertEquals(expectedQuery, actualQuery);
+    }
+
+    @Test
+    @DisplayName("Test Critère ISSN")
+    public void testIssn() {
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> issn = Arrays.asList("1146-7665");
+        CriterionIssn criterionIssn = new CriterionIssn(issn);
+        criteria.add(criterionIssn);
+
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
+
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(solrQuery, null);
+        String expectedQuery =
+                "011-a_t:1146\\-7665";
         assertEquals(expectedQuery, actualQuery);
     }
 }
