@@ -30,25 +30,26 @@ public class SolrQueryBuilder {
 
             // Bloc de critère PCP
             if (criterion instanceof CriterionPcp) {
-
-                Criteria pcpQuery = buildPcpQuery((CriterionPcp)criterion);
-                if (pcpQuery != null) {
+                try {
+                    Criteria pcpQuery = buildPcpQuery((CriterionPcp) criterion);
                     filterQuery.addCriteria(pcpQuery);
+                } catch (IllegalCriterionException ex) {
+                    log.error(ex.getLocalizedMessage());
                 }
             }
 
             // Bloc de critère RCR
             if (criterion instanceof CriterionRcr) {
-
-                Criteria rcrQuery = buildRcrQuery((CriterionRcr)criterion);
-                if (rcrQuery != null) {
+                try {
+                    Criteria rcrQuery = buildRcrQuery((CriterionRcr) criterion);
                     filterQuery.addCriteria(rcrQuery);
+                } catch (IllegalCriterionException ex) {
+                    log.error(ex.getLocalizedMessage());
                 }
             }
 
             // Bloc de critère Mots du titre
             if (criterion instanceof CriterionTitleWords) {
-
                 try {
                     Criteria titleWordsQuery = buildTitleWordsQuery((CriterionTitleWords) criterion);
                     filterQuery.addCriteria(titleWordsQuery);
@@ -59,18 +60,31 @@ public class SolrQueryBuilder {
 
             //Bloc de critère PPN
             if (criterion instanceof CriterionPpn) {
-                Criteria ppnQuery = buildPpnQuery((CriterionPpn) criterion);
-                if (ppnQuery != null) {
+                try {
+                    Criteria ppnQuery = buildPpnQuery((CriterionPpn) criterion);
                     filterQuery.addCriteria(ppnQuery);
+                } catch (IllegalCriterionException ex) {
+                    log.error(ex.getLocalizedMessage());
+                }
+            }
+
+            //Bloc de critère pays
+            if (criterion instanceof CriterionCountry) {
+                try {
+                    Criteria countryQuery = buildCountryQuery((CriterionCountry) criterion);
+                    filterQuery.addCriteria(countryQuery);
+                } catch (IllegalCriterionException ex) {
+                    log.error(ex.getLocalizedMessage());
                 }
             }
 
             //Bloc de critère code langue
-            if (criterion instanceof CriterionLangue) {
-
-                Criteria langueQuery = buildLangueQuery((CriterionLangue) criterion);
-                if (langueQuery != null) {
-                    filterQuery.addCriteria(langueQuery);
+            if (criterion instanceof CriterionLanguage) {
+                try {
+                    Criteria languageQuery = buildLanguageQuery((CriterionLanguage) criterion);
+                    filterQuery.addCriteria(languageQuery);
+                } catch (IllegalCriterionException ex) {
+                    log.error(ex.getLocalizedMessage());
                 }
             }
 
@@ -86,9 +100,11 @@ public class SolrQueryBuilder {
 
             // bloc de critère ISSN
             if (criterion instanceof CriterionIssn) {
-                Criteria issnQuery = buildIssnQuery((CriterionIssn)criterion);
-                if (issnQuery != null) {
+                try {
+                    Criteria issnQuery = buildIssnQuery((CriterionIssn)criterion);
                     filterQuery.addCriteria(issnQuery);
+                } catch (IllegalCriterionException ex) {
+                    log.error(ex.getLocalizedMessage());
                 }
             }
         }
@@ -96,125 +112,121 @@ public class SolrQueryBuilder {
         return filterQuery.getCriteria();
     }
 
-
-
     /**
      * Construit la requête SolR à partir d'un critère de recherche par PCP
-     * @param pcp Les critères de recherche par PCP
+     * @param criterion Les critères de recherche par PCP
      * @return Criteria Requête SolR
+     * @exception IllegalCriterionException Si la liste des critères est vide
      */
-    private Criteria buildPcpQuery(CriterionPcp pcp) {
+    private Criteria buildPcpQuery(CriterionPcp criterion) throws IllegalCriterionException {
 
-        if (pcp.getPcp().size() > 0) {
-
-            Iterator<String> pcpIterator = pcp.getPcp().iterator();
-            String pcpCode = pcpIterator.next();
-
-            Criteria myCriteria = new Criteria(NoticeField.PCP_S).is(pcpCode);
-
-            while (pcpIterator.hasNext()) {
-                pcpCode = pcpIterator.next();
-                myCriteria = myCriteria.or(NoticeField.PCP_S).is(pcpCode);
-            }
-
-            switch (pcp.getBlocOperator()) {
-                case LogicalOperator.AND:
-                    // AND par défaut, on ne fait rien
-                    break;
-                case LogicalOperator.OR:
-                    myCriteria.setPartIsOr(true);
-                    break;
-                case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.notOperator();
-                    break;
-            }
-
-            return myCriteria.connect();
-
-        } else {
-            return null;
+        if (criterion.getPcp().isEmpty()) {
+            throw new IllegalCriterionException("Criteria list cannot be empty");
         }
+
+        Iterator<String> pcpIterator = criterion.getPcp().iterator();
+        String pcpCode = pcpIterator.next();
+
+        Criteria myCriteria = new Criteria(NoticeField.PCP_S).is(pcpCode);
+
+        while (pcpIterator.hasNext()) {
+            pcpCode = pcpIterator.next();
+            myCriteria = myCriteria.or(NoticeField.PCP_S).is(pcpCode);
+        }
+
+        switch (criterion.getBlocOperator()) {
+            case LogicalOperator.AND:
+                // AND par défaut, on ne fait rien
+                break;
+            case LogicalOperator.OR:
+                myCriteria.setPartIsOr(true);
+                break;
+            case LogicalOperator.EXCEPT:
+                myCriteria = myCriteria.notOperator();
+                break;
+        }
+
+        return myCriteria.connect();
     }
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par RCR
-     * @param rcr Les critères de recherche par RCR
+     * @param criterion Les critères de recherche par RCR
      * @return Criteria Requête SolR
+     * @exception IllegalCriterionException Si la liste des critères est vide
      */
-    private Criteria buildRcrQuery(CriterionRcr rcr) {
+    private Criteria buildRcrQuery(CriterionRcr criterion) throws IllegalCriterionException {
 
-        if (rcr.getRcr().size() > 0) {
+        if (criterion.getRcr().isEmpty()) {
+            throw new IllegalCriterionException("Criteria list cannot be empty");
+        }
 
-            Iterator<String> rcrIterator = rcr.getRcr().iterator();
-            Iterator<String> rcrOperatorIterator = rcr.getRcrOperator().iterator();
+        Iterator<String> rcrIterator = criterion.getRcr().iterator();
+        Iterator<String> rcrOperatorIterator = criterion.getRcrOperators().iterator();
 
-            Criteria myCriteria = null;
+        Criteria myCriteria = null;
 
-            String rcrCode = rcrIterator.next();
-            String rcrOperator = rcrOperatorIterator.next();
+        String rcrCode = rcrIterator.next();
+        String rcrOperator = rcrOperatorIterator.next();
 
-            // 1er critère
+        // 1er critère
+        switch (rcrOperator) {
+            case LogicalOperator.EXCEPT:
+                myCriteria = new Criteria(NoticeField.RCR_S).is(rcrCode).not();
+                break;
+            default:
+                myCriteria = new Criteria(NoticeField.RCR_S).is(rcrCode);
+                break;
+        }
+
+        // les autres
+        while (rcrIterator.hasNext()) {
+            rcrCode = rcrIterator.next();
+            rcrOperator = rcrOperatorIterator.next();
+
             switch (rcrOperator) {
-                case LogicalOperator.EXCEPT:
-                    myCriteria = new Criteria(NoticeField.RCR_S).is(rcrCode).not();
-                    break;
-                default:
-                    myCriteria = new Criteria(NoticeField.RCR_S).is(rcrCode);
-                    break;
-            }
-
-            // les autres
-            while (rcrIterator.hasNext()) {
-                rcrCode = rcrIterator.next();
-                rcrOperator = rcrOperatorIterator.next();
-
-                switch (rcrOperator) {
-                    case LogicalOperator.AND:
-                        myCriteria = myCriteria.and(NoticeField.RCR_S).is(rcrCode);
-                        break;
-                    case LogicalOperator.OR:
-                        myCriteria = myCriteria.or(NoticeField.RCR_S).is(rcrCode);
-                        break;
-                    case LogicalOperator.EXCEPT:
-                        myCriteria = myCriteria.and(NoticeField.RCR_S).is(rcrCode).not();
-                        break;
-                }
-            }
-
-            // pour le bloc entier
-            switch (rcr.getBlocOperator()) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect();
+                    myCriteria = myCriteria.and(NoticeField.RCR_S).is(rcrCode);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria.setPartIsOr(true);
+                    myCriteria = myCriteria.or(NoticeField.RCR_S).is(rcrCode);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.notOperator();
+                    myCriteria = myCriteria.and(NoticeField.RCR_S).is(rcrCode).not();
                     break;
             }
-
-            return myCriteria;
-
-        } else {
-            return null;
         }
+
+        // pour le bloc entier
+        switch (criterion.getBlocOperator()) {
+            case LogicalOperator.AND:
+                myCriteria = myCriteria.connect();
+                break;
+            case LogicalOperator.OR:
+                myCriteria.setPartIsOr(true);
+                break;
+            case LogicalOperator.EXCEPT:
+                myCriteria = myCriteria.notOperator();
+                break;
+        }
+
+        return myCriteria;
     }
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par mots du titre
-     * @param titleWords Les critères de recherche par mots du titre
+     * @param criterion Les critères de recherche par mots du titre
      * @return Criteria Requête SolR
-     * @exception IllegalCriterionException Si la liste des critères est vide.
+     * @exception IllegalCriterionException Si la liste des critères est vide
      */
-    private Criteria buildTitleWordsQuery(CriterionTitleWords titleWords) throws IllegalCriterionException {
+    private Criteria buildTitleWordsQuery(CriterionTitleWords criterion) throws IllegalCriterionException {
 
-        if (titleWords.getTitleWords().isEmpty()) {
+        if (criterion.getTitleWords().isEmpty()) {
             throw new IllegalCriterionException("Criteria list cannot be empty");
         }
 
-        Iterator<String> valueIterator = titleWords.getTitleWords().iterator();
-        Iterator<String> operatorIterator = titleWords.getTitleWordsOperator().iterator();
+        Iterator<String> valueIterator = criterion.getTitleWords().iterator();
+        Iterator<String> operatorIterator = criterion.getTitleWordOperators().iterator();
 
         Criteria myCriteria = null;
 
@@ -280,7 +292,70 @@ public class SolrQueryBuilder {
         }
 
         // pour le bloc entier
-        switch (titleWords.getBlocOperator()) {
+        switch (criterion.getBlocOperator()) {
+            case LogicalOperator.AND:
+                break;
+            case LogicalOperator.OR:
+                myCriteria.setPartIsOr(true);
+                break;
+            case LogicalOperator.EXCEPT:
+                myCriteria = myCriteria.notOperator();
+                break;
+        }
+
+        return myCriteria;
+    }
+
+    /**
+     * Construit la requête SolR à partir d'un critère de recherche par code pays
+     * @param criterion Les critères de recherche par code pays
+     * @return Criteria Requête SolR
+     * @exception IllegalCriterionException Si la liste des critères est vide
+     */
+    private Criteria buildCountryQuery(CriterionCountry criterion) throws IllegalCriterionException {
+
+        if (criterion.getCountries().isEmpty()) {
+            throw new IllegalCriterionException("Criteria list cannot be empty");
+        }
+
+        Iterator<String> valueIterator = criterion.getCountries().iterator();
+        Iterator<String> operatorIterator = criterion.getCountryOperators().iterator();
+
+        Criteria myCriteria = null;
+
+        String value = valueIterator.next();
+        String operator = operatorIterator.next();
+
+        // 1er critère
+        switch (operator) {
+            case LogicalOperator.EXCEPT:
+                myCriteria = new Criteria(NoticeField.COUNTRY_T).is(value).not().connect().and(NoticeField.KEY_TITLE_T);
+                break;
+            default:
+                myCriteria = new Criteria(NoticeField.COUNTRY_T).is(value).connect().and(NoticeField.KEY_TITLE_T);
+                break;
+        }
+
+        // les autres
+        while (valueIterator.hasNext()) {
+            value = valueIterator.next();
+            operator = operatorIterator.next();
+
+            switch (operator) {
+                case LogicalOperator.AND:
+                    myCriteria = myCriteria.connect().and(NoticeField.COUNTRY_T).is(value).and(NoticeField.KEY_TITLE_T);
+                    break;
+                case LogicalOperator.OR:
+                    myCriteria = myCriteria.connect().or(NoticeField.COUNTRY_T).is(value).and(NoticeField.KEY_TITLE_T);
+                    break;
+                case LogicalOperator.EXCEPT:
+                    myCriteria = myCriteria.connect().and(NoticeField.COUNTRY_T).is(value).not().and(NoticeField.KEY_TITLE_T);
+                    break;
+            }
+        }
+
+        // pour le bloc entier
+        switch (criterion.getBlocOperator()) {
             case LogicalOperator.AND:
                 break;
             case LogicalOperator.OR:
@@ -296,113 +371,110 @@ public class SolrQueryBuilder {
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par PPN
-     * @param ppn Les critères de recherche par PPN
+     * @param criterion Les critères de recherche par PPN
      * @return Criteria Requête SolR
+     * @exception IllegalCriterionException Si la liste des critères est vide
      */
-    private Criteria buildPpnQuery(CriterionPpn ppn) {
-        if (ppn.getPpn().size() > 0) {
+    private Criteria buildPpnQuery(CriterionPpn criterion) throws IllegalCriterionException {
 
-            Iterator<String> ppnIterator = ppn.getPpn().iterator();
-
-            Criteria myCriteria;
-
-            String ppnCode = ppnIterator.next();
-
-            myCriteria = new Criteria(NoticeField.PPN).is(ppnCode);
-
-            // les autres
-            while (ppnIterator.hasNext()) {
-                ppnCode = ppnIterator.next();
-                myCriteria = myCriteria.or(NoticeField.PPN).is(ppnCode);
-            }
-
-            // pour le bloc entier
-            switch (ppn.getBlocOperator()) {
-                case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect();
-                    break;
-                case LogicalOperator.OR:
-                    myCriteria.setPartIsOr(true);
-                    break;
-                case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.notOperator();
-                    break;
-            }
-
-            return myCriteria;
-
-        } else {
-            return null;
+        if (criterion.getPpn().isEmpty()) {
+            throw new IllegalCriterionException("Criteria list cannot be empty");
         }
+
+        Iterator<String> valueIterator = criterion.getPpn().iterator();
+
+        Criteria myCriteria;
+
+        String value = valueIterator.next();
+
+        myCriteria = new Criteria(NoticeField.PPN).is(value);
+
+        // les autres
+        while (valueIterator.hasNext()) {
+            value = valueIterator.next();
+            myCriteria = myCriteria.or(NoticeField.PPN).is(value);
+        }
+
+        // pour le bloc entier
+        switch (criterion.getBlocOperator()) {
+            case LogicalOperator.AND:
+                myCriteria = myCriteria.connect();
+                break;
+            case LogicalOperator.OR:
+                myCriteria.setPartIsOr(true);
+                break;
+            case LogicalOperator.EXCEPT:
+                myCriteria = myCriteria.notOperator();
+                break;
+        }
+
+        return myCriteria;
     }
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par code langue
-     * @param langue Les critères de recherche par code langue
+     * @param criterion Les critères de recherche par code langue
      * @return Criteria Requête SolR
      */
-    private Criteria buildLangueQuery(CriterionLangue langue) {
-        if (langue.getLangue().size() > 0) {
+    private Criteria buildLanguageQuery(CriterionLanguage criterion) {
 
-            Iterator<String> langueIterator = langue.getLangue().iterator();
-            Iterator<String> langueOperatorIterator = langue.getLangueOperator().iterator();
+        if (criterion.getLanguages().isEmpty()) {
+            throw new IllegalCriterionException("Criteria list cannot be empty");
+        }
 
-            Criteria myCriteria = null;
+        Iterator<String> langueIterator = criterion.getLanguages().iterator();
+        Iterator<String> langueOperatorIterator = criterion.getLanguageOperators().iterator();
 
-            String langueCode = langueIterator.next();
-            String langueOperator = langueOperatorIterator.next();
+        Criteria myCriteria = null;
 
-            // 1er critère
+        String langueCode = langueIterator.next();
+        String langueOperator = langueOperatorIterator.next();
+
+        // 1er critère
+        switch (langueOperator) {
+            case LogicalOperator.EXCEPT:
+                myCriteria = new Criteria(NoticeField.LANGUAGE).is(langueCode).not().connect();
+                break;
+            default:
+                myCriteria = new Criteria(NoticeField.LANGUAGE).is(langueCode).connect();
+                break;
+        }
+
+        // les autres
+        while (langueIterator.hasNext()) {
+            langueCode = langueIterator.next();
+            langueOperator = langueOperatorIterator.next();
+
             switch (langueOperator) {
-                case LogicalOperator.EXCEPT:
-                    myCriteria = new Criteria(NoticeField.LANGUAGE).is(langueCode).not();
-                    break;
-                default:
-                    myCriteria = new Criteria(NoticeField.LANGUAGE).is(langueCode);
-                    break;
-            }
-
-            // les autres
-            while (langueIterator.hasNext()) {
-                langueCode = langueIterator.next();
-                langueOperator = langueOperatorIterator.next();
-
-                switch (langueOperator) {
-                    case LogicalOperator.AND:
-                        myCriteria = myCriteria.and(NoticeField.LANGUAGE).is(langueCode);
-                        break;
-                    case LogicalOperator.OR:
-                        myCriteria = myCriteria.or(NoticeField.LANGUAGE).is(langueCode);
-                        break;
-                    case LogicalOperator.EXCEPT:
-                        myCriteria = myCriteria.and(NoticeField.LANGUAGE).is(langueCode).not();
-                        break;
-                }
-            }
-            myCriteria = myCriteria.and(NoticeField.KEY_TITLE_T);
-
-            // pour le bloc entier
-            switch (langue.getBlocOperator()) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect();
+                    myCriteria = myCriteria.connect().and(NoticeField.LANGUAGE).is(langueCode);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria.setPartIsOr(true);
+                    myCriteria = myCriteria.connect().or(NoticeField.LANGUAGE).is(langueCode);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.notOperator();
+                    myCriteria = myCriteria.connect().and(NoticeField.LANGUAGE).is(langueCode).not();
                     break;
             }
-
-            return myCriteria;
-
-        } else {
-            return null;
         }
+        myCriteria = myCriteria.and(NoticeField.KEY_TITLE_T);
+
+        // pour le bloc entier
+        switch (criterion.getBlocOperator()) {
+            case LogicalOperator.AND:
+                break;
+            case LogicalOperator.OR:
+                myCriteria.setPartIsOr(true);
+                break;
+            case LogicalOperator.EXCEPT:
+                myCriteria = myCriteria.notOperator();
+                break;
+        }
+
+        return myCriteria;
     }
 
     /**
-<<<<<<< HEAD
      * Construit la requête SolR à partir d'un critère de recherche par éditeur
      * @param criterion Les critères de recherche par editeur
      * @return Criteria Requête SolR
@@ -415,7 +487,7 @@ public class SolrQueryBuilder {
         }
 
         Iterator<String> rcrIterator = criterion.getEditors().iterator();
-        Iterator<String> rcrOperatorIterator = criterion.getEditorsOperator().iterator();
+        Iterator<String> rcrOperatorIterator = criterion.getEditorOperators().iterator();
 
         Criteria myCriteria = null;
 
@@ -453,7 +525,6 @@ public class SolrQueryBuilder {
         // pour le bloc entier
         switch (criterion.getBlocOperator()) {
             case LogicalOperator.AND:
-                //myCriteria = myCriteria.connect();
                 break;
             case LogicalOperator.OR:
                 myCriteria.setPartIsOr(true);
@@ -467,42 +538,41 @@ public class SolrQueryBuilder {
     }
 
      /* Construit la requête SolR à partir d'un critère de recherche par ISSN
-     * @param issn Les critères de recherche par ISSN
+     * @param critetion Les critères de recherche par ISSN
      * @return Criteria Requête SolR
      */
-    private Criteria buildIssnQuery(CriterionIssn issn) {
-        if (issn.getIssn().size() > 0) {
+    private Criteria buildIssnQuery(CriterionIssn criterion) {
 
-            Iterator<String> issnIterator = issn.getIssn().iterator();
-
-            Criteria myCriteria;
-
-            String issnCode = issnIterator.next();
-            myCriteria = new Criteria(NoticeField.ISSN_T).is(issnCode);
-
-            // les autres
-            while (issnIterator.hasNext()) {
-                issnCode = issnIterator.next();
-                myCriteria = myCriteria.or(NoticeField.ISSN_T).is(issnCode);
-            }
-
-            // pour le bloc entier
-            switch (issn.getBlocOperator()) {
-                case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect();
-                    break;
-                case LogicalOperator.OR:
-                    myCriteria.setPartIsOr(true);
-                    break;
-                case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.notOperator();
-                    break;
-            }
-
-            return myCriteria;
-
-        } else {
-            return null;
+        if (criterion.getIssn().isEmpty()) {
+            throw new IllegalCriterionException("Criteria list cannot be empty");
         }
+
+        Iterator<String> issnIterator = criterion.getIssn().iterator();
+
+        Criteria myCriteria;
+
+        String value = issnIterator.next();
+        myCriteria = new Criteria(NoticeField.ISSN_T).is(value);
+
+        // les autres
+        while (issnIterator.hasNext()) {
+            value = issnIterator.next();
+            myCriteria = myCriteria.or(NoticeField.ISSN_T).is(value);
+        }
+
+        // pour le bloc entier
+        switch (criterion.getBlocOperator()) {
+            case LogicalOperator.AND:
+                myCriteria = myCriteria.connect();
+                break;
+            case LogicalOperator.OR:
+                myCriteria.setPartIsOr(true);
+                break;
+            case LogicalOperator.EXCEPT:
+                myCriteria = myCriteria.notOperator();
+                break;
+        }
+
+        return myCriteria;
     }
 }

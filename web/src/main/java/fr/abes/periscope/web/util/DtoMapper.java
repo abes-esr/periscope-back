@@ -4,7 +4,6 @@ import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
-import fr.abes.periscope.core.util.TrackExecutionTime;
 import fr.abes.periscope.web.dto.*;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -34,7 +33,6 @@ public class DtoMapper {
      * @param targetClass Classe des objets cibles
      * @return Liste des objets cibles
      */
-    @TrackExecutionTime
     public <S, T> List<T> mapList(List<S> source, Class<T> targetClass) {
         return source
                 .stream()
@@ -189,20 +187,43 @@ public class DtoMapper {
     }
 
     /**
+<<<<<<< HEAD
+     * Convertisseur pour les critères pays (DTO vers objet métier)
+     */
+    @Bean
+    public void converterCountry() {
+
+        Converter<CriterionCountryWebDto, CriterionCountry> myConverter = new Converter<CriterionCountryWebDto, CriterionCountry>() {
+            public CriterionCountry convert(MappingContext<CriterionCountryWebDto, CriterionCountry> context) {
+                CriterionCountryWebDto s = context.getSource();
+                try {
+                    CriterionCountry d = new CriterionCountry(s.getBlocOperator(), s.getCountries(), s.getCountriesOperator());
+                    return d;
+                } catch (IllegalOperatorException ex) {
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_COUNTRIES + ": " + ex.getLocalizedMessage());
+                } catch (CriterionOperatorMismatchException ex) {
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_COUNTRIES + ": " + ex.getLocalizedMessage());
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
+
+    /**
      * Convertisseur pour les critères Langue (DTO vers objet métier)
      */
     @Bean
     public void converterLangue() {
-        Converter<CriterionLangueWebDto, CriterionLangue> myConverter = new Converter<CriterionLangueWebDto, CriterionLangue>() {
-            public CriterionLangue convert(MappingContext<CriterionLangueWebDto, CriterionLangue> context) {
-                CriterionLangueWebDto s = context.getSource();
+        Converter<CriterionLanguageWebDto, CriterionLanguage> myConverter = new Converter<CriterionLanguageWebDto, CriterionLanguage>() {
+            public CriterionLanguage convert(MappingContext<CriterionLanguageWebDto, CriterionLanguage> context) {
+                CriterionLanguageWebDto s = context.getSource();
                 try {
-                    CriterionLangue d = new CriterionLangue(s.getBlocOperator(), s.getLangue(), s.getLangueOperator());
+                    CriterionLanguage d = new CriterionLanguage(s.getBlocOperator(), s.getLanguage(), s.getLanguageOperators());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_LANGUE+": "+ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_LANGUAGE +": "+ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_LANGUE+": "+ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_LANGUAGE +": "+ex.getLocalizedMessage());
                 }
             }
         };

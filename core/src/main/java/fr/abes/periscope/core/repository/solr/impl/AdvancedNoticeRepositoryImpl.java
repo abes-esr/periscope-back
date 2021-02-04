@@ -5,7 +5,6 @@ import fr.abes.periscope.core.entity.NoticeSolr;
 import fr.abes.periscope.core.repository.solr.AdvancedNoticeRepository;
 import fr.abes.periscope.core.repository.solr.NoticeField;
 import fr.abes.periscope.core.repository.solr.SolrQueryBuilder;
-import fr.abes.periscope.core.util.TrackExecutionTime;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -27,7 +26,6 @@ public class AdvancedNoticeRepositoryImpl implements AdvancedNoticeRepository {
 
     private SolrQueryBuilder builderQuery;
 
-    @TrackExecutionTime
     @Override
     /**
      * Retourne les Notices SolR selon une liste de critères et une page

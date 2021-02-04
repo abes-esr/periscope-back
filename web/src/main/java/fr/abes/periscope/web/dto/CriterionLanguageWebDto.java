@@ -14,13 +14,13 @@ import java.util.List;
  */
 @Getter
 @Setter
-@JsonTypeName(CriterionTypeName.CRITERION_LANGUE)
-public class CriterionLangueWebDto extends CriterionWebDto {
-    @JsonProperty(value="langue")
+@JsonTypeName(CriterionTypeName.CRITERION_LANGUAGE)
+public class CriterionLanguageWebDto extends CriterionWebDto {
+    @JsonProperty(value="language")
     @NotNull(message = "La liste des codes langues ne doit pas être nulle")
-    private List<String> langue = new ArrayList<>();
+    private List<String> language = new ArrayList<>();
 
-    @JsonProperty(value="langue_operator")
+    @JsonProperty(value="language_operator")
     @NotNull(message = "La liste des connecteurs logiques ne doit pas être nulle")
-    private List<String> langueOperator = new ArrayList<>();
+    private List<String> languageOperators = new ArrayList<>();
 }
