@@ -3,9 +3,6 @@ package fr.abes.periscope.web.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import fr.abes.periscope.core.criterion.CriterionLangue;
-import fr.abes.periscope.core.criterion.CriterionIssn;
-import fr.abes.periscope.core.criterion.CriterionTitleWords;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -22,7 +19,7 @@ import javax.validation.constraints.NotNull;
         @JsonSubTypes.Type(value = CriterionPpnWebDto.class, name = CriterionTypeName.CRITERION_PPN),
         @JsonSubTypes.Type(value = CriterionTitleWordsWebDto.class, name = CriterionTypeName.CRITERION_TITLE_WORDS),
         @JsonSubTypes.Type(value = CriterionCountryWebDto.class, name = CriterionTypeName.CRITERION_COUNTRIES),
-        @JsonSubTypes.Type(value = CriterionLangueWebDto.class, name = CriterionTypeName.CRITERION_LANGUE),
+        @JsonSubTypes.Type(value = CriterionLanguageWebDto.class, name = CriterionTypeName.CRITERION_LANGUAGE),
         @JsonSubTypes.Type(value = CriterionEditorWebDto.class, name = CriterionTypeName.CRITERION_EDITOR),
         @JsonSubTypes.Type(value = CriterionIssnWebDto.class, name = CriterionTypeName.CRITERION_ISSN)})
 public abstract class CriterionWebDto {

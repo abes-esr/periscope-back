@@ -4,8 +4,6 @@ import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,18 +20,18 @@ public class CriterionPcp extends Criterion {
 
     /** Liste des connecteurs logiques entre les codes RCR
      * Exemple :
-     * pcpOperator[0] pour connecter pcp[0]
-     * pcpOperator[1] pour connecter pcp[0] et pcp[1] */
-    private List<String> pcpOperator = new ArrayList<>();
+     * pcpOperators[0] pour connecter pcp[0]
+     * pcpOperators[1] pour connecter pcp[0] et pcp[1] */
+    private List<String> pcpOperators = new ArrayList<>();
 
     /**
      * Constructeur de critère de recherche par code PCP à connecter avec un autre bloc
      * @param blocOperator Connecteur logique du bloc
      * @param candidatesPcp Liste de code PCP
-     * @param candidatesOperator Liste des connecteurs logiques entre les code PCP.
-     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent.
-     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
-     * @exception IllegalCriterionException Si la liste des critères est vide.
+     * @param candidatesOperator Liste des connecteurs logiques entre les code PCP
+     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent
+     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit
+     * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionPcp(String blocOperator, List<String> candidatesPcp, List<String> candidatesOperator) {
         super(blocOperator);
@@ -56,16 +54,16 @@ public class CriterionPcp extends Criterion {
         }
 
         this.pcp = candidatesPcp;
-        this.pcpOperator = candidatesOperator;
+        this.pcpOperators = candidatesOperator;
     }
 
     /**
      * Constructeur de critère de recherche par code PCP (1er bloc)
      * @param candidatesPcp Liste de code PCP
-     * @param candidatesOperator Liste des connecteurs logiques entre les codes PCP.
-     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent.
-     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
-     * @exception IllegalCriterionException Si la liste des critères est vide.
+     * @param candidatesOperator Liste des connecteurs logiques entre les codes PCP
+     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent
+     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit
+     * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionPcp(List<String> candidatesPcp, List<String> candidatesOperator) {
         super();
@@ -88,6 +86,6 @@ public class CriterionPcp extends Criterion {
         }
 
         this.pcp = candidatesPcp;
-        this.pcpOperator = candidatesOperator;
+        this.pcpOperators = candidatesOperator;
     }
 }

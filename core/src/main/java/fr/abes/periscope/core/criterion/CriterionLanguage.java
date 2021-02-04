@@ -3,35 +3,34 @@ package fr.abes.periscope.core.criterion;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public class CriterionLangue extends Criterion {
+public class CriterionLanguage extends Criterion {
 
     /** Liste des codes Langue à rechercher */
-    private List<String> langue = new ArrayList<>();
+    private List<String> languages = new ArrayList<>();
 
     /** Liste des connecteurs logiques entre les codes langues
      * Exemple :
-     * rcrOperator[0] pour connecter langue[0]
-     * rcrOperator[1] pour connecter langue[0] et langue[1] */
-    private List<String> langueOperator = new ArrayList<>();
+     * languageOperators[0] pour connecter languages[0]
+     * languageOperators[1] pour connecter languages[0] et languages[1] */
+    private List<String> languageOperators = new ArrayList<>();
 
     /**
      * Instancie un critère de recherche par code langue à connecter avec un autre bloc
      * @param blocOperator Connecteur logique du bloc
-     * @param candidatesLangue Liste des codes Langues à rechercher
-     * @param candidatesOperator Liste des connecteurs logiques entre les code Langues. Note: le premier critère n'a pas de connecteur.
-     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent.
-     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
+     * @param candidatesLanguage Liste des codes Langues à rechercher
+     * @param candidatesOperator Liste des connecteurs logiques entre les code langues
+     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent
+     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit
      */
-    public CriterionLangue(String blocOperator, List<String> candidatesLangue, List<String> candidatesOperator) {
+    public CriterionLanguage(String blocOperator, List<String> candidatesLanguage, List<String> candidatesOperator) {
         super(blocOperator);
 
-        if (candidatesOperator.size() != candidatesLangue.size()) {
+        if (candidatesOperator.size() != candidatesLanguage.size()) {
             throw new CriterionOperatorMismatchException("Criteria list size mismatch the operators list size");
         }
 
@@ -44,22 +43,22 @@ public class CriterionLangue extends Criterion {
             throw new IllegalOperatorException("Operators contains illegal values. Accepted value : "+LogicalOperator.AND+"/"+LogicalOperator.OR+"/"+LogicalOperator.EXCEPT);
         }
 
-        this.langue = candidatesLangue;
-        this.langueOperator = candidatesOperator;
+        this.languages = candidatesLanguage;
+        this.languageOperators = candidatesOperator;
     }
 
     /**
      * Instancie un critère de recherche par code Langue (1er bloc).
      * Le connecteur logique du bloc par défaut est ET
-     * @param candidatesLangue Liste des codes langue à rechercher
-     * @param candidatesOperator Liste des connecteurs logiques entre les code langues. Note: le premier critère n'a pas de connecteur.
-     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent.
-     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
+     * @param candidatesLanguage Liste des codes langue à rechercher
+     * @param candidatesOperator Liste des connecteurs logiques entre les code langues
+     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent
+     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit
      */
-    public CriterionLangue(List<String> candidatesLangue, List<String> candidatesOperator) {
+    public CriterionLanguage(List<String> candidatesLanguage, List<String> candidatesOperator) {
         super();
 
-        if (candidatesOperator.size() != candidatesLangue.size()) {
+        if (candidatesOperator.size() != candidatesLanguage.size()) {
             throw new CriterionOperatorMismatchException("Criteria list size mismatch the operators list size");
         }
 
@@ -72,7 +71,7 @@ public class CriterionLangue extends Criterion {
             throw new IllegalOperatorException("Operators contains illegal values. Accepted value : "+LogicalOperator.AND+"/"+LogicalOperator.OR+"/"+LogicalOperator.EXCEPT);
         }
 
-        this.langue = candidatesLangue;
-        this.langueOperator = candidatesOperator;
+        this.languages = candidatesLanguage;
+        this.languageOperators = candidatesOperator;
     }
 }

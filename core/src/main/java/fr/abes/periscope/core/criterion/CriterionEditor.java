@@ -21,16 +21,16 @@ public class CriterionEditor extends Criterion {
      * Exemple :
      * editorsOperator[0] pour connecter editors[0]
      * editorsOperator[1] pour connecter editors[0] et editors[1] */
-    private List<String> editorsOperator = new ArrayList<>();
+    private List<String> editorOperators = new ArrayList<>();
 
     /**
      * Instancie un critère de recherche par éditeur à connecter avec un autre bloc
      * @param blocOperator Connecteur logique du bloc
      * @param candidatesEditor Liste des éditeurs à rechercher
-     * @param candidatesOperator Liste des connecteurs logiques entre les éditeurs.
-     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent.
-     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
-     * @exception IllegalCriterionException Si la liste des critères est vide.
+     * @param candidatesOperator Liste des connecteurs logiques entre les éditeurs
+     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent
+     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit
+     * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionEditor(String blocOperator, List<String> candidatesEditor, List<String> candidatesOperator) {
         super(blocOperator);
@@ -53,17 +53,17 @@ public class CriterionEditor extends Criterion {
         }
 
         this.editors = candidatesEditor;
-        this.editorsOperator = candidatesOperator;
+        this.editorOperators = candidatesOperator;
     }
 
     /**
-     * Instancie un critère de recherche par éditeurs (1er bloc).
+     * Instancie un critère de recherche par éditeurs (1er bloc)
      * Le connecteur logique du bloc par défaut est ET
      * @param candidatesEditor Liste des éditeurs à rechercher
-     * @param candidatesOperator Liste des connecteurs logiques entre les éditeurs.
-     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent.
-     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
-     * @exception IllegalCriterionException Si la liste des critères est vide.
+     * @param candidatesOperator Liste des connecteurs logiques entre les éditeurs
+     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent
+     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit
+     * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionEditor(List<String> candidatesEditor, List<String> candidatesOperator) {
         super();
@@ -86,6 +86,6 @@ public class CriterionEditor extends Criterion {
         }
 
         this.editors = candidatesEditor;
-        this.editorsOperator = candidatesOperator;
+        this.editorOperators = candidatesOperator;
     }
 }

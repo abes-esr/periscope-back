@@ -214,16 +214,16 @@ public class DtoMapper {
      */
     @Bean
     public void converterLangue() {
-        Converter<CriterionLangueWebDto, CriterionLangue> myConverter = new Converter<CriterionLangueWebDto, CriterionLangue>() {
-            public CriterionLangue convert(MappingContext<CriterionLangueWebDto, CriterionLangue> context) {
-                CriterionLangueWebDto s = context.getSource();
+        Converter<CriterionLanguageWebDto, CriterionLanguage> myConverter = new Converter<CriterionLanguageWebDto, CriterionLanguage>() {
+            public CriterionLanguage convert(MappingContext<CriterionLanguageWebDto, CriterionLanguage> context) {
+                CriterionLanguageWebDto s = context.getSource();
                 try {
-                    CriterionLangue d = new CriterionLangue(s.getBlocOperator(), s.getLangue(), s.getLangueOperator());
+                    CriterionLanguage d = new CriterionLanguage(s.getBlocOperator(), s.getLanguage(), s.getLanguageOperators());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_LANGUE+": "+ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_LANGUAGE +": "+ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_LANGUE+": "+ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_LANGUAGE +": "+ex.getLocalizedMessage());
                 }
             }
         };

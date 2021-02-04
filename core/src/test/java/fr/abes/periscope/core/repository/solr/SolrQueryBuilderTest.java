@@ -304,8 +304,8 @@ public class SolrQueryBuilderTest {
 
         List<String> language = Arrays.asList("cos");
         List<String> operator = Arrays.asList("ET");
-        CriterionLangue criterionLangue = new CriterionLangue("ET",language,operator);
-        criteria.add(criterionLangue);
+        CriterionLanguage criterionLanguage = new CriterionLanguage("ET",language,operator);
+        criteria.add(criterionLanguage);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
 
@@ -329,8 +329,8 @@ public class SolrQueryBuilderTest {
 
         List<String> language = Arrays.asList("cos");
         List<String> operator = Arrays.asList("ET");
-        CriterionLangue criterionLangue = new CriterionLangue("OU",language,operator);
-        criteria.add(criterionLangue);
+        CriterionLanguage criterionLanguage = new CriterionLanguage("OU",language,operator);
+        criteria.add(criterionLanguage);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
 
@@ -353,8 +353,8 @@ public class SolrQueryBuilderTest {
 
         List<String> language = Arrays.asList("cos");
         List<String> operator = Arrays.asList("ET");
-        CriterionLangue criterionLangue = new CriterionLangue("SAUF",language,operator);
-        criteria.add(criterionLangue);
+        CriterionLanguage criterionLanguage = new CriterionLanguage("SAUF",language,operator);
+        criteria.add(criterionLanguage);
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria));
 

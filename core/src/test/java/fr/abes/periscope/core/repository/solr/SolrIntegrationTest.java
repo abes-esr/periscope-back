@@ -12,8 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.solr.core.DefaultQueryParser;
-import org.springframework.data.solr.core.query.SimpleQuery;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -346,7 +344,7 @@ public class SolrIntegrationTest {
 
         List<String> language = Arrays.asList("cos");
         List<String> operator = Arrays.asList("ET");
-        CriterionLangue criterionLangue = new CriterionLangue("ET",language,operator);
+        CriterionLanguage criterionLangue = new CriterionLanguage("ET",language,operator);
         criteria.add(criterionLangue);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
@@ -372,8 +370,8 @@ public class SolrIntegrationTest {
 
         List<String> language = Arrays.asList("cos");
         List<String> operator = Arrays.asList("ET");
-        CriterionLangue criterionLangue = new CriterionLangue("OU",language,operator);
-        criteria.add(criterionLangue);
+        CriterionLanguage criterionLanguage = new CriterionLanguage("OU",language,operator);
+        criteria.add(criterionLanguage);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
                 Sort.by(Sort.Direction.ASC, NoticeField.PPN)));
@@ -396,8 +394,8 @@ public class SolrIntegrationTest {
 
         List<String> language = Arrays.asList("cos");
         List<String> operator = Arrays.asList("ET");
-        CriterionLangue criterionLangue = new CriterionLangue("SAUF",language,operator);
-        criteria.add(criterionLangue);
+        CriterionLanguage criterionLanguage = new CriterionLanguage("SAUF",language,operator);
+        criteria.add(criterionLanguage);
 
         List<NoticeSolr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, PageRequest.of(0,25,
                 Sort.by(Sort.Direction.ASC, NoticeField.PPN)));

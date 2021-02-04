@@ -11,7 +11,7 @@ public interface CriterionTypeName {
     String CRITERION_PPN = "CriterionPpn";
     String CRITERION_TITLE_WORDS = "CriterionTitleWords";
     String CRITERION_COUNTRIES = "CriterionCountry";
-    String CRITERION_LANGUE = "CriterionLangue";
+    String CRITERION_LANGUAGE = "CriterionLanguage";
     String CRITERION_EDITOR = "CriterionEditor";
     String CRITERION_ISSN = "CriterionIssn";
 }

@@ -79,9 +79,9 @@ public class SolrQueryBuilder {
             }
 
             //Bloc de critère code langue
-            if (criterion instanceof CriterionLangue) {
+            if (criterion instanceof CriterionLanguage) {
                 try {
-                    Criteria languageQuery = buildLangueQuery((CriterionLangue) criterion);
+                    Criteria languageQuery = buildLanguageQuery((CriterionLanguage) criterion);
                     filterQuery.addCriteria(languageQuery);
                 } catch (IllegalCriterionException ex) {
                     log.error(ex.getLocalizedMessage());
@@ -162,7 +162,7 @@ public class SolrQueryBuilder {
         }
 
         Iterator<String> rcrIterator = criterion.getRcr().iterator();
-        Iterator<String> rcrOperatorIterator = criterion.getRcrOperator().iterator();
+        Iterator<String> rcrOperatorIterator = criterion.getRcrOperators().iterator();
 
         Criteria myCriteria = null;
 
@@ -226,7 +226,7 @@ public class SolrQueryBuilder {
         }
 
         Iterator<String> valueIterator = criterion.getTitleWords().iterator();
-        Iterator<String> operatorIterator = criterion.getTitleWordsOperator().iterator();
+        Iterator<String> operatorIterator = criterion.getTitleWordOperators().iterator();
 
         Criteria myCriteria = null;
 
@@ -319,7 +319,7 @@ public class SolrQueryBuilder {
         }
 
         Iterator<String> valueIterator = criterion.getCountries().iterator();
-        Iterator<String> operatorIterator = criterion.getCountryOperator().iterator();
+        Iterator<String> operatorIterator = criterion.getCountryOperators().iterator();
 
         Criteria myCriteria = null;
 
@@ -357,7 +357,6 @@ public class SolrQueryBuilder {
         // pour le bloc entier
         switch (criterion.getBlocOperator()) {
             case LogicalOperator.AND:
-                //myCriteria = myCriteria.connect();
                 break;
             case LogicalOperator.OR:
                 myCriteria.setPartIsOr(true);
@@ -414,67 +413,65 @@ public class SolrQueryBuilder {
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par code langue
-     * @param langue Les critères de recherche par code langue
+     * @param criterion Les critères de recherche par code langue
      * @return Criteria Requête SolR
      */
-    private Criteria buildLangueQuery(CriterionLangue langue) {
-        if (langue.getLangue().size() > 0) {
+    private Criteria buildLanguageQuery(CriterionLanguage criterion) {
 
-            Iterator<String> langueIterator = langue.getLangue().iterator();
-            Iterator<String> langueOperatorIterator = langue.getLangueOperator().iterator();
+        if (criterion.getLanguages().isEmpty()) {
+            throw new IllegalCriterionException("Criteria list cannot be empty");
+        }
 
-            Criteria myCriteria = null;
+        Iterator<String> langueIterator = criterion.getLanguages().iterator();
+        Iterator<String> langueOperatorIterator = criterion.getLanguageOperators().iterator();
 
-            String langueCode = langueIterator.next();
-            String langueOperator = langueOperatorIterator.next();
+        Criteria myCriteria = null;
 
-            // 1er critère
+        String langueCode = langueIterator.next();
+        String langueOperator = langueOperatorIterator.next();
+
+        // 1er critère
+        switch (langueOperator) {
+            case LogicalOperator.EXCEPT:
+                myCriteria = new Criteria(NoticeField.LANGUAGE).is(langueCode).not().connect();
+                break;
+            default:
+                myCriteria = new Criteria(NoticeField.LANGUAGE).is(langueCode).connect();
+                break;
+        }
+
+        // les autres
+        while (langueIterator.hasNext()) {
+            langueCode = langueIterator.next();
+            langueOperator = langueOperatorIterator.next();
+
             switch (langueOperator) {
-                case LogicalOperator.EXCEPT:
-                    myCriteria = new Criteria(NoticeField.LANGUAGE).is(langueCode).not();
-                    break;
-                default:
-                    myCriteria = new Criteria(NoticeField.LANGUAGE).is(langueCode);
-                    break;
-            }
-
-            // les autres
-            while (langueIterator.hasNext()) {
-                langueCode = langueIterator.next();
-                langueOperator = langueOperatorIterator.next();
-
-                switch (langueOperator) {
-                    case LogicalOperator.AND:
-                        myCriteria = myCriteria.and(NoticeField.LANGUAGE).is(langueCode);
-                        break;
-                    case LogicalOperator.OR:
-                        myCriteria = myCriteria.or(NoticeField.LANGUAGE).is(langueCode);
-                        break;
-                    case LogicalOperator.EXCEPT:
-                        myCriteria = myCriteria.and(NoticeField.LANGUAGE).is(langueCode).not();
-                        break;
-                }
-            }
-            myCriteria = myCriteria.and(NoticeField.KEY_TITLE_T);
-
-            // pour le bloc entier
-            switch (langue.getBlocOperator()) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect();
+                    myCriteria = myCriteria.connect().and(NoticeField.LANGUAGE).is(langueCode);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria.setPartIsOr(true);
+                    myCriteria = myCriteria.connect().or(NoticeField.LANGUAGE).is(langueCode);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.notOperator();
+                    myCriteria = myCriteria.connect().and(NoticeField.LANGUAGE).is(langueCode).not();
                     break;
             }
-
-            return myCriteria;
-
-        } else {
-            return null;
         }
+        myCriteria = myCriteria.and(NoticeField.KEY_TITLE_T);
+
+        // pour le bloc entier
+        switch (criterion.getBlocOperator()) {
+            case LogicalOperator.AND:
+                break;
+            case LogicalOperator.OR:
+                myCriteria.setPartIsOr(true);
+                break;
+            case LogicalOperator.EXCEPT:
+                myCriteria = myCriteria.notOperator();
+                break;
+        }
+
+        return myCriteria;
     }
 
     /**
@@ -490,7 +487,7 @@ public class SolrQueryBuilder {
         }
 
         Iterator<String> rcrIterator = criterion.getEditors().iterator();
-        Iterator<String> rcrOperatorIterator = criterion.getEditorsOperator().iterator();
+        Iterator<String> rcrOperatorIterator = criterion.getEditorOperators().iterator();
 
         Criteria myCriteria = null;
 
@@ -528,7 +525,6 @@ public class SolrQueryBuilder {
         // pour le bloc entier
         switch (criterion.getBlocOperator()) {
             case LogicalOperator.AND:
-                //myCriteria = myCriteria.connect();
                 break;
             case LogicalOperator.OR:
                 myCriteria.setPartIsOr(true);

@@ -19,18 +19,18 @@ public class CriterionTitleWords extends Criterion {
 
     /** Liste des connecteurs logiques entre les mots du titre
      * Exemple :
-     * titleWordsOperator[0] pour connecter titleWords[0]
-     * titleWordsOperator[1] pour connecter titleWords[0] et titleWords[1] */
-    private List<String> titleWordsOperator = new ArrayList<>();
+     * titleWordsOperators[0] pour connecter titleWords[0]
+     * titleWordsOperators[1] pour connecter titleWords[0] et titleWords[1] */
+    private List<String> titleWordOperators = new ArrayList<>();
 
     /**
      * Instancie un critère de recherche par mots du titre avec un autre bloc
      * @param blocOperator Connecteur logique du bloc
      * @param candidatesTitleWords Liste des mots du titre à rechercher
-     * @param candidatesOperator Liste des connecteurs logiques entre les mots du tires.
-     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent.
-     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
-     * @exception IllegalCriterionException Si la liste des critères est vide.
+     * @param candidatesOperator Liste des connecteurs logiques entre les mots du tires
+     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent
+     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit
+     * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionTitleWords(String blocOperator, List<String> candidatesTitleWords, List<String> candidatesOperator) {
         super(blocOperator);
@@ -53,17 +53,16 @@ public class CriterionTitleWords extends Criterion {
         }
 
         this.titleWords = candidatesTitleWords;
-        this.titleWordsOperator = candidatesOperator;
+        this.titleWordOperators = candidatesOperator;
     }
 
     /**
-     * Instancie un critère de recherche par mots du titre (1er bloc).
-     * Le connecteur logique du bloc par défaut est ET
+     * Instancie un critère de recherche par mots du titre (1er bloc)
      * @param candidatesTitleWords Liste des mots du titre à rechercher
-     * @param candidatesOperator Liste des connecteurs logiques entre les mots du titre.
-     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent.
-     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit.
-     * @exception IllegalCriterionException Si la liste des critères est vide.
+     * @param candidatesOperator Liste des connecteurs logiques entre les mots du titre
+     * @exception CriterionOperatorMismatchException Si le nombre de critères et le nombre d'opérateurs ne sont pas cohérent
+     * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit
+     * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionTitleWords(List<String> candidatesTitleWords, List<String> candidatesOperator) {
         super();
@@ -86,6 +85,6 @@ public class CriterionTitleWords extends Criterion {
         }
 
         this.titleWords = candidatesTitleWords;
-        this.titleWordsOperator = candidatesOperator;
+        this.titleWordOperators = candidatesOperator;
     }
 }
