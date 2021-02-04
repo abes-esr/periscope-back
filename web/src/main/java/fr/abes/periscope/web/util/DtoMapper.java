@@ -187,6 +187,7 @@ public class DtoMapper {
     }
 
     /**
+<<<<<<< HEAD
      * Convertisseur pour les critères pays (DTO vers objet métier)
      */
     @Bean
@@ -199,9 +200,30 @@ public class DtoMapper {
                     CriterionCountry d = new CriterionCountry(s.getBlocOperator(), s.getCountries(), s.getCountriesOperator());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_COUNTRIES+": "+ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_COUNTRIES + ": " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_COUNTRIES+": "+ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_COUNTRIES + ": " + ex.getLocalizedMessage());
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
+
+    /**
+     * Convertisseur pour les critères Langue (DTO vers objet métier)
+     */
+    @Bean
+    public void converterLangue() {
+        Converter<CriterionLangueWebDto, CriterionLangue> myConverter = new Converter<CriterionLangueWebDto, CriterionLangue>() {
+            public CriterionLangue convert(MappingContext<CriterionLangueWebDto, CriterionLangue> context) {
+                CriterionLangueWebDto s = context.getSource();
+                try {
+                    CriterionLangue d = new CriterionLangue(s.getBlocOperator(), s.getLangue(), s.getLangueOperator());
+                    return d;
+                } catch (IllegalOperatorException ex) {
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_LANGUE+": "+ex.getLocalizedMessage());
+                } catch (CriterionOperatorMismatchException ex) {
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_LANGUE+": "+ex.getLocalizedMessage());
                 }
             }
         };

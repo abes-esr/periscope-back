@@ -64,6 +64,10 @@ public class PublicController {
                 criteria.add(dtoMapper.map(userCriterion, CriterionCountry.class));
             }
 
+            if (userCriterion instanceof CriterionLangueWebDto) {
+                criteria.add(dtoMapper.map(userCriterion, CriterionLangue.class));
+            }
+
             if (userCriterion instanceof CriterionEditorWebDto) {
                 criteria.add(dtoMapper.map(userCriterion, CriterionEditor.class));
             }

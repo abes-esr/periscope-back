@@ -36,5 +36,5 @@ public interface NoticeField {
     String COUNTRY_Z = "102-a_z";
     String COUNTRY_S = "102-a_s";
     String COUNTRY_T = "102-a_t";
-
+    String LANGUAGE = "101-a_t";
 }
