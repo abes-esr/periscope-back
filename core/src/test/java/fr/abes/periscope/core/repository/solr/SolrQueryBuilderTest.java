@@ -312,7 +312,7 @@ public class SolrQueryBuilderTest {
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         String expectedQuery =
-                "930-z_s:PCCor AND ((101-a_t:cos AND 530-a_t:[* TO *]))";
+                "930-z_s:PCCor AND (101-a_t:cos AND 530-a_t:[* TO *])";
         assertEquals(expectedQuery, actualQuery);
 
     }
