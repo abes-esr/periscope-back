@@ -44,6 +44,10 @@ public class Notice {
 
     private PublicationYear endYear;
 
+    private String mirabelURL;
+
+    private Integer nbLocation;
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

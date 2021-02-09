@@ -1,16 +1,18 @@
 package fr.abes.periscope.core.util;
 
+import fr.abes.periscope.core.criterion.LogicalOperator;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.NoticeSolr;
+import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.entity.PublicationYear;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import java.text.ParseException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,9 +28,9 @@ public class NoticeMapper {
         return new ModelMapper();
     }
 
-    public PublicationYear buildStartPublicationYear(String value) throws ParseException {
+    public PublicationYear buildStartPublicationYear(String value) throws IllegalPublicationYearException {
         //log.debug("SolR startdate : "+value.substring(9,13));
-        String yearCode = value.substring(8,9);
+        String yearCode = value.substring(8, 9);
         String candidateYear;
         PublicationYear year = new PublicationYear();
         switch (yearCode) {
@@ -41,40 +43,37 @@ public class NoticeMapper {
             case "h":
             case "i":
             case "j":
-                candidateYear = value.substring(9,13);
+                candidateYear = value.substring(9, 13);
                 return extractDate(candidateYear);
             case "f":
-                String candidateOldestYear = value.substring(9,13);
+                String candidateOldestYear = value.substring(9, 13);
                 String candidateNewestYear = value.substring(13, 17);
                 return extractCaseF(candidateOldestYear, candidateNewestYear);
             default:
-                throw new IllegalPublicationYearException("Unable to decode year code "+yearCode);
+                throw new IllegalPublicationYearException("Unable to decode year code " + yearCode);
         }
 
     }
 
-
-    public PublicationYear buildEndPublicationYear(String value) throws ParseException {
-        //log.debug("SolR enddate : "+value.substring(13,17));
-        String yearCode = value.substring(8,9);
+    public PublicationYear buildEndPublicationYear(String value) throws IllegalPublicationYearException {
+        String yearCode = value.substring(8, 9);
         String candidateYear;
-        PublicationYear year = new PublicationYear();
 
         switch (yearCode) {
             case "b":
-                candidateYear = value.substring(13,17);
+                candidateYear = value.substring(13, 17);
                 return extractDate(candidateYear);
             case "a":
-                candidateYear = value.substring(13,17);
+                candidateYear = value.substring(13, 17);
                 if (candidateYear.equals("9999")) {
-                    return null;
+                    return new PublicationYear(); // Année nulle par défaut
                 } else
                     throw new IllegalPublicationYearException("Unable to decode end year code " + yearCode);
             case "c":
             case "d":
-                candidateYear = value.substring(13,17);
+                candidateYear = value.substring(13, 17);
                 if (candidateYear.equals("    ")) {
-                    return null;
+                    return new PublicationYear(); // Année nulle par défaut
                 } else
                     throw new IllegalPublicationYearException("Unable to decode end year code " + yearCode);
             case "e":
@@ -82,16 +81,16 @@ public class NoticeMapper {
             case "h":
             case "i":
             case "j":
-                return null;
+                return new PublicationYear();
             case "g":
-                candidateYear = value.substring(13,17);
+                candidateYear = value.substring(13, 17);
                 if (candidateYear.equals("9999")) {
-                    return null;
+                    return new PublicationYear(); // Année nulle par défaut
                 } else {
                     return extractDate(candidateYear);
                 }
             default:
-                throw new IllegalPublicationYearException("Unable to decode year code "+yearCode);
+                throw new IllegalPublicationYearException("Unable to decode year code " + yearCode);
         }
     }
 
@@ -115,7 +114,7 @@ public class NoticeMapper {
 
     private PublicationYear extractCaseF(String candidateOldestYear, String candidateNewestYear) {
         int cdtOldestYear = Integer.parseInt(candidateOldestYear);
-        int cdtNewestYear = (candidateNewestYear.equals("    "))?9999:Integer.parseInt(candidateNewestYear);
+        int cdtNewestYear = (candidateNewestYear.equals("    ")) ? 9999 : Integer.parseInt(candidateNewestYear);
         PublicationYear year = new PublicationYear();
         if (cdtOldestYear > cdtNewestYear) {
             throw new IllegalPublicationYearException("Oldest Year can't be superior to newest Year");
@@ -140,12 +139,10 @@ public class NoticeMapper {
 
         // Extraction de la date de début
         try {
-
             PublicationYear year = buildStartPublicationYear(source.getProcessingGlobalData());
             notice.setStartYear(year);
-        } catch (ParseException e) {
-            //log.debug("SolR startdate : '"+source.getProcessingGlobalData().substring(0,8)+"'");
-            //log.debug("Unable to parse start date :"+e.getLocalizedMessage());
+        } catch (IllegalPublicationYearException e) {
+            log.debug("Unable to parse start publication year :" + e.getLocalizedMessage());
             notice.setStartYear(null);
         }
 
@@ -153,12 +150,64 @@ public class NoticeMapper {
         try {
             PublicationYear year = buildEndPublicationYear(source.getProcessingGlobalData());
             notice.setEndYear(year);
-        } catch (ParseException e) {
-            //log.debug("SolR enddate : '"+source.getProcessingGlobalData().substring(9,17)+"'");
-            //log.debug("Unable to parse end date :"+e.getLocalizedMessage());
+        } catch (IllegalPublicationYearException e) {
+            log.debug("Unable to parse end publication year :" + e.getLocalizedMessage());
             notice.setEndYear(null);
         }
 
+        //Extraction du type de ressource continue
+        notice.setContiniousType(extractOnGoingResourceType(source.getContiniousType()));
+
+        //Extraction du lien exterieur de Mirabel
+        notice.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
+
         return notice;
     }
+
+    /**
+     * Extrait l'URL vers MIRABEL
+     * @param externalURLs Liste des URL externes
+     * @return String URL MIRABEL ou null
+     */
+    public String extractMirabelURL(List<String> externalURLs) {
+        if (externalURLs == null) {
+            return null;
+        }
+        return externalURLs.stream()
+                .filter(link -> link.contains("mirabel"))
+                .findFirst()
+                .orElse(null);
+    }
+
+    /**
+     * Extrait le type de ressource continue
+     * @param continiousType
+     * @return String Type de ressource continue
+     */
+    public String extractOnGoingResourceType(String continiousType) {
+
+        if (continiousType == null) {
+            return OnGoingResourceType.X;
+        }
+
+        switch (continiousType.substring(0,1)) {
+            case "a":
+                return OnGoingResourceType.A;
+            case "b":
+                return OnGoingResourceType.B;
+            case "c":
+                return OnGoingResourceType.C;
+            case "e":
+                return OnGoingResourceType.E;
+            case "f":
+                return OnGoingResourceType.F;
+            case "g":
+                return OnGoingResourceType.G;
+            case "z":
+                return OnGoingResourceType.Z;
+            default:
+                return OnGoingResourceType.X;
+        }
+    }
+
 }

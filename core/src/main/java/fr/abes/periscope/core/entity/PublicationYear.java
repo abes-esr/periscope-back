@@ -7,11 +7,12 @@ import lombok.Setter;
 @Setter
 public class PublicationYear {
 
-    private int year;
+    private Integer year;
 
-    private int confidenceIndex;
+    private Integer confidenceIndex;
 
     public PublicationYear() {
+        this.year=null;
         this.confidenceIndex = 0;
     }
 

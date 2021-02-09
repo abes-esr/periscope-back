@@ -52,7 +52,9 @@ public class AdvancedNoticeRepositoryImpl implements AdvancedNoticeRepository {
                 NoticeField.TITLE_COMPLEMENT,
                 NoticeField.SECTION_TITLE,
                 NoticeField.KEY_TITLE_QUALIFIER,
-                NoticeField.CONTINIOUS_TYPE);
+                NoticeField.CONTINIOUS_TYPE,
+                NoticeField.EXTERNAL_URLS_S,
+                NoticeField.NB_LOC);
 
         // Debug query
         DefaultQueryParser dqp = new DefaultQueryParser(null);
