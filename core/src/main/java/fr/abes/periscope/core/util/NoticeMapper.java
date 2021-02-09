@@ -29,57 +29,103 @@ public class NoticeMapper {
     public PublicationYear buildStartPublicationYear(String value) throws ParseException {
         //log.debug("SolR startdate : "+value.substring(9,13));
         String yearCode = value.substring(8,9);
+        String candidateYear;
         PublicationYear year = new PublicationYear();
         switch (yearCode) {
             case "b":
-                String candidateYear = value.substring(9,13);
-                if(candidateYear.charAt(2)==' ' && candidateYear.charAt(3)==' ') {
-                    year.setYear(Integer.valueOf(candidateYear.substring(0,2)));
-                    year.setConfidenceIndex(100);
-                }
-                else if(candidateYear.charAt(2)==' ') {
-                   new IllegalPublicationYearException("Unable to decode year format like"+candidateYear);
-
-                } else if(candidateYear.charAt(3)==' ') {
-                    year.setYear(Integer.valueOf(candidateYear.substring(0,3)));
-                    year.setConfidenceIndex(10);
-                }else {
-                    year.setYear(Integer.valueOf(candidateYear.substring(0,4)));
-                    year.setConfidenceIndex(0);
-                }
-                return year;
+            case "a":
+            case "c":
+            case "d":
+            case "e":
+            case "g":
+            case "h":
+            case "i":
+            case "j":
+                candidateYear = value.substring(9,13);
+                return extractDate(candidateYear);
+            case "f":
+                String candidateOldestYear = value.substring(9,13);
+                String candidateNewestYear = value.substring(13, 17);
+                return extractCaseF(candidateOldestYear, candidateNewestYear);
             default:
                 throw new IllegalPublicationYearException("Unable to decode year code "+yearCode);
         }
 
     }
 
+
     public PublicationYear buildEndPublicationYear(String value) throws ParseException {
         //log.debug("SolR enddate : "+value.substring(13,17));
         String yearCode = value.substring(8,9);
+        String candidateYear;
         PublicationYear year = new PublicationYear();
 
         switch (yearCode) {
             case "b":
-                String candidateYear = value.substring(13,17);
-                if(candidateYear.charAt(2)==' ' && candidateYear.charAt(3)==' ') {
-                    year.setYear(Integer.valueOf(candidateYear.substring(0,2)));
-                    year.setConfidenceIndex(100);
+                candidateYear = value.substring(13,17);
+                return extractDate(candidateYear);
+            case "a":
+                candidateYear = value.substring(13,17);
+                if (candidateYear.equals("9999")) {
+                    return null;
+                } else
+                    throw new IllegalPublicationYearException("Unable to decode end year code " + yearCode);
+            case "c":
+            case "d":
+                candidateYear = value.substring(13,17);
+                if (candidateYear.equals("    ")) {
+                    return null;
+                } else
+                    throw new IllegalPublicationYearException("Unable to decode end year code " + yearCode);
+            case "e":
+            case "f":
+            case "h":
+            case "i":
+            case "j":
+                return null;
+            case "g":
+                candidateYear = value.substring(13,17);
+                if (candidateYear.equals("9999")) {
+                    return null;
+                } else {
+                    return extractDate(candidateYear);
                 }
-                else if(candidateYear.charAt(2)==' ') {
-                    new IllegalPublicationYearException("Unable to decode year format like"+candidateYear);
-
-                } else if(candidateYear.charAt(3)==' ') {
-                    year.setYear(Integer.valueOf(candidateYear.substring(0,3)));
-                    year.setConfidenceIndex(10);
-                }else {
-                    year.setYear(Integer.valueOf(candidateYear.substring(0,4)));
-                    year.setConfidenceIndex(0);
-                }
-                return year;
             default:
                 throw new IllegalPublicationYearException("Unable to decode year code "+yearCode);
         }
+    }
+
+    private PublicationYear extractDate(String candidateYear) {
+        PublicationYear year = new PublicationYear();
+        if (candidateYear.charAt(2) == ' ' && candidateYear.charAt(3) == ' ') {
+            year.setYear(Integer.valueOf(candidateYear.substring(0, 2)));
+            year.setConfidenceIndex(100);
+        } else if (candidateYear.charAt(2) == ' ') {
+            new IllegalPublicationYearException("Unable to decode year format like" + candidateYear);
+
+        } else if (candidateYear.charAt(3) == ' ') {
+            year.setYear(Integer.valueOf(candidateYear.substring(0, 3)));
+            year.setConfidenceIndex(10);
+        } else {
+            year.setYear(Integer.valueOf(candidateYear.substring(0, 4)));
+            year.setConfidenceIndex(0);
+        }
+        return year;
+    }
+
+    private PublicationYear extractCaseF(String candidateOldestYear, String candidateNewestYear) {
+        int cdtOldestYear = Integer.parseInt(candidateOldestYear);
+        int cdtNewestYear = (candidateNewestYear.equals("    "))?9999:Integer.parseInt(candidateNewestYear);
+        PublicationYear year = new PublicationYear();
+        if (cdtOldestYear > cdtNewestYear) {
+            throw new IllegalPublicationYearException("Oldest Year can't be superior to newest Year");
+        }
+        year.setYear(cdtOldestYear);
+        if (cdtNewestYear != 9999)
+            year.setConfidenceIndex(cdtNewestYear - cdtOldestYear);
+        else
+            year.setConfidenceIndex(0);
+        return year;
     }
 
     public List<Notice> mapList(List<NoticeSolr> source) {

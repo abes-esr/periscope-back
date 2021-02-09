@@ -1,8 +1,10 @@
 package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.entity.PublicationYear;
+import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import fr.abes.periscope.core.util.NoticeMapper;
 import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +37,259 @@ public class NoticeMapperTest {
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
         PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
 
-        Assert.assertEquals(expectedStartYear,startYear.getYear());
-        Assert.assertEquals(expectedStartYearConfidenceIndex,startYear.getConfidenceIndex());
+        Assert.assertEquals(expectedStartYear, startYear.getYear());
+        Assert.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
 
-        Assert.assertEquals(expectedEndYear,endYear.getYear());
-        Assert.assertEquals(expectedEndYearConfidenceIndex,endYear.getConfidenceIndex());
+        Assert.assertEquals(expectedEndYear, endYear.getYear());
+        Assert.assertEquals(expectedEndYearConfidenceIndex, endYear.getConfidenceIndex());
     }
 
+    /**
+     * Test titre mort avec année de début approximative (décennie)
+     */
+    @Test
+    @DisplayName("Titre mort avec année de début approximative (décennie)")
+    public void testDeatTitleWithApproximateStartYear1() throws ParseException {
+        String input = "19970418b199 2004k y0frey50 ba";
+        int expectedStartYear = 199;
+        int expectedStartYearConfidenceIndex = 10;
+        int expectedEndYear = 2004;
+        int expectedEndYearConfidenceIndex = 0;
+
+        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
+        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+
+        Assert.assertEquals(expectedStartYear, startYear.getYear());
+        Assert.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
+
+        Assert.assertEquals(expectedEndYear, endYear.getYear());
+        Assert.assertEquals(expectedEndYearConfidenceIndex, endYear.getConfidenceIndex());
+    }
+
+    /**
+     * Test titre mort avec année de début approximative (siècle)
+     */
+    @Test
+    @DisplayName("Titre mort avec année de début approximative (siècle)")
+    public void testDeatTitleWithApproximateStartYear2() throws ParseException {
+        String input = "19970418b19  2004k y0frey50 ba";
+        int expectedStartYear = 19;
+        int expectedStartYearConfidenceIndex = 100;
+        int expectedEndYear = 2004;
+        int expectedEndYearConfidenceIndex = 0;
+
+        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
+        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+
+        Assert.assertEquals(expectedStartYear, startYear.getYear());
+        Assert.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
+
+        Assert.assertEquals(expectedEndYear, endYear.getYear());
+        Assert.assertEquals(expectedEndYearConfidenceIndex, endYear.getConfidenceIndex());
+    }
+
+    /**
+     * Test titre mort avec année de fin approximative (décennie)
+     */
+    @Test
+    @DisplayName("Titre mort avec année de fin approximative (décennie)")
+    public void testDeatTitleWithApproximateEndYear1() throws ParseException {
+        String input = "19970418b1997200 k y0frey50 ba";
+        int expectedStartYear = 1997;
+        int expectedStartYearConfidenceIndex = 0;
+        int expectedEndYear = 200;
+        int expectedEndYearConfidenceIndex = 10;
+
+        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
+        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+
+        Assert.assertEquals(expectedStartYear, startYear.getYear());
+        Assert.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
+
+        Assert.assertEquals(expectedEndYear, endYear.getYear());
+        Assert.assertEquals(expectedEndYearConfidenceIndex, endYear.getConfidenceIndex());
+    }
+
+    /**
+     * Test titre mort avec année de fin approximative (siècle)
+     */
+    @Test
+    @DisplayName("Titre mort avec année de fin approximative (siècle)")
+    public void testDeatTitleWithApproximateEndYear2() throws ParseException {
+        String input = "19970418b199720  k y0frey50 ba";
+        int expectedStartYear = 1997;
+        int expectedStartYearConfidenceIndex = 0;
+        int expectedEndYear = 20;
+        int expectedEndYearConfidenceIndex = 100;
+
+        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
+        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+
+        Assert.assertEquals(expectedStartYear, startYear.getYear());
+        Assert.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
+
+        Assert.assertEquals(expectedEndYear, endYear.getYear());
+        Assert.assertEquals(expectedEndYearConfidenceIndex, endYear.getConfidenceIndex());
+    }
+
+    /**
+     * Test ressource continue en cours
+     */
+    @DisplayName("Ressource continue en cours")
+    @Test
+    public void testOngoingResource() throws ParseException {
+        String input = "19970418a19979999k y0frey50 ba";
+        int expectedStartYear = 1997;
+        int expectedStartYearConfidenceIndex = 0;
+
+        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
+        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+
+        Assert.assertEquals(expectedStartYear, startYear.getYear());
+        Assert.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
+
+        Assert.assertNull(endYear);
+    }
+
+    /**
+     * Test ressource continue en cours avec exception
+     */
+    @DisplayName("Ressource continue en cours avec exception")
+    @Test
+    public void testOngoingResourceWithException() {
+        String input = "19970418a19972000k y0frey50 ba";
+        Assertions.assertThrows(IllegalPublicationYearException.class, () -> {
+            noticeMapper.buildEndPublicationYear(input);
+        });
+    }
+
+    /**
+     * Test ressource continue dont la situation est inconnue
+     */
+    @DisplayName("ressource continue dont la situation est inconnue")
+    @Test
+    public void testOnGoingResourceWithUnknownSituation() throws ParseException {
+        String input = "19970418c1997    k y0frey50 ba";
+        int expectedStartYear = 1997;
+        int expectedStartYearConfidenceIndex = 0;
+
+        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
+        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+
+        Assert.assertEquals(expectedStartYear, startYear.getYear());
+        Assert.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
+
+        Assert.assertNull(endYear);
+    }
+
+    /**
+     * Test ressource continue en cours dont la situation est inconnue avec exception
+     */
+    @DisplayName("Ressource continue en cours dont la situation est inconnue avec exception")
+    @Test
+    public void testOnGoingResourceWithUnknownSituationWithException() {
+        String input = "19970418c19972000k y0frey50 ba";
+        Assertions.assertThrows(IllegalPublicationYearException.class, () -> {
+            noticeMapper.buildEndPublicationYear(input);
+        });
+    }
+
+    /**
+     * Test reproduction
+     */
+    @DisplayName("reproduction")
+    @Test
+    public void testReproduction() throws ParseException {
+        String input = "19970418e19972000k y0frey50 ba";
+        int expectedStartYear = 1997;
+        int expectedStartYearConfidenceIndex = 0;
+
+        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
+        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+
+        Assert.assertEquals(expectedStartYear, startYear.getYear());
+        Assert.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
+
+        Assert.assertNull(endYear);
+
+    }
+
+    /**
+     * Test monographie dont la date de publication est incertaine
+     */
+    @DisplayName("monographie dont la date de publication est incertaine ")
+    @Test
+    public void testMonographyWithUncertainDate() throws ParseException {
+        String input = "19970418f19972000k y0frey50 ba";
+        int expectedStartYear = 1997;
+        int expectedStartYearConfidenceIndex = 3;
+
+        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
+        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+
+        Assert.assertEquals(expectedStartYear, startYear.getYear());
+        Assert.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
+
+        Assert.assertNull(endYear);
+    }
+
+    /**
+     * Test monographie dont la date de publication est incertaine mais sans date de fin
+     */
+    @DisplayName("monographie dont la date de publication est incertaine sans date de fin")
+    @Test
+    public void testMonographyWithUncertainDateAndNoEndDate() throws ParseException {
+        String input = "19970418f1997    k y0frey50 ba";
+        int expectedStartYear = 1997;
+        int expectedStartYearConfidenceIndex = 0;
+
+        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
+        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+
+        Assert.assertEquals(expectedStartYear, startYear.getYear());
+        Assert.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
+
+        Assert.assertNull(endYear);
+    }
+
+    /**
+     * Test monographie dont la publication s’étend sur plus d’une année
+     */
+    @DisplayName("monographie dont la publication s’étend sur plus d’une année")
+    @Test
+    public void testMonographyOnManyYears() throws ParseException {
+        String input = "19970418g19979999k y0frey50 ba";
+        int expectedStartYear = 1997;
+        int expectedStartYearConfidenceIndex = 0;
+
+        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
+        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+
+        Assert.assertEquals(expectedStartYear, startYear.getYear());
+        Assert.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
+
+        Assert.assertNull(endYear);
+    }
+
+    /**
+     * Test monographie dont la publication s’étend sur plus d’une année encore en cours
+     */
+    @DisplayName("monographie dont la publication s’étend sur plus d’une année encore en cours")
+    @Test
+    public void testMonographyOnManyYearsStillInProgress() throws ParseException {
+        String input = "19970418g19971998k y0frey50 ba";
+        int expectedStartYear = 1997;
+        int expectedStartYearConfidenceIndex = 0;
+        int expectedEndYear = 1998;
+        int expectedEndYearConfidenceIndex = 0;
+
+        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
+        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+
+        Assert.assertEquals(expectedStartYear, startYear.getYear());
+        Assert.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
+
+        Assert.assertEquals(expectedEndYear, endYear.getYear());
+        Assert.assertEquals(expectedEndYearConfidenceIndex, endYear.getConfidenceIndex());
+    }
 }
