@@ -160,7 +160,7 @@ node {
                     newconfig = original
 
                     newconfig = newconfig.replaceAll("spring.main.allow-bean-definition-overriding=true", "")
-                    newconfig = newconfig + System.getProperty("line.separator") "valeur.test=${status}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "valeur.test=${status}"
 
                     writeFile file: "web/src/main/resources/application-dev.properties", text: "${newconfig}"
                 }
@@ -177,7 +177,7 @@ node {
                     newconfig = original
 
                     newconfig = newconfig.replaceAll("spring.main.allow-bean-definition-overriding=true", "")
-                    newconfig = newconfig + System.getProperty("line.separator") "valeur.test=${status}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "valeur.test=${status}"
 
                     writeFile file: "web/src/main/resources/application-test.properties", text: "${newconfig}"
                 }
@@ -194,7 +194,7 @@ node {
                     newconfig = original
 
                     newconfig = newconfig.replaceAll("spring.main.allow-bean-definition-overriding=true", "")
-                    newconfig = newconfig + System.getProperty("line.separator") "valeur.test=${status}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "valeur.test=${status}"
 
                     writeFile file: "web/src/main/resources/application-prod.properties", text: "${newconfig}"
                 }
