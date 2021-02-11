@@ -181,23 +181,23 @@ node {
                     ]) {
                         try {
                             echo 'get service status'
-                            sh "ssh -tt ${hostname} \"${status} ${tomcatServiceName}\""
+                            sh "ssh -tt ${username}@${hostname} \"${status} ${tomcatServiceName}\""
 
                             echo 'stop the service'
-                            sh "ssh -tt ${hostname} \"${stop} ${tomcatServiceName}\""
+                            sh "ssh -tt ${username}@${hostname} \"${stop} ${tomcatServiceName}\""
 
                         } catch(e) {
                             // Maybe the tomcat is not running
                             echo 'maybe the service is not running'
 
                             echo 'we try to start the service'
-                            sh "ssh -tt ${hostname} \"${start} ${tomcatServiceName}\""
+                            sh "ssh -tt ${username}@${hostname} \"${start} ${tomcatServiceName}\""
 
                             echo 'get service status'
-                            sh "ssh -tt ${hostname} \"${status} ${tomcatServiceName}\""
+                            sh "ssh -tt ${username}@${hostname} \"${status} ${tomcatServiceName}\""
 
                             echo 'stop the service'
-                            sh "ssh -tt ${hostname} \"${stop} ${tomcatServiceName}\""
+                            sh "ssh -tt ${username}@${hostname} \"${stop} ${tomcatServiceName}\""
                         }
                     }
                 }
