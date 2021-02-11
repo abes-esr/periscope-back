@@ -152,6 +152,11 @@ node {
             if (ENV == 'DEV') {
                 echo 'Compile for dev profile'
                 echo "--------------------------"
+
+                config = readFile "web/src/main/resources/application-dev.properties"
+                newconfig = config.replaceAll("spring.main.banner-mode=off","spring.main.banner-mode=on")
+                writeFile file: "web/src/main/resources/application-dev.properties", text: "${newconfig}"
+
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pdev"
             }
 
