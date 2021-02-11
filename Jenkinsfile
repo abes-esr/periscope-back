@@ -149,21 +149,20 @@ node {
 
     stage('compile-package') {
         try {
-            sh 'cd '
             if (ENV == 'DEV') {
                 echo 'Compile for dev profile'
                 echo "--------------------------"
-
-                def props = readProperties  file: 'web/src/main/resources/application-test.properties'
-                echo "$props"
-                echo "${props['logging.config']}"
-
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pdev"
             }
 
             if (ENV == 'TEST') {
                 echo 'Compile for test profile'
                 echo "--------------------------"
+
+                config = readFile "web/src/main/resources/application-test.properties"
+                newconfig = config.replaceAll("spring.main.banner-mode=off","spring.main.banner-mode=on")
+                writeFile file: "web/src/main/resources/application-test.properties", text: "${newconfig}"
+
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Ptest"
             }
 
