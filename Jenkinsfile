@@ -147,15 +147,63 @@ node {
         echo "Tests are skipped"
     }
 
+    stage('edit-properties') {
+        try {
+            if (ENV == 'DEV') {
+                withCredentials([
+                        string(credentialsId: 'service.status', variable: 'status')
+                ]) {
+                    echo 'Edition application-dev.properties'
+                    echo "--------------------------"
+
+                    original = readFile "web/src/main/resources/application-dev.properties"
+                    newconfig = original
+
+                    newconfig = newconfig.replaceAll("spring.main.allow-bean-definition-overriding=true", "")
+                    newconfig = newconfig + "valeur-test=${status}"+System.getProperty("line.separator")
+
+                    writeFile file: "web/src/main/resources/application-dev.properties", text: "${newconfig}"
+                }
+            }
+
+            if (ENV == 'TEST') {
+                echo 'Edition application-test.properties'
+                echo "--------------------------"
+
+                original = readFile "web/src/main/resources/application-test.properties"
+                newconfig = original
+
+                newconfig = newconfig.replaceAll("spring.main.allow-bean-definition-overriding=true", "")
+                newconfig = newconfig + "valeur-test=${status}"+System.getProperty("line.separator")
+
+                writeFile file: "web/src/main/resources/application-test.properties", text: "${newconfig}"
+            }
+
+            if (ENV == 'PROD') {
+                echo 'Edition application-prod.properties'
+                echo "--------------------------"
+
+                original = readFile "web/src/main/resources/application-prod.properties"
+                newconfig = original
+
+                newconfig = newconfig.replaceAll("spring.main.allow-bean-definition-overriding=true", "")
+                newconfig = newconfig + "valeur-test=${status}"+System.getProperty("line.separator")
+
+                writeFile file: "web/src/main/resources/application-prod.properties", text: "${newconfig}"
+            }
+
+        } catch(e) {
+            currentBuild.result = hudson.model.Result.FAILURE.toString()
+            notifySlack(slackChannel,e.getLocalizedMessage())
+            throw e
+        }
+    }
+
     stage('compile-package') {
         try {
             if (ENV == 'DEV') {
                 echo 'Compile for dev profile'
                 echo "--------------------------"
-
-                config = readFile "web/src/main/resources/application-dev.properties"
-                newconfig = config.replaceAll("spring.main.banner-mode=off","spring.main.banner-mode=on")
-                writeFile file: "web/src/main/resources/application-dev.properties", text: "${newconfig}"
 
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pdev"
             }
@@ -164,16 +212,13 @@ node {
                 echo 'Compile for test profile'
                 echo "--------------------------"
 
-                config = readFile "web/src/main/resources/application-test.properties"
-                newconfig = config.replaceAll("spring.main.banner-mode=off","spring.main.banner-mode=on")
-                writeFile file: "web/src/main/resources/application-test.properties", text: "${newconfig}"
-
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Ptest"
             }
 
             if (ENV == 'PROD') {
                 echo 'Compile for prod profile'
                 echo "--------------------------"
+
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pprod"
             }
 
