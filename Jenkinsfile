@@ -151,17 +151,20 @@ node {
         try {
             sh 'cd '
             if (ENV == 'DEV') {
-                echo 'compile for dev profile'
+                echo 'Compile for dev profile'
+                echo "--------------------------"
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pdev"
             }
 
             if (ENV == 'TEST') {
-                echo 'compile for test profile'
+                echo 'Compile for test profile'
+                echo "--------------------------"
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Ptest"
             }
 
             if (ENV == 'PROD') {
-                echo 'compile for prod profile'
+                echo 'Compile for prod profile'
+                echo "--------------------------"
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pprod"
             }
 
@@ -200,11 +203,11 @@ node {
                             string(credentialsId: 'service.stop', variable: 'stop'),
                             string(credentialsId: 'service.start', variable: 'start')
                     ]) {
-                        echo "--------------------------"
-                        echo "stop tomcat on ${hostname}"
+                        echo "Stop service on ${serverHostnames[i]}"
                         echo "--------------------------"
 
                         try {
+
                             echo 'get service status'
                             sh "ssh -tt ${username}@${hostname} \"${status} ${tomcatServiceName}\""
 
@@ -242,9 +245,8 @@ node {
                             usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
                             string(credentialsId: "${serverHostnames[i]}", variable: 'hostname')
                     ]) {
-                        echo "-------------------------------"
-                        echo "deploy to tomcat on ${hostname}"
-                        echo "-------------------------------"
+                        echo "Deploy to ${serverHostnames[i]}"
+                        echo "--------------------------"
 
                         sh "ssh -tt ${username}@${hostname} \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
                         sh "scp ${warDir}${warName}.war ${username}@${hostname}:${tomcatWebappsDir}"
@@ -268,9 +270,8 @@ node {
                             string(credentialsId: 'service.status', variable: 'status'),
                             string(credentialsId: 'service.start', variable: 'start')
                     ]) {
-                        echo "-----------------------------"
-                        echo "restart tomcat on ${hostname}"
-                        echo "-----------------------------"
+                        echo "Restart service on ${serverHostnames[i]}"
+                        echo "--------------------------"
 
                         echo 'start service'
                         sh "ssh -tt ${username}@${hostname} \"${start} ${tomcatServiceName}\""
