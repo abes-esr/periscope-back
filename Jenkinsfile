@@ -172,27 +172,32 @@ node {
             if (ENV == 'DEV') {
                 echo 'stop tomcat on cirse1-dev'
                 sshagent(credentials: ['cirse1-dev-ssh-key']) {
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-
+                    withCredentials([
+                            usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
+                            string(credentialsId: 'dev-server-1', variable: 'hostname'),
+                            string(credentialsId: 'status', variable: 'status'),
+                            string(credentialsId: 'stop', variable: 'stop'),
+                            string(credentialsId: 'start', variable: 'start')
+                    ]) {
                         try {
-                            echo 'get status cirse1 dev (should be running)'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+                            echo 'get service status'
+                            sh "ssh -tt ${hostname} \"${status} ${tomcatServiceName}\""
 
-                            echo 'stop cirse1 dev'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                            echo 'stop the service'
+                            sh "ssh -tt ${hostname} \"${stop} ${tomcatServiceName}\""
 
                         } catch(e) {
                             // Maybe the tomcat is not running
-                            echo 'cirse1 dev is not running'
+                            echo 'maybe the service is not running'
 
-                            echo 'we try to start cirse1 dev'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
+                            echo 'we try to start the service'
+                            sh "ssh -tt ${hostname} \"${start} ${tomcatServiceName}\""
 
-                            echo 'get status cirse1 dev'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+                            echo 'get service status'
+                            sh "ssh -tt ${hostname} \"${status} ${tomcatServiceName}\""
 
-                            echo 'stop cirse1 dev'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                            echo 'stop the service'
+                            sh "ssh -tt ${hostname} \"${stop} ${tomcatServiceName}\""
                         }
                     }
                 }
