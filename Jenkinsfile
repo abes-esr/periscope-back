@@ -151,7 +151,8 @@ node {
         try {
             if (ENV == 'DEV') {
                 withCredentials([
-                        string(credentialsId: 'service.status', variable: 'status')
+                        usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
+                        string(credentialsId: 'periscope.oracle', variable: 'url')
                 ]) {
                     echo 'Edition application-dev.properties'
                     echo "--------------------------"
@@ -160,7 +161,10 @@ node {
                     newconfig = original
 
                     newconfig = newconfig.replaceAll("spring.main.allow-bean-definition-overriding=true", "")
-                    newconfig = newconfig + System.getProperty("line.separator") + "valeur.test=${status}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "sujets.datasource.url=${url}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "sujets.datasource.username=${username}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "sujets.datasource.password=${pass}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "sujets.datasource.driver-class-name=oracle.jdbc.OracleDrive"
 
                     writeFile file: "web/src/main/resources/application-dev.properties", text: "${newconfig}"
                 }
@@ -168,7 +172,8 @@ node {
 
             if (ENV == 'TEST') {
                 withCredentials([
-                        string(credentialsId: 'service.status', variable: 'status')
+                        usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
+                        string(credentialsId: 'periscope.oracle', variable: 'url')
                 ]) {
                     echo 'Edition application-test.properties'
                     echo "--------------------------"
@@ -177,7 +182,10 @@ node {
                     newconfig = original
 
                     newconfig = newconfig.replaceAll("spring.main.allow-bean-definition-overriding=true", "")
-                    newconfig = newconfig + System.getProperty("line.separator") + "valeur.test=${status}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "sujets.datasource.url=${url}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "sujets.datasource.username=${username}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "sujets.datasource.password=${pass}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "sujets.datasource.driver-class-name=oracle.jdbc.OracleDrive"
 
                     writeFile file: "web/src/main/resources/application-test.properties", text: "${newconfig}"
                 }
@@ -185,7 +193,8 @@ node {
 
             if (ENV == 'PROD') {
                 withCredentials([
-                        string(credentialsId: 'service.status', variable: 'status')
+                        usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
+                        string(credentialsId: 'periscope.oracle', variable: 'url')
                 ]) {
                     echo 'Edition application-prod.properties'
                     echo "--------------------------"
@@ -194,8 +203,11 @@ node {
                     newconfig = original
 
                     newconfig = newconfig.replaceAll("spring.main.allow-bean-definition-overriding=true", "")
-                    newconfig = newconfig + System.getProperty("line.separator") + "valeur.test=${status}"
-
+                    newconfig = newconfig + System.getProperty("line.separator") + "sujets.datasource.url=${url}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "sujets.datasource.username=${username}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "sujets.datasource.password=${pass}"
+                    newconfig = newconfig + System.getProperty("line.separator") + "sujets.datasource.driver-class-name=oracle.jdbc.OracleDrive"
+                    
                     writeFile file: "web/src/main/resources/application-prod.properties", text: "${newconfig}"
                 }
             }
