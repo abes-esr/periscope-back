@@ -153,6 +153,11 @@ node {
             if (ENV == 'DEV') {
                 echo 'Compile for dev profile'
                 echo "--------------------------"
+
+                def props = readProperties  file: 'web/src/main/resources/application-test.properties'
+                echo "$props"
+                echo "${props['logging.config']}"
+
                 sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pdev"
             }
 
