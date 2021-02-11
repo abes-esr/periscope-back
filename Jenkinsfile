@@ -192,8 +192,6 @@ node {
     stage ('stop tomcat'){
         for (int i = 0; i < serverHostnames.size(); i++) { //Pour chaque serveur
             try {
-                echo "stop tomcat on ${serverHostnames[i]}"
-
                 sshagent(credentials: ["${serverCredentials[i]}"]) {
                     withCredentials([
                             usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
@@ -202,6 +200,10 @@ node {
                             string(credentialsId: 'service.stop', variable: 'stop'),
                             string(credentialsId: 'service.start', variable: 'start')
                     ]) {
+                        echo "--------------------------"
+                        echo "stop tomcat on ${hostname}"
+                        echo "--------------------------"
+
                         try {
                             echo 'get service status'
                             sh "ssh -tt ${username}@${hostname} \"${status} ${tomcatServiceName}\""
@@ -235,13 +237,15 @@ node {
     stage ('deploy to tomcat'){
         for (int i = 0; i < serverHostnames.size(); i++) { //Pour chaque serveur
             try {
-                echo "deploy to tomcat on ${serverHostnames[i]}"
-
                 sshagent(credentials: ["${serverCredentials[i]}"]) {
                     withCredentials([
                             usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
                             string(credentialsId: "${serverHostnames[i]}", variable: 'hostname')
                     ]) {
+                        echo "-------------------------------"
+                        echo "deploy to tomcat on ${hostname}"
+                        echo "-------------------------------"
+
                         sh "ssh -tt ${username}@${hostname} \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
                         sh "scp ${warDir}${warName}.war ${username}@${hostname}:${tomcatWebappsDir}"
                     }
@@ -257,8 +261,6 @@ node {
     stage ('restart tomcat'){
         for (int i = 0; i < serverHostnames.size(); i++) { //Pour chaque serveur
             try {
-                echo "restart tomcat on ${serverHostnames[i]}"
-
                 sshagent(credentials: ["${serverCredentials[i]}"]) {
                     withCredentials([
                             usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
@@ -266,6 +268,10 @@ node {
                             string(credentialsId: 'service.status', variable: 'status'),
                             string(credentialsId: 'service.start', variable: 'start')
                     ]) {
+                        echo "-----------------------------"
+                        echo "restart tomcat on ${hostname}"
+                        echo "-----------------------------"
+
                         echo 'start service'
                         sh "ssh -tt ${username}@${hostname} \"${start} ${tomcatServiceName}\""
 
