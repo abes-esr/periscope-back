@@ -37,4 +37,6 @@ public interface NoticeField {
     String COUNTRY_S = "102-a_s";
     String COUNTRY_T = "102-a_t";
     String LANGUAGE = "101-a_t";
+    String EXTERNAL_URLS_S = "033-a_s";
+    String NB_LOC = "NbLocs_i";
 }

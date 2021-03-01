@@ -10,6 +10,7 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import java.io.Serializable;
 import java.util.HashSet;
+import java.util.List;
 
 /**
  * Représente une notice au format SolR
@@ -64,6 +65,12 @@ public class NoticeSolr implements Serializable {
 
     @Indexed(name = NoticeField.CONTINIOUS_TYPE, type = "string")
     private String continiousType;
+
+    @Indexed(name = NoticeField.EXTERNAL_URLS_S, type = "string")
+    private List<String> externalURLs;
+
+    @Indexed(name = NoticeField.NB_LOC, type = "integer")
+    private Integer nbLocation;
 
     @Override
     public boolean equals(Object obj) {

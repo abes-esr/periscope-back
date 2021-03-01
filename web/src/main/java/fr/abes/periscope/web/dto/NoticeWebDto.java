@@ -1,6 +1,9 @@
 package fr.abes.periscope.web.dto;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.abes.periscope.core.entity.PublicationYear;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -52,10 +55,35 @@ public class NoticeWebDto {
     @JsonProperty("type")
     private String continiousType;
 
-    @JsonProperty("date_debut")
-    private Date startDate;
+    @JsonIgnore
+    private PublicationYear startYear;
+    @JsonIgnore
+    private PublicationYear endYear;
 
-    @JsonProperty("date_fin")
-    private Date endDate;
+    @JsonGetter("date_debut")
+    protected Integer getStartYear() {
+        return startYear.getYear();
+    }
+
+    @JsonGetter("date_debut_indice")
+    protected Integer getStartYearConfidenceIndex() {
+        return startYear.getConfidenceIndex();
+    }
+
+    @JsonGetter("date_fin")
+    protected Integer getEndYear() {
+        return endYear.getYear();
+    }
+
+    @JsonGetter("date_fin_indice")
+    protected Integer getEndYearConfidenceIndex() {
+        return endYear.getConfidenceIndex();
+    }
+
+    @JsonProperty("lien_mirabel")
+    private String mirabelURL;
+
+    @JsonProperty("nb_location")
+    private Integer nbLocation;
 
 }

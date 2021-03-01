@@ -6,9 +6,9 @@ package fr.abes.periscope.core.criterion;
 public interface LogicalOperator {
 
     /** Connecteur logique ET */
-    public static final String AND = "ET";
+    String AND = "ET";
     /** Connecteur logique OU */
-    public static final String OR = "OU";
+    String OR = "OU";
     /** Connecteur logique SAUF */
-    public static final String EXCEPT = "SAUF";
+    String EXCEPT = "SAUF";
 }

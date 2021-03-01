@@ -3,7 +3,6 @@ package fr.abes.periscope.core.entity;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
 import java.util.HashSet;
 
 /**
@@ -41,9 +40,13 @@ public class Notice {
 
     private String continiousType;
 
-    private Date startDate;
+    private PublicationYear startYear;
 
-    private Date endDate;
+    private PublicationYear endYear;
+
+    private String mirabelURL;
+
+    private Integer nbLocation;
 
     @Override
     public boolean equals(Object obj) {
@@ -69,7 +72,7 @@ public class Notice {
 
     @Override
     public String toString() {
-        return "Notice {"+ "ppn="+ ppn+", issn="+issn+", startDate="+startDate+", endDate="+endDate+"}";
+        return "Notice {"+ "ppn="+ ppn+", issn="+issn+", startDate="+ startYear +", endDate="+ endYear +"}";
     }
 
 }
