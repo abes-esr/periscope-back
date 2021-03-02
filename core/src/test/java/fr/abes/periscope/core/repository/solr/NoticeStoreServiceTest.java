@@ -3,8 +3,10 @@ package fr.abes.periscope.core.repository.solr;
 import fr.abes.periscope.core.EnableOnIntegrationTest;
 import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionPpn;
+import fr.abes.periscope.core.criterion.CriterionRcr;
 import fr.abes.periscope.core.criterion.CriterionTitleWords;
 import fr.abes.periscope.core.entity.Notice;
+import fr.abes.periscope.core.entity.NoticeSolr;
 import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import org.junit.Assert;
@@ -12,6 +14,8 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -119,6 +123,19 @@ public class NoticeStoreServiceTest {
         Notice candidate = noticeService.findNoticesByCriteria(criteria, 0,5).get(0);
 
         Assert.assertEquals(expected,candidate.getNbLocation());
+    }
+
+    @Test
+    @DisplayName("Fix bug NumberFormatException: For input string: \"19  \"")
+    public void testFixBug1() {
+        List<Criterion> criteria = new LinkedList<>();
+        List<String> rcr = Arrays.asList("661362104");
+        List<String> rcr_operator = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr("SAUF",rcr,rcr_operator);
+        criteria.add(criterionRcr);
+
+        List<Notice> newCandidates = noticeService.findNoticesByCriteria(criteria, 0,25);
+
     }
 
 }

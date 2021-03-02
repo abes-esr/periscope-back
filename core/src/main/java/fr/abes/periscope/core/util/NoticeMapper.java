@@ -1,13 +1,11 @@
 package fr.abes.periscope.core.util;
 
-import fr.abes.periscope.core.criterion.LogicalOperator;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.NoticeSolr;
 import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.entity.PublicationYear;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -113,8 +111,8 @@ public class NoticeMapper {
     }
 
     private PublicationYear extractCaseF(String candidateOldestYear, String candidateNewestYear) {
-        int cdtOldestYear = Integer.parseInt(candidateOldestYear);
-        int cdtNewestYear = (candidateNewestYear.equals("    ")) ? 9999 : Integer.parseInt(candidateNewestYear);
+        int cdtOldestYear = Integer.parseInt(candidateOldestYear.trim());
+        int cdtNewestYear = (candidateNewestYear.equals("    ")) ? 9999 : Integer.parseInt(candidateNewestYear.trim());
         PublicationYear year = new PublicationYear();
         if (cdtOldestYear > cdtNewestYear) {
             throw new IllegalPublicationYearException("Oldest Year can't be superior to newest Year");
