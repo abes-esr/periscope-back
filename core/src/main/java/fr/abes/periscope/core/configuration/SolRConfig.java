@@ -5,6 +5,7 @@ import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.apache.solr.common.params.ModifiableSolrParams;
+import org.modelmapper.ModelMapper;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -22,7 +23,7 @@ public class SolRConfig {
         params.add("wt", "xml");
         params.add("version","2.2");
         params.add("indent", "on");
-        params.add("omitHeader","true");
+        params.add("omitHeader","false");
 
         HttpSolrClient.Builder builder = new HttpSolrClient.Builder()
                 .withBaseSolrUrl("https://periscope.sudoc.fr/SolrProxy")
@@ -49,6 +50,11 @@ public class SolRConfig {
     @Bean
     public SolrQueryBuilder builderQuery() {
         return new SolrQueryBuilder();
+    }
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
     }
 }
 

@@ -1,10 +1,13 @@
 package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.*;
+import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
+import fr.abes.periscope.core.repository.solr.NoticeField;
 import fr.abes.periscope.web.dto.*;
+import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
@@ -12,19 +15,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
 public class DtoMapper {
-
     @Autowired
     private ModelMapper modelMapper;
 
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
 
     /**
      * Fonction de mapping générique pour des listes
@@ -51,6 +50,39 @@ public class DtoMapper {
         return modelMapper.map(source, targetClass);
     }
 
+    /** Convertisseur pour les critères de tri
+     *
+     */
+    @Bean
+    public void converterSort() {
+        Converter<CriterionSortWebDto, CriterionSort> myConverter = new Converter<CriterionSortWebDto, CriterionSort>() {
+            @Override
+            public CriterionSort convert(MappingContext<CriterionSortWebDto, CriterionSort> mappingContext) {
+                CriterionSortWebDto s = mappingContext.getSource();
+                final String[] field = {""};
+                try {
+                    Class c = NoticeField.class;
+                    Arrays.stream(c.getDeclaredFields()).forEach(n -> {
+                        if (n.getName().equalsIgnoreCase(s.getSort())) {
+                            try {
+                                field[0] = String.valueOf(n.get(s.getSort()));
+                            } catch (IllegalAccessException e) {
+                                throw new IllegalOperatorException(s.getSort() + " : Critère de tri inconnu");
+                            }
+                        }
+                    });
+                    if (field[0].isEmpty()) {
+                        throw new IllegalOperatorException(s.getSort() + " : Critère de tri inconnu");
+                    }
+                    CriterionSort d = new CriterionSort(field[0], s.getOrder());
+                    return d;
+                } catch (IllegalOperatorException ex) {
+                    throw new IllegalOperatorException(s.getSort() + " : " + ex.getMessage());
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
     /**
      * Convertisseur pour les critères PCP (DTO vers objet métier)
      */

@@ -24,17 +24,17 @@ public class PublicController {
     private final NoticeStoreService noticeStoreService;
 
     /** Service pour le mapping DTO */
-    @Autowired
-    private DtoMapper dtoMapper;
+    private final DtoMapper dtoMapper;
 
     @Autowired
-    public PublicController(NoticeStoreService service) {
-        noticeStoreService = service;
+    public PublicController(NoticeStoreService service, DtoMapper dtoMapper) {
+        this.noticeStoreService = service;
+        this.dtoMapper = dtoMapper;
     }
 
     @PostMapping("/notice/findByCriteria")
-    public List<NoticeWebDto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size,@RequestBody @Valid LinkedList<CriterionWebDto> userCriteria) throws IllegalCriterionException {
-
+    public List<NoticeWebDto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size,@RequestBody @Valid RequestParameters requestParameters) throws IllegalCriterionException {
+        LinkedList<CriterionWebDto> userCriteria = requestParameters.getUserCriteria();
         if (userCriteria.size() == 0) {
             throw new IllegalCriterionException("Criteria list cannot be empty");
         }
@@ -77,7 +77,16 @@ public class PublicController {
             }
         }
 
-        List<Notice> candidate = noticeStoreService.findNoticesByCriteria(criteria,page,size);
+        List<CriterionSort>  sortCriteria = new LinkedList<>();
+        LinkedList<CriterionSortWebDto> userSortCriteria = requestParameters.getSortCriteria();
+        if (userSortCriteria.size() != 0) {
+            Iterator<CriterionSortWebDto> userSortCriteriaIterator = userSortCriteria.iterator();
+            while (userSortCriteriaIterator.hasNext()) {
+                CriterionSortWebDto sortCriterion = userSortCriteriaIterator.next();
+                sortCriteria.add(dtoMapper.map(sortCriterion, CriterionSort.class));
+            }
+        }
+        List<Notice> candidate = noticeStoreService.findNoticesByCriteria(criteria,sortCriteria,page,size);
         return dtoMapper.mapList(candidate, NoticeWebDto.class);
 
     }
