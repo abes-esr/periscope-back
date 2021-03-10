@@ -6,6 +6,7 @@ import fr.abes.periscope.core.repository.solr.AdvancedNoticeRepository;
 import fr.abes.periscope.core.repository.solr.NoticeField;
 import fr.abes.periscope.core.repository.solr.SolrQueryBuilder;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -20,14 +21,14 @@ import java.util.List;
 /**
  * Représente un dépôt de Notice SolR avec des requêtes complexes
  */
-@AllArgsConstructor
+@Data
 @Slf4j
 @Repository
 public class AdvancedNoticeRepositoryImpl implements AdvancedNoticeRepository {
 
-    private SolrTemplate solrTemplate;
+    private final SolrTemplate solrTemplate;
 
-    private SolrQueryBuilder builderQuery;
+    private final SolrQueryBuilder builderQuery;
 
     @Override
     /**

@@ -33,7 +33,7 @@ public class SolRConfig {
     }
 
     @Bean
-    public SolrTemplate solrTemplate(SolrClient client) throws Exception {
+    public SolrTemplate solrTemplate(SolrClient client) {
         SolrTemplate template = new SolrTemplate(client);
         return template;
     }

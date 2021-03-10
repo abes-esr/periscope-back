@@ -2,6 +2,8 @@ package fr.abes.periscope.web.controller;
 
 import fr.abes.periscope.PeriscopeApplication;
 import fr.abes.periscope.core.entity.Notice;
+import fr.abes.periscope.core.entity.NoticeSolr;
+import fr.abes.periscope.core.repository.NoticeRepository;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import fr.abes.periscope.web.util.DtoMapper;
 import org.aspectj.weaver.ast.Not;
@@ -12,10 +14,12 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,28 +35,22 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
-@AutoConfigureMockMvc
-@SpringBootTest(classes = PeriscopeApplication.class)
+@WebMvcTest(PublicController.class)
 public class PublicControllerTest {
-    @InjectMocks
-    protected PublicController publicController;
-
     @Autowired
-    MockMvc mockMvc;
+    ApplicationContext context;
 
     @MockBean
     NoticeStoreService service;
 
     @Autowired
+    private MockMvc mockMvc;
+
+    @Autowired
     DtoMapper mapper;
 
-    @Before
-    public void setup(){
-        publicController = new PublicController(service, mapper);
-    }
-
     Notice notice;
+
     @BeforeEach
     void init() {
         notice = new Notice();
@@ -69,7 +67,7 @@ public class PublicControllerTest {
     void testSort() throws Exception {
         List<Notice> notices = new ArrayList<>();
         notices.add(notice);
-        given(this.service.findNoticesByCriteria(any(), any(), 0, 25)).willReturn(notices);
+        given(this.service.findNoticesByCriteria(any(), any(), 0,25)).willReturn(notices);
         this.mockMvc.perform(post("/api/notice/findByCriteria?page=0&size=25").accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk()).andExpect(jsonPath("$.ppn").value("12345678"));
     }
