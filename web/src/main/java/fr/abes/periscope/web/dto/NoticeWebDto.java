@@ -7,7 +7,6 @@ import fr.abes.periscope.core.entity.PublicationYear;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.Date;
 import java.util.HashSet;
 
 @Getter @Setter

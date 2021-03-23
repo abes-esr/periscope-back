@@ -6,25 +6,29 @@ import fr.abes.periscope.core.repository.solr.AdvancedNoticeRepository;
 import fr.abes.periscope.core.repository.solr.NoticeField;
 import fr.abes.periscope.core.repository.solr.SolrQueryBuilder;
 import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 /**
  * Représente un dépôt de Notice SolR avec des requêtes complexes
  */
-@AllArgsConstructor
+@Data
 @Slf4j
+@Repository
 public class AdvancedNoticeRepositoryImpl implements AdvancedNoticeRepository {
 
-    private SolrTemplate solrTemplate;
+    private final SolrTemplate solrTemplate;
 
-    private SolrQueryBuilder builderQuery;
+    private final SolrQueryBuilder builderQuery;
 
     @Override
     /**
@@ -33,7 +37,7 @@ public class AdvancedNoticeRepositoryImpl implements AdvancedNoticeRepository {
      * @param page La page souhaitée
      * @return List<NoticeSolr> Liste de Notices SolR
      */
-    public List<NoticeSolr> findNoticesByCriteria(List<Criterion> criteria, Pageable page) {
+    public List<NoticeSolr> findNoticesByCriteria(List<Criterion> criteria, Sort sort, Pageable page) {
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria),page);
         solrQuery.addProjectionOnFields(
@@ -55,7 +59,7 @@ public class AdvancedNoticeRepositoryImpl implements AdvancedNoticeRepository {
                 NoticeField.CONTINIOUS_TYPE,
                 NoticeField.EXTERNAL_URLS_S,
                 NoticeField.NB_LOC);
-
+        solrQuery.addSort(sort);
         // Debug query
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
@@ -65,7 +69,7 @@ public class AdvancedNoticeRepositoryImpl implements AdvancedNoticeRepository {
         return results.getContent();
     }
 
-    public List<NoticeSolr> findNoticesBySolrQuery(String query, Pageable page) {
+    public List<NoticeSolr> findNoticesBySolrQuery(String query, Sort sort, Pageable page) {
 
         SimpleQuery solrQuery = new SimpleQuery(query,page);
         solrQuery.addProjectionOnFields(
@@ -85,7 +89,7 @@ public class AdvancedNoticeRepositoryImpl implements AdvancedNoticeRepository {
                 NoticeField.SECTION_TITLE,
                 NoticeField.KEY_TITLE_QUALIFIER,
                 NoticeField.CONTINIOUS_TYPE);
-
+        solrQuery.addSort(sort);
         // Debug query
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);

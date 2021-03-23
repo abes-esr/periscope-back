@@ -6,7 +6,6 @@ import fr.abes.periscope.core.criterion.CriterionPpn;
 import fr.abes.periscope.core.criterion.CriterionRcr;
 import fr.abes.periscope.core.criterion.CriterionTitleWords;
 import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.NoticeSolr;
 import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import org.junit.Assert;
@@ -14,8 +13,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -36,7 +33,7 @@ public class NoticeStoreServiceTest {
      */
     @Test
     @DisplayName("Journal Le Monde")
-    public void testLeMonde() {
+    void testLeMonde() {
 
         List<Criterion> criteria = new LinkedList<>();
 
@@ -45,7 +42,8 @@ public class NoticeStoreServiceTest {
         CriterionTitleWords criterion = new CriterionTitleWords("ET",mots,operator);
         criteria.add(criterion);
 
-        List<Notice> candidates = noticeService.findNoticesByCriteria(criteria, 0,5);
+        List<Notice> candidates = noticeService.findNoticesByCriteria(criteria, new LinkedList<>(), 0,5);
+
     }
 
     /**
@@ -53,7 +51,7 @@ public class NoticeStoreServiceTest {
      */
     @Test
     @DisplayName("Notice sans type de ressource continue")
-    public void testNoticeWithOutResourceType() {
+    void testNoticeWithOutResourceType() {
         String expectedType = OnGoingResourceType.X;
 
         List<Criterion> criteria = new LinkedList<>();
@@ -62,7 +60,7 @@ public class NoticeStoreServiceTest {
         CriterionPpn criterion = new CriterionPpn("ET",ppn);
         criteria.add(criterion);
 
-        Notice candidate = noticeService.findNoticesByCriteria(criteria, 0,5).get(0);
+        Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
 
         Assert.assertEquals(expectedType,candidate.getContiniousType());
 
@@ -73,7 +71,7 @@ public class NoticeStoreServiceTest {
      */
     @Test
     @DisplayName("Notice avec lien Mirabel")
-    public void testNoticeWithMirabelLink() {
+    void testNoticeWithMirabelLink() {
         String expectedType = "https://reseau-mirabel.info/revue/titre-id/5072";
 
         List<Criterion> criteria = new LinkedList<>();
@@ -82,7 +80,7 @@ public class NoticeStoreServiceTest {
         CriterionPpn criterion = new CriterionPpn("ET",ppn);
         criteria.add(criterion);
 
-        Notice candidate = noticeService.findNoticesByCriteria(criteria, 0,5).get(0);
+        Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
 
         Assert.assertEquals(expectedType,candidate.getMirabelURL());
     }
@@ -92,7 +90,7 @@ public class NoticeStoreServiceTest {
      */
     @Test
     @DisplayName("Notice sans lien Mirabel")
-    public void testNoticeWithOutMirabelLink() {
+    void testNoticeWithOutMirabelLink() {
         String expectedType = null;
 
         List<Criterion> criteria = new LinkedList<>();
@@ -101,7 +99,7 @@ public class NoticeStoreServiceTest {
         CriterionPpn criterion = new CriterionPpn("ET",ppn);
         criteria.add(criterion);
 
-        Notice candidate = noticeService.findNoticesByCriteria(criteria, 0,5).get(0);
+        Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
 
         Assert.assertEquals(expectedType,candidate.getMirabelURL());
     }
@@ -111,7 +109,7 @@ public class NoticeStoreServiceTest {
      */
     @Test
     @DisplayName("Notice nombre de localisation")
-    public void testNoticeNbLoc() {
+    void testNoticeNbLoc() {
         Integer expected = 3;
 
         List<Criterion> criteria = new LinkedList<>();
@@ -120,22 +118,21 @@ public class NoticeStoreServiceTest {
         CriterionPpn criterion = new CriterionPpn("ET",ppn);
         criteria.add(criterion);
 
-        Notice candidate = noticeService.findNoticesByCriteria(criteria, 0,5).get(0);
+        Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
 
         Assert.assertEquals(expected,candidate.getNbLocation());
     }
 
     @Test
     @DisplayName("Fix bug NumberFormatException: For input string: \"19  \"")
-    public void testFixBug1() {
+    void testFixBug1() {
         List<Criterion> criteria = new LinkedList<>();
         List<String> rcr = Arrays.asList("661362104");
         List<String> rcr_operator = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr("SAUF",rcr,rcr_operator);
         criteria.add(criterionRcr);
 
-        List<Notice> newCandidates = noticeService.findNoticesByCriteria(criteria, 0,25);
+        List<Notice> newCandidates = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,25);
 
     }
-
 }
