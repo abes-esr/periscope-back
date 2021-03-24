@@ -3,14 +3,20 @@ package fr.abes.periscope.core.service;
 import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionSort;
 import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.NoticeSolrV1;
-import fr.abes.periscope.core.repository.NoticeV1Repository;
+import fr.abes.periscope.core.entity.NoticeSolr;
+import fr.abes.periscope.core.repository.solr.v1.NoticeV1Repository;
+import fr.abes.periscope.core.repository.solr.v2.NoticeV2Repository;
 import fr.abes.periscope.core.util.NoticeMapper;
 import fr.abes.periscope.core.util.TrackExecutionTime;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -23,7 +29,21 @@ import java.util.*;
 @Data
 public class NoticeStoreService {
 
-    private final NoticeV1Repository noticeRepository;
+    @Autowired
+    @Qualifier("solr-v1")
+    private SolrTemplate solrV1Template;
+
+    @Autowired
+    @Qualifier("solr-v2")
+    private SolrTemplate solrV2Template;
+
+    private final NoticeV1Repository noticeV1Repository;
+    private final NoticeV2Repository noticeV2Repository;
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 
     private final NoticeMapper noticeMapper;
 
@@ -41,7 +61,8 @@ public class NoticeStoreService {
         criteriaSort.forEach(c -> {
             orders.add(new Sort.Order(c.getOrder(), c.getSort()));
         });
-        List<NoticeSolrV1> notices = noticeRepository.findNoticesByCriteria(criteria, Sort.by(orders), PageRequest.of(page, size));
-        return noticeMapper.mapList(notices);
+
+        List<NoticeSolr> notices = noticeV1Repository.findNoticesByCriteria(criteria, Sort.by(orders), PageRequest.of(page, size));
+        return noticeMapper.mapList(notices,Notice.class);
     }
 }

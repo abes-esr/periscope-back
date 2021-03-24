@@ -1,9 +1,9 @@
-package fr.abes.periscope.core.entity;
+package fr.abes.periscope.core.entity.v1.solr;
 
 /**
  * Représente les champs SolR pour une Notice SolR
  */
-public interface NoticeV1Field {
+public interface NoticeV1SolrField {
 
     String PCP_S = "930-z_s";
     String PCP_T = "930-z_t";

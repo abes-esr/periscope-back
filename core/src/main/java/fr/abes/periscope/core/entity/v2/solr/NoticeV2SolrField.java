@@ -1,6 +1,6 @@
-package fr.abes.periscope.core.entity;
+package fr.abes.periscope.core.entity.v2.solr;
 
-public interface NoticeV2Field {
+public interface NoticeV2SolrField {
 
     String ID = "id";
     String ID_TYPE = "string";

@@ -1,6 +1,7 @@
 package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.criterion.*;
+import fr.abes.periscope.core.repository.solr.v1.SolrV1QueryBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test la construction de requête SolR à partir des critères de recherche.
  */
-@SpringBootTest(classes = SolrQueryBuilder.class)
-public class SolrQueryBuilderTest {
+@SpringBootTest(classes = SolrV1QueryBuilder.class)
+public class SolrV1QueryBuilderTest {
 
     @Autowired
-    private SolrQueryBuilder builderQuery;
+    private SolrV1QueryBuilder builderQuery;
 
     /**
      * Test de l'historiette #id 12

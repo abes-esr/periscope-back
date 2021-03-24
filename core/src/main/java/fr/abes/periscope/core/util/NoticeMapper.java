@@ -1,15 +1,25 @@
 package fr.abes.periscope.core.util;
 
 import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.NoticeSolrV1;
+import fr.abes.periscope.core.entity.NoticeSolr;
 import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.entity.PublicationYear;
+import fr.abes.periscope.core.entity.v1.NoticeV1;
+import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
+import fr.abes.periscope.core.entity.v2.NoticeV2;
+import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.Converter;
+import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.spi.ErrorMessage;
+import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +29,98 @@ public class NoticeMapper {
 
     @Autowired
     private ModelMapper modelMapper;
+
+    /**
+     * Fonction de mapping générique pour des listes
+     *
+     * @param source      Liste source
+     * @param targetClass Classe des objets cibles
+     * @return Liste des objets cibles
+     */
+    public <S, T> List<T> mapList(List<S> source, Class<T> targetClass) {
+        return source
+                .stream()
+                .map(element -> modelMapper.map(element, targetClass))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Fonction de mapping générique pour un objet
+     *
+     * @param source      Objet source
+     * @param targetClass Classe de l'objet cible
+     * @return Objet cible
+     */
+    public <S, T> T map(S source, Class<T> targetClass) {
+        return modelMapper.map(source, targetClass);
+    }
+
+    /**
+     * Convertisseur pour les notices SolR vers les notices PERISCOPE
+     */
+    @Bean
+    public void converterNoticeSolr() {
+
+        Converter<NoticeSolr, Notice> myConverter = new Converter<NoticeSolr, Notice>() {
+
+            public Notice convert(MappingContext<NoticeSolr, Notice> context) {
+                NoticeSolr source = context.getSource();
+                Notice target;
+
+                if(source instanceof NoticeV1Solr) {
+                    target = new NoticeV1();
+                } else if (source instanceof NoticeV2Solr) {
+                    target = new NoticeV2();
+                } else {
+                    target = new Notice();
+                }
+
+                try {
+                    // Champs générique au NoticeSolr
+
+                    // Extraction de la date de début
+                    try {
+                        PublicationYear year = buildStartPublicationYear(source.getProcessingGlobalData());
+                        target.setStartYear(year);
+                    } catch (IllegalPublicationYearException e) {
+                        log.debug("Unable to parse start publication year :" + e.getLocalizedMessage());
+                        target.setStartYear(null);
+                    }
+
+                    // Extraction de la date de fin
+                    try {
+                        PublicationYear year = buildEndPublicationYear(source.getProcessingGlobalData());
+                        target.setEndYear(year);
+                    } catch (IllegalPublicationYearException e) {
+                        log.debug("Unable to parse end publication year :" + e.getLocalizedMessage());
+                        target.setEndYear(null);
+                    }
+
+                    //Extraction du type de ressource continue
+                    target.setContiniousType(extractOnGoingResourceType(source.getContiniousType()));
+
+                    //Extraction du lien exterieur de Mirabel
+                    target.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
+
+                    // Champs spécifique à la V1
+                    if(source instanceof NoticeV1Solr) {
+
+                    }
+
+                    // Champs spécifique à la V2
+                    if(source instanceof NoticeV2Solr) {
+
+                    }
+
+                    return target;
+
+                } catch (Exception ex) {
+                    throw new MappingException(Arrays.asList(new ErrorMessage(ex.getMessage())));
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
 
     public PublicationYear buildStartPublicationYear(String value) throws IllegalPublicationYearException {
         //log.debug("SolR startdate : "+value.substring(9,13));
@@ -117,43 +219,6 @@ public class NoticeMapper {
         else
             year.setConfidenceIndex(0);
         return year;
-    }
-
-    public List<Notice> mapList(List<NoticeSolrV1> source) {
-        return source
-                .stream()
-                .map(element -> map(element))
-                .collect(Collectors.toList());
-    }
-
-    public Notice map(NoticeSolrV1 source) {
-        Notice notice = modelMapper.map(source, Notice.class);
-
-        // Extraction de la date de début
-        try {
-            PublicationYear year = buildStartPublicationYear(source.getProcessingGlobalData());
-            notice.setStartYear(year);
-        } catch (IllegalPublicationYearException e) {
-            log.debug("Unable to parse start publication year :" + e.getLocalizedMessage());
-            notice.setStartYear(null);
-        }
-
-        // Extraction de la date de fin
-        try {
-            PublicationYear year = buildEndPublicationYear(source.getProcessingGlobalData());
-            notice.setEndYear(year);
-        } catch (IllegalPublicationYearException e) {
-            log.debug("Unable to parse end publication year :" + e.getLocalizedMessage());
-            notice.setEndYear(null);
-        }
-
-        //Extraction du type de ressource continue
-        notice.setContiniousType(extractOnGoingResourceType(source.getContiniousType()));
-
-        //Extraction du lien exterieur de Mirabel
-        notice.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
-
-        return notice;
     }
 
     /**

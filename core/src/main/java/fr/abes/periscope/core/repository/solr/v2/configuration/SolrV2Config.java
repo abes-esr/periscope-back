@@ -1,6 +1,7 @@
-package fr.abes.periscope.core.configuration;
+package fr.abes.periscope.core.repository.solr.v2.configuration;
 
-import fr.abes.periscope.core.repository.solr.SolrQueryBuilder;
+import fr.abes.periscope.core.repository.solr.v1.SolrV1QueryBuilder;
+import fr.abes.periscope.core.repository.solr.v2.SolrV2QueryBuilder;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
@@ -14,27 +15,26 @@ import org.springframework.data.solr.core.SolrTemplate;
  * Configuration du client SolR
  */
 @Configuration
-public class SolRConfig {
+public class SolrV2Config {
 
     @Bean
-    public SolrClient solrClient() {
+    public SolrClient solrV2Client() {
         ModifiableSolrParams params = new ModifiableSolrParams();
-        params.add("solrService","Pcp");
         params.add("wt", "xml");
         params.add("version","2.2");
         params.add("indent", "on");
         params.add("omitHeader","false");
 
         HttpSolrClient.Builder builder = new HttpSolrClient.Builder()
-                .withBaseSolrUrl("https://periscope.sudoc.fr/SolrProxy")
+                .withBaseSolrUrl("http://smalt-dev.v212.abes.fr:8081/solr/")
                 .withInvariantParams(params)
                 .withResponseParser(new QESXMLResponseParser());
         return builder.build();
     }
 
-    @Bean
-    public SolrTemplate solrTemplate(SolrClient client) {
-        SolrTemplate template = new SolrTemplate(client);
+    @Bean("solr-v2")
+    public SolrTemplate solrTemplate() {
+        SolrTemplate template = new SolrTemplate(solrV2Client());
         return template;
     }
 
@@ -48,13 +48,8 @@ public class SolRConfig {
     }
 
     @Bean
-    public SolrQueryBuilder builderQuery() {
-        return new SolrQueryBuilder();
-    }
-
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
+    public SolrV2QueryBuilder builderV2Query() {
+        return new SolrV2QueryBuilder();
     }
 }
 

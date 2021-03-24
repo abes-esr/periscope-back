@@ -1,5 +1,6 @@
-package fr.abes.periscope.core.entity;
+package fr.abes.periscope.core.entity.v1.solr;
 
+import fr.abes.periscope.core.entity.NoticeSolr;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,58 +18,58 @@ import java.util.List;
 @NoArgsConstructor
 @Getter @Setter
 @SolrDocument
-public class NoticeSolrV1 extends NoticeSolr implements Serializable {
+public class NoticeV1Solr implements Serializable, NoticeSolr {
 
     @Id
-    @Indexed(name = NoticeV1Field.PPN, type = "string")
+    @Indexed(name = NoticeV1SolrField.PPN, type = "string")
     private String ppn;
 
-    @Indexed(name = NoticeV1Field.ISSN, type = "string")
+    @Indexed(name = NoticeV1SolrField.ISSN, type = "string")
     private String issn;
 
-    @Indexed(name = NoticeV1Field.PCP_LIST, type = "string")
+    @Indexed(name = NoticeV1SolrField.PCP_LIST, type = "string")
     private HashSet<String> pcpList;
 
-    @Indexed(name = NoticeV1Field.RCR_LIST, type = "string")
+    @Indexed(name = NoticeV1SolrField.RCR_LIST, type = "string")
     private HashSet<String> rcrList;
 
-    @Indexed(name = NoticeV1Field.EDITOR, type = "string")
+    @Indexed(name = NoticeV1SolrField.EDITOR, type = "string")
     private String editor;
 
-    @Indexed(name = NoticeV1Field.PROCESSING_GLOBAL_DATA, type = "string")
+    @Indexed(name = NoticeV1SolrField.PROCESSING_GLOBAL_DATA, type = "string")
     private String processingGlobalData;
 
-    @Indexed(name = NoticeV1Field.KEY_TITLE, type = "string")
+    @Indexed(name = NoticeV1SolrField.KEY_TITLE, type = "string")
     private String keyTitle;
 
-    @Indexed(name = NoticeV1Field.KEY_SHORTED_TITLE, type = "string")
+    @Indexed(name = NoticeV1SolrField.KEY_SHORTED_TITLE, type = "string")
     private String keyShortedTitle;
 
-    @Indexed(name = NoticeV1Field.PROPER_TITLE, type = "string")
+    @Indexed(name = NoticeV1SolrField.PROPER_TITLE, type = "string")
     private String properTitle;
 
-    @Indexed(name = NoticeV1Field.TITLE_FROM_DIFFERENT_AUTHOR, type = "string")
+    @Indexed(name = NoticeV1SolrField.TITLE_FROM_DIFFERENT_AUTHOR, type = "string")
     private String titleFromDifferentAuthor;
 
-    @Indexed(name = NoticeV1Field.PARALLEL_TITLE, type = "string")
+    @Indexed(name = NoticeV1SolrField.PARALLEL_TITLE, type = "string")
     private String parallelTitle;
 
-    @Indexed(name = NoticeV1Field.TITLE_COMPLEMENT, type = "string")
+    @Indexed(name = NoticeV1SolrField.TITLE_COMPLEMENT, type = "string")
     private String titleComplement;
 
-    @Indexed(name = NoticeV1Field.SECTION_TITLE, type = "string")
+    @Indexed(name = NoticeV1SolrField.SECTION_TITLE, type = "string")
     private String sectionTitle;
 
-    @Indexed(name = NoticeV1Field.KEY_TITLE_QUALIFIER, type = "string")
+    @Indexed(name = NoticeV1SolrField.KEY_TITLE_QUALIFIER, type = "string")
     private String keyTitleQualifer;
 
-    @Indexed(name = NoticeV1Field.CONTINIOUS_TYPE, type = "string")
+    @Indexed(name = NoticeV1SolrField.CONTINIOUS_TYPE, type = "string")
     private String continiousType;
 
-    @Indexed(name = NoticeV1Field.EXTERNAL_URLS_S, type = "string")
+    @Indexed(name = NoticeV1SolrField.EXTERNAL_URLS_S, type = "string")
     private List<String> externalURLs;
 
-    @Indexed(name = NoticeV1Field.NB_LOC, type = "integer")
+    @Indexed(name = NoticeV1SolrField.NB_LOC, type = "integer")
     private Integer nbLocation;
 
     @Override
@@ -85,7 +86,7 @@ public class NoticeSolrV1 extends NoticeSolr implements Serializable {
             return false;
         }
 
-        return ppn != null && ppn.equals(((NoticeSolrV1) obj).ppn);
+        return ppn != null && ppn.equals(((NoticeV1Solr) obj).ppn);
     }
 
     @Override
