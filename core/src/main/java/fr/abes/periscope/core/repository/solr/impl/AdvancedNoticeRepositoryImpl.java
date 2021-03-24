@@ -1,11 +1,10 @@
 package fr.abes.periscope.core.repository.solr.impl;
 
 import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.entity.NoticeSolr;
+import fr.abes.periscope.core.entity.NoticeSolrV1;
 import fr.abes.periscope.core.repository.solr.AdvancedNoticeRepository;
-import fr.abes.periscope.core.repository.solr.NoticeField;
+import fr.abes.periscope.core.entity.NoticeV1Field;
 import fr.abes.periscope.core.repository.solr.SolrQueryBuilder;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -37,65 +36,65 @@ public class AdvancedNoticeRepositoryImpl implements AdvancedNoticeRepository {
      * @param page La page souhaitée
      * @return List<NoticeSolr> Liste de Notices SolR
      */
-    public List<NoticeSolr> findNoticesByCriteria(List<Criterion> criteria, Sort sort, Pageable page) {
+    public List<NoticeSolrV1> findNoticesByCriteria(List<Criterion> criteria, Sort sort, Pageable page) {
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria),page);
         solrQuery.addProjectionOnFields(
-                NoticeField.PPN,
-                NoticeField.ISSN_T,
-                NoticeField.PCP_T,
-                NoticeField.RCR_T,
-                NoticeField.EDITOR,
-                NoticeField.PROCESSING_GLOBAL_DATA,
-                NoticeField.KEY_TITLE,
-                NoticeField.ISSN,
-                NoticeField.KEY_SHORTED_TITLE,
-                NoticeField.PROPER_TITLE,
-                NoticeField.TITLE_FROM_DIFFERENT_AUTHOR,
-                NoticeField.PARALLEL_TITLE,
-                NoticeField.TITLE_COMPLEMENT,
-                NoticeField.SECTION_TITLE,
-                NoticeField.KEY_TITLE_QUALIFIER,
-                NoticeField.CONTINIOUS_TYPE,
-                NoticeField.EXTERNAL_URLS_S,
-                NoticeField.NB_LOC);
+                NoticeV1Field.PPN,
+                NoticeV1Field.ISSN_T,
+                NoticeV1Field.PCP_T,
+                NoticeV1Field.RCR_T,
+                NoticeV1Field.EDITOR,
+                NoticeV1Field.PROCESSING_GLOBAL_DATA,
+                NoticeV1Field.KEY_TITLE,
+                NoticeV1Field.ISSN,
+                NoticeV1Field.KEY_SHORTED_TITLE,
+                NoticeV1Field.PROPER_TITLE,
+                NoticeV1Field.TITLE_FROM_DIFFERENT_AUTHOR,
+                NoticeV1Field.PARALLEL_TITLE,
+                NoticeV1Field.TITLE_COMPLEMENT,
+                NoticeV1Field.SECTION_TITLE,
+                NoticeV1Field.KEY_TITLE_QUALIFIER,
+                NoticeV1Field.CONTINIOUS_TYPE,
+                NoticeV1Field.EXTERNAL_URLS_S,
+                NoticeV1Field.NB_LOC);
         solrQuery.addSort(sort);
         // Debug query
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         log.debug("SolR query : "+actualQuery);
 
-        Page results = solrTemplate.queryForPage("notice",solrQuery, NoticeSolr.class);
+        Page results = solrTemplate.queryForPage("notice",solrQuery, NoticeSolrV1.class);
         return results.getContent();
     }
 
-    public List<NoticeSolr> findNoticesBySolrQuery(String query, Sort sort, Pageable page) {
+    public List<NoticeSolrV1> findNoticesBySolrQuery(String query, Sort sort, Pageable page) {
 
         SimpleQuery solrQuery = new SimpleQuery(query,page);
         solrQuery.addProjectionOnFields(
-                NoticeField.PPN,
-                NoticeField.ISSN_T,
-                NoticeField.PCP_T,
-                NoticeField.RCR_T,
-                NoticeField.EDITOR,
-                NoticeField.PROCESSING_GLOBAL_DATA,
-                NoticeField.KEY_TITLE,
-                NoticeField.ISSN,
-                NoticeField.KEY_SHORTED_TITLE,
-                NoticeField.PROPER_TITLE,
-                NoticeField.TITLE_FROM_DIFFERENT_AUTHOR,
-                NoticeField.PARALLEL_TITLE,
-                NoticeField.TITLE_COMPLEMENT,
-                NoticeField.SECTION_TITLE,
-                NoticeField.KEY_TITLE_QUALIFIER,
-                NoticeField.CONTINIOUS_TYPE);
+                NoticeV1Field.PPN,
+                NoticeV1Field.ISSN_T,
+                NoticeV1Field.PCP_T,
+                NoticeV1Field.RCR_T,
+                NoticeV1Field.EDITOR,
+                NoticeV1Field.PROCESSING_GLOBAL_DATA,
+                NoticeV1Field.KEY_TITLE,
+                NoticeV1Field.ISSN,
+                NoticeV1Field.KEY_SHORTED_TITLE,
+                NoticeV1Field.PROPER_TITLE,
+                NoticeV1Field.TITLE_FROM_DIFFERENT_AUTHOR,
+                NoticeV1Field.PARALLEL_TITLE,
+                NoticeV1Field.TITLE_COMPLEMENT,
+                NoticeV1Field.SECTION_TITLE,
+                NoticeV1Field.KEY_TITLE_QUALIFIER,
+                NoticeV1Field.CONTINIOUS_TYPE);
         solrQuery.addSort(sort);
         // Debug query
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
         log.debug("SolR query : "+actualQuery);
 
-        Page results = solrTemplate.queryForPage("notice",solrQuery, NoticeSolr.class);
+        Page results = solrTemplate.queryForPage("notice",solrQuery, NoticeSolrV1.class);
         return results.getContent();
     }
 }

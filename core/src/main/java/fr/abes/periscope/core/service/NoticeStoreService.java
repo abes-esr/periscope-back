@@ -3,20 +3,17 @@ package fr.abes.periscope.core.service;
 import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionSort;
 import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.NoticeSolr;
-import fr.abes.periscope.core.repository.NoticeRepository;
-import fr.abes.periscope.core.repository.solr.NoticeField;
+import fr.abes.periscope.core.entity.NoticeSolrV1;
+import fr.abes.periscope.core.repository.NoticeV1Repository;
 import fr.abes.periscope.core.util.NoticeMapper;
 import fr.abes.periscope.core.util.TrackExecutionTime;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Stream;
 
 /**
  * Représente la couche service pour les Notices
@@ -26,7 +23,7 @@ import java.util.stream.Stream;
 @Data
 public class NoticeStoreService {
 
-    private final NoticeRepository noticeRepository;
+    private final NoticeV1Repository noticeRepository;
 
     private final NoticeMapper noticeMapper;
 
@@ -44,7 +41,7 @@ public class NoticeStoreService {
         criteriaSort.forEach(c -> {
             orders.add(new Sort.Order(c.getOrder(), c.getSort()));
         });
-        List<NoticeSolr> notices = noticeRepository.findNoticesByCriteria(criteria, Sort.by(orders), PageRequest.of(page, size));
+        List<NoticeSolrV1> notices = noticeRepository.findNoticesByCriteria(criteria, Sort.by(orders), PageRequest.of(page, size));
         return noticeMapper.mapList(notices);
     }
 }

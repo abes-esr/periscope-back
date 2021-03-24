@@ -1,14 +1,13 @@
 package fr.abes.periscope.core.util;
 
 import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.NoticeSolr;
+import fr.abes.periscope.core.entity.NoticeSolrV1;
 import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.entity.PublicationYear;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -120,14 +119,14 @@ public class NoticeMapper {
         return year;
     }
 
-    public List<Notice> mapList(List<NoticeSolr> source) {
+    public List<Notice> mapList(List<NoticeSolrV1> source) {
         return source
                 .stream()
                 .map(element -> map(element))
                 .collect(Collectors.toList());
     }
 
-    public Notice map(NoticeSolr source) {
+    public Notice map(NoticeSolrV1 source) {
         Notice notice = modelMapper.map(source, Notice.class);
 
         // Extraction de la date de début

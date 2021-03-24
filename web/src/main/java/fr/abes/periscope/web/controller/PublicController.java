@@ -3,13 +3,12 @@ package fr.abes.periscope.web.controller;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
-import fr.abes.periscope.core.repository.solr.NoticeField;
+import fr.abes.periscope.core.entity.NoticeV1Field;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.util.DtoMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,7 +84,7 @@ public class PublicController {
                 sortCriteria.add(dtoMapper.map(sortCriterion, CriterionSort.class));
             }
         } else {
-            sortCriteria.add(new CriterionSort(NoticeField.PPN, Sort.Direction.ASC));
+            sortCriteria.add(new CriterionSort(NoticeV1Field.PPN, Sort.Direction.ASC));
         }
         List<Notice> candidate = noticeStoreService.findNoticesByCriteria(criteria,sortCriteria,page,size);
         return dtoMapper.mapList(candidate, NoticeWebDto.class);

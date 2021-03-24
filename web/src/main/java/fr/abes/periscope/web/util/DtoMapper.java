@@ -1,13 +1,11 @@
 package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
-import fr.abes.periscope.core.repository.solr.NoticeField;
+import fr.abes.periscope.core.entity.NoticeV1Field;
 import fr.abes.periscope.web.dto.*;
-import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
@@ -61,7 +59,7 @@ public class DtoMapper {
                 CriterionSortWebDto s = mappingContext.getSource();
                 final String[] field = {""};
                 try {
-                    Class c = NoticeField.class;
+                    Class c = NoticeV1Field.class;
                     Arrays.stream(c.getDeclaredFields()).forEach(n -> {
                         if (n.getName().equalsIgnoreCase(s.getSort())) {
                             try {

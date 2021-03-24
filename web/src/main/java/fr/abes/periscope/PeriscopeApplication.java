@@ -1,6 +1,6 @@
 package fr.abes.periscope;
 
-import fr.abes.periscope.core.repository.NoticeRepository;
+import fr.abes.periscope.core.repository.NoticeV1Repository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
@@ -14,7 +14,7 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 public class PeriscopeApplication extends SpringBootServletInitializer implements CommandLineRunner {
 
 	@Autowired
-	private NoticeRepository noticeRepository;
+	private NoticeV1Repository noticeRepository;
 
 	public static void main(String[] args) {
 		SpringApplication.run(PeriscopeApplication.class, args);
