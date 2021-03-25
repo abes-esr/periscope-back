@@ -17,6 +17,7 @@ import java.util.List;
  * Représente un constructeur de requête SolR pour Periscope
  */
 @Slf4j
+@Deprecated
 public class SolrQueryBuilder {
 
     /**

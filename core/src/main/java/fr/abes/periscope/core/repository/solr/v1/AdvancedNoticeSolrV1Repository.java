@@ -10,6 +10,7 @@ import java.util.List;
 /**
  * Interface d'un dépôt de Notice SolR avec des requêtes complexes
  */
+@Deprecated
 public interface AdvancedNoticeSolrV1Repository {
     List<NoticeV1Solr> findNoticesByCriteria(List<Criterion> criteria, Sort sort, Pageable page);
 }

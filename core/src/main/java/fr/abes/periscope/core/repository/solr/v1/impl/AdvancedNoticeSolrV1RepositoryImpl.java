@@ -22,6 +22,7 @@ import java.util.List;
 /**
  * Représente un dépôt de Notice SolR avec des requêtes complexes
  */
+@Deprecated
 @Data
 @Slf4j
 @Repository

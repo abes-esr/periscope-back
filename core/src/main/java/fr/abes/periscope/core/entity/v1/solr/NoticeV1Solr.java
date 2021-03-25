@@ -14,6 +14,7 @@ import java.util.List;
 /**
  * Représente une notice au format SolR
  */
+@Deprecated
 @NoArgsConstructor
 @Getter @Setter
 @SolrDocument

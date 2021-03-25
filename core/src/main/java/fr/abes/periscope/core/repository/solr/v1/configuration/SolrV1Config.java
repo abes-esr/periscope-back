@@ -14,6 +14,7 @@ import org.springframework.data.solr.core.SolrTemplate;
 /**
  * Configuration du client SolR
  */
+@Deprecated
 @Configuration
 public class SolrV1Config {
 
