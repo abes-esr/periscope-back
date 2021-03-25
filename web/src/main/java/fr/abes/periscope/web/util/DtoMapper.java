@@ -4,7 +4,7 @@ import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
-import fr.abes.periscope.core.entity.NoticeV1Field;
+import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
 import fr.abes.periscope.web.dto.*;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -59,7 +59,7 @@ public class DtoMapper {
                 CriterionSortWebDto s = mappingContext.getSource();
                 final String[] field = {""};
                 try {
-                    Class c = NoticeV1Field.class;
+                    Class c = NoticeV1SolrField.class;
                     Arrays.stream(c.getDeclaredFields()).forEach(n -> {
                         if (n.getName().equalsIgnoreCase(s.getSort())) {
                             try {
