@@ -1,12 +1,14 @@
 package fr.abes.periscope.core.repository.solr.v2;
 
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
+import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.FilterQuery;
 import org.springframework.data.solr.core.query.SimpleFilterQuery;
+import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
 import java.util.List;
@@ -15,7 +17,7 @@ import java.util.List;
  * Représente un constructeur de requête SolR pour Periscope
  */
 @Slf4j
-public class SolrV2QueryBuilder {
+public class SolrQueryBuilder {
 
     /**
      * Construit la requête SolR à partir des critères de recherche
@@ -128,11 +130,11 @@ public class SolrV2QueryBuilder {
         Iterator<String> pcpIterator = criterion.getPcp().iterator();
         String pcpCode = pcpIterator.next();
 
-        Criteria myCriteria = new Criteria(NoticeV1SolrField.PCP_S).is(pcpCode);
+        Criteria myCriteria = new Criteria(NoticeV2SolrField.PCP_LIST).is(pcpCode);
 
         while (pcpIterator.hasNext()) {
             pcpCode = pcpIterator.next();
-            myCriteria = myCriteria.or(NoticeV1SolrField.PCP_S).is(pcpCode);
+            myCriteria = myCriteria.or(NoticeV2SolrField.PCP_LIST).is(pcpCode);
         }
 
         switch (criterion.getBlocOperator()) {
@@ -173,10 +175,10 @@ public class SolrV2QueryBuilder {
         // 1er critère
         switch (rcrOperator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = new Criteria(NoticeV1SolrField.RCR_S).is(rcrCode).not();
+                myCriteria = new Criteria(NoticeV2SolrField.RCR_LIST).is(rcrCode).not();
                 break;
             default:
-                myCriteria = new Criteria(NoticeV1SolrField.RCR_S).is(rcrCode);
+                myCriteria = new Criteria(NoticeV2SolrField.RCR_LIST).is(rcrCode);
                 break;
         }
 
@@ -187,13 +189,13 @@ public class SolrV2QueryBuilder {
 
             switch (rcrOperator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.and(NoticeV1SolrField.RCR_S).is(rcrCode);
+                    myCriteria = myCriteria.and(NoticeV2SolrField.RCR_LIST).is(rcrCode);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.or(NoticeV1SolrField.RCR_S).is(rcrCode);
+                    myCriteria = myCriteria.or(NoticeV2SolrField.RCR_LIST).is(rcrCode);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.and(NoticeV1SolrField.RCR_S).is(rcrCode).not();
+                    myCriteria = myCriteria.and(NoticeV2SolrField.RCR_LIST).is(rcrCode).not();
                     break;
             }
         }
@@ -237,22 +239,22 @@ public class SolrV2QueryBuilder {
         // 1er critère
         switch (operator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = new Criteria(NoticeV1SolrField.KEY_TITLE_T).is(value).not().
-                        or(NoticeV1SolrField.KEY_SHORTED_TITLE_T).is(value).not().
-                        or(NoticeV1SolrField.PROPER_TITLE_T).is(value).not().
-                        or(NoticeV1SolrField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).not().
-                        or(NoticeV1SolrField.PARALLEL_TITLE_T).is(value).not().
-                        or(NoticeV1SolrField.TITLE_COMPLEMENT_T).is(value).not().
-                        or(NoticeV1SolrField.SECTION_TITLE_T).is(value).not().connect();
+                myCriteria = new Criteria(NoticeV2SolrField.KEY_TITLE).is(value).not().
+                        or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).not().
+                        or(NoticeV2SolrField.PROPER_TITLE).is(value).not().
+                        or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).not().
+                        or(NoticeV2SolrField.PARALLEL_TITLE).is(value).not().
+                        or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).not().
+                        or(NoticeV2SolrField.SECTION_TITLE).is(value).not().connect();
                 break;
             default:
-                myCriteria = new Criteria(NoticeV1SolrField.KEY_TITLE_T).is(value).
-                        or(NoticeV1SolrField.KEY_SHORTED_TITLE_T).is(value).
-                        or(NoticeV1SolrField.PROPER_TITLE_T).is(value).
-                        or(NoticeV1SolrField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).
-                        or(NoticeV1SolrField.PARALLEL_TITLE_T).is(value).
-                        or(NoticeV1SolrField.TITLE_COMPLEMENT_T).is(value).
-                        or(NoticeV1SolrField.SECTION_TITLE_T).is(value).connect();
+                myCriteria = new Criteria(NoticeV2SolrField.KEY_TITLE).is(value).
+                        or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).
+                        or(NoticeV2SolrField.PROPER_TITLE).is(value).
+                        or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
+                        or(NoticeV2SolrField.PARALLEL_TITLE).is(value).
+                        or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).
+                        or(NoticeV2SolrField.SECTION_TITLE).is(value).connect();
                 break;
         }
 
@@ -263,31 +265,31 @@ public class SolrV2QueryBuilder {
 
             switch (operator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect().and(NoticeV1SolrField.KEY_TITLE_T).is(value).
-                            or(NoticeV1SolrField.KEY_SHORTED_TITLE_T).is(value).
-                            or(NoticeV1SolrField.PROPER_TITLE_T).is(value).
-                            or(NoticeV1SolrField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).
-                            or(NoticeV1SolrField.PARALLEL_TITLE_T).is(value).
-                            or(NoticeV1SolrField.TITLE_COMPLEMENT_T).is(value).
-                            or(NoticeV1SolrField.SECTION_TITLE_T).is(value);
+                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.KEY_TITLE).is(value).
+                            or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).
+                            or(NoticeV2SolrField.PROPER_TITLE).is(value).
+                            or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
+                            or(NoticeV2SolrField.PARALLEL_TITLE).is(value).
+                            or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).
+                            or(NoticeV2SolrField.SECTION_TITLE).is(value);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.connect().or(NoticeV1SolrField.KEY_TITLE_T).is(value).
-                            or(NoticeV1SolrField.KEY_SHORTED_TITLE_T).is(value).
-                            or(NoticeV1SolrField.PROPER_TITLE_T).is(value).
-                            or(NoticeV1SolrField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).
-                            or(NoticeV1SolrField.PARALLEL_TITLE_T).is(value).
-                            or(NoticeV1SolrField.TITLE_COMPLEMENT_T).is(value).
-                            or(NoticeV1SolrField.SECTION_TITLE_T).is(value);
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.KEY_TITLE).is(value).
+                            or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).
+                            or(NoticeV2SolrField.PROPER_TITLE).is(value).
+                            or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
+                            or(NoticeV2SolrField.PARALLEL_TITLE).is(value).
+                            or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).
+                            or(NoticeV2SolrField.SECTION_TITLE).is(value);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV1SolrField.KEY_TITLE_T).is(value).not().
-                            or(NoticeV1SolrField.KEY_SHORTED_TITLE_T).is(value).not().
-                            or(NoticeV1SolrField.PROPER_TITLE_T).is(value).not().
-                            or(NoticeV1SolrField.TITLE_FROM_DIFFERENT_AUTHOR_T).is(value).not().
-                            or(NoticeV1SolrField.PARALLEL_TITLE_T).is(value).not().
-                            or(NoticeV1SolrField.TITLE_COMPLEMENT_T).is(value).not().
-                            or(NoticeV1SolrField.SECTION_TITLE_T).is(value).not();
+                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.KEY_TITLE).is(value).not().
+                            or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).not().
+                            or(NoticeV2SolrField.PROPER_TITLE).is(value).not().
+                            or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).not().
+                            or(NoticeV2SolrField.PARALLEL_TITLE).is(value).not().
+                            or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).not().
+                            or(NoticeV2SolrField.SECTION_TITLE).is(value).not();
                     break;
             }
         }
@@ -330,10 +332,10 @@ public class SolrV2QueryBuilder {
         // 1er critère
         switch (operator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = new Criteria(NoticeV1SolrField.COUNTRY_T).is(value).not().connect().and(NoticeV1SolrField.KEY_TITLE_T);
+                myCriteria = new Criteria(NoticeV2SolrField.COUNTRY).is(value).not().connect().and(NoticeV2SolrField.KEY_TITLE);
                 break;
             default:
-                myCriteria = new Criteria(NoticeV1SolrField.COUNTRY_T).is(value).connect().and(NoticeV1SolrField.KEY_TITLE_T);
+                myCriteria = new Criteria(NoticeV2SolrField.COUNTRY).is(value).connect().and(NoticeV2SolrField.KEY_TITLE);
                 break;
         }
 
@@ -344,13 +346,13 @@ public class SolrV2QueryBuilder {
 
             switch (operator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect().and(NoticeV1SolrField.COUNTRY_T).is(value).and(NoticeV1SolrField.KEY_TITLE_T);
+                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.COUNTRY).is(value).and(NoticeV2SolrField.KEY_TITLE);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.connect().or(NoticeV1SolrField.COUNTRY_T).is(value).and(NoticeV1SolrField.KEY_TITLE_T);
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.COUNTRY).is(value).and(NoticeV2SolrField.KEY_TITLE);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV1SolrField.COUNTRY_T).is(value).not().and(NoticeV1SolrField.KEY_TITLE_T);
+                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.COUNTRY).is(value).not().and(NoticeV2SolrField.KEY_TITLE);
                     break;
             }
         }
@@ -388,12 +390,12 @@ public class SolrV2QueryBuilder {
 
         String value = valueIterator.next();
 
-        myCriteria = new Criteria(NoticeV1SolrField.PPN).is(value);
+        myCriteria = new Criteria(NoticeV2SolrField.PPN).is(value);
 
         // les autres
         while (valueIterator.hasNext()) {
             value = valueIterator.next();
-            myCriteria = myCriteria.or(NoticeV1SolrField.PPN).is(value);
+            myCriteria = myCriteria.or(NoticeV2SolrField.PPN).is(value);
         }
 
         // pour le bloc entier
@@ -434,10 +436,10 @@ public class SolrV2QueryBuilder {
         // 1er critère
         switch (langueOperator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = new Criteria(NoticeV1SolrField.LANGUAGE).is(langueCode).not().connect();
+                myCriteria = new Criteria(NoticeV2SolrField.LANGUAGE).is(langueCode).not().connect();
                 break;
             default:
-                myCriteria = new Criteria(NoticeV1SolrField.LANGUAGE).is(langueCode).connect();
+                myCriteria = new Criteria(NoticeV2SolrField.LANGUAGE).is(langueCode).connect();
                 break;
         }
 
@@ -448,17 +450,17 @@ public class SolrV2QueryBuilder {
 
             switch (langueOperator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect().and(NoticeV1SolrField.LANGUAGE).is(langueCode);
+                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.LANGUAGE).is(langueCode);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.connect().or(NoticeV1SolrField.LANGUAGE).is(langueCode);
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.LANGUAGE).is(langueCode);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV1SolrField.LANGUAGE).is(langueCode).not();
+                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.LANGUAGE).is(langueCode).not();
                     break;
             }
         }
-        myCriteria = myCriteria.and(NoticeV1SolrField.KEY_TITLE_T);
+        myCriteria = myCriteria.and(NoticeV2SolrField.KEY_TITLE);
 
         // pour le bloc entier
         switch (criterion.getBlocOperator()) {
@@ -498,10 +500,10 @@ public class SolrV2QueryBuilder {
         // 1er critère
         switch (rcrOperator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = new Criteria(NoticeV1SolrField.EDITOR_T).is(rcrCode).not().connect();
+                myCriteria = new Criteria(NoticeV2SolrField.EDITOR).is(rcrCode).not().connect();
                 break;
             default:
-                myCriteria = new Criteria(NoticeV1SolrField.EDITOR_T).is(rcrCode).connect();
+                myCriteria = new Criteria(NoticeV2SolrField.EDITOR).is(rcrCode).connect();
                 break;
         }
 
@@ -512,13 +514,13 @@ public class SolrV2QueryBuilder {
 
             switch (rcrOperator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect().and(NoticeV1SolrField.EDITOR_T).is(rcrCode);
+                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.EDITOR).is(rcrCode);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.connect().or(NoticeV1SolrField.EDITOR_T).is(rcrCode);
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.EDITOR).is(rcrCode);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV1SolrField.EDITOR_T).is(rcrCode).not();
+                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.EDITOR).is(rcrCode).not();
                     break;
             }
         }
@@ -553,12 +555,12 @@ public class SolrV2QueryBuilder {
         Criteria myCriteria;
 
         String value = issnIterator.next();
-        myCriteria = new Criteria(NoticeV1SolrField.ISSN_T).is(value);
+        myCriteria = new Criteria(NoticeV2SolrField.ISSN).is(value);
 
         // les autres
         while (issnIterator.hasNext()) {
             value = issnIterator.next();
-            myCriteria = myCriteria.or(NoticeV1SolrField.ISSN_T).is(value);
+            myCriteria = myCriteria.or(NoticeV2SolrField.ISSN).is(value);
         }
 
         // pour le bloc entier

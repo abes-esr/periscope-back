@@ -135,4 +135,25 @@ public class NoticeStoreServiceTest {
         List<Notice> newCandidates = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,25);
 
     }
+
+    /**
+     * Test Journal Le Monde
+     */
+    @Test
+    @DisplayName("Test entre le SolR V1 et V2")
+    void testSolRV1V2() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> ppn = Arrays.asList("000000191");
+        CriterionPpn criterion = new CriterionPpn("ET",ppn);
+        criteria.add(criterion);
+
+        Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
+        String expected = candidate.getProperTitle();
+
+        candidate = noticeService.findNoticesByCriteria("v2",criteria,  new LinkedList<>(),0,5).get(0);
+        Assert.assertEquals(expected,candidate.getProperTitle());
+
+    }
 }

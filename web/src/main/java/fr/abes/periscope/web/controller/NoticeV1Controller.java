@@ -3,7 +3,7 @@ package fr.abes.periscope.web.controller;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
-import fr.abes.periscope.core.entity.NoticeV1Field;
+import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.util.DtoMapper;
@@ -22,7 +22,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1")
 @Data
-public class PublicController {
+public class NoticeV1Controller {
 
     private final NoticeStoreService noticeStoreService;
 
@@ -84,7 +84,7 @@ public class PublicController {
                 sortCriteria.add(dtoMapper.map(sortCriterion, CriterionSort.class));
             }
         } else {
-            sortCriteria.add(new CriterionSort(NoticeV1Field.PPN, Sort.Direction.ASC));
+            sortCriteria.add(new CriterionSort(NoticeV1SolrField.PPN, Sort.Direction.ASC));
         }
         List<Notice> candidate = noticeStoreService.findNoticesByCriteria(criteria,sortCriteria,page,size);
         return dtoMapper.mapList(candidate, NoticeWebDto.class);
