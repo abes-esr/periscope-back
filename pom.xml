@@ -27,7 +27,8 @@
     <!-- ===================================================== -->
     <properties>
         <finalName>periscope-${project.artifactId}-${project.version}</finalName>
-        <baseDir>./target/</baseDir>
+        <warName>periscope-web</warName>
+        <webBaseDir>./target/</webBaseDir>
     </properties>
 
     <!-- =========================================================== -->
