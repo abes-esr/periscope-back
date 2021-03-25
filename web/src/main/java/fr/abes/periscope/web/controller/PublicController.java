@@ -3,11 +3,14 @@ package fr.abes.periscope.web.controller;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
+import fr.abes.periscope.core.repository.solr.NoticeField;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.util.DtoMapper;
+import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,22 +22,18 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v1")
+@Data
 public class PublicController {
 
     private final NoticeStoreService noticeStoreService;
 
     /** Service pour le mapping DTO */
-    @Autowired
-    private DtoMapper dtoMapper;
+    private final DtoMapper dtoMapper;
 
-    @Autowired
-    public PublicController(NoticeStoreService service) {
-        noticeStoreService = service;
-    }
 
     @PostMapping("/notice/findByCriteria")
-    public List<NoticeWebDto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size,@RequestBody @Valid LinkedList<CriterionWebDto> userCriteria) throws IllegalCriterionException {
-
+    public List<NoticeWebDto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size,@RequestBody @Valid RequestParameters requestParameters) throws IllegalCriterionException {
+        LinkedList<CriterionWebDto> userCriteria = requestParameters.getUserCriteria();
         if (userCriteria.size() == 0) {
             throw new IllegalCriterionException("Criteria list cannot be empty");
         }
@@ -77,7 +76,18 @@ public class PublicController {
             }
         }
 
-        List<Notice> candidate = noticeStoreService.findNoticesByCriteria(criteria,page,size);
+        List<CriterionSort>  sortCriteria = new LinkedList<>();
+        LinkedList<CriterionSortWebDto> userSortCriteria = requestParameters.getSortCriteria();
+        if (userSortCriteria != null && userSortCriteria.size() != 0) {
+            Iterator<CriterionSortWebDto> userSortCriteriaIterator = userSortCriteria.iterator();
+            while (userSortCriteriaIterator.hasNext()) {
+                CriterionSortWebDto sortCriterion = userSortCriteriaIterator.next();
+                sortCriteria.add(dtoMapper.map(sortCriterion, CriterionSort.class));
+            }
+        } else {
+            sortCriteria.add(new CriterionSort(NoticeField.PPN, Sort.Direction.ASC));
+        }
+        List<Notice> candidate = noticeStoreService.findNoticesByCriteria(criteria,sortCriteria,page,size);
         return dtoMapper.mapList(candidate, NoticeWebDto.class);
 
     }

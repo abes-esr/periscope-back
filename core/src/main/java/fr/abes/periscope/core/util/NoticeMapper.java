@@ -21,11 +21,6 @@ public class NoticeMapper {
     @Autowired
     private ModelMapper modelMapper;
 
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
-
     public PublicationYear buildStartPublicationYear(String value) throws IllegalPublicationYearException {
         //log.debug("SolR startdate : "+value.substring(9,13));
         String yearCode = value.substring(8, 9);

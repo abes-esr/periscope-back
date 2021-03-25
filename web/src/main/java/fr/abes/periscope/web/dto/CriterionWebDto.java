@@ -3,6 +3,7 @@ package fr.abes.periscope.web.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import fr.abes.periscope.core.criterion.CriterionTypeName;
 import lombok.Getter;
 import lombok.Setter;
 
