@@ -88,6 +88,13 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(new ApiReturnError(HttpStatus.NOT_FOUND, error, ex));
     }
 
+    @Override
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        String error = "Missing request parameter";
+        log.error(ex.getLocalizedMessage());
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
+    }
+
     /**
      * Si la transformation DTO a échoué
      * @param ex MappingException
@@ -111,12 +118,4 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
-
-    @ExceptionHandler(MissingServletRequestParameterException.class)
-    protected ResponseEntity<Object> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
-        String error = "Missing request parameter";
-        log.error(ex.getLocalizedMessage());
-        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
-    }
-
 }

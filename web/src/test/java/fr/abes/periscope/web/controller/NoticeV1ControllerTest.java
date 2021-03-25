@@ -47,21 +47,27 @@ public class NoticeV1ControllerTest extends PeriscopeApplicationTest {
     @Test
     @DisplayName("POST findByCriteria - sans paramètres")
     public void findByCriteriaPostMethodWithoutParameters() throws Exception {
-       String json = "[\n" +
-               "   {\n" +
-               "    \"type\":\"CriterionRcr\",\n" +
-               "    \"bloc_operator\":\"SAUF\",   \n" +
-               "    \"rcr\":[\"661362104\"],\n" +
-               "    \"rcr_operator\":[\"ET\"]   \n" +
-               "    }\n" +
-               "]";
+       String json = "\n" +
+               "\n" +
+               "{\n" +
+               "    \"criteres\":\n" +
+               "    [\n" +
+               "        {\"type\":\"CriterionPcp\",\"bloc_operator\":\"OU\",\"pcp\":[\"PCAM\"],\"pcp_operator\":[\"ET\"]},\n" +
+               "        {\"type\":\"CriterionRcr\",\"bloc_operator\":\"ET\",\"rcr\":[\"341725201\"],\"rcr_operator\":[\"ET\"]}\n" +
+               "    ],\n" +
+               "    \"tri\":\n" +
+               "    [\n" +
+               "        {\"sort\":\"EDITOR\",\"order\":\"DESC\"},\n" +
+               "        {\"sort\":\"KEY_TITLE\",\"order\":\"ASC\"}\n" +
+               "    ]\n" +
+               "}\n";
 
         mockMvc.perform(post("/api/v1/notice/findByCriteria")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
-                .andExpect(jsonPath("$.message").value("Malformed JSON request"))
+                .andExpect(jsonPath("$.message").value("Missing request parameter"))
                 .andExpect(jsonPath("$.debugMessage").exists());
     }
 
@@ -92,14 +98,13 @@ public class NoticeV1ControllerTest extends PeriscopeApplicationTest {
     @Test
     @DisplayName("POST findByCriteria - mauvais JSON")
     public void findByCriteriaPostMethodWrongJSON() throws Exception {
-        String json = "[\n" +
-                "   {\n" +
-                "    \"type\":\"CriterionRcr\",\n" +
-                "    \"bloc_operator\":\"SAUF\",   \n" +
-                "    \"rcr\":[\"661362104\"],\n" +
-                "    \"rcr_operator\":[\"ET\"]   \n" +
-                "    }\n" +
-                "]";
+        String json = "{\n" +
+                "    \"criteres\":\n" +
+                "    [\n" +
+                "        {\"sort\":\"EDITOR\",\"order\":\"DESC\"},\n" +
+                "        {\"sort\":\"KEY_TITLE\",\"order\":\"ASC\"}\n" +
+                "    ]\n" +
+                "}";
 
         mockMvc.perform(post("/api/v1/notice/findByCriteria?page=0&size=25")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
@@ -108,5 +113,31 @@ public class NoticeV1ControllerTest extends PeriscopeApplicationTest {
                 .andExpect(jsonPath("$.timestamp").isNotEmpty())
                 .andExpect(jsonPath("$.message").value("Malformed JSON request"))
                 .andExpect(jsonPath("$.debugMessage").exists());
+    }
+
+    /**
+     * Test la route /api/v1/notice/findByCriteria avec la méthode POST et
+     * un mauvais JSON
+     * @throws Exception
+     */
+    @Test
+    @DisplayName("POST findByCriteria - bon JSON")
+    public void findByCriteriaPostMethodGoodJSON() throws Exception {
+        String json = "{\n" +
+                "    \"criteres\":\n" +
+                "    [\n" +
+                "        {\"type\":\"CriterionPcp\",\"bloc_operator\":\"OU\",\"pcp\":[\"PCAM\"],\"pcp_operator\":[\"ET\"]},\n" +
+                "        {\"type\":\"CriterionRcr\",\"bloc_operator\":\"ET\",\"rcr\":[\"341725201\"],\"rcr_operator\":[\"ET\"]}\n" +
+                "    ],\n" +
+                "    \"tri\":\n" +
+                "    [\n" +
+                "        {\"sort\":\"EDITOR\",\"order\":\"DESC\"},\n" +
+                "        {\"sort\":\"KEY_TITLE\",\"order\":\"ASC\"}\n" +
+                "    ]\n" +
+                "}";
+
+        mockMvc.perform(post("/api/v1/notice/findByCriteria?page=0&size=25")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk());
     }
 }
