@@ -126,8 +126,7 @@ public class NoticeV1ControllerTest extends PeriscopeApplicationTest {
         String json = "{\n" +
                 "    \"criteres\":\n" +
                 "    [\n" +
-                "        {\"type\":\"CriterionPcp\",\"bloc_operator\":\"OU\",\"pcp\":[\"PCAM\"],\"pcp_operator\":[\"ET\"]},\n" +
-                "        {\"type\":\"CriterionRcr\",\"bloc_operator\":\"ET\",\"rcr\":[\"341725201\"],\"rcr_operator\":[\"ET\"]}\n" +
+                "        {\"type\":\"CriterionPcp\",\"bloc_operator\":\"OU\",\"pcp\":[\"PCAM\"],\"pcp_operator\":[\"ET\"]}\n" +
                 "    ],\n" +
                 "    \"tri\":\n" +
                 "    [\n" +
@@ -138,6 +137,11 @@ public class NoticeV1ControllerTest extends PeriscopeApplicationTest {
 
         mockMvc.perform(post("/api/v1/notice/findByCriteria?page=0&size=25")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$").isArray())
+                .andExpect(jsonPath("$.[0].ppn").exists())
+                .andExpect(jsonPath("$.[0].ppn").isString())
+                .andExpect(jsonPath("$.[0].issn").exists())
+                .andExpect(jsonPath("$.[0].issn").isString());
     }
 }
