@@ -36,6 +36,7 @@ node {
     def candidateModules = []
     def executeBuild = []
     def executeTests = false
+    def deployArtifactoy = false
     def buildNumber = -1
     def executeDeploy = []
     def backTargetHostnames = []
@@ -82,6 +83,7 @@ node {
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
                     stringParam(defaultValue: '', description: "Numéro du build à déployer. Retrouvez vos précédents builds sur https://artifactory.abes.fr/artifactory/webapp/#/builds/${artifactoryBuildName}", name: 'BUILD_NUMBER'),
+                    booleanParam(defaultValue: false, description: 'Voulez-vous deployer sur Artifactory ?', name: 'deployArtifactoy'),
                     booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests'),
                     choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV')
             ])
@@ -156,6 +158,14 @@ node {
                 executeTests = params.executeTests
             }
             echo "executeTests =  ${executeTests}"
+
+            // Booleen de deploiement sur Artifactory
+            if (params.deployArtifactoy == null) {
+                deployArtifactoy = false
+            } else {
+                deployArtifactoy = params.deployArtifactoy
+            }
+            echo "deployArtifactoy =  ${deployArtifactoy}"
 
             // Environnement de deploiement
             if (params.ENV == null) {
@@ -285,7 +295,7 @@ node {
             }
         }
 
-        if ("${executeBuild[moduleIndex]}" == 'true') {
+        if ( deployArtifactoy && "${executeBuild[moduleIndex]}" == 'true') {
 
             //-------------------------------
             // Etape 3.3 : Deploiement sur Artifactory
