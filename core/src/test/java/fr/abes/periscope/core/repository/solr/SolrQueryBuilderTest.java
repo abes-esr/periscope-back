@@ -1,10 +1,10 @@
 package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.repository.solr.v1.SolrV1QueryBuilder;
+import fr.abes.periscope.core.repository.solr.v1.SolrQueryBuilder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.query.SimpleQuery;
@@ -18,11 +18,14 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test la construction de requête SolR à partir des critères de recherche.
  */
-@SpringBootTest(classes = SolrV1QueryBuilder.class)
-public class SolrV1QueryBuilderTest {
+@SpringBootTest
+public class SolrQueryBuilderTest {
 
-    @Autowired
-    private SolrV1QueryBuilder builderQuery;
+    private SolrQueryBuilder builderQuery;
+
+    public SolrQueryBuilderTest(@Qualifier("SolrQueryV1Builder") SolrQueryBuilder builder) {
+        builderQuery = builder;
+    }
 
     /**
      * Test de l'historiette #id 12

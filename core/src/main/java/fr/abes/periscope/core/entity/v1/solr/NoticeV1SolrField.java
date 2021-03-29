@@ -3,6 +3,7 @@ package fr.abes.periscope.core.entity.v1.solr;
 /**
  * Représente les champs SolR pour une Notice SolR
  */
+@Deprecated
 public interface NoticeV1SolrField {
 
     String PCP_S = "930-z_s";

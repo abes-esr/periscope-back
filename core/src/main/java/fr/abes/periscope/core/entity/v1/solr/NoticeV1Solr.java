@@ -1,6 +1,5 @@
 package fr.abes.periscope.core.entity.v1.solr;
 
-import fr.abes.periscope.core.entity.NoticeSolr;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,10 +14,11 @@ import java.util.List;
 /**
  * Représente une notice au format SolR
  */
+@Deprecated
 @NoArgsConstructor
 @Getter @Setter
 @SolrDocument
-public class NoticeV1Solr implements Serializable, NoticeSolr {
+public class NoticeV1Solr implements Serializable {
 
     @Id
     @Indexed(name = NoticeV1SolrField.PPN, type = "string")

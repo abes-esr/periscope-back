@@ -2,8 +2,8 @@ package fr.abes.periscope.web.controller;
 
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
+import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.util.DtoMapper;
@@ -20,9 +20,9 @@ import java.util.List;
 @Slf4j
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v2")
 @Data
-public class PublicController {
+public class NoticeV2Controller {
 
     private final NoticeStoreService noticeStoreService;
 
@@ -86,7 +86,8 @@ public class PublicController {
         } else {
             sortCriteria.add(new CriterionSort(NoticeV1SolrField.PPN, Sort.Direction.ASC));
         }
-        List<Notice> candidate = noticeStoreService.findNoticesByCriteria(criteria,sortCriteria,page,size);
+
+        List<Notice> candidate = noticeStoreService.findNoticesByCriteria("v2",criteria,sortCriteria,page,size);
         return dtoMapper.mapList(candidate, NoticeWebDto.class);
 
     }

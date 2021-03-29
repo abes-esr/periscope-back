@@ -1,11 +1,12 @@
 package fr.abes.periscope.core.repository.solr.v1.configuration;
 
-import fr.abes.periscope.core.repository.solr.v1.SolrV1QueryBuilder;
+import fr.abes.periscope.core.repository.solr.v1.SolrQueryBuilder;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
 import org.apache.solr.common.params.ModifiableSolrParams;
-import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.solr.core.SolrTemplate;
@@ -13,11 +14,15 @@ import org.springframework.data.solr.core.SolrTemplate;
 /**
  * Configuration du client SolR
  */
+@Deprecated
 @Configuration
 public class SolrV1Config {
 
+    @Value("${solr.v1.baseurl}")
+    private String baseURL;
+
     @Bean
-    public SolrClient solrV1Client() {
+    public SolrClient solrClient() {
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.add("solrService","Pcp");
         params.add("wt", "xml");
@@ -26,15 +31,16 @@ public class SolrV1Config {
         params.add("omitHeader","false");
 
         HttpSolrClient.Builder builder = new HttpSolrClient.Builder()
-                .withBaseSolrUrl("https://periscope.sudoc.fr/SolrProxy")
+                .withBaseSolrUrl(this.baseURL)
                 .withInvariantParams(params)
                 .withResponseParser(new QESXMLResponseParser());
         return builder.build();
     }
 
-    @Bean("solr-v1")
-    public SolrTemplate solrTemplate() {
-        SolrTemplate template = new SolrTemplate(solrV1Client());
+    @Bean
+    @Qualifier("solrV1Template")
+    public SolrTemplate solrV1Template() {
+        SolrTemplate template = new SolrTemplate(solrClient());
         return template;
     }
 
@@ -48,8 +54,9 @@ public class SolrV1Config {
     }
 
     @Bean
-    public SolrV1QueryBuilder builderV1Query() {
-        return new SolrV1QueryBuilder();
+    @Qualifier("SolrQueryV1Builder")
+    public SolrQueryBuilder builderV1Query() {
+        return new SolrQueryBuilder();
     }
 }
 

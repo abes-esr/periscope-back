@@ -1,15 +1,14 @@
-package fr.abes.periscope.core.repository.solr.v2.impl;
+package fr.abes.periscope.core.repository.solr.v1.impl;
 
 import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.entity.NoticeSolr;
+import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
-import fr.abes.periscope.core.repository.solr.v2.AdvancedNoticeRepository;
-import fr.abes.periscope.core.repository.solr.v2.SolrV2QueryBuilder;
+import fr.abes.periscope.core.repository.solr.v1.AdvancedNoticeSolrV1Repository;
+import fr.abes.periscope.core.repository.solr.v1.SolrQueryBuilder;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -23,16 +22,23 @@ import java.util.List;
 /**
  * Représente un dépôt de Notice SolR avec des requêtes complexes
  */
+@Deprecated
 @Data
 @Slf4j
 @Repository
-public class AdvancedNoticeV2RepositoryImpl implements AdvancedNoticeRepository {
+public class AdvancedNoticeSolrV1RepositoryImpl implements AdvancedNoticeSolrV1Repository {
 
-    @Autowired
-    @Qualifier("solr-v2")
     private final SolrTemplate solrTemplate;
 
-    private final SolrV2QueryBuilder builderQuery;
+    private final SolrQueryBuilder builderQuery;
+
+    @Value("${solr.v1.core}")
+    private String core;
+
+    public AdvancedNoticeSolrV1RepositoryImpl(@Qualifier("solrV1Template") SolrTemplate template, @Qualifier("SolrQueryV1Builder") SolrQueryBuilder builder) {
+        solrTemplate = template;
+        builderQuery = builder;
+    }
 
     @Override
     /**
@@ -41,7 +47,7 @@ public class AdvancedNoticeV2RepositoryImpl implements AdvancedNoticeRepository 
      * @param page La page souhaitée
      * @return List<NoticeSolr> Liste de Notices SolR
      */
-    public List<NoticeSolr> findNoticesByCriteria(List<Criterion> criteria, Sort sort, Pageable page) {
+    public List<NoticeV1Solr> findNoticesByCriteria(List<Criterion> criteria, Sort sort, Pageable page) {
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria),page);
         solrQuery.addProjectionOnFields(
@@ -69,11 +75,11 @@ public class AdvancedNoticeV2RepositoryImpl implements AdvancedNoticeRepository 
         String actualQuery = dqp.getQueryString(solrQuery, null);
         log.debug("SolR query : "+actualQuery);
 
-        Page results = solrTemplate.queryForPage("notice",solrQuery, NoticeV2Solr.class);
+        Page results = solrTemplate.queryForPage(core,solrQuery, NoticeV1Solr.class);
         return results.getContent();
     }
 
-    public List<NoticeSolr> findNoticesBySolrQuery(String query, Sort sort, Pageable page) {
+    public List<NoticeV1Solr> findNoticesBySolrQuery(String query, Sort sort, Pageable page) {
 
         SimpleQuery solrQuery = new SimpleQuery(query,page);
         solrQuery.addProjectionOnFields(
@@ -99,7 +105,7 @@ public class AdvancedNoticeV2RepositoryImpl implements AdvancedNoticeRepository 
         String actualQuery = dqp.getQueryString(solrQuery, null);
         log.debug("SolR query : "+actualQuery);
 
-        Page results = solrTemplate.queryForPage("notice",solrQuery, NoticeV2Solr.class);
+        Page results = solrTemplate.queryForPage(core,solrQuery, NoticeV1Solr.class);
         return results.getContent();
     }
 }

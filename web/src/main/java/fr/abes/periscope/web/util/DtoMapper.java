@@ -49,7 +49,7 @@ public class DtoMapper {
     }
 
     /** Convertisseur pour les critères de tri
-     *
+     * On vérifie la definition des champs depuis la classe NoticeV1SolrField
      */
     @Bean
     public void converterSort() {

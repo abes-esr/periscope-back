@@ -1,12 +1,12 @@
 package fr.abes.periscope.core.util;
 
 import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.NoticeSolr;
 import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.entity.PublicationYear;
 import fr.abes.periscope.core.entity.v1.NoticeV1;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
 import fr.abes.periscope.core.entity.v2.NoticeV2;
+import fr.abes.periscope.core.entity.v2.solr.ItemSolr;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import lombok.extern.slf4j.Slf4j;
@@ -20,12 +20,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
 @Slf4j
 public class NoticeMapper {
+
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
 
     @Autowired
     private ModelMapper modelMapper;
@@ -56,27 +63,31 @@ public class NoticeMapper {
     }
 
     /**
-     * Convertisseur pour les notices SolR vers les notices PERISCOPE
+     * Convertisseur pour les notices SolR V1 vers les notices PERISCOPE
      */
     @Bean
-    public void converterNoticeSolr() {
+    public void converterNoticeV1Solr() {
 
-        Converter<NoticeSolr, Notice> myConverter = new Converter<NoticeSolr, Notice>() {
+        Converter<NoticeV1Solr, Notice> myConverter = new Converter<NoticeV1Solr, Notice>() {
 
-            public Notice convert(MappingContext<NoticeSolr, Notice> context) {
-                NoticeSolr source = context.getSource();
-                Notice target;
-
-                if(source instanceof NoticeV1Solr) {
-                    target = new NoticeV1();
-                } else if (source instanceof NoticeV2Solr) {
-                    target = new NoticeV2();
-                } else {
-                    target = new Notice();
-                }
+            public Notice convert(MappingContext<NoticeV1Solr, Notice> context) {
+                NoticeV1Solr source = context.getSource();
+                Notice target = new NoticeV1();
 
                 try {
-                    // Champs générique au NoticeSolr
+
+                    target.setPpn(source.getPpn());
+                    target.setIssn((source.getIssn()));
+                    target.setPcpList(source.getPcpList());
+                    target.setRcrList(source.getRcrList());
+                    target.setEditor(source.getEditor());
+                    target.setKeyTitle(source.getKeyTitle());
+                    target.setKeyShortedTitle(source.getKeyShortedTitle());
+                    target.setProperTitle(source.getProperTitle());
+                    target.setTitleFromDifferentAuthor(source.getTitleFromDifferentAuthor());
+                    target.setParallelTitle(source.getParallelTitle());
+                    target.setTitleComplement(source.getTitleComplement());
+                    target.setSectionTitle(source.getSectionTitle());
 
                     // Extraction de la date de début
                     try {
@@ -102,15 +113,56 @@ public class NoticeMapper {
                     //Extraction du lien exterieur de Mirabel
                     target.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
 
-                    // Champs spécifique à la V1
-                    if(source instanceof NoticeV1Solr) {
+                    target.setNbLocation(source.getNbLocation());
 
+                    return target;
+
+                } catch (Exception ex) {
+                    throw new MappingException(Arrays.asList(new ErrorMessage(ex.getMessage())));
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
+
+    /**
+     * Convertisseur pour les notices SolR V1 vers les notices PERISCOPE
+     */
+    @Bean
+    public void converterNoticeV2Solr() {
+
+        Converter<NoticeV2Solr, Notice> myConverter = new Converter<NoticeV2Solr, Notice>() {
+
+            public Notice convert(MappingContext<NoticeV2Solr, Notice> context) {
+                NoticeV2Solr source = context.getSource();
+                Notice target = new NoticeV2();
+
+                try {
+
+                    target.setPpn(source.getPpn());
+                    target.setIssn((source.getIssn()));
+
+                    Iterator<ItemSolr> itemIterator = source.getSpecimens().iterator();
+                    while(itemIterator.hasNext()) {
+                        ItemSolr item = itemIterator.next();
+
+                        target.getPcpList().add(item.getEpn());
+                        target.getRcrList().add(item.getRcr());
                     }
 
-                    // Champs spécifique à la V2
-                    if(source instanceof NoticeV2Solr) {
+                    target.setEditor(source.getEditor());
+                    target.setKeyTitle(source.getKeyTitle());
+                    target.setKeyShortedTitle(source.getKeyShortedTitle());
+                    target.setProperTitle(source.getProperTitle());
+                    target.setTitleFromDifferentAuthor(source.getTitleFromDifferentAuthor());
+                    target.setParallelTitle(source.getParallelTitle());
+                    target.setTitleComplement(source.getTitleComplement());
+                    target.setSectionTitle(source.getSectionTitle());
 
-                    }
+                    //Extraction du lien exterieur de Mirabel
+                    target.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
+
+                    target.setNbLocation(source.getNbLocation());
 
                     return target;
 

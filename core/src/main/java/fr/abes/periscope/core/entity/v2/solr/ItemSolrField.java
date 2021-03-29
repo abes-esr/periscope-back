@@ -8,15 +8,15 @@ public interface ItemSolrField {
     String ID = "id";
     String ID_TYPE = "string";
 
-    String EPN = "930-5";
+    String EPN = "930_5";
     String EPN_TYPE = "string";
 
     //--------------------------------
     // Zone 930
-    String PCP = "930-z";
+    String PCP = "930_z";
     String PCP_TYPE = "strings";
 
-    String RCR = "930-b";
+    String RCR = "930_b";
     String RCR_TYPE = "strings";
     //--------------------------------
 
