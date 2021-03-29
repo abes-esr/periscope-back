@@ -8,7 +8,7 @@ import org.springframework.data.domain.Sort;
 import java.util.List;
 
 /**
- * Interface d'un dépôt de Notice SolR avec des requêtes complexes
+ * @Deprecated Interface d'un dépôt de Notice SolR avec des requêtes complexes
  */
 @Deprecated
 public interface AdvancedNoticeSolrV1Repository {

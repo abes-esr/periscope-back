@@ -7,5 +7,5 @@ import java.util.Set;
 
 public class NoticeV2 extends Notice {
 
-    protected Set<Item> specimens = new HashSet<>();
+    protected Set<Item> items = new HashSet<>();
 }

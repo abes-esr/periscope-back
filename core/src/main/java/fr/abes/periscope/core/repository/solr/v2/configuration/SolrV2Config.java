@@ -38,8 +38,7 @@ public class SolrV2Config {
     @Bean
     @Qualifier("solrV2Template")
     public SolrTemplate solrV2Template() {
-        SolrTemplate template = new SolrTemplate(solrV2Client());
-        return template;
+        return new SolrTemplate(solrV2Client());
     }
 
     @Bean

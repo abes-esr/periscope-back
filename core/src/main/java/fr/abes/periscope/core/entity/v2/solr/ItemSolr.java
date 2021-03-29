@@ -7,9 +7,11 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
+import java.io.Serializable;
+
 @Getter @Setter
 @SolrDocument
-public class ItemSolr {
+public class ItemSolr implements Serializable {
 
     @Id
     @Field(ItemSolrField.ID)
@@ -35,7 +37,6 @@ public class ItemSolr {
     public ItemSolr(String ppn, String epn) {
         this.id = epn;
         this.epn = epn;
-
         this.ppn = ppn; // Lien avec la notice parent
     }
 

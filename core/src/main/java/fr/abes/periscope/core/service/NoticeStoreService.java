@@ -31,7 +31,7 @@ public class NoticeStoreService {
     private NoticeSolrV2Repository noticeV2Repository;
     private NoticeMapper noticeMapper;
 
-    private final String defaultRepository = "v1";
+    private static final String DEFAULT_REPOSITORY = "v1";
 
     @Autowired
     public NoticeStoreService(NoticeMapper mapper, NoticeSolrV1Repository noticeV1Repository, NoticeSolrV2Repository noticeV2Repository) {
@@ -53,9 +53,7 @@ public class NoticeStoreService {
     @TrackExecutionTime
     public List<Notice> findNoticesByCriteria(String repository, List<Criterion> criteria, List<CriterionSort> criteriaSort, int page, int size) throws IllegalArgumentException {
         List<Sort.Order> orders = new ArrayList<>();
-        criteriaSort.forEach(c -> {
-            orders.add(new Sort.Order(c.getOrder(), c.getSort()));
-        });
+        criteriaSort.forEach(c -> orders.add(new Sort.Order(c.getOrder(), c.getSort())));
 
         switch (repository) {
             case "v1":
@@ -80,6 +78,6 @@ public class NoticeStoreService {
      */
     @TrackExecutionTime
     public List<Notice> findNoticesByCriteria(List<Criterion> criteria, List<CriterionSort> criteriaSort, int page, int size) {
-        return findNoticesByCriteria(defaultRepository,criteria,criteriaSort,page,size);
+        return findNoticesByCriteria(DEFAULT_REPOSITORY,criteria,criteriaSort,page,size);
     }
 }

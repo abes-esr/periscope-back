@@ -2,7 +2,6 @@ package fr.abes.periscope.core.criterion;
 
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import lombok.Getter;
-import lombok.Setter;
 
 /**
  * Représente un bloc générique de critère de recherche
@@ -20,7 +19,7 @@ public abstract class Criterion {
     /**
      * Constrcteur de critère de recherche pour un premier bloc
      */
-    public Criterion() {
+    protected Criterion() {
         this.isFirst = true;
         this.blocOperator = LogicalOperator.AND; //Par defaut
     }
@@ -29,7 +28,7 @@ public abstract class Criterion {
      * Constrcteur de critère de recherche avec un connecteur de bloc
      * @param operator String Connecteur logique
      */
-    public Criterion(String operator) {
+    protected Criterion(String operator) {
 
         this.isFirst = false;
 

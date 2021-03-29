@@ -1,5 +1,6 @@
 package fr.abes.periscope.core.entity.v2.solr;
 
+import fr.abes.periscope.core.entity.NoticeSolr;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.solr.client.solrj.beans.Field;
@@ -20,7 +21,7 @@ public class NoticeV2Solr implements Serializable {
     @Id
     @Field(NoticeV2SolrField.ID)
     @Indexed(name = NoticeV2SolrField.ID, type = NoticeV2SolrField.ID_TYPE)
-    protected String id;
+    private String id;
 
     @Field(NoticeV2SolrField.TITLE_TYPE)
     @Indexed(name = NoticeV2SolrField.TITLE_TYPE, type = NoticeV2SolrField.TITLE_TYPE_TYPE)
@@ -28,76 +29,76 @@ public class NoticeV2Solr implements Serializable {
 
     @Field(NoticeV2SolrField.PPN)
     @Indexed(name = NoticeV2SolrField.PPN, type = NoticeV2SolrField.PPN_TYPE)
-    protected String ppn;
+    private String ppn;
 
     @Field(NoticeV2SolrField.ISSN)
     @Indexed(name = NoticeV2SolrField.ISSN, type = NoticeV2SolrField.ISSN_TYPE)
-    protected String issn;
+    private String issn;
 
     @Field(NoticeV2SolrField.PCP_LIST)
     @Indexed(name = NoticeV2SolrField.PCP_LIST, type = NoticeV2SolrField.PCP_LIST_TYPE)
     @Deprecated
-    protected Set<String> pcpList;
+    private Set<String> pcpList;
 
     @Field(NoticeV2SolrField.RCR_LIST)
     @Indexed(name = NoticeV2SolrField.RCR_LIST, type = NoticeV2SolrField.RCR_LIST_TYPE)
     @Deprecated
-    protected Set<String> rcrList;
+    private Set<String> rcrList;
 
     @Field(NoticeV2SolrField.EDITOR)
     @Indexed(name = NoticeV2SolrField.EDITOR, type = NoticeV2SolrField.EDITOR_TYPE)
-    protected String editor;
+    private String editor;
 
     @Field(NoticeV2SolrField.PROCESSING_GLOBAL_DATA)
     @Indexed(name = NoticeV2SolrField.PROCESSING_GLOBAL_DATA, type = NoticeV2SolrField.PROCESSING_GLOBAL_DATA_TYPE)
-    protected String processingGlobalData;
+    private String processingGlobalData;
 
     @Field(NoticeV2SolrField.KEY_TITLE)
     @Indexed(name = NoticeV2SolrField.KEY_TITLE, type = NoticeV2SolrField.KEY_TITLE_TYPE)
-    protected String keyTitle;
+    private String keyTitle;
 
     @Field(NoticeV2SolrField.KEY_SHORTED_TITLE)
     @Indexed(name = NoticeV2SolrField.KEY_SHORTED_TITLE, type = NoticeV2SolrField.KEY_SHORTED_TITLE_TYPE)
-    protected String keyShortedTitle;
+    private String keyShortedTitle;
 
     @Field(NoticeV2SolrField.PROPER_TITLE)
     @Indexed(name = NoticeV2SolrField.PROPER_TITLE, type = NoticeV2SolrField.PROPER_TITLE_TYPE)
-    protected String properTitle;
+    private String properTitle;
 
     @Field(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR)
     @Indexed(name = NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR, type = NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR_TYPE)
-    protected String titleFromDifferentAuthor;
+    private String titleFromDifferentAuthor;
 
     @Field(NoticeV2SolrField.PARALLEL_TITLE)
     @Indexed(name = NoticeV2SolrField.PARALLEL_TITLE, type = NoticeV2SolrField.PARALLEL_TITLE_TYPE)
-    protected String parallelTitle;
+    private String parallelTitle;
 
     @Field(NoticeV2SolrField.TITLE_COMPLEMENT)
     @Indexed(name = NoticeV2SolrField.TITLE_COMPLEMENT, type = NoticeV2SolrField.TITLE_COMPLEMENT_TYPE)
-    protected String titleComplement;
+    private String titleComplement;
 
     @Field(NoticeV2SolrField.SECTION_TITLE)
     @Indexed(name = NoticeV2SolrField.SECTION_TITLE, type = NoticeV2SolrField.SECTION_TITLE_TYPE)
-    protected String sectionTitle;
+    private String sectionTitle;
 
     @Field(NoticeV2SolrField.KEY_TITLE_QUALIFIER)
     @Indexed(name = NoticeV2SolrField.KEY_TITLE_QUALIFIER, type = NoticeV2SolrField.KEY_TITLE_QUALIFIER_TYPE)
-    protected String keyTitleQualifer;
+    private String keyTitleQualifer;
 
     @Field(NoticeV2SolrField.CONTINIOUS_TYPE)
     @Indexed(name = NoticeV2SolrField.CONTINIOUS_TYPE, type = NoticeV2SolrField.CONTINIOUS_TYPE_TYPE)
-    protected String continiousType;
+    private String continiousType;
 
     @Field(NoticeV2SolrField.EXTERNAL_URLS)
     @Indexed(name = NoticeV2SolrField.EXTERNAL_URLS, type = NoticeV2SolrField.EXTERNAL_URLS_TYPE)
-    protected List<String> externalURLs;
+    private List<String> externalURLs;
 
     @Field(NoticeV2SolrField.NB_LOC)
     @Indexed(name = NoticeV2SolrField.NB_LOC, type = NoticeV2SolrField.NB_LOC_TYPE)
-    protected Integer nbLocation;
+    private Integer nbLocation;
 
     @ChildDocument
-    protected Set<ItemSolr> specimens = new HashSet<>();
+    private Set<ItemSolr> items = new HashSet<>();
 
     @Override
     public boolean equals(Object obj) {
