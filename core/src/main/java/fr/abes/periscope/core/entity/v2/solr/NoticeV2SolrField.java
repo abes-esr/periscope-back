@@ -118,8 +118,8 @@ public final class NoticeV2SolrField {
 
     //--------------------------------
     // Zone 110
-    public static final String CONTINIOUS_TYPE = "110_a";
-    public static final String CONTINIOUS_TYPE_TYPE = "string";
+    public static final String TYPE_DOCUMENT = "typeDocument";
+    public static final String TYPE_DOCUMENT_TYPE = "string";
     //--------------------------------
 
     //--------------------------------

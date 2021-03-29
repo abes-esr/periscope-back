@@ -15,7 +15,7 @@ import java.util.List;
 
 public abstract class NoticeAbstractController {
 
-    protected List<NoticeWebDto> findByCriteria(int page, int size, NoticeStoreService service, LinkedList<CriterionWebDto> userCriteria, LinkedList<CriterionSortWebDto> userSortCriteria, DtoMapper dtoMapper) {
+    protected List<Criterion> findByCriteria(LinkedList<CriterionWebDto> userCriteria, DtoMapper dtoMapper) {
         if (userCriteria.isEmpty()) {
             throw new IllegalCriterionException("Criteria list cannot be empty");
         }
@@ -26,22 +26,10 @@ public abstract class NoticeAbstractController {
             CriterionWebDto userCriterion = criteriaIterator.next();
             handleCriteria(dtoMapper, criteria, userCriterion);
         }
-
-        List<CriterionSort>  sortCriteria = new LinkedList<>();
-        if (userSortCriteria != null && !userSortCriteria.isEmpty()) {
-            Iterator<CriterionSortWebDto> userSortCriteriaIterator = userSortCriteria.iterator();
-            while (userSortCriteriaIterator.hasNext()) {
-                CriterionSortWebDto sortCriterion = userSortCriteriaIterator.next();
-                sortCriteria.add(dtoMapper.map(sortCriterion, CriterionSort.class));
-            }
-        } else {
-            sortCriteria.add(new CriterionSort(NoticeV1SolrField.PPN, Sort.Direction.ASC));
-        }
-        List<Notice> candidate = service.findNoticesByCriteria(criteria,sortCriteria,page,size);
-        return dtoMapper.mapList(candidate, NoticeWebDto.class);
+        return criteria;
     }
 
-    private void handleCriteria(DtoMapper dtoMapper, List<Criterion> criteria, CriterionWebDto userCriterion) {
+    protected void handleCriteria(DtoMapper dtoMapper, List<Criterion> criteria, CriterionWebDto userCriterion) {
         if (userCriterion instanceof CriterionPcpWebDto) {
             criteria.add(dtoMapper.map(userCriterion, CriterionPcp.class));
         }

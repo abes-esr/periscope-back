@@ -1,6 +1,5 @@
 package fr.abes.periscope.core.entity.v2.solr;
 
-import fr.abes.periscope.core.entity.NoticeSolr;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.solr.client.solrj.beans.Field;
@@ -85,9 +84,9 @@ public class NoticeV2Solr implements Serializable {
     @Indexed(name = NoticeV2SolrField.KEY_TITLE_QUALIFIER, type = NoticeV2SolrField.KEY_TITLE_QUALIFIER_TYPE)
     private String keyTitleQualifer;
 
-    @Field(NoticeV2SolrField.CONTINIOUS_TYPE)
-    @Indexed(name = NoticeV2SolrField.CONTINIOUS_TYPE, type = NoticeV2SolrField.CONTINIOUS_TYPE_TYPE)
-    private String continiousType;
+    @Field(NoticeV2SolrField.TYPE_DOCUMENT)
+    @Indexed(name = NoticeV2SolrField.TYPE_DOCUMENT, type = NoticeV2SolrField.TYPE_DOCUMENT_TYPE)
+    private String typeDocument;
 
     @Field(NoticeV2SolrField.EXTERNAL_URLS)
     @Indexed(name = NoticeV2SolrField.EXTERNAL_URLS, type = NoticeV2SolrField.EXTERNAL_URLS_TYPE)

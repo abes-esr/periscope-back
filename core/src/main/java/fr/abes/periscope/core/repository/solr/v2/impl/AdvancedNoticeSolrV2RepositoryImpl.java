@@ -59,13 +59,13 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
                 NoticeV2SolrField.KEY_TITLE,
                 NoticeV2SolrField.ISSN,
                 NoticeV2SolrField.KEY_SHORTED_TITLE,*/
-                NoticeV2SolrField.PROPER_TITLE/*,
+                NoticeV2SolrField.PROPER_TITLE,/*
                 NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR,
                 NoticeV2SolrField.PARALLEL_TITLE,
                 NoticeV2SolrField.TITLE_COMPLEMENT,
                 NoticeV2SolrField.SECTION_TITLE,
-                NoticeV2SolrField.KEY_TITLE_QUALIFIER,
-                NoticeV2SolrField.CONTINIOUS_TYPE,
+                NoticeV2SolrField.KEY_TITLE_QUALIFIER,*/
+                NoticeV2SolrField.TYPE_DOCUMENT/*,
                 NoticeV2SolrField.EXTERNAL_URLS,
                 NoticeV2SolrField.NB_LOC*/);
         solrQuery.addSort(sort);
@@ -96,8 +96,8 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
                 NoticeV2SolrField.PARALLEL_TITLE,
                 NoticeV2SolrField.TITLE_COMPLEMENT,
                 NoticeV2SolrField.SECTION_TITLE,
-                NoticeV2SolrField.KEY_TITLE_QUALIFIER,
-                NoticeV2SolrField.CONTINIOUS_TYPE*/);
+                NoticeV2SolrField.KEY_TITLE_QUALIFIER*/,
+                NoticeV2SolrField.TYPE_DOCUMENT);
         solrQuery.addSort(sort);
         // Debug query
         DefaultQueryParser dqp = new DefaultQueryParser(null);

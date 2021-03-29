@@ -1,5 +1,10 @@
 package fr.abes.periscope.web.controller;
 
+import fr.abes.periscope.core.criterion.Criterion;
+import fr.abes.periscope.core.criterion.CriterionSort;
+import fr.abes.periscope.core.entity.Notice;
+import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
+import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import fr.abes.periscope.web.dto.CriterionSortWebDto;
@@ -9,9 +14,11 @@ import fr.abes.periscope.web.dto.RequestParameters;
 import fr.abes.periscope.web.util.DtoMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -31,7 +38,20 @@ public class NoticeV2Controller extends NoticeAbstractController {
     @PostMapping("/notice/findByCriteria")
     public List<NoticeWebDto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size,@RequestBody @Valid RequestParameters requestParameters) throws IllegalCriterionException {
         LinkedList<CriterionWebDto> userCriteria = requestParameters.getUserCriteria();
-        LinkedList<CriterionSortWebDto> sortCriteria = requestParameters.getSortCriteria();
-        return findByCriteria(page, size, noticeStoreService, userCriteria, sortCriteria, dtoMapper);
+        List<Criterion> criteria = findByCriteria(userCriteria, dtoMapper);
+        LinkedList<CriterionSortWebDto> userSortCriteria = requestParameters.getSortCriteria();
+
+        List<CriterionSort> sortCriteria = new LinkedList<>();
+        if (userSortCriteria != null && !userSortCriteria.isEmpty()) {
+            Iterator<CriterionSortWebDto> userSortCriteriaIterator = userSortCriteria.iterator();
+            while (userSortCriteriaIterator.hasNext()) {
+                CriterionSortWebDto sortCriterion = userSortCriteriaIterator.next();
+                sortCriteria.add(dtoMapper.map(sortCriterion, CriterionSort.class));
+            }
+        } else {
+            sortCriteria.add(new CriterionSort(NoticeV2SolrField.PPN, Sort.Direction.ASC));
+        }
+        List<Notice> candidate = noticeStoreService.findNoticesByCriteria("v2", criteria,sortCriteria,page,size);
+        return dtoMapper.mapList(candidate, NoticeWebDto.class);
     }
 }

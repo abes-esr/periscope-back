@@ -1,6 +1,5 @@
 package fr.abes.periscope.core.entity.v1.solr;
 
-import fr.abes.periscope.core.entity.NoticeSolr;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -13,7 +12,7 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * Représente une notice au format SolR
+ * @Deprecated Représente une notice au format SolR
  */
 @Deprecated
 @NoArgsConstructor
