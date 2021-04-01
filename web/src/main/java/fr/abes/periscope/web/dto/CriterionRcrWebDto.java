@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,13 +17,13 @@ import java.util.List;
 public class CriterionRcrWebDto extends CriterionWebDto {
 
     public static final String RCR_PROPERTY = "rcr";
-    public static final String RCR_OPRATOR_PROPERTY = "rcr_operator";
+    public static final String RCR_OPERATOR_PROPERTY = "rcr_operator";
 
     @JsonProperty(value= RCR_PROPERTY)
     @NotNull(message = "La liste des codes RCR ne doit pas être nulle")
     private List<String> rcr;
 
-    @JsonProperty(value= RCR_OPRATOR_PROPERTY)
+    @JsonProperty(value= RCR_OPERATOR_PROPERTY)
     @NotNull(message = "La liste des connecteurs logiques ne doit pas être nulle")
     private List<String> rcrOperator;
 

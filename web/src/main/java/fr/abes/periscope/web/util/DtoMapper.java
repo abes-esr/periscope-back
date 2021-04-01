@@ -135,7 +135,7 @@ public class DtoMapper {
                         throw new IllegalArgumentException(CriterionTypeName.CRITERION_RCR + " - property '"+CriterionRcrWebDto.RCR_PROPERTY+"' is missing");
                     }
                     if (s.getRcrOperator() == null) {
-                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_RCR + " - property '"+CriterionRcrWebDto.RCR_OPRATOR_PROPERTY+"' is missing");
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_RCR + " - property '"+CriterionRcrWebDto.RCR_OPERATOR_PROPERTY +"' is missing");
                     }
 
                     CriterionRcr d = new CriterionRcr(s.getBlocOperator(), s.getRcr(), s.getRcrOperator());
@@ -143,7 +143,7 @@ public class DtoMapper {
                 } catch (IllegalOperatorException ex) {
                     throw new IllegalOperatorException(CriterionTypeName.CRITERION_RCR  + " : " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_RCR + " - '"+CriterionRcrWebDto.RCR_PROPERTY+"' dismatch size of '"+CriterionRcrWebDto.RCR_OPRATOR_PROPERTY+"' : " + ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_RCR + " - '"+CriterionRcrWebDto.RCR_PROPERTY+"' dismatch size of '"+CriterionRcrWebDto.RCR_OPERATOR_PROPERTY +"' : " + ex.getLocalizedMessage());
                 } catch (IllegalCriterionException ex) {
                     throw new IllegalCriterionException(CriterionTypeName.CRITERION_RCR + " : " + ex.getLocalizedMessage());
                 }
@@ -174,7 +174,7 @@ public class DtoMapper {
                 } catch (IllegalOperatorException ex) {
                     throw new IllegalOperatorException(CriterionTypeName.CRITERION_PPN  + " : " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_PPN + " - '"+CriterionPpnWebDto.PPN_PROPERTY+"' dismatch size of '"+CriterionPpnWebDto.PPN_OPRATOR_PROPERTY+"' : " + ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_PPN + " - '"+CriterionPpnWebDto.PPN_PROPERTY+"' dismatch size of '"+CriterionPpnWebDto.PPN_OPERATOR_PROPERTY +"' : " + ex.getLocalizedMessage());
                 } catch (IllegalCriterionException ex) {
                     throw new IllegalCriterionException(CriterionTypeName.CRITERION_PPN + " : " + ex.getLocalizedMessage());
                 }
@@ -201,7 +201,7 @@ public class DtoMapper {
                         throw new IllegalArgumentException(CriterionTypeName.CRITERION_TITLE_WORDS + " - property '"+CriterionTitleWordsWebDto.TITLE_WORDS_PROPERTY+"' is missing");
                     }
                     if (s.getTitleWordsOperator() == null) {
-                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_TITLE_WORDS + " - property '"+CriterionTitleWordsWebDto.TITLE_WORDS_OPRATOR_PROPERTY+"' is missing");
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_TITLE_WORDS + " - property '"+CriterionTitleWordsWebDto.TITLE_WORDS_OPERATOR_PROPERTY +"' is missing");
                     }
 
                     CriterionTitleWords d = new CriterionTitleWords(s.getBlocOperator(), s.getTitleWords(), s.getTitleWordsOperator());
@@ -209,7 +209,7 @@ public class DtoMapper {
                 } catch (IllegalOperatorException ex) {
                     throw new IllegalOperatorException(CriterionTypeName.CRITERION_TITLE_WORDS  + " : " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_TITLE_WORDS + " - '"+CriterionTitleWordsWebDto.TITLE_WORDS_PROPERTY+"' dismatch size of '"+CriterionTitleWordsWebDto.TITLE_WORDS_OPRATOR_PROPERTY+"' : " + ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_TITLE_WORDS + " - '"+CriterionTitleWordsWebDto.TITLE_WORDS_PROPERTY+"' dismatch size of '"+CriterionTitleWordsWebDto.TITLE_WORDS_OPERATOR_PROPERTY +"' : " + ex.getLocalizedMessage());
                 } catch (IllegalCriterionException ex) {
                     throw new IllegalCriterionException(CriterionTypeName.CRITERION_TITLE_WORDS + " : " + ex.getLocalizedMessage());
                 }
@@ -242,7 +242,7 @@ public class DtoMapper {
                 } catch (IllegalOperatorException ex) {
                     throw new IllegalOperatorException(CriterionTypeName.CRITERION_ISSN  + " : " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_ISSN + " - '"+CriterionIssnWebDto.ISSN_PROPERTY+"' dismatch size of '"+CriterionIssnWebDto.ISSN_OPRATOR_PROPERTY+"' : " + ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_ISSN + " - '"+CriterionIssnWebDto.ISSN_PROPERTY+"' dismatch size of '"+CriterionIssnWebDto.ISSN_OPERATOR_PROPERTY +"' : " + ex.getLocalizedMessage());
                 } catch (IllegalCriterionException ex) {
                     throw new IllegalCriterionException(CriterionTypeName.CRITERION_ISSN + " : " + ex.getLocalizedMessage());
                 }

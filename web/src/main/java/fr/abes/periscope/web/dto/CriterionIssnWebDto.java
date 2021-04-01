@@ -18,7 +18,7 @@ import java.util.List;
 public class CriterionIssnWebDto extends CriterionWebDto {
 
     public static final String ISSN_PROPERTY = "issn";
-    public static final String ISSN_OPRATOR_PROPERTY = "issn_operator";
+    public static final String ISSN_OPERATOR_PROPERTY = "issn_operator";
 
     @JsonProperty(value= ISSN_PROPERTY)
     @NotNull(message = "La liste des ISSN ne doit pas être nulle")
