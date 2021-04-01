@@ -36,7 +36,7 @@ public class CriterionTitleWords extends Criterion {
         super(blocOperator);
 
         if (candidatesTitleWords.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         if (candidatesOperator.size() != candidatesTitleWords.size()) {
@@ -68,7 +68,7 @@ public class CriterionTitleWords extends Criterion {
         super();
 
         if (candidatesTitleWords.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         if (candidatesOperator.size() != candidatesTitleWords.size()) {

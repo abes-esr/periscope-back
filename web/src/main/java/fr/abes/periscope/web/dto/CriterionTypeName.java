@@ -1,4 +1,4 @@
-package fr.abes.periscope.core.criterion;
+package fr.abes.periscope.web.dto;
 
 /**
  * Représente les noms des types de critères de recherche

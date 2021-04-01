@@ -2,7 +2,6 @@ package fr.abes.periscope.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import fr.abes.periscope.core.criterion.CriterionTypeName;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,7 +16,11 @@ import java.util.List;
 @Setter
 @JsonTypeName(CriterionTypeName.CRITERION_PPN)
 public class CriterionPpnWebDto extends CriterionWebDto {
-    @JsonProperty(value="ppn")
+
+    public static final String PPN_PROPERTY = "ppn";
+    public static final String PPN_OPRATOR_PROPERTY = "ppn_operator";
+
+    @JsonProperty(value= PPN_PROPERTY)
     @NotNull(message = "La liste des PPN ne doit pas être nulle")
-    private List<String> ppn = new ArrayList<>();
+    private List<String> ppn;
 }

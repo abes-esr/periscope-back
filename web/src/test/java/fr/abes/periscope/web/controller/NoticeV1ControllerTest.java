@@ -92,14 +92,101 @@ public class NoticeV1ControllerTest extends PeriscopeApplicationTest {
 
     /**
      * Test la route /api/v1/notice/findByCriteria avec la méthode POST et
-     * un mauvais JSON
+     * un mauvais JSON (sans critères)
      * @throws Exception
      */
     @Test
-    @DisplayName("POST findByCriteria - mauvais JSON")
-    public void findByCriteriaPostMethodWrongJSON() throws Exception {
+    @DisplayName("POST findByCriteria - mauvais JSON - sans critères")
+    public void findByCriteriaPostMethodWrongJSON1() throws Exception {
+        String json = "{\n" +
+                "    \"crites\":\n" +
+                "    [\n" +
+                "        {\"sort\":\"EDITOR\",\"order\":\"DESC\"},\n" +
+                "        {\"sort\":\"KEY_TITLE\",\"order\":\"ASC\"}\n" +
+                "    ]\n" +
+                "}";
+
+        mockMvc.perform(post("/api/v1/notice/findByCriteria?page=0&size=25")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("The credentials are not valid"))
+                .andExpect(jsonPath("$.debugMessage").exists());
+    }
+
+    /**
+     * Test la route /api/v1/notice/findByCriteria avec la méthode POST et
+     * un mauvais JSON (sans critères)
+     * @throws Exception
+     */
+    @Test
+    @DisplayName("POST findByCriteria - mauvais JSON - type")
+    public void findByCriteriaPostMethodWrongJSON2() throws Exception {
         String json = "{\n" +
                 "    \"criteres\":\n" +
+                "    [\n" +
+                "        {\"typedd\":\"CriterionPcp\",\"bloc_operator\":\"OU\",\"pcp\":[\"PCAM\"],\"pcp_operator\":[\"ET\"]}\n" +
+                "    ],\n" +
+                "    \"tri\":\n" +
+                "    [\n" +
+                "        {\"sort\":\"EDITOR\",\"order\":\"DESC\"},\n" +
+                "        {\"sort\":\"KEY_TITLE\",\"order\":\"ASC\"}\n" +
+                "    ]\n" +
+                "}";
+
+        mockMvc.perform(post("/api/v1/notice/findByCriteria?page=0&size=25")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Malformed JSON request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
+    }
+
+    /**
+     * Test la route /api/v1/notice/findByCriteria avec la méthode POST et
+     * un mauvais JSON (sans critères)
+     * @throws Exception
+     */
+    @Test
+    @DisplayName("POST findByCriteria - mauvais JSON - mauvais type")
+    public void findByCriteriaPostMethodWrongJSON3() throws Exception {
+        String json = "{\n" +
+                "    \"criteres\":\n" +
+                "    [\n" +
+                "        {\"type\":\"CriterionTOTO\",\"bloc_operator\":\"OU\",\"pcp\":[\"PCAM\"],\"pcp_operator\":[\"ET\"]}\n" +
+                "    ],\n" +
+                "    \"tri\":\n" +
+                "    [\n" +
+                "        {\"sort\":\"EDITOR\",\"order\":\"DESC\"},\n" +
+                "        {\"sort\":\"KEY_TITLE\",\"order\":\"ASC\"}\n" +
+                "    ]\n" +
+                "}";
+
+        mockMvc.perform(post("/api/v1/notice/findByCriteria?page=0&size=25")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.timestamp").isNotEmpty())
+                .andExpect(jsonPath("$.message").value("Malformed JSON request"))
+                .andExpect(jsonPath("$.debugMessage").exists());
+    }
+
+    /**
+     * Test la route /api/v1/notice/findByCriteria avec la méthode POST et
+     * un mauvais JSON (sans critères)
+     * @throws Exception
+     */
+    @Test
+    @DisplayName("POST findByCriteria - mauvais JSON - bloc_operator")
+    public void findByCriteriaPostMethodWrongJSON4() throws Exception {
+        String json = "{\n" +
+                "    \"criteres\":\n" +
+                "    [\n" +
+                "        {\"type\":\"CriterionTOTO\",\"bloc_opator\":\"OU\",\"pcp\":[\"PCAM\"],\"pcp_operator\":[\"ET\"]}\n" +
+                "    ],\n" +
+                "    \"tri\":\n" +
                 "    [\n" +
                 "        {\"sort\":\"EDITOR\",\"order\":\"DESC\"},\n" +
                 "        {\"sort\":\"KEY_TITLE\",\"order\":\"ASC\"}\n" +

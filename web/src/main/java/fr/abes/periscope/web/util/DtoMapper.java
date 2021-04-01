@@ -5,6 +5,7 @@ import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
+import fr.abes.periscope.core.exception.IllegalSortException;
 import fr.abes.periscope.web.dto.*;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -65,17 +66,17 @@ public class DtoMapper {
                             try {
                                 field[0] = String.valueOf(n.get(s.getSort()));
                             } catch (IllegalAccessException e) {
-                                throw new IllegalOperatorException(s.getSort() + " : Critère de tri inconnu");
+                                throw new IllegalSortException(s.getSort() + " : Critère de tri inconnu");
                             }
                         }
                     });
                     if (field[0].isEmpty()) {
-                        throw new IllegalOperatorException(s.getSort() + " : Critère de tri inconnu");
+                        throw new IllegalSortException(s.getSort() + " : Critère de tri inconnu");
                     }
                     CriterionSort d = new CriterionSort(field[0], s.getOrder());
                     return d;
-                } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(s.getSort() + " : " + ex.getMessage());
+                } catch (IllegalSortException ex) {
+                    throw new IllegalSortException(s.getSort() + " : " + ex.getMessage());
                 }
             }
         };
@@ -92,12 +93,26 @@ public class DtoMapper {
             public CriterionPcp convert(MappingContext<CriterionPcpWebDto, CriterionPcp> context) {
                 CriterionPcpWebDto s = context.getSource();
                 try {
+                    if (s.getBlocOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_PCP + " - property '"+CriterionWebDto.OPERATOR_PROPERTY+"' is missing");
+                    }
+                    if (s.getPcp() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_PCP + " - property '"+CriterionPcpWebDto.PCP_PROPERTY+"' is missing");
+                    }
+                    if (s.getPcpOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_PCP + " - property '"+CriterionPcpWebDto.PCP_OPERATOR_PROPERTY +"' is missing");
+                    }
+
                     CriterionPcp d = new CriterionPcp(s.getBlocOperator(), s.getPcp(), s.getPcpOperator());
                     return d;
-                } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_PCP + ": " + ex.getLocalizedMessage());
-                }
 
+                } catch (IllegalOperatorException ex) {
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_PCP + " : " + ex.getLocalizedMessage());
+                } catch (CriterionOperatorMismatchException ex) {
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_PCP + " - '"+CriterionPcpWebDto.PCP_PROPERTY+"' dismatch size of '"+CriterionPcpWebDto.PCP_OPERATOR_PROPERTY +"' : " + ex.getLocalizedMessage());
+                } catch (IllegalCriterionException ex) {
+                    throw new IllegalCriterionException(CriterionTypeName.CRITERION_PCP + " : " + ex.getLocalizedMessage());
+                }
             }
         };
         modelMapper.addConverter(myConverter);
@@ -113,12 +128,24 @@ public class DtoMapper {
             public CriterionRcr convert(MappingContext<CriterionRcrWebDto, CriterionRcr> context) {
                 CriterionRcrWebDto s = context.getSource();
                 try {
+                    if (s.getBlocOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_RCR + " - property '"+CriterionWebDto.OPERATOR_PROPERTY+"' is missing");
+                    }
+                    if (s.getRcr() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_RCR + " - property '"+CriterionRcrWebDto.RCR_PROPERTY+"' is missing");
+                    }
+                    if (s.getRcrOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_RCR + " - property '"+CriterionRcrWebDto.RCR_OPRATOR_PROPERTY+"' is missing");
+                    }
+
                     CriterionRcr d = new CriterionRcr(s.getBlocOperator(), s.getRcr(), s.getRcrOperator());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_RCR + ": " + ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_RCR  + " : " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_RCR + ": " + ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_RCR + " - '"+CriterionRcrWebDto.RCR_PROPERTY+"' dismatch size of '"+CriterionRcrWebDto.RCR_OPRATOR_PROPERTY+"' : " + ex.getLocalizedMessage());
+                } catch (IllegalCriterionException ex) {
+                    throw new IllegalCriterionException(CriterionTypeName.CRITERION_RCR + " : " + ex.getLocalizedMessage());
                 }
             }
         };
@@ -135,12 +162,21 @@ public class DtoMapper {
             public CriterionPpn convert(MappingContext<CriterionPpnWebDto, CriterionPpn> context) {
                 CriterionPpnWebDto s = context.getSource();
                 try {
+                    if (s.getBlocOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_PPN + " - property '"+CriterionWebDto.OPERATOR_PROPERTY+"' is missing");
+                    }
+                    if (s.getPpn() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_PPN + " - property '"+CriterionPpnWebDto.PPN_PROPERTY+"' is missing");
+                    }
+
                     CriterionPpn d = new CriterionPpn(s.getBlocOperator(), s.getPpn());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_PPN + ": " + ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_PPN  + " : " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_PPN + ": " + ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_PPN + " - '"+CriterionPpnWebDto.PPN_PROPERTY+"' dismatch size of '"+CriterionPpnWebDto.PPN_OPRATOR_PROPERTY+"' : " + ex.getLocalizedMessage());
+                } catch (IllegalCriterionException ex) {
+                    throw new IllegalCriterionException(CriterionTypeName.CRITERION_PPN + " : " + ex.getLocalizedMessage());
                 }
             }
         };
@@ -157,12 +193,25 @@ public class DtoMapper {
             public CriterionTitleWords convert(MappingContext<CriterionTitleWordsWebDto, CriterionTitleWords> context) {
                 CriterionTitleWordsWebDto s = context.getSource();
                 try {
+
+                    if (s.getBlocOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_TITLE_WORDS + " - property '"+CriterionWebDto.OPERATOR_PROPERTY+"' is missing");
+                    }
+                    if (s.getTitleWords() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_TITLE_WORDS + " - property '"+CriterionTitleWordsWebDto.TITLE_WORDS_PROPERTY+"' is missing");
+                    }
+                    if (s.getTitleWordsOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_TITLE_WORDS + " - property '"+CriterionTitleWordsWebDto.TITLE_WORDS_OPRATOR_PROPERTY+"' is missing");
+                    }
+
                     CriterionTitleWords d = new CriterionTitleWords(s.getBlocOperator(), s.getTitleWords(), s.getTitleWordsOperator());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_TITLE_WORDS + ": " + ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_TITLE_WORDS  + " : " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_TITLE_WORDS + ": " + ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_TITLE_WORDS + " - '"+CriterionTitleWordsWebDto.TITLE_WORDS_PROPERTY+"' dismatch size of '"+CriterionTitleWordsWebDto.TITLE_WORDS_OPRATOR_PROPERTY+"' : " + ex.getLocalizedMessage());
+                } catch (IllegalCriterionException ex) {
+                    throw new IllegalCriterionException(CriterionTypeName.CRITERION_TITLE_WORDS + " : " + ex.getLocalizedMessage());
                 }
             }
         };
@@ -180,12 +229,22 @@ public class DtoMapper {
             public CriterionIssn convert(MappingContext<CriterionIssnWebDto, CriterionIssn> mappingContext) {
                 CriterionIssnWebDto s = mappingContext.getSource();
                 try {
+
+                    if (s.getBlocOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_ISSN + " - property '"+CriterionWebDto.OPERATOR_PROPERTY+"' is missing");
+                    }
+                    if (s.getIssn() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_ISSN + " - property '"+CriterionIssnWebDto.ISSN_PROPERTY+"' is missing");
+                    }
+
                     CriterionIssn d = new CriterionIssn(s.getBlocOperator(), s.getIssn());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_ISSN + ": " + ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_ISSN  + " : " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_ISSN + ": " + ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_ISSN + " - '"+CriterionIssnWebDto.ISSN_PROPERTY+"' dismatch size of '"+CriterionIssnWebDto.ISSN_OPRATOR_PROPERTY+"' : " + ex.getLocalizedMessage());
+                } catch (IllegalCriterionException ex) {
+                    throw new IllegalCriterionException(CriterionTypeName.CRITERION_ISSN + " : " + ex.getLocalizedMessage());
                 }
             }
         };
@@ -202,14 +261,25 @@ public class DtoMapper {
             public CriterionEditor convert(MappingContext<CriterionEditorWebDto, CriterionEditor> context) {
                 CriterionEditorWebDto s = context.getSource();
                 try {
+
+                    if (s.getBlocOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_EDITOR + " - property '"+CriterionWebDto.OPERATOR_PROPERTY+"' is missing");
+                    }
+                    if (s.getEditors() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_EDITOR + " - property '"+CriterionEditorWebDto.EDITORS_PROPERTY+"' is missing");
+                    }
+                    if (s.getEditorsOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_EDITOR + " - property '"+CriterionEditorWebDto.EDITORS_OPERATOR_PROPERTY+"' is missing");
+                    }
+
                     CriterionEditor d = new CriterionEditor(s.getBlocOperator(), s.getEditors(), s.getEditorsOperator());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_EDITOR+": "+ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_EDITOR  + " : " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_EDITOR+": "+ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_EDITOR + " - '"+CriterionEditorWebDto.EDITORS_PROPERTY+"' dismatch size of '"+CriterionEditorWebDto.EDITORS_OPERATOR_PROPERTY+"' : " + ex.getLocalizedMessage());
                 } catch (IllegalCriterionException ex) {
-                    throw new IllegalCriterionException(CriterionTypeName.CRITERION_EDITOR+": "+ex.getLocalizedMessage());
+                    throw new IllegalCriterionException(CriterionTypeName.CRITERION_EDITOR + " : " + ex.getLocalizedMessage());
                 }
             }
         };
@@ -217,7 +287,6 @@ public class DtoMapper {
     }
 
     /**
-<<<<<<< HEAD
      * Convertisseur pour les critères pays (DTO vers objet métier)
      */
     @Bean
@@ -227,12 +296,25 @@ public class DtoMapper {
             public CriterionCountry convert(MappingContext<CriterionCountryWebDto, CriterionCountry> context) {
                 CriterionCountryWebDto s = context.getSource();
                 try {
+
+                    if (s.getBlocOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_COUNTRIES + " - property '"+CriterionWebDto.OPERATOR_PROPERTY+"' is missing");
+                    }
+                    if (s.getCountries() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_COUNTRIES + " - property '"+CriterionCountryWebDto.COUNTRIES_PROPERTY+"' is missing");
+                    }
+                    if (s.getCountriesOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_COUNTRIES + " - property '"+CriterionCountryWebDto.COUNTRIES_OPERATOR_PROPERTY+"' is missing");
+                    }
+
                     CriterionCountry d = new CriterionCountry(s.getBlocOperator(), s.getCountries(), s.getCountriesOperator());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_COUNTRIES + ": " + ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_COUNTRIES  + " : " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_COUNTRIES + ": " + ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_COUNTRIES + " - '"+CriterionCountryWebDto.COUNTRIES_PROPERTY+"' dismatch size of '"+CriterionCountryWebDto.COUNTRIES_OPERATOR_PROPERTY+"' : " + ex.getLocalizedMessage());
+                } catch (IllegalCriterionException ex) {
+                    throw new IllegalCriterionException(CriterionTypeName.CRITERION_COUNTRIES + " : " + ex.getLocalizedMessage());
                 }
             }
         };
@@ -248,12 +330,25 @@ public class DtoMapper {
             public CriterionLanguage convert(MappingContext<CriterionLanguageWebDto, CriterionLanguage> context) {
                 CriterionLanguageWebDto s = context.getSource();
                 try {
+
+                    if (s.getBlocOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_LANGUAGE + " - property '"+CriterionWebDto.OPERATOR_PROPERTY+"' is missing");
+                    }
+                    if (s.getLanguage() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_LANGUAGE + " - property '"+CriterionLanguageWebDto.LANGUAGE_PROPERTY+"' is missing");
+                    }
+                    if (s.getLanguageOperators() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_LANGUAGE + " - property '"+CriterionLanguageWebDto.LANGUAGE_OPERATOR_PROPERTY+"' is missing");
+                    }
+
                     CriterionLanguage d = new CriterionLanguage(s.getBlocOperator(), s.getLanguage(), s.getLanguageOperators());
                     return d;
                 } catch (IllegalOperatorException ex) {
-                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_LANGUAGE +": "+ex.getLocalizedMessage());
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_LANGUAGE  + " : " + ex.getLocalizedMessage());
                 } catch (CriterionOperatorMismatchException ex) {
-                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_LANGUAGE +": "+ex.getLocalizedMessage());
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_LANGUAGE + " - '"+CriterionLanguageWebDto.LANGUAGE_PROPERTY+"' dismatch size of '"+CriterionLanguageWebDto.LANGUAGE_OPERATOR_PROPERTY+"' : " + ex.getLocalizedMessage());
+                } catch (IllegalCriterionException ex) {
+                    throw new IllegalCriterionException(CriterionTypeName.CRITERION_LANGUAGE + " : " + ex.getLocalizedMessage());
                 }
             }
         };

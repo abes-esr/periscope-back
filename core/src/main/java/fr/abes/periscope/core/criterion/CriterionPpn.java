@@ -22,7 +22,7 @@ public class CriterionPpn extends Criterion {
         super(blocOperator);
 
         if (candidatesPpn.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         this.ppn = candidatesPpn;
@@ -39,7 +39,7 @@ public class CriterionPpn extends Criterion {
         super();
 
         if (candidatesPpn.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         this.ppn = candidatesPpn;

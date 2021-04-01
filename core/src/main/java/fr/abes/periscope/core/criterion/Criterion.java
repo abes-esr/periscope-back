@@ -43,7 +43,7 @@ public abstract class Criterion {
                 this.blocOperator = LogicalOperator.EXCEPT;
                 break;
             default:
-                throw new IllegalOperatorException("Unable to decode '"+operator+"' as logical operator");
+                throw new IllegalOperatorException("Bloc operator doesn't match ["+LogicalOperator.AND+", "+LogicalOperator.OR+", "+LogicalOperator.EXCEPT+"]");
         }
     }
 }

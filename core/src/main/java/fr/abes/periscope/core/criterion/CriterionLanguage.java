@@ -1,6 +1,7 @@
 package fr.abes.periscope.core.criterion;
 
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
+import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import lombok.Getter;
 
@@ -30,6 +31,10 @@ public class CriterionLanguage extends Criterion {
     public CriterionLanguage(String blocOperator, List<String> candidatesLanguage, List<String> candidatesOperator) {
         super(blocOperator);
 
+        if (candidatesLanguage.isEmpty()) {
+            throw new IllegalCriterionException("Criteria list is empty");
+        }
+
         if (candidatesOperator.size() != candidatesLanguage.size()) {
             throw new CriterionOperatorMismatchException("Criteria list size mismatch the operators list size");
         }
@@ -57,6 +62,10 @@ public class CriterionLanguage extends Criterion {
      */
     public CriterionLanguage(List<String> candidatesLanguage, List<String> candidatesOperator) {
         super();
+
+        if (candidatesLanguage.isEmpty()) {
+            throw new IllegalCriterionException("Criteria list is empty");
+        }
 
         if (candidatesOperator.size() != candidatesLanguage.size()) {
             throw new CriterionOperatorMismatchException("Criteria list size mismatch the operators list size");

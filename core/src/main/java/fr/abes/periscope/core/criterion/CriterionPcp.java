@@ -37,7 +37,7 @@ public class CriterionPcp extends Criterion {
         super(blocOperator);
 
         if (candidatesPcp.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         if (candidatesOperator.size() != candidatesPcp.size()) {
@@ -69,7 +69,7 @@ public class CriterionPcp extends Criterion {
         super();
 
         if (candidatesPcp.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         if (candidatesOperator.size() != candidatesPcp.size()) {

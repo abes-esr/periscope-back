@@ -2,12 +2,10 @@ package fr.abes.periscope.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import fr.abes.periscope.core.criterion.CriterionTypeName;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -18,12 +16,15 @@ import java.util.List;
 @JsonTypeName(CriterionTypeName.CRITERION_PCP)
 public class CriterionPcpWebDto extends CriterionWebDto {
 
-    @JsonProperty(value="pcp")
-    @NotNull(message = "La liste des codes PCP ne doit pas être nulle")
-    private List<String> pcp = new ArrayList<>();
+    public static final String PCP_PROPERTY = "pcp";
+    public static final String PCP_OPERATOR_PROPERTY = "pcp_operator";
 
-    @JsonProperty(value="pcp_operator")
+    @JsonProperty(value=PCP_PROPERTY)
+    @NotNull(message = "La liste des codes PCP ne doit pas être nulle")
+    private List<String> pcp;
+
+    @JsonProperty(value= PCP_OPERATOR_PROPERTY)
     @NotNull(message = "La liste des connecteurs logiques ne doit pas être nulle")
-    private List<String> pcpOperator = new ArrayList<>();
+    private List<String> pcpOperator;
 
 }

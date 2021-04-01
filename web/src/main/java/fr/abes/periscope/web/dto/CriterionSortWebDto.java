@@ -10,10 +10,15 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class CriterionSortWebDto {
-    @JsonProperty(value = "sort")
+
+    public static final String SORT_PROPERTY = "sort";
+    public static final String ORDER_PROPERTY = "order";
+
+    @JsonProperty(value = SORT_PROPERTY)
     @NotNull(message = "Le critère de tri ne peut pas être vide")
     private String sort;
-    @JsonProperty(value = "order")
+
+    @JsonProperty(value = ORDER_PROPERTY)
     @NotNull(message = "L'ordre de tri ne peut pas être vide")
     private Sort.Direction order;
 }

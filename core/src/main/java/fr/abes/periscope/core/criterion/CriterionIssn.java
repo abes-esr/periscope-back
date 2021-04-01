@@ -24,7 +24,7 @@ public class CriterionIssn extends Criterion {
         super(blocOperator);
 
         if (candidatesIssn.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         this.issn = candidatesIssn;
@@ -41,7 +41,7 @@ public class CriterionIssn extends Criterion {
         super();
 
         if (candidatesIssn.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         this.issn = candidatesIssn;

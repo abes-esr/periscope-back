@@ -3,7 +3,6 @@ package fr.abes.periscope.web.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import fr.abes.periscope.core.criterion.CriterionTypeName;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +13,7 @@ import javax.validation.constraints.NotNull;
  */
 @Getter
 @Setter
-@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type")
+@JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = java.lang.Void.class)
 @JsonSubTypes({@JsonSubTypes.Type(value = CriterionPcpWebDto.class, name = CriterionTypeName.CRITERION_PCP),
         @JsonSubTypes.Type(value = CriterionRcrWebDto.class, name = CriterionTypeName.CRITERION_RCR),
         @JsonSubTypes.Type(value = CriterionPpnWebDto.class, name = CriterionTypeName.CRITERION_PPN),
@@ -25,7 +24,9 @@ import javax.validation.constraints.NotNull;
         @JsonSubTypes.Type(value = CriterionIssnWebDto.class, name = CriterionTypeName.CRITERION_ISSN)})
 public abstract class CriterionWebDto {
 
-    @JsonProperty(value="bloc_operator")
+    public static final String OPERATOR_PROPERTY = "bloc_operator";
+
+    @JsonProperty(value=OPERATOR_PROPERTY)
     @NotNull(message = "Le connecteur logique pour le bloc ne doit pas être null")
     protected String blocOperator;
 }
