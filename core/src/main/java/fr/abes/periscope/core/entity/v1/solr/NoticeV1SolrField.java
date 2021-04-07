@@ -4,7 +4,7 @@ package fr.abes.periscope.core.entity.v1.solr;
  * Représente les champs SolR pour une Notice SolR
  */
 @Deprecated
-public final class NoticeV1SolrField {
+public abstract class NoticeV1SolrField {
 
     public static final String PCP_S = "930-z_s";
     public static final String PCP_T = "930-z_t";
@@ -40,8 +40,4 @@ public final class NoticeV1SolrField {
     public static final String LANGUAGE = "101-a_t";
     public static final String EXTERNAL_URLS_S = "033-a_s";
     public static final String NB_LOC = "NbLocs_i";
-
-    private NoticeV1SolrField() {
-        throw new IllegalStateException("Classe utilitaire");
-    }
 }

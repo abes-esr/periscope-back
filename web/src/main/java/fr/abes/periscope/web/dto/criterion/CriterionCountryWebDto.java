@@ -1,4 +1,4 @@
-package fr.abes.periscope.web.dto;
+package fr.abes.periscope.web.dto.criterion;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -6,15 +6,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Représente un critère de recherche par code RCR
+ * Représente un critère de recherche par code pays au format JSON de l'API
  */
-@Getter
-@Setter
-@JsonTypeName(CriterionTypeName.CRITERION_RCR)
+@Getter @Setter
+@JsonTypeName(CriterionTypeName.CRITERION_COUNTRIES)
 public class CriterionCountryWebDto extends CriterionWebDto {
 
     public static final String COUNTRIES_PROPERTY = "countries";

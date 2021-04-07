@@ -1,4 +1,4 @@
-package fr.abes.periscope.web.dto;
+package fr.abes.periscope.web.dto.criterion;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
@@ -9,10 +9,9 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
- * Représente un critère de recherche par code PCP
+ * Représente un critère de recherche par code PCP au format JSON de l'API
  */
-@Getter
-@Setter
+@Getter @Setter
 @JsonTypeName(CriterionTypeName.CRITERION_PCP)
 public class CriterionPcpWebDto extends CriterionWebDto {
 

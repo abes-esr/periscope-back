@@ -6,7 +6,7 @@ import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
 import fr.abes.periscope.core.exception.IllegalSortException;
-import fr.abes.periscope.web.dto.*;
+import fr.abes.periscope.web.dto.criterion.*;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
@@ -18,11 +18,24 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Utilitaire de mapping de objets Entité (core) et des objets DTO (API)
+ */
 @Service
 public class DtoMapper {
     @Autowired
     private ModelMapper modelMapper;
 
+    /**
+     * Fonction de mapping générique pour un objet
+     *
+     * @param source      Objet source
+     * @param targetClass Classe de l'objet cible
+     * @return Objet cible
+     */
+    public <S, T> T map(S source, Class<T> targetClass) {
+        return modelMapper.map(source, targetClass);
+    }
 
     /**
      * Fonction de mapping générique pour des listes
@@ -36,17 +49,6 @@ public class DtoMapper {
                 .stream()
                 .map(element -> modelMapper.map(element, targetClass))
                 .collect(Collectors.toList());
-    }
-
-    /**
-     * Fonction de mapping générique pour un objet
-     *
-     * @param source      Objet source
-     * @param targetClass Classe de l'objet cible
-     * @return Objet cible
-     */
-    public <S, T> T map(S source, Class<T> targetClass) {
-        return modelMapper.map(source, targetClass);
     }
 
     /** Convertisseur pour les critères de tri

@@ -5,6 +5,7 @@ import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.entity.PublicationYear;
 import fr.abes.periscope.core.entity.v1.NoticeV1;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
+import fr.abes.periscope.core.entity.v2.Item;
 import fr.abes.periscope.core.entity.v2.NoticeV2;
 import fr.abes.periscope.core.entity.v2.solr.ItemSolr;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
@@ -25,6 +26,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Convertisseurs entre les NoticeSolR et les Notices pour PERISCOPE
+ */
 @Component
 @Slf4j
 public class NoticeMapper {
@@ -79,7 +83,7 @@ public class NoticeMapper {
                     target.setPpn(source.getPpn());
                     target.setIssn((source.getIssn()));
                     target.setPcpList(source.getPcpList());
-                    target.setRcrList(source.getRcrList());
+                    ((NoticeV1)target).setRcrList(source.getRcrList());
                     target.setEditor(source.getEditor());
                     target.setKeyTitle(source.getKeyTitle());
                     target.setKeyShortedTitle(source.getKeyShortedTitle());
@@ -126,7 +130,7 @@ public class NoticeMapper {
     }
 
     /**
-     * Convertisseur pour les notices SolR V1 vers les notices PERISCOPE
+     * Convertisseur pour les notices SolR V2 vers les notices PERISCOPE
      */
     @Bean
     public void converterNoticeV2Solr() {
@@ -144,10 +148,15 @@ public class NoticeMapper {
 
                     Iterator<ItemSolr> itemIterator = source.getItems().iterator();
                     while(itemIterator.hasNext()) {
-                        ItemSolr item = itemIterator.next();
+                        ItemSolr itemSolR = itemIterator.next();
+                        Item item = new Item();
 
-                        target.getPcpList().add(item.getEpn());
-                        target.getRcrList().add(item.getRcr());
+                        item.setId(itemSolR.getId());
+                        item.setEpn(itemSolR.getEpn());
+                        item.setPpn(itemSolR.getPpn());
+                        item.setRcr(itemSolR.getRcr());
+
+                        ((NoticeV2)target).addItem(item);
                     }
 
                     target.setEditor(source.getEditor());
@@ -174,8 +183,13 @@ public class NoticeMapper {
         modelMapper.addConverter(myConverter);
     }
 
+    /**
+     * Extrait l'année de début de publication
+     * @param value zone
+     * @return PublicationYear Année de début de publication
+     * @throws IllegalPublicationYearException si l'année de publication ne peut pas être décodée
+     */
     public PublicationYear buildStartPublicationYear(String value) throws IllegalPublicationYearException {
-        //log.debug("SolR startdate : "+value.substring(9,13));
         String yearCode = value.substring(8, 9);
         String candidateYear;
         PublicationYear year = new PublicationYear();
@@ -201,6 +215,12 @@ public class NoticeMapper {
 
     }
 
+    /**
+     * Extrait l'année de fin de publication
+     * @param value zone
+     * @return PublicationYear Année de fin de publication
+     * @throws IllegalPublicationYearException si l'année de publication ne peut pas être décodée
+     */
     public PublicationYear buildEndPublicationYear(String value) throws IllegalPublicationYearException {
         String yearCode = value.substring(8, 9);
         String candidateYear;
@@ -240,7 +260,13 @@ public class NoticeMapper {
         }
     }
 
-    private PublicationYear extractDate(String candidateYear) {
+    /**
+     * Extrait la date de publication
+     * @param candidateYear
+     * @return
+     * @throws IllegalPublicationYearException
+     */
+    private PublicationYear extractDate(String candidateYear) throws IllegalPublicationYearException {
         PublicationYear year = new PublicationYear();
         if (candidateYear.charAt(2) == ' ' && candidateYear.charAt(3) == ' ') {
             year.setYear(Integer.valueOf(candidateYear.substring(0, 2)));
@@ -258,7 +284,14 @@ public class NoticeMapper {
         return year;
     }
 
-    private PublicationYear extractCaseF(String candidateOldestYear, String candidateNewestYear) {
+    /**
+     * Extrait le cas F
+     * @param candidateOldestYear
+     * @param candidateNewestYear
+     * @return
+     * @throws IllegalPublicationYearException
+     */
+    private PublicationYear extractCaseF(String candidateOldestYear, String candidateNewestYear) throws IllegalPublicationYearException {
         int cdtOldestYear = Integer.parseInt(candidateOldestYear.trim());
         int cdtNewestYear = (candidateNewestYear.equals("    ")) ? 9999 : Integer.parseInt(candidateNewestYear.trim());
         PublicationYear year = new PublicationYear();

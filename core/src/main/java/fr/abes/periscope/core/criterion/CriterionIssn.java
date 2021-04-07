@@ -6,6 +6,9 @@ import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * Représente un critère de recherche par code ISSN
+ */
 @Getter
 public class CriterionIssn extends Criterion {
 

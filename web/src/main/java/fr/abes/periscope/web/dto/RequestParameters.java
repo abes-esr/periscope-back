@@ -1,11 +1,16 @@
 package fr.abes.periscope.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.abes.periscope.web.dto.criterion.CriterionSortWebDto;
+import fr.abes.periscope.web.dto.criterion.CriterionWebDto;
 import lombok.Data;
 
 import javax.validation.constraints.NotNull;
 import java.util.LinkedList;
 
+/**
+ * Représente une requête JSON pour recherche des Notices
+ */
 @Data
 public class RequestParameters {
 

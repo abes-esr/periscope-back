@@ -9,8 +9,7 @@ import java.util.Set;
 /**
  * Représente une Notice au format Periscope
  */
-@Getter
-@Setter
+@Getter @Setter
 public abstract class Notice {
 
     private String ppn;
@@ -18,8 +17,6 @@ public abstract class Notice {
     private String issn;
 
     private Set<String> pcpList = new HashSet<>();
-
-    private Set<String> rcrList = new HashSet<>();
 
     private String editor;
 

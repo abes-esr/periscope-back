@@ -3,17 +3,15 @@ package fr.abes.periscope.web.controller;
 import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionSort;
 import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
-import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.service.NoticeStoreService;
-import fr.abes.periscope.web.dto.CriterionSortWebDto;
-import fr.abes.periscope.web.dto.CriterionWebDto;
-import fr.abes.periscope.web.dto.NoticeWebDto;
+import fr.abes.periscope.web.dto.NoticeWebV2Dto;
 import fr.abes.periscope.web.dto.RequestParameters;
+import fr.abes.periscope.web.dto.criterion.CriterionSortWebDto;
+import fr.abes.periscope.web.dto.criterion.CriterionWebDto;
 import fr.abes.periscope.web.util.DtoMapper;
-import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,23 +20,37 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ *  Controller d'interrogation de la V2 de l'index Solr
+ */
 @Slf4j
 @CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/v2")
-@Data
 public class NoticeV2Controller extends NoticeAbstractController {
 
-    private final NoticeStoreService noticeStoreService;
+    /**
+     * Constructeur du contrôlleur pour les Notices V1
+     * @param service Service de Notices
+     * @param mapper Mapper Entité - DTO
+     */
+    @Autowired
+    public NoticeV2Controller(NoticeStoreService service, DtoMapper mapper) {
+        super(service,mapper);
+    }
 
-    /** Service pour le mapping DTO */
-    private final DtoMapper dtoMapper;
-
-
+    /**
+     * Rechercher des notices par des critères de recherche et des tris.
+     * Le critère de tris par défaut est par PPN en ordre croissant
+     * @param page Numéro de la page (URL)
+     * @param size Nombre d'élement (URL)
+     * @param requestParameters Paramètre de la requêtes (body-content)
+     * @return List<NoticeWebV1Dto> Liste de Notices V2 au format DTO
+     */
     @PostMapping("/notice/findByCriteria")
-    public List<NoticeWebDto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size,@RequestBody @Valid RequestParameters requestParameters) throws IllegalCriterionException {
+    public List<NoticeWebV2Dto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size, @RequestBody @Valid RequestParameters requestParameters) {
         LinkedList<CriterionWebDto> userCriteria = requestParameters.getUserCriteria();
-        List<Criterion> criteria = findByCriteria(userCriteria, dtoMapper);
+        List<Criterion> criteria = convertCriteriaFromDto(userCriteria);
         LinkedList<CriterionSortWebDto> userSortCriteria = requestParameters.getSortCriteria();
 
         List<CriterionSort> sortCriteria = new LinkedList<>();
@@ -52,6 +64,6 @@ public class NoticeV2Controller extends NoticeAbstractController {
             sortCriteria.add(new CriterionSort(NoticeV2SolrField.PPN, Sort.Direction.ASC));
         }
         List<Notice> candidate = noticeStoreService.findNoticesByCriteria("v2", criteria,sortCriteria,page,size);
-        return dtoMapper.mapList(candidate, NoticeWebDto.class);
+        return dtoMapper.mapList(candidate, NoticeWebV2Dto.class);
     }
 }

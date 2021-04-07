@@ -8,6 +8,9 @@ import lombok.Getter;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Représente un critère de recherche par code de langue
+ */
 @Getter
 public class CriterionLanguage extends Criterion {
 

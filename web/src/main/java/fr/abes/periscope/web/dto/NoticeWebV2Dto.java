@@ -8,9 +8,13 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.List;
 
+/**
+ * Représente un Notice V2 au format JSON de l'API
+ */
 @Getter @Setter
-public class NoticeWebDto {
+public class NoticeWebV2Dto {
 
     @JsonProperty("ppn")
     private String ppn;
@@ -21,8 +25,8 @@ public class NoticeWebDto {
     @JsonProperty("pcpList")
     private HashSet<String> pcpList;
 
-    @JsonProperty("rcrList")
-    private HashSet<String> rcrList;
+    @JsonProperty("exemplaires")
+    private List<ItemWebDto> items;
 
     @JsonProperty("editeur")
     private String editor;

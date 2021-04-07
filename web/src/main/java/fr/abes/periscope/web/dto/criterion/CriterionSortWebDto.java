@@ -1,4 +1,4 @@
-package fr.abes.periscope.web.dto;
+package fr.abes.periscope.web.dto.criterion;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
@@ -7,18 +7,20 @@ import org.springframework.data.domain.Sort;
 
 import javax.validation.constraints.NotNull;
 
-@Getter
-@Setter
+/**
+ * Représente un critère de tri au format JSON de l'API
+ */
+@Getter @Setter
 public class CriterionSortWebDto {
 
     public static final String SORT_PROPERTY = "sort";
     public static final String ORDER_PROPERTY = "order";
 
     @JsonProperty(value = SORT_PROPERTY)
-    @NotNull(message = "Le critère de tri ne peut pas être vide")
+    @NotNull(message = "Le critère de tri ne peut pas être null")
     private String sort;
 
     @JsonProperty(value = ORDER_PROPERTY)
-    @NotNull(message = "L'ordre de tri ne peut pas être vide")
+    @NotNull(message = "L'ordre de tri ne peut pas être null")
     private Sort.Direction order;
 }

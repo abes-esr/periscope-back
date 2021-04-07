@@ -13,6 +13,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Représente une notice au format SolR selon le SolR V2 de PERISCOPE
+ */
 @Getter @Setter
 @SolrDocument
 public class NoticeV2Solr implements Serializable {

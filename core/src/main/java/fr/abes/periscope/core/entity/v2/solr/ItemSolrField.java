@@ -3,7 +3,7 @@ package fr.abes.periscope.core.entity.v2.solr;
 /**
  * Représente les champs SolR pour un Exemplaire SolR
  */
-public final class ItemSolrField {
+public abstract class ItemSolrField {
 
     public static final String ID = "id";
     public static final String ID_TYPE = "string";

@@ -1,23 +1,45 @@
 package fr.abes.periscope.core.entity;
 
+import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * Représente une année de publication avec un indice de confiance
+ */
 @Getter
 @Setter
 public class PublicationYear {
 
+    /** Année de publication */
     private Integer year;
 
+    /**
+     * Indice de confiance entre 0 et 10.
+     * La valeur 10 indique une confiance absolue sur l'année de publication
+     * La valeur 0 indique une confiance très médiocre sur l'année de publication
+     */
     private Integer confidenceIndex;
 
+    /**
+     * Constructeur d'une année de publication sans indice de confiance.
+     * L'indice vaut par défaut 0
+     */
     public PublicationYear() {
         this.year=null;
         this.confidenceIndex = 0;
     }
 
+    /**
+     * Constructeur d'une année de publication avec un indice confiance
+     * @param candidateYear Année de publication
+     * @param candidateConfidenceIndex Indice de confiance
+     */
     public PublicationYear(int candidateYear, int candidateConfidenceIndex) {
         this.year = candidateYear;
+        if (candidateConfidenceIndex < 0 || candidateConfidenceIndex > 10) {
+            throw new IllegalPublicationYearException("Confidence index is out of range [0:10]");
+        }
         this.confidenceIndex = candidateConfidenceIndex;
     }
 

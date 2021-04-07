@@ -14,8 +14,7 @@ import java.util.List;
 @Getter
 public class CriterionPcp extends Criterion {
 
-    /** Liste des codes PCP à rechercher. Les connecteurs
-     * logiques entre les codes sont des OU */
+    /** Liste des codes PCP à rechercher. */
     private List<String> pcp = new ArrayList<>();
 
     /** Liste des connecteurs logiques entre les codes RCR

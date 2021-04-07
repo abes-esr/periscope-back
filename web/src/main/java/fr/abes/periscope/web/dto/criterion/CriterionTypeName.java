@@ -1,10 +1,10 @@
-package fr.abes.periscope.web.dto;
+package fr.abes.periscope.web.dto.criterion;
 
 /**
  * Représente les noms des types de critères de recherche
  * Ces noms sont utilisés pour définir le type de critère (champs 'type" dans le JSON)
  */
-public final class CriterionTypeName {
+public abstract class CriterionTypeName {
 
     public static final String CRITERION_PCP = "CriterionPcp";
     public static final String CRITERION_RCR = "CriterionRcr";
@@ -15,7 +15,4 @@ public final class CriterionTypeName {
     public static final String CRITERION_EDITOR = "CriterionEditor";
     public static final String CRITERION_ISSN = "CriterionIssn";
 
-    private CriterionTypeName() {
-        throw new IllegalStateException("Classe utilitaire");
-    }
 }

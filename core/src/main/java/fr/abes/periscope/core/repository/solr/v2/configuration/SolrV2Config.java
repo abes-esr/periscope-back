@@ -4,6 +4,7 @@ import fr.abes.periscope.core.repository.solr.v2.SolrQueryBuilder;
 import org.apache.solr.client.solrj.SolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.apache.solr.client.solrj.impl.XMLResponseParser;
+import org.apache.solr.common.SolrException;
 import org.apache.solr.common.params.ModifiableSolrParams;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -22,6 +23,11 @@ public class SolrV2Config {
 
     @Bean
     public SolrClient solrV2Client() {
+
+        if (baseURL.isEmpty()) {
+            throw  new SolrException(SolrException.ErrorCode.SERVER_ERROR,"baseURL is empty");
+        }
+
         ModifiableSolrParams params = new ModifiableSolrParams();
         params.add("wt", "xml");
         params.add("version","2.2");

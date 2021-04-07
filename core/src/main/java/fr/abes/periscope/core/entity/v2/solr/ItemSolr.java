@@ -9,6 +9,9 @@ import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import java.io.Serializable;
 
+/**
+ * Représente un exemplaire
+ */
 @Getter @Setter
 @SolrDocument
 public class ItemSolr implements Serializable {
@@ -64,6 +67,6 @@ public class ItemSolr implements Serializable {
 
     @Override
     public String toString() {
-        return "SpecimenSolr {"+ "id="+ id+", rcr="+rcr+"}";
+        return "ItemSolr {"+ "id="+ id+", epn="+epn+", rcr="+rcr+"}";
     }
 }

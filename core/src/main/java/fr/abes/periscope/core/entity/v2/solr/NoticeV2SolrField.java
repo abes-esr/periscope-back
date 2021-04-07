@@ -1,6 +1,6 @@
 package fr.abes.periscope.core.entity.v2.solr;
 
-public final class NoticeV2SolrField {
+public abstract class NoticeV2SolrField {
 
     public static final String ID = "id";
     public static final String ID_TYPE = "string";
@@ -228,9 +228,5 @@ public final class NoticeV2SolrField {
 
     public static final String PCP_RCR = "pcprcr";
     public static final String PCP_RCR_TYPE = "text_fr";
-
-    private NoticeV2SolrField() {
-        throw new IllegalStateException("Classe utilitaire");
-    }
 
 }

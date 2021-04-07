@@ -14,7 +14,7 @@ import java.util.Iterator;
 import java.util.List;
 
 /**
- * Représente un constructeur de requête SolR pour Periscope
+ * Représente un constructeur de requête SolR pour Periscope V1
  */
 @Slf4j
 @Deprecated
@@ -34,82 +34,50 @@ public class SolrQueryBuilder {
 
             // Bloc de critère PCP
             if (criterion instanceof CriterionPcp) {
-                try {
-                    Criteria pcpQuery = buildPcpQuery((CriterionPcp) criterion);
-                    filterQuery.addCriteria(pcpQuery);
-                } catch (IllegalCriterionException ex) {
-                    log.error(ex.getLocalizedMessage());
-                }
+                Criteria pcpQuery = buildPcpQuery((CriterionPcp) criterion);
+                filterQuery.addCriteria(pcpQuery);
             }
 
             // Bloc de critère RCR
             if (criterion instanceof CriterionRcr) {
-                try {
-                    Criteria rcrQuery = buildRcrQuery((CriterionRcr) criterion);
-                    filterQuery.addCriteria(rcrQuery);
-                } catch (IllegalCriterionException ex) {
-                    log.error(ex.getLocalizedMessage());
-                }
+                Criteria rcrQuery = buildRcrQuery((CriterionRcr) criterion);
+                filterQuery.addCriteria(rcrQuery);
             }
 
             // Bloc de critère Mots du titre
             if (criterion instanceof CriterionTitleWords) {
-                try {
-                    Criteria titleWordsQuery = buildTitleWordsQuery((CriterionTitleWords) criterion);
-                    filterQuery.addCriteria(titleWordsQuery);
-                } catch (IllegalCriterionException ex) {
-                    log.error(ex.getLocalizedMessage());
-                }
+                Criteria titleWordsQuery = buildTitleWordsQuery((CriterionTitleWords) criterion);
+                filterQuery.addCriteria(titleWordsQuery);
             }
 
             //Bloc de critère PPN
             if (criterion instanceof CriterionPpn) {
-                try {
-                    Criteria ppnQuery = buildPpnQuery((CriterionPpn) criterion);
-                    filterQuery.addCriteria(ppnQuery);
-                } catch (IllegalCriterionException ex) {
-                    log.error(ex.getLocalizedMessage());
-                }
+                Criteria ppnQuery = buildPpnQuery((CriterionPpn) criterion);
+                filterQuery.addCriteria(ppnQuery);
             }
 
             //Bloc de critère pays
             if (criterion instanceof CriterionCountry) {
-                try {
-                    Criteria countryQuery = buildCountryQuery((CriterionCountry) criterion);
-                    filterQuery.addCriteria(countryQuery);
-                } catch (IllegalCriterionException ex) {
-                    log.error(ex.getLocalizedMessage());
-                }
+                Criteria countryQuery = buildCountryQuery((CriterionCountry) criterion);
+                filterQuery.addCriteria(countryQuery);
             }
 
             //Bloc de critère code langue
             if (criterion instanceof CriterionLanguage) {
-                try {
-                    Criteria languageQuery = buildLanguageQuery((CriterionLanguage) criterion);
-                    filterQuery.addCriteria(languageQuery);
-                } catch (IllegalCriterionException ex) {
-                    log.error(ex.getLocalizedMessage());
-                }
+                Criteria languageQuery = buildLanguageQuery((CriterionLanguage) criterion);
+                filterQuery.addCriteria(languageQuery);
             }
 
             //Bloc de critère éditeur
             if (criterion instanceof CriterionEditor) {
-                try {
-                    Criteria countryQuery = buildEditorQuery((CriterionEditor) criterion);
-                    filterQuery.addCriteria(countryQuery);
-                } catch (IllegalCriterionException ex) {
-                    log.error(ex.getLocalizedMessage());
-                }
+                Criteria countryQuery = buildEditorQuery((CriterionEditor) criterion);
+                filterQuery.addCriteria(countryQuery);
             }
 
             // bloc de critère ISSN
             if (criterion instanceof CriterionIssn) {
-                try {
-                    Criteria issnQuery = buildIssnQuery((CriterionIssn)criterion);
-                    filterQuery.addCriteria(issnQuery);
-                } catch (IllegalCriterionException ex) {
-                    log.error(ex.getLocalizedMessage());
-                }
+                Criteria issnQuery = buildIssnQuery((CriterionIssn)criterion);
+                filterQuery.addCriteria(issnQuery);
             }
         }
 
@@ -120,13 +88,8 @@ public class SolrQueryBuilder {
      * Construit la requête SolR à partir d'un critère de recherche par PCP
      * @param criterion Les critères de recherche par PCP
      * @return Criteria Requête SolR
-     * @exception IllegalCriterionException Si la liste des critères est vide
      */
-    private Criteria buildPcpQuery(CriterionPcp criterion) throws IllegalCriterionException {
-
-        if (criterion.getPcp().isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
-        }
+    private Criteria buildPcpQuery(CriterionPcp criterion){
 
         Iterator<String> pcpIterator = criterion.getPcp().iterator();
         String pcpCode = pcpIterator.next();
@@ -157,13 +120,8 @@ public class SolrQueryBuilder {
      * Construit la requête SolR à partir d'un critère de recherche par RCR
      * @param criterion Les critères de recherche par RCR
      * @return Criteria Requête SolR
-     * @exception IllegalCriterionException Si la liste des critères est vide
      */
-    private Criteria buildRcrQuery(CriterionRcr criterion) throws IllegalCriterionException {
-
-        if (criterion.getRcr().isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
-        }
+    private Criteria buildRcrQuery(CriterionRcr criterion) {
 
         Iterator<String> rcrIterator = criterion.getRcr().iterator();
         Iterator<String> rcrOperatorIterator = criterion.getRcrOperators().iterator();
@@ -221,13 +179,8 @@ public class SolrQueryBuilder {
      * Construit la requête SolR à partir d'un critère de recherche par mots du titre
      * @param criterion Les critères de recherche par mots du titre
      * @return Criteria Requête SolR
-     * @exception IllegalCriterionException Si la liste des critères est vide
      */
-    private Criteria buildTitleWordsQuery(CriterionTitleWords criterion) throws IllegalCriterionException {
-
-        if (criterion.getTitleWords().isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
-        }
+    private Criteria buildTitleWordsQuery(CriterionTitleWords criterion) {
 
         Iterator<String> valueIterator = criterion.getTitleWords().iterator();
         Iterator<String> operatorIterator = criterion.getTitleWordOperators().iterator();
@@ -314,13 +267,8 @@ public class SolrQueryBuilder {
      * Construit la requête SolR à partir d'un critère de recherche par code pays
      * @param criterion Les critères de recherche par code pays
      * @return Criteria Requête SolR
-     * @exception IllegalCriterionException Si la liste des critères est vide
      */
-    private Criteria buildCountryQuery(CriterionCountry criterion) throws IllegalCriterionException {
-
-        if (criterion.getCountries().isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
-        }
+    private Criteria buildCountryQuery(CriterionCountry criterion) {
 
         Iterator<String> valueIterator = criterion.getCountries().iterator();
         Iterator<String> operatorIterator = criterion.getCountryOperators().iterator();
@@ -377,9 +325,8 @@ public class SolrQueryBuilder {
      * Construit la requête SolR à partir d'un critère de recherche par PPN
      * @param criterion Les critères de recherche par PPN
      * @return Criteria Requête SolR
-     * @exception IllegalCriterionException Si la liste des critères est vide
      */
-    private Criteria buildPpnQuery(CriterionPpn criterion) throws IllegalCriterionException {
+    private Criteria buildPpnQuery(CriterionPpn criterion) {
 
         if (criterion.getPpn().isEmpty()) {
             throw new IllegalCriterionException("Criteria list cannot be empty");
@@ -482,13 +429,8 @@ public class SolrQueryBuilder {
      * Construit la requête SolR à partir d'un critère de recherche par éditeur
      * @param criterion Les critères de recherche par editeur
      * @return Criteria Requête SolR
-     * @exception IllegalCriterionException Si la liste des critères est vide
      */
-    private Criteria buildEditorQuery(CriterionEditor criterion) throws IllegalCriterionException {
-
-        if (criterion.getEditors().isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
-        }
+    private Criteria buildEditorQuery(CriterionEditor criterion) {
 
         Iterator<String> rcrIterator = criterion.getEditors().iterator();
         Iterator<String> rcrOperatorIterator = criterion.getEditorOperators().iterator();
@@ -546,10 +488,6 @@ public class SolrQueryBuilder {
      * @return Criteria Requête SolR
      */
     private Criteria buildIssnQuery(CriterionIssn criterion) {
-
-        if (criterion.getIssn().isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
-        }
 
         Iterator<String> issnIterator = criterion.getIssn().iterator();
 

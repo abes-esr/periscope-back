@@ -41,10 +41,11 @@ public class NoticeStoreService {
     }
 
     /**
-     * Retourne une liste de Notice en fonction des critères de recherche et du numéro de page
-     *
+     * Retourne une liste de Notice en fonction des critères de recherche,
+     * du critère de tri et du numéro de page     *
      * @param repository Repository à utiliser
-     * @param criteria Critères de recherche
+     * @param criteria Les critères de recherche
+     * @param criteriaSort Les critères de tri
      * @param page     Numéro de page
      * @param size     Nombre d'élément
      * @return List<Notice> Liste de Notice répondant aux critères de recherche
@@ -68,10 +69,10 @@ public class NoticeStoreService {
     }
 
     /**
-     * Retourne une liste de Notice en fonction des critères de recherche et du numéro de page
-     * Le repository par défaut est utilisé
-     *
-     * @param criteria Critères de recherche
+     * Retourne une liste de Notice en fonction des critères de recherche,
+     * du critère de tri et du numéro de page avec le repository par défaut     *
+     * @param criteria Les critères de recherche
+     * @param criteriaSort Les critères de tri
      * @param page     Numéro de page
      * @param size     Nombre d'élément
      * @return List<Notice> Liste de Notice répondant aux critères de recherche

@@ -2,29 +2,59 @@ package fr.abes.periscope.web.controller;
 
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
-import fr.abes.periscope.web.dto.*;
+import fr.abes.periscope.core.service.NoticeStoreService;
+import fr.abes.periscope.web.dto.RequestParameters;
+import fr.abes.periscope.web.dto.criterion.*;
 import fr.abes.periscope.web.util.DtoMapper;
 
 import java.lang.reflect.Field;
 import java.util.*;
 
+/**
+ * Classe abstraite du contrôlleur pour les Notices
+ */
 public abstract class NoticeAbstractController {
 
-    protected List<Criterion> findByCriteria(LinkedList<CriterionWebDto> userCriteria, DtoMapper dtoMapper) {
+    protected final NoticeStoreService noticeStoreService;
+
+    /** Service pour le mapping Entité - DTO */
+    protected final DtoMapper dtoMapper;
+
+    /**
+     * Constructeur d'un contrôlleur de Notice
+     * @param service Service de Notice
+     * @param mapper Mapper Entité - DTO
+     */
+    public NoticeAbstractController(NoticeStoreService service, DtoMapper mapper) {
+        this.noticeStoreService = service;
+        this.dtoMapper = mapper;
+    }
+
+    /**
+     * Converti une liste de critères de recherche DTO en liste de critère de recherche
+     * @param userCriteria Liste de critères de recherche DTO
+     * @return List<Criterion> Liste de critères de recherche
+     */
+    protected List<Criterion> convertCriteriaFromDto(LinkedList<CriterionWebDto> userCriteria) {
         if (userCriteria.isEmpty()) {
-            throw new IllegalCriterionException("Json property '"+RequestParameters.CRITERIA_PROPERTY+"' is empty");
+            throw new IllegalCriterionException("Json property '"+ RequestParameters.CRITERIA_PROPERTY+"' is empty");
         }
         List<Criterion> criteria = new LinkedList<>();
 
         Iterator<CriterionWebDto> criteriaIterator = userCriteria.iterator();
         while (criteriaIterator.hasNext()) {
             CriterionWebDto userCriterion = criteriaIterator.next();
-            handleCriteria(dtoMapper, criteria, userCriterion);
+            handleCriteria(criteria, userCriterion);
         }
         return criteria;
     }
 
-    protected void handleCriteria(DtoMapper dtoMapper, List<Criterion> criteria, CriterionWebDto userCriterion) {
+    /**
+     * Converti le critère de recherche DTO en critère de recherche et l'ajout à la liste
+     * @param criteria Liste de critère de recherche
+     * @param userCriterion Critère de recherche DTO à convertir
+     */
+    private void handleCriteria(List<Criterion> criteria, CriterionWebDto userCriterion) {
 
         if (userCriterion == null) {
             // Le type de critère n'a pas pu être décodé. On renvoie une erreur

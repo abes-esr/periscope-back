@@ -12,10 +12,9 @@ import java.util.HashSet;
 import java.util.List;
 
 /**
- * @Deprecated Représente une notice au format SolR
+ * @Deprecated Représente une notice au format SolR selon le SolR4a
  */
 @Deprecated
-@NoArgsConstructor
 @Getter @Setter
 @SolrDocument
 public class NoticeV1Solr implements Serializable {

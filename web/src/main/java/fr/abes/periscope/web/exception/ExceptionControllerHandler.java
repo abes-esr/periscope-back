@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.modelmapper.MappingException;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.Ordered;
@@ -25,6 +26,10 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 import java.util.List;
 
+/**
+ * Gestionnaire des exceptions de l'API.
+ * Cette classe récupère toutes les exceptions et renvoi un message d'erreur
+ */
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -35,7 +40,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Vérifier le Token passé dans le header avec une format correcte
+     * Erreur de lecture / décodage des paramètres d'une requête HTTP
      * @param ex
      * @param headers
      * @param status
@@ -77,7 +82,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Vérifier le nom d'utilisateur et le mot de passe lors de l'inscription
+     * Vérifier la validité (@Valid) des paramètres de la requête
      * @param ex
      * @param headers
      * @param status
@@ -112,6 +117,14 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(new ApiReturnError(HttpStatus.NOT_FOUND, error, ex));
     }
 
+    /**
+     * Erreur de paramètre
+     * @param ex
+     * @param headers
+     * @param status
+     * @param request
+     * @return
+     */
     @Override
     protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "Missing request parameter";
@@ -141,5 +154,18 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         String error = "Malformed JSON request";
         log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
+    }
+
+    /**
+     * Si la connexion / requête avec le SolR a echoué, on loggue l'exception
+     * et on renvoit une erreur standard à l'API pour masquer l'URL du serveur SolR
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(HttpSolrClient.RemoteSolrException.class)
+    protected ResponseEntity<Object> handleRemoteSolrException(HttpSolrClient.RemoteSolrException ex) {
+        String error = "SolR server error";
+        log.error(ex.getLocalizedMessage());
+        return buildResponseEntity(new ApiReturnError(HttpStatus.INTERNAL_SERVER_ERROR, error, new Exception("Something was wrong with the database server")));
     }
 }

@@ -1,9 +1,9 @@
 package fr.abes.periscope.core.criterion;
 
 /**
- * Représente les mots-clès des connecteurs logiques entre les critères de recherche
+ * Représente les mots-clès des connecteurs logiques entre les bloc de recherche
  */
-public final class LogicalOperator {
+public abstract class LogicalOperator {
 
     /** Connecteur logique ET */
     public static final String AND = "ET";
@@ -12,7 +12,4 @@ public final class LogicalOperator {
     /** Connecteur logique SAUF */
     public static final String EXCEPT = "SAUF";
 
-    private LogicalOperator() {
-        throw new IllegalStateException("Classe utilitaire");
-    }
 }

@@ -1,4 +1,4 @@
-package fr.abes.periscope.web.dto;
+package fr.abes.periscope.web.dto.criterion;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -9,10 +9,9 @@ import lombok.Setter;
 import javax.validation.constraints.NotNull;
 
 /**
- * Représente un critère de recherche générique
+ * Représente un critère de recherche générique au format JSON de l'API
  */
-@Getter
-@Setter
+@Getter @Setter
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, property = "type", defaultImpl = java.lang.Void.class)
 @JsonSubTypes({@JsonSubTypes.Type(value = CriterionPcpWebDto.class, name = CriterionTypeName.CRITERION_PCP),
         @JsonSubTypes.Type(value = CriterionRcrWebDto.class, name = CriterionTypeName.CRITERION_RCR),

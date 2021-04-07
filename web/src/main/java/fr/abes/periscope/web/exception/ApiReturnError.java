@@ -3,8 +3,12 @@ package fr.abes.periscope.web.exception;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 import org.springframework.http.HttpStatus;
+
 import java.time.LocalDateTime;
 
+/**
+ * Représente une erreur au format JSON de l'API
+ */
 @Data
 public class ApiReturnError {
     private HttpStatus status;

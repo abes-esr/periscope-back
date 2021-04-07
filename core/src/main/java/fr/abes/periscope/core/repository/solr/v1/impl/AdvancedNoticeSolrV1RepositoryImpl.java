@@ -32,6 +32,7 @@ public class AdvancedNoticeSolrV1RepositoryImpl implements AdvancedNoticeSolrV1R
 
     private final SolrQueryBuilder builderQuery;
 
+    /** Core du serveur SolR */
     @Value("${solr.v1.core}")
     private String core;
 
@@ -40,13 +41,16 @@ public class AdvancedNoticeSolrV1RepositoryImpl implements AdvancedNoticeSolrV1R
         builderQuery = builder;
     }
 
-    @Override
     /**
-     * Retourne les Notices SolR selon une liste de critères et une page
+     * Retourne les Notices SolR selon une liste de critères, un critère de tri
+     * et une page.
+     * La liste des champs SolR a récupéré est inscrites en dur dans la méthode
      * @param criteria Les critères de la recherche
+     * @param sort Les critères de tri
      * @param page La page souhaitée
-     * @return List<NoticeSolr> Liste de Notices SolR
+     * @return List<NoticeV1Solr> Liste de Notices SolR
      */
+    @Override
     public List<NoticeV1Solr> findNoticesByCriteria(List<Criterion> criteria, Sort sort, Pageable page) {
 
         SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria),page);
@@ -79,6 +83,15 @@ public class AdvancedNoticeSolrV1RepositoryImpl implements AdvancedNoticeSolrV1R
         return results.getContent();
     }
 
+    /**
+     * Retourne les Notices SolR selon une requête SolR, un critère de tri
+     * et une page.
+     * La liste des champs SolR a récupéré est inscrites en dur dans la méthode
+     * @param query Requête SolR
+     * @param sort Les critères de tri
+     * @param page La page souhaitée
+     * @return List<NoticeV1Solr> Liste de Notices SolR
+     */
     public List<NoticeV1Solr> findNoticesBySolrQuery(String query, Sort sort, Pageable page) {
 
         SimpleQuery solrQuery = new SimpleQuery(query,page);
