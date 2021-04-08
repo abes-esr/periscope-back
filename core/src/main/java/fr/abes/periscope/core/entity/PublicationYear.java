@@ -15,8 +15,8 @@ public class PublicationYear {
     private Integer year;
 
     /**
-     * Indice de confiance entre 0 et 10.
-     * La valeur 10 indique une confiance absolue sur l'année de publication
+     * Indice de confiance entre 0 et 100.
+     * La valeur 100 indique une confiance absolue sur l'année de publication
      * La valeur 0 indique une confiance très médiocre sur l'année de publication
      */
     private Integer confidenceIndex;
@@ -37,8 +37,8 @@ public class PublicationYear {
      */
     public PublicationYear(int candidateYear, int candidateConfidenceIndex) {
         this.year = candidateYear;
-        if (candidateConfidenceIndex < 0 || candidateConfidenceIndex > 10) {
-            throw new IllegalPublicationYearException("Confidence index is out of range [0:10]");
+        if (candidateConfidenceIndex < 0 || candidateConfidenceIndex > 100) {
+            throw new IllegalPublicationYearException("Confidence index is out of range [0:100]");
         }
         this.confidenceIndex = candidateConfidenceIndex;
     }
