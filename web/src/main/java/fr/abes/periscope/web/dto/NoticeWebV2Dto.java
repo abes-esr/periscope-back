@@ -4,10 +4,12 @@ import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.abes.periscope.core.entity.PublicationYear;
+import fr.abes.periscope.core.entity.v2.solr.ItemSolr;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -101,5 +103,32 @@ public class NoticeWebV2Dto {
 
     @JsonProperty("exemplaires")
     private List<ItemWebDto> items;
+
+    // Support avec la V1
+    @JsonGetter("pcpList")
+    protected HashSet<String> getPcpList() {
+        HashSet<String> list = new HashSet<>();
+
+        Iterator<ItemWebDto> itemIterator = getItems().iterator();
+        while(itemIterator.hasNext()) {
+            ItemWebDto item = itemIterator.next();
+            list.add(item.getPcp());
+        }
+
+        return list;
+    }
+
+    @JsonGetter("rcrList")
+    protected HashSet<String> getRcrList() {
+        HashSet<String> list = new HashSet<>();
+
+        Iterator<ItemWebDto> itemIterator = getItems().iterator();
+        while(itemIterator.hasNext()) {
+            ItemWebDto item = itemIterator.next();
+            list.add(item.getRcr());
+        }
+
+        return list;
+    }
 
 }
