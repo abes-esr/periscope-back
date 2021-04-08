@@ -58,6 +58,7 @@ public class NoticeV2Controller extends NoticeAbstractController {
             Iterator<CriterionSortWebDto> userSortCriteriaIterator = userSortCriteria.iterator();
             while (userSortCriteriaIterator.hasNext()) {
                 CriterionSortWebDto sortCriterion = userSortCriteriaIterator.next();
+                sortCriterion.setVersion("v2"); /* Hack pour gérer les Notices V1 et V2 dans le NoticeMapper */
                 sortCriteria.add(dtoMapper.map(sortCriterion, CriterionSort.class));
             }
         } else {

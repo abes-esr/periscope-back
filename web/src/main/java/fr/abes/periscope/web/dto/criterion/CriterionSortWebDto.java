@@ -1,5 +1,6 @@
 package fr.abes.periscope.web.dto.criterion;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,4 +24,8 @@ public class CriterionSortWebDto {
     @JsonProperty(value = ORDER_PROPERTY)
     @NotNull(message = "L'ordre de tri ne peut pas être null")
     private Sort.Direction order;
+
+    /* Hack pour gérer les Notices V1 et V2 dans le NoticeMapper */
+    @JsonIgnoreProperties
+    private String version = "v1";
 }

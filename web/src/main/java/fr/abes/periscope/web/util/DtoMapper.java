@@ -1,6 +1,7 @@
 package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.*;
+import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
@@ -64,6 +65,10 @@ public class DtoMapper {
                 final String[] field = {""};
                 try {
                     Class c = NoticeV1SolrField.class;
+                    if (s.getVersion().equalsIgnoreCase("v2")) {
+                        c = NoticeV2SolrField.class;
+                    }
+
                     Arrays.stream(c.getDeclaredFields()).forEach(n -> {
                         if (n.getName().equalsIgnoreCase(s.getSort())) {
                             try {
@@ -85,6 +90,7 @@ public class DtoMapper {
         };
         modelMapper.addConverter(myConverter);
     }
+
     /**
      * Convertisseur pour les critères PCP (DTO vers objet métier)
      */
