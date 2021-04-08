@@ -18,24 +18,28 @@ public class ItemSolr implements Serializable {
 
     @Id
     @Field(ItemSolrField.ID)
-    @Indexed(name = ItemSolrField.ID, type = ItemSolrField.ID_TYPE)
+    @Indexed(name = ItemSolrField.ID)
     private String id;
 
     @Field(ItemSolrField.EPN)
-    @Indexed(name = ItemSolrField.EPN, type = ItemSolrField.EPN_TYPE)
+    @Indexed(name = ItemSolrField.EPN)
     private String epn;
 
     @Field(NoticeV2SolrField.PPN)
-    @Indexed(name = NoticeV2SolrField.PPN, type = NoticeV2SolrField.PPN_TYPE)
+    @Indexed(name = NoticeV2SolrField.PPN)
     private String ppn;
 
     @Field(NoticeV2SolrField.TITLE_TYPE)
-    @Indexed(name = NoticeV2SolrField.TITLE_TYPE, type = NoticeV2SolrField.TITLE_TYPE_TYPE)
-    private String type = "exemplaire";
+    @Indexed(name = NoticeV2SolrField.TITLE_TYPE)
+    private String titleType = "exemplaire";
 
     @Field(ItemSolrField.RCR)
-    @Indexed(name = ItemSolrField.RCR, type = ItemSolrField.RCR_TYPE)
+    @Indexed(name = ItemSolrField.RCR)
     private String rcr;
+
+    @Field(ItemSolrField.PCP)
+    @Indexed(name = ItemSolrField.PCP)
+    private String pcp;
 
     public ItemSolr(String ppn, String epn) {
         this.id = epn;

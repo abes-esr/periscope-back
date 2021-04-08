@@ -10,6 +10,10 @@ import java.util.Set;
 @Getter @Setter
 public class NoticeV2 extends Notice {
 
+    protected String language;
+
+    protected String country;
+
     protected Set<Item> items = new HashSet<>();
 
     public void addItem(Item item) {

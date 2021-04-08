@@ -18,6 +18,8 @@ public class Item {
 
     private String rcr;
 
+    private String pcp;
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

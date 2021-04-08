@@ -22,12 +22,6 @@ public class NoticeWebV2Dto {
     @JsonProperty("issn")
     private String issn;
 
-    @JsonProperty("pcpList")
-    private HashSet<String> pcpList;
-
-    @JsonProperty("exemplaires")
-    private List<ItemWebDto> items;
-
     @JsonProperty("editeur")
     private String editor;
 
@@ -65,22 +59,38 @@ public class NoticeWebV2Dto {
 
     @JsonGetter("date_debut")
     protected Integer getStartYear() {
-        return startYear.getYear();
+        if (startYear == null) {
+            return null;
+        } else {
+            return startYear.getYear();
+        }
     }
 
     @JsonGetter("date_debut_indice")
     protected Integer getStartYearConfidenceIndex() {
-        return startYear.getConfidenceIndex();
+        if (startYear == null) {
+            return null;
+        } else {
+            return startYear.getConfidenceIndex();
+        }
     }
 
     @JsonGetter("date_fin")
     protected Integer getEndYear() {
-        return endYear.getYear();
+        if (endYear == null) {
+            return null;
+        } else {
+            return endYear.getYear();
+        }
     }
 
     @JsonGetter("date_fin_indice")
     protected Integer getEndYearConfidenceIndex() {
-        return endYear.getConfidenceIndex();
+        if (endYear == null) {
+            return null;
+        } else {
+            return endYear.getConfidenceIndex();
+        }
     }
 
     @JsonProperty("lien_mirabel")
@@ -88,5 +98,8 @@ public class NoticeWebV2Dto {
 
     @JsonProperty("nb_location")
     private Integer nbLocation;
+
+    @JsonProperty("exemplaires")
+    private List<ItemWebDto> items;
 
 }

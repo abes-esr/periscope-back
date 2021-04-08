@@ -16,4 +16,7 @@ public class ItemWebDto {
     @JsonProperty("rcr")
     private String rcr;
 
+    @JsonProperty("pcp")
+    private String pcp;
+
 }

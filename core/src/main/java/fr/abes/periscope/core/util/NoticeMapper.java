@@ -155,6 +155,7 @@ public class NoticeMapper {
                         item.setEpn(itemSolR.getEpn());
                         item.setPpn(itemSolR.getPpn());
                         item.setRcr(itemSolR.getRcr());
+                        item.setPcp(itemSolR.getPcp());
 
                         ((NoticeV2)target).addItem(item);
                     }
@@ -167,6 +168,16 @@ public class NoticeMapper {
                     target.setParallelTitle(source.getParallelTitle());
                     target.setTitleComplement(source.getTitleComplement());
                     target.setSectionTitle(source.getSectionTitle());
+                    target.setContiniousType(source.getTypeDocument());
+                    ((NoticeV2) target).setLanguage(source.getLanguage());
+                    ((NoticeV2) target).setCountry(source.getCountry());
+
+                    if(source.getStartYear() != null ) {
+                        target.setStartYear(new PublicationYear(source.getStartYear(), source.getStartYearConfidenceIndex()));
+                    }
+                    if(source.getEndYear() != null ) {
+                        target.setEndYear(new PublicationYear(source.getEndYear(), source.getEndYearConfidenceIndex()));
+                    }
 
                     //Extraction du lien exterieur de Mirabel
                     target.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
@@ -351,5 +362,4 @@ public class NoticeMapper {
                 return OnGoingResourceType.X;
         }
     }
-
 }

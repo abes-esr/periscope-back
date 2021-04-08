@@ -11,18 +11,18 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 
 @SpringBootApplication
 @Slf4j
-public class PeriscopeApplication extends SpringBootServletInitializer implements CommandLineRunner {
+public class PeriscopeAPIApplication extends SpringBootServletInitializer implements CommandLineRunner {
 
 	@Autowired
 	private NoticeSolrV1Repository noticeRepository;
 
 	public static void main(String[] args) {
-		SpringApplication.run(PeriscopeApplication.class, args);
+		SpringApplication.run(PeriscopeAPIApplication.class, args);
 	}
 
 	@Override
 	protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
-		return builder.sources(PeriscopeApplication.class);
+		return builder.sources(PeriscopeAPIApplication.class);
 	}
 
 	@Override
