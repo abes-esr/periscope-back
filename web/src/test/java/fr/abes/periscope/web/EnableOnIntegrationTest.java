@@ -1,4 +1,4 @@
-package fr.abes.periscope.core;
+package fr.abes.periscope.web;
 
 import org.springframework.test.annotation.IfProfileValue;
 import org.springframework.test.context.junit.jupiter.EnabledIf;
@@ -10,6 +10,6 @@ import java.lang.annotation.Target;
 
 @Target({ ElementType.TYPE, ElementType.METHOD })
 @Retention(RetentionPolicy.RUNTIME)
-@EnabledIf(expression = "#{environment['spring.profiles.active'] == 'test-solr'}", loadContext = true)
+@EnabledIf(expression = "#{environment.acceptsProfiles('test-solr', 'someotherprofile')", loadContext = true)
 @IfProfileValue(name ="spring.profiles.active", value ="test-solr")
 public @interface EnableOnIntegrationTest {}

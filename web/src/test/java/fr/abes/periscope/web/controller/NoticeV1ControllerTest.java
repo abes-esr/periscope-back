@@ -1,12 +1,17 @@
 package fr.abes.periscope.web.controller;
 
+import fr.abes.periscope.web.EnableOnIntegrationTest;
 import fr.abes.periscope.web.PeriscopeApplicationTest;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.condition.EnabledIfSystemProperty;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.IfProfileValue;
+import org.springframework.test.context.junit.jupiter.DisabledIf;
+import org.springframework.test.context.junit.jupiter.EnabledIf;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -207,8 +212,10 @@ public class NoticeV1ControllerTest extends PeriscopeApplicationTest {
      * un mauvais JSON
      * @throws Exception
      */
+
     @Test
     @DisplayName("POST findByCriteria - bon JSON")
+    @EnableOnIntegrationTest
     public void findByCriteriaPostMethodGoodJSON() throws Exception {
         String json = "{\n" +
                 "    \"criteres\":\n" +

@@ -1,5 +1,6 @@
 package fr.abes.periscope.core.repository.solr;
 
+import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.repository.solr.v1.SolrQueryBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  * Test la construction de requête SolR à partir des critères de recherche.
  */
-@SpringBootTest
+@SpringBootTest(classes = {CoreTestConfiguration.class})
 public class SolrQueryBuilderTest {
 
     private SolrQueryBuilder builderQuery;

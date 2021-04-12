@@ -1,5 +1,6 @@
 package fr.abes.periscope.core.repository.solr;
 
+import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.EnableOnIntegrationTest;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
@@ -21,7 +22,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @EnableOnIntegrationTest
-@SpringBootTest
+@SpringBootTest(classes = {CoreTestConfiguration.class})
 public class SolrIntegrationTest {
 
     @Autowired
