@@ -18,6 +18,7 @@ import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.SolrTemplate;
 import org.springframework.data.solr.core.query.SimpleField;
 import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

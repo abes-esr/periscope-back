@@ -2,10 +2,7 @@ package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.EnableOnIntegrationTest;
-import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionRcr;
-import fr.abes.periscope.core.criterion.CriterionTitleWords;
+import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.repository.solr.v1.NoticeSolrV1Repository;
@@ -164,7 +161,12 @@ public class NoticeStoreServiceTest {
         Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
         String expected = candidate.getProperTitle();
 
-        candidate = noticeService.findNoticesByCriteria("v2",criteria,  new LinkedList<>(),0,5).get(0);
+        List<Criterion> criteria1 = new LinkedList<>();
+        List<String> ppnParent = Arrays.asList("000000191");
+        CriterionPpnParent criterionPpnParent = new CriterionPpnParent("ET", ppnParent);
+        criteria1.add(criterionPpnParent);
+
+        candidate = noticeService.findNoticesByCriteria("v2",criteria1,  new LinkedList<>(),0,5).get(0);
         Assert.assertEquals(expected,candidate.getProperTitle());
 
     }

@@ -145,6 +145,7 @@ public abstract class NoticeV2SolrField {
     public static final String DATE_INDEX_TYPE = "pdate";
     public static final String NB_LOC = "NbLocs";
     public static final String PCP_RCR = "pcprcr";
+    public static final String PPN_PARENT = "ppn_parent";
 
     public static final String START_YEAR = "start_year";
     public static final String START_YEAR_CONFIDENCE_INDEX = "start_year_confidence_index";

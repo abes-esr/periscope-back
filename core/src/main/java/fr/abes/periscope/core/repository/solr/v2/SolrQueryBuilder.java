@@ -55,6 +55,11 @@ public class SolrQueryBuilder {
                 filterQuery.addCriteria(ppnQuery);
             }
 
+            if (criterion instanceof CriterionPpnParent) {
+                Criteria ppnParentQuery = buildPpnParentQuery((CriterionPpnParent) criterion);
+                filterQuery.addCriteria(ppnParentQuery);
+            }
+
             //Bloc de critère pays
             if (criterion instanceof CriterionCountry) {
                  Criteria countryQuery = buildCountryQuery((CriterionCountry) criterion);
@@ -81,6 +86,37 @@ public class SolrQueryBuilder {
         }
 
         return filterQuery.getCriteria();
+    }
+
+    private Criteria buildPpnParentQuery(CriterionPpnParent criterion) {
+        Iterator<String> valueIterator = criterion.getPpnParent().iterator();
+
+        Criteria myCriteria;
+
+        String value = valueIterator.next();
+
+        myCriteria = new Criteria(NoticeV2SolrField.PPN_PARENT).is(value);
+
+        // les autres
+        while (valueIterator.hasNext()) {
+            value = valueIterator.next();
+            myCriteria = myCriteria.or(NoticeV2SolrField.PPN_PARENT).is(value);
+        }
+
+        // pour le bloc entier
+        switch (criterion.getBlocOperator()) {
+            case LogicalOperator.AND:
+                myCriteria = myCriteria.connect();
+                break;
+            case LogicalOperator.OR:
+                myCriteria.setPartIsOr(true);
+                break;
+            case LogicalOperator.EXCEPT:
+                myCriteria = myCriteria.notOperator();
+                break;
+        }
+
+        return myCriteria;
     }
 
     /**
