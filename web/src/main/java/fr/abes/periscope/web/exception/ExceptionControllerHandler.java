@@ -1,22 +1,35 @@
 package fr.abes.periscope.web.exception;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.modelmapper.MappingException;
+import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import java.util.List;
+
+/**
+ * Gestionnaire des exceptions de l'API.
+ * Cette classe récupère toutes les exceptions et renvoi un message d'erreur
+ */
 @Slf4j
 @Order(Ordered.HIGHEST_PRECEDENCE)
 @ControllerAdvice
@@ -27,7 +40,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Vérifier le Token passé dans le header avec une format correcte
+     * Erreur de lecture / décodage des paramètres d'une requête HTTP
      * @param ex
      * @param headers
      * @param status
@@ -38,6 +51,17 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 
         String error = "Malformed JSON request";
+
+        if (ex.getCause() instanceof MismatchedInputException) {
+            String targetType = ((MismatchedInputException) ex.getCause()).getTargetType().getSimpleName();
+
+            List<JsonMappingException.Reference> errors = ((MismatchedInputException) ex.getCause()).getPath();
+            String property = errors.get(errors.size()-1).getFieldName();
+
+            log.error(ex.getLocalizedMessage());
+            return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, new MismatchedJsonTypeException(property+" need to be type of '"+targetType+"'")));
+        }
+
         log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
@@ -58,7 +82,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * Vérifier le nom d'utilisateur et le mot de passe lors de l'inscription
+     * Vérifier la validité (@Valid) des paramètres de la requête
      * @param ex
      * @param headers
      * @param status
@@ -68,8 +92,14 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
         String error = "The credentials are not valid";
-        log.error(ex.getLocalizedMessage());
-        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
+        BindingResult result = ex.getBindingResult();
+        List<FieldError> fieldErrors = result.getFieldErrors();
+        String msg = "";
+        for (FieldError fieldError: fieldErrors) {
+            msg += fieldError.getDefaultMessage()+ " ";
+        }
+        log.error(msg);
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, new IllegalCriterionException(msg)));
     }
 
     /**
@@ -85,6 +115,21 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         String error = "Page not found";
         log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.NOT_FOUND, error, ex));
+    }
+
+    /**
+     * Erreur de paramètre
+     * @param ex
+     * @param headers
+     * @param status
+     * @param request
+     * @return
+     */
+    @Override
+    protected ResponseEntity<Object> handleMissingServletRequestParameter(MissingServletRequestParameterException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        String error = "Missing request parameter";
+        log.error(ex.getLocalizedMessage());
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
     /**
@@ -111,5 +156,16 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
-
+    /**
+     * Si la connexion / requête avec le SolR a echoué, on loggue l'exception
+     * et on renvoit une erreur standard à l'API pour masquer l'URL du serveur SolR
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(HttpSolrClient.RemoteSolrException.class)
+    protected ResponseEntity<Object> handleRemoteSolrException(HttpSolrClient.RemoteSolrException ex) {
+        String error = "SolR server error";
+        log.error(ex.getLocalizedMessage());
+        return buildResponseEntity(new ApiReturnError(HttpStatus.INTERNAL_SERVER_ERROR, error, new Exception("Something was wrong with the database server")));
+    }
 }

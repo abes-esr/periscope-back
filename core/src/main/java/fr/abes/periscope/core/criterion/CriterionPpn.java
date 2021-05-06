@@ -6,9 +6,13 @@ import lombok.Getter;
 
 import java.util.List;
 
+/**
+ * Représente un critère de recherche par PPN
+ */
 @Getter
 public class CriterionPpn extends Criterion {
-    /** Liste des PPN à rechercher. Les connecteurs logiques entre les PPN sont forcément des OU */
+    /** Liste des PPN à rechercher.
+     * Note : Les connecteurs logiques entre les PPN sont forcément des OU */
     private List<String> ppn;
 
     /**
@@ -22,7 +26,7 @@ public class CriterionPpn extends Criterion {
         super(blocOperator);
 
         if (candidatesPpn.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         this.ppn = candidatesPpn;
@@ -39,7 +43,7 @@ public class CriterionPpn extends Criterion {
         super();
 
         if (candidatesPpn.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         this.ppn = candidatesPpn;

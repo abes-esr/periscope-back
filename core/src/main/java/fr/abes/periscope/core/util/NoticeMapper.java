@@ -1,28 +1,206 @@
 package fr.abes.periscope.core.util;
 
 import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.NoticeSolr;
 import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.entity.PublicationYear;
+import fr.abes.periscope.core.entity.v1.NoticeV1;
+import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
+import fr.abes.periscope.core.entity.v2.Item;
+import fr.abes.periscope.core.entity.v2.NoticeV2;
+import fr.abes.periscope.core.entity.v2.solr.ItemSolr;
+import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import lombok.extern.slf4j.Slf4j;
+import org.modelmapper.Converter;
+import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.spi.ErrorMessage;
+import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Convertisseurs entre les NoticeSolR et les Notices pour PERISCOPE
+ */
 @Component
 @Slf4j
 public class NoticeMapper {
 
+    @Bean
+    public ModelMapper modelMapper() {
+        return new ModelMapper();
+    }
+
     @Autowired
     private ModelMapper modelMapper;
 
+    /**
+     * Fonction de mapping générique pour des listes
+     *
+     * @param source      Liste source
+     * @param targetClass Classe des objets cibles
+     * @return Liste des objets cibles
+     */
+    public <S, T> List<T> mapList(List<S> source, Class<T> targetClass) {
+        return source
+                .stream()
+                .map(element -> modelMapper.map(element, targetClass))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Fonction de mapping générique pour un objet
+     *
+     * @param source      Objet source
+     * @param targetClass Classe de l'objet cible
+     * @return Objet cible
+     */
+    public <S, T> T map(S source, Class<T> targetClass) {
+        return modelMapper.map(source, targetClass);
+    }
+
+    /**
+     * Convertisseur pour les notices SolR V1 vers les notices PERISCOPE
+     */
+    @Bean
+    public void converterNoticeV1Solr() {
+
+        Converter<NoticeV1Solr, Notice> myConverter = new Converter<NoticeV1Solr, Notice>() {
+
+            public Notice convert(MappingContext<NoticeV1Solr, Notice> context) {
+                NoticeV1Solr source = context.getSource();
+                Notice target = new NoticeV1();
+
+                try {
+
+                    target.setPpn(source.getPpn());
+                    target.setIssn((source.getIssn()));
+                    target.setPcpList(source.getPcpList());
+                    ((NoticeV1)target).setRcrList(source.getRcrList());
+                    target.setEditor(source.getEditor());
+                    target.setKeyTitle(source.getKeyTitle());
+                    target.setKeyShortedTitle(source.getKeyShortedTitle());
+                    target.setProperTitle(source.getProperTitle());
+                    target.setTitleFromDifferentAuthor(source.getTitleFromDifferentAuthor());
+                    target.setParallelTitle(source.getParallelTitle());
+                    target.setTitleComplement(source.getTitleComplement());
+                    target.setSectionTitle(source.getSectionTitle());
+
+                    // Extraction de la date de début
+                    try {
+                        PublicationYear year = buildStartPublicationYear(source.getProcessingGlobalData());
+                        target.setStartYear(year);
+                    } catch (IllegalPublicationYearException e) {
+                        log.debug("Unable to parse start publication year :" + e.getLocalizedMessage());
+                        target.setStartYear(null);
+                    }
+
+                    // Extraction de la date de fin
+                    try {
+                        PublicationYear year = buildEndPublicationYear(source.getProcessingGlobalData());
+                        target.setEndYear(year);
+                    } catch (IllegalPublicationYearException e) {
+                        log.debug("Unable to parse end publication year :" + e.getLocalizedMessage());
+                        target.setEndYear(null);
+                    }
+
+                    //Extraction du type de ressource continue
+                    target.setContiniousType(extractOnGoingResourceType(source.getContiniousType()));
+
+                    //Extraction du lien exterieur de Mirabel
+                    target.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
+
+                    target.setNbLocation(source.getNbLocation());
+
+                    return target;
+
+                } catch (Exception ex) {
+                    throw new MappingException(Arrays.asList(new ErrorMessage(ex.getMessage())));
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
+
+    /**
+     * Convertisseur pour les notices SolR V2 vers les notices PERISCOPE
+     */
+    @Bean
+    public void converterNoticeV2Solr() {
+
+        Converter<NoticeV2Solr, Notice> myConverter = new Converter<NoticeV2Solr, Notice>() {
+
+            public Notice convert(MappingContext<NoticeV2Solr, Notice> context) {
+                NoticeV2Solr source = context.getSource();
+                Notice target = new NoticeV2();
+
+                try {
+
+                    target.setPpn(source.getPpn());
+                    target.setIssn((source.getIssn()));
+
+                    Iterator<ItemSolr> itemIterator = source.getItems().iterator();
+                    while(itemIterator.hasNext()) {
+                        ItemSolr itemSolR = itemIterator.next();
+                        Item item = new Item();
+
+                        item.setId(itemSolR.getId());
+                        item.setEpn(itemSolR.getEpn());
+                        item.setPpn(itemSolR.getPpn());
+                        item.setRcr(itemSolR.getRcr());
+                        item.setPcp(itemSolR.getPcp());
+
+                        ((NoticeV2)target).addItem(item);
+                    }
+
+                    target.setEditor(source.getEditor());
+                    target.setKeyTitle(source.getKeyTitle());
+                    target.setKeyShortedTitle(source.getKeyShortedTitle());
+                    target.setProperTitle(source.getProperTitle());
+                    target.setTitleFromDifferentAuthor(source.getTitleFromDifferentAuthor());
+                    target.setParallelTitle(source.getParallelTitle());
+                    target.setTitleComplement(source.getTitleComplement());
+                    target.setSectionTitle(source.getSectionTitle());
+                    target.setContiniousType(source.getTypeDocument());
+                    ((NoticeV2) target).setLanguage(source.getLanguage());
+                    ((NoticeV2) target).setCountry(source.getCountry());
+
+                    if(source.getStartYear() != null ) {
+                        target.setStartYear(new PublicationYear(source.getStartYear(), source.getStartYearConfidenceIndex()));
+                    }
+                    if(source.getEndYear() != null ) {
+                        target.setEndYear(new PublicationYear(source.getEndYear(), source.getEndYearConfidenceIndex()));
+                    }
+
+                    //Extraction du lien exterieur de Mirabel
+                    target.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
+
+                    target.setNbLocation(source.getNbLocation());
+
+                    return target;
+
+                } catch (Exception ex) {
+                    throw new MappingException(Arrays.asList(new ErrorMessage(ex.getMessage())));
+                }
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
+
+    /**
+     * Extrait l'année de début de publication
+     * @param value zone
+     * @return PublicationYear Année de début de publication
+     * @throws IllegalPublicationYearException si l'année de publication ne peut pas être décodée
+     */
     public PublicationYear buildStartPublicationYear(String value) throws IllegalPublicationYearException {
-        //log.debug("SolR startdate : "+value.substring(9,13));
         String yearCode = value.substring(8, 9);
         String candidateYear;
         PublicationYear year = new PublicationYear();
@@ -48,6 +226,12 @@ public class NoticeMapper {
 
     }
 
+    /**
+     * Extrait l'année de fin de publication
+     * @param value zone
+     * @return PublicationYear Année de fin de publication
+     * @throws IllegalPublicationYearException si l'année de publication ne peut pas être décodée
+     */
     public PublicationYear buildEndPublicationYear(String value) throws IllegalPublicationYearException {
         String yearCode = value.substring(8, 9);
         String candidateYear;
@@ -87,7 +271,13 @@ public class NoticeMapper {
         }
     }
 
-    private PublicationYear extractDate(String candidateYear) {
+    /**
+     * Extrait la date de publication
+     * @param candidateYear
+     * @return
+     * @throws IllegalPublicationYearException
+     */
+    private PublicationYear extractDate(String candidateYear) throws IllegalPublicationYearException {
         PublicationYear year = new PublicationYear();
         if (candidateYear.charAt(2) == ' ' && candidateYear.charAt(3) == ' ') {
             year.setYear(Integer.valueOf(candidateYear.substring(0, 2)));
@@ -105,7 +295,14 @@ public class NoticeMapper {
         return year;
     }
 
-    private PublicationYear extractCaseF(String candidateOldestYear, String candidateNewestYear) {
+    /**
+     * Extrait le cas F
+     * @param candidateOldestYear
+     * @param candidateNewestYear
+     * @return
+     * @throws IllegalPublicationYearException
+     */
+    private PublicationYear extractCaseF(String candidateOldestYear, String candidateNewestYear) throws IllegalPublicationYearException {
         int cdtOldestYear = Integer.parseInt(candidateOldestYear.trim());
         int cdtNewestYear = (candidateNewestYear.equals("    ")) ? 9999 : Integer.parseInt(candidateNewestYear.trim());
         PublicationYear year = new PublicationYear();
@@ -118,43 +315,6 @@ public class NoticeMapper {
         else
             year.setConfidenceIndex(0);
         return year;
-    }
-
-    public List<Notice> mapList(List<NoticeSolr> source) {
-        return source
-                .stream()
-                .map(element -> map(element))
-                .collect(Collectors.toList());
-    }
-
-    public Notice map(NoticeSolr source) {
-        Notice notice = modelMapper.map(source, Notice.class);
-
-        // Extraction de la date de début
-        try {
-            PublicationYear year = buildStartPublicationYear(source.getProcessingGlobalData());
-            notice.setStartYear(year);
-        } catch (IllegalPublicationYearException e) {
-            log.debug("Unable to parse start publication year :" + e.getLocalizedMessage());
-            notice.setStartYear(null);
-        }
-
-        // Extraction de la date de fin
-        try {
-            PublicationYear year = buildEndPublicationYear(source.getProcessingGlobalData());
-            notice.setEndYear(year);
-        } catch (IllegalPublicationYearException e) {
-            log.debug("Unable to parse end publication year :" + e.getLocalizedMessage());
-            notice.setEndYear(null);
-        }
-
-        //Extraction du type de ressource continue
-        notice.setContiniousType(extractOnGoingResourceType(source.getContiniousType()));
-
-        //Extraction du lien exterieur de Mirabel
-        notice.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
-
-        return notice;
     }
 
     /**
@@ -202,5 +362,4 @@ public class NoticeMapper {
                 return OnGoingResourceType.X;
         }
     }
-
 }

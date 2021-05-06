@@ -14,8 +14,7 @@ import java.util.List;
 @Getter
 public class CriterionPcp extends Criterion {
 
-    /** Liste des codes PCP à rechercher. Les connecteurs
-     * logiques entre les codes sont des OU */
+    /** Liste des codes PCP à rechercher. */
     private List<String> pcp = new ArrayList<>();
 
     /** Liste des connecteurs logiques entre les codes RCR
@@ -37,7 +36,7 @@ public class CriterionPcp extends Criterion {
         super(blocOperator);
 
         if (candidatesPcp.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         if (candidatesOperator.size() != candidatesPcp.size()) {
@@ -69,7 +68,7 @@ public class CriterionPcp extends Criterion {
         super();
 
         if (candidatesPcp.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         if (candidatesOperator.size() != candidatesPcp.size()) {

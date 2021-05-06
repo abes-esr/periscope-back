@@ -1,18 +1,27 @@
 package fr.abes.periscope.core.repository.solr;
 
+import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.EnableOnIntegrationTest;
-import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionRcr;
-import fr.abes.periscope.core.criterion.CriterionTitleWords;
+import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.OnGoingResourceType;
+import fr.abes.periscope.core.repository.solr.v1.NoticeSolrV1Repository;
+import fr.abes.periscope.core.repository.solr.v1.configuration.SolrV1Config;
+import fr.abes.periscope.core.repository.solr.v1.impl.AdvancedNoticeSolrV1RepositoryImpl;
+import fr.abes.periscope.core.repository.solr.v2.impl.AdvancedNoticeSolrV2RepositoryImpl;
 import fr.abes.periscope.core.service.NoticeStoreService;
+import fr.abes.periscope.core.util.NoticeMapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -22,7 +31,7 @@ import java.util.List;
  * Test la conversion d'une Notice SolR vers une Notice.
  */
 @EnableOnIntegrationTest
-@SpringBootTest
+@SpringBootTest(classes = {CoreTestConfiguration.class})
 public class NoticeStoreServiceTest {
 
     @Autowired
@@ -133,6 +142,32 @@ public class NoticeStoreServiceTest {
         criteria.add(criterionRcr);
 
         List<Notice> newCandidates = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,25);
+
+    }
+
+    /**
+     * Test Journal Le Monde
+     */
+    @Test
+    @DisplayName("Test entre le SolR V1 et V2")
+    void testSolRV1V2() {
+
+        List<Criterion> criteria = new LinkedList<>();
+
+        List<String> ppn = Arrays.asList("000000191");
+        CriterionPpn criterion = new CriterionPpn("ET",ppn);
+        criteria.add(criterion);
+
+        Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
+        String expected = candidate.getProperTitle();
+
+        List<Criterion> criteria1 = new LinkedList<>();
+        List<String> ppnParent = Arrays.asList("000000191");
+        CriterionPpnParent criterionPpnParent = new CriterionPpnParent("ET", ppnParent);
+        criteria1.add(criterionPpnParent);
+
+        candidate = noticeService.findNoticesByCriteria("v2",criteria1,  new LinkedList<>(),0,5).get(0);
+        Assert.assertEquals(expected,candidate.getProperTitle());
 
     }
 }

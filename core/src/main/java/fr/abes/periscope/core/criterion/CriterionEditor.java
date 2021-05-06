@@ -36,7 +36,7 @@ public class CriterionEditor extends Criterion {
         super(blocOperator);
 
         if (candidatesEditor.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         if (candidatesOperator.size() != candidatesEditor.size()) {
@@ -69,7 +69,7 @@ public class CriterionEditor extends Criterion {
         super();
 
         if (candidatesEditor.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         if (candidatesOperator.size() != candidatesEditor.size()) {

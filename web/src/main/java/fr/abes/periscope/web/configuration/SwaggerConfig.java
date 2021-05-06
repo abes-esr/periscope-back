@@ -18,7 +18,7 @@ public class SwaggerConfig {
     public Docket api() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("fr.abes.helloabes.web.controller"))
+                .apis(RequestHandlerSelectors.basePackage("fr.abes.periscope.web.controller"))
                 .paths(PathSelectors.any())
                 .build()
                 .apiInfo(metadata());
@@ -26,11 +26,10 @@ public class SwaggerConfig {
 
     private ApiInfo metadata() {
         return new ApiInfoBuilder()
-                .title("WebService Hello Abes")
-                .description("Le service web RESTful permet d'exposer un message public de bienvenue et un message privé aux utilisateurs authentifiés sur le service.</br>" +
-                        "Les échanges s'opèrent via des requêtes HTTP contenant des fichiers JSON dans le corps des requêtes (Body) et une clé 'Authorization' dans l'entête des requêtes pour les appels à des services sécurisés.")
-                .version("0.0.1")
-                .contact(new Contact("Abes", "https://github.com/abes-esr/abes-hello-back", "scod@abes.fr"))
+                .title("PERISCOPE API")
+                .description("Service web RESTful de l'application PERISCOPE permet de rechercher dans la collection des périodiques du SUDOC.")
+                .version("1.0.0")
+                .contact(new Contact("Abes", "https://github.com/abes-esr/periscope-back", "scod@abes.fr"))
                 .build();
     }
 }

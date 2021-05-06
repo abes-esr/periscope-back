@@ -16,7 +16,7 @@ import java.text.ParseException;
 /**
  * Test l'extraction des dates de publication de la zone 100$a d'une NoticeSolr.
  */
-@SpringBootTest
+@SpringBootTest(classes = {NoticeMapper.class})
 public class NoticeMapperTest {
 
     @Autowired

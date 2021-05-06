@@ -1,16 +1,16 @@
 package fr.abes.periscope.core.entity;
 
 /**
- * Représente les types de ressources continues
+ * Représente la correspondance entre les caractères UNIMARC et
+ * la dénomination littérale des types de ressources continues
  */
-public interface OnGoingResourceType {
-
-    String A = "Periodique";
-    String B = "Monographie";
-    String C = "Journal";
-    String E = "Publication à feuillets mobiles";
-    String F = "Base de données";
-    String G = "Site web";
-    String Z = "Autre";
-    String X = "Non renseigné";
+public abstract class OnGoingResourceType {
+    public static final String A = "Periodique";
+    public static final String B = "Monographie";
+    public static final String C = "Journal";
+    public static final String E = "Publication à feuillets mobiles";
+    public static final String F = "Base de données";
+    public static final String G = "Site web";
+    public static final String Z = "Autre";
+    public static final String X = "Non renseigné";
 }

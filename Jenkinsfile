@@ -1,24 +1,62 @@
 //this is the scripted method with groovy engine
+/*
+Ce Jenkinsfile permet de compiler et de deployer la partie web et/ou la partie batch du projet.
+sur les environnements de DEV, TEST et PROD
+Ce script se veut le plus generique possible et comporte 2 zones a editer specifiquement au projet
+ */
 import hudson.model.Result
 
 node {
 
-    //Configuration
+    // **** DEBUT DE ZONE A EDITER n°1 ****
+
+    /*
+    Cette zone contient la definition de la structure interne du projet.
+    Le tableau modulesNames contient les modules concernes par la compilation et le deploiement.
+    Dans cette exemple, il s'agit des modules 'web' et 'batch'
+    Les variables de definition des modules (backTargetDir, backServiceName,...)
+    permettent de renseigner les specifications sur les environements cibles.
+     */
+
+    // Configuration du projet
     def gitURL = "https://github.com/abes-esr/periscope-back.git"
-    def gitCredentials = ''
-    def warDir = "web/target/"
-    def warName = "periscope"
-    def tomcatWebappsDir = "/usr/local/tomcat9-periscope/webapps/"
-    def tomcatServiceName = "tomcat9-periscope.service"
+    def gitCredentials = 'Github'
     def slackChannel = "#notif-periscope"
+    def artifactoryBuildName = "periscope-api"
+    def modulesNames = ["web"]
+
+    // Definition du module web
+    def backApplicationFileName = "periscope"
+    def backTargetDir = "/usr/local/tomcat9-periscope/webapps/"
+    def backServiceName = "tomcat9-periscope.service"
+
+    // **** FIN DE ZONE A EDITER n°1 ****
+
+    // Variables de configuration d'execution
+    def candidateModules = []
+    def executeBuild = []
+    def executeTests = false
+    def deployArtifactoy = false
+    def buildNumber = -1
+    def executeDeploy = []
+    def backTargetHostnames = []
+    def batchTargetHostnames = []
 
     // Variables globales
+    def ENV
     def maventool
     def rtMaven
-    def buildInfo
-    def server
-    def ENV
-    def executeTests
+    def mavenProfil
+    def artifactoryServer
+    def downloadSpec
+
+    // Definition des actions
+    def choiceParams = ['Compiler', 'Compiler & Déployer', 'Déployer un précédent build']
+    for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
+        choiceParams.add("[${modulesNames[moduleIndex]}] Compiler le module")
+        choiceParams.add("[${modulesNames[moduleIndex]}] Compiler & Déployer le module")
+        choiceParams.add("[${modulesNames[moduleIndex]}] Déployer un précédent build")
+    }
 
     // Configuration du job Jenkins
     // On garde les 5 derniers builds par branche
@@ -32,39 +70,104 @@ node {
                             numToKeepStr: '5')
             ),
             parameters([
+                    choice(choices: choiceParams.join('\n'), description: 'Que voulez-vous faire ?', name: 'ACTION'),
                     gitParameter(
                             branch: '',
                             branchFilter: 'origin/(.*)',
                             defaultValue: 'develop',
-                            description: 'Sélectionner la branche ou le tag à déployer',
+                            description: 'Sélectionner la branche ou le tag',
                             name: 'BRANCH_TAG',
                             quickFilterEnabled: false,
                             selectedValue: 'NONE',
                             sortMode: 'DESCENDING_SMART',
                             tagFilter: '*',
                             type: 'PT_BRANCH_TAG'),
-                    choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV'),
-                    booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests')
+                    stringParam(defaultValue: '', description: "Numéro du build à déployer. Retrouvez vos précédents builds sur https://artifactory.abes.fr/artifactory/webapp/#/builds/${artifactoryBuildName}", name: 'BUILD_NUMBER'),
+                    booleanParam(defaultValue: false, description: 'Voulez-vous deployer sur Artifactory ?', name: 'deployArtifactoy'),
+                    booleanParam(defaultValue: false, description: 'Voulez-vous exécuter les tests ?', name: 'executeTests'),
+                    choice(choices: ['DEV', 'TEST', 'PROD'], description: 'Sélectionner l\'environnement cible', name: 'ENV')
             ])
     ])
 
+    //-------------------------------
+    // Etape 1 : Configuration
+    //-------------------------------
     stage('Set environnement variables') {
         try {
+            // Java
             env.JAVA_HOME = "${tool 'Open JDK 11'}"
             env.PATH = "${env.JAVA_HOME}/bin:${env.PATH}"
 
+            // Maven & Artifactory
             maventool = tool 'Maven 3.3.9'
             rtMaven = Artifactory.newMavenBuild()
-            server = Artifactory.server '-1137809952@1458918089773'
+            artifactoryServer = Artifactory.server '-1137809952@1458918089773'
             rtMaven.tool = 'Maven 3.3.9'
-            rtMaven.opts = '-Xms1024m -Xmx4096m'
+            rtMaven.opts = "-Xms1024m -Xmx4096m"
 
+            // Action a faire
+            if (params.ACTION == null) {
+                throw new Exception("Variable ACTION is null")
+            }
+
+            for (int moduleIndex = 0; moduleIndex < modulesNames.size(); moduleIndex++) { //Pour chaque module du projet
+
+                if (params.ACTION == 'Compiler') {
+                    candidateModules.add("${modulesNames[moduleIndex]}")
+                    executeBuild.add(true)
+                    executeDeploy.add(false)
+                } else if (params.ACTION == 'Compiler & Déployer') {
+                    candidateModules.add("${modulesNames[moduleIndex]}")
+                    executeBuild.add(true)
+                    executeDeploy.add(true)
+                } else if (params.ACTION == "[${modulesNames[moduleIndex]}] Compiler & Déployer le module") {
+                    candidateModules.add("${modulesNames[moduleIndex]}")
+                    executeBuild.add(true)
+                    executeDeploy.add(true)
+                } else if (params.ACTION == "[${modulesNames[moduleIndex]}] Compiler le module") {
+                    candidateModules.add("${modulesNames[moduleIndex]}")
+                    executeBuild.add(true)
+                    executeDeploy.add(false)
+                } else if (params.ACTION == "Déployer un précédent build" || params.ACTION == "[${modulesNames[moduleIndex]}] Déployer un précédent build") {
+
+                    if (params.BUILD_NUMBER == null || params.BUILD_NUMBER == -1) {
+                        throw new Exception("No build number specified")
+                    }
+                    buildNumber = params.BUILD_NUMBER
+                    candidateModules.add("${modulesNames[moduleIndex]}")
+                    executeBuild.add(false)
+                    executeDeploy.add(true)
+                }
+            }
+
+            if (candidateModules.size() == 0) {
+                throw new Exception("Unable to decode variable ACTION")
+            }
+
+            // Branche a deployer
             if (params.BRANCH_TAG == null) {
                 throw new Exception("Variable BRANCH_TAG is null")
             } else {
                 echo "Branch to deploy =  ${params.BRANCH_TAG}"
             }
 
+            // Booleen d'execution des tests
+            if (params.executeTests == null) {
+                executeTests = false
+            } else {
+                executeTests = params.executeTests
+            }
+            echo "executeTests =  ${executeTests}"
+
+            // Booleen de deploiement sur Artifactory
+            if (params.deployArtifactoy == null) {
+                deployArtifactoy = false
+            } else {
+                deployArtifactoy = params.deployArtifactoy
+            }
+            echo "deployArtifactoy =  ${deployArtifactoy}"
+
+            // Environnement de deploiement
             if (params.ENV == null) {
                 throw new Exception("Variable ENV is null")
             } else {
@@ -72,435 +175,296 @@ node {
                 echo "Target environnement =  ${ENV}"
             }
 
-            if (params.executeTests == null) {
-                executeTests = false
-            } else {
-                executeTests = params.executeTests
-            }
+            if (ENV == 'DEV') {
+                mavenProfil = "dev"
+                backTargetHostnames.add('hostname.server-back-1-dev')
+                backTargetHostnames.add('hostname.server-back-2-dev')
 
-            echo "executeTests =  ${executeTests}"
+                batchTargetHostnames.add('hostname.server-batch-1-dev')
+
+            } else if (ENV == 'TEST') {
+                mavenProfil = "test"
+                backTargetHostnames.add('hostname.server-back-1-test')
+                backTargetHostnames.add('hostname.server-back-2-test')
+
+                batchTargetHostnames.add('hostname.server-batch-1-test')
+
+            } else if (ENV == 'PROD') {
+                mavenProfil = "prod"
+                backTargetHostnames.add('hostname.server-back-1-prod')
+                backTargetHostnames.add('hostname.server-back-2-prod')
+
+                batchTargetHostnames.add('hostname.server-batch-1-prod')
+            }
 
         } catch (e) {
             currentBuild.result = hudson.model.Result.NOT_BUILT.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
+            notifySlack(slackChannel, "Failed to set environnement variables: " + e.getLocalizedMessage())
             throw e
         }
     }
 
-    stage('SCM checkout') {
-        try {
-            checkout([
-                    $class                           : 'GitSCM',
-                    branches                         : [[name: "${params.BRANCH_TAG}"]],
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions                       : [],
-                    submoduleCfg                     : [],
-                    userRemoteConfigs                : [[credentialsId: "${gitCredentials}", url: "${gitURL}"]]
-            ])
+    if (buildNumber == -1) {
 
-        } catch (e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
-            throw e
-        }
-    }
-
-    if ("${executeTests}" == 'true') {
-        stage('test') {
+        //-------------------------------
+        // Etape 2 : Recuperation du code
+        //-------------------------------
+        stage('SCM checkout') {
             try {
-
-                rtMaven.run pom: 'pom.xml', goals: 'clean test'
-                junit allowEmptyResults: true, testResults: '/target/surefire-reports/*.xml'
+                checkout([
+                        $class                           : 'GitSCM',
+                        branches                         : [[name: "${params.BRANCH_TAG}"]],
+                        doGenerateSubmoduleConfigurations: false,
+                        extensions                       : [],
+                        submoduleCfg                     : [],
+                        userRemoteConfigs                : [[credentialsId: "${gitCredentials}", url: "${gitURL}"]]
+                ])
 
             } catch (e) {
-                currentBuild.result = hudson.model.Result.UNSTABLE.toString()
-                notifySlack(slackChannel,e.getLocalizedMessage())
-                // Si les tests ne passent pas, on mets le build en UNSTABLE et on continue
-                //throw e
+                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                notifySlack(slackChannel, "Failed to fetch SCM: " + e.getLocalizedMessage())
+                throw e
             }
-        }
-    } else {
-        echo "Tests are skipped"
-    }
-
-    stage('compile-package') {
-        try {
-            sh 'cd '
-            if (ENV == 'DEV') {
-                echo 'compile for dev profile'
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pdev"
-            }
-
-            if (ENV == 'TEST') {
-                echo 'compile for test profile'
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Ptest"
-            }
-
-            if (ENV == 'PROD') {
-                echo 'compile for prod profile'
-                sh "'${maventool}/bin/mvn' -Dmaven.test.skip=true clean package -DfinalName='${warName}' -DbaseDir='${tomcatWebappsDir}${warName}' -Pprod"
-            }
-
-        } catch(e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
-            throw e
         }
     }
 
-    //stage('sonarqube analysis'){
-    //   withSonarQubeEnv('SonarQube Server2'){ cf : jenkins/configuration/sonarQube servers ==> between the quotes put the name we gave to the server
-    //      sh "${maventool}/bin/mvn sonar:sonar"
-    //  }
-    // }
+    for (int moduleIndex = 0; moduleIndex < candidateModules.size(); moduleIndex++) { //Pour chaque module du projet
 
-    stage('artifact') {
-        try {
-            archive "${warDir}${warName}.war"
+        //-------------------------------
+        // Etape 3 : Compilation
+        //-------------------------------
+        if ("${executeBuild[moduleIndex]}" == 'true') {
 
-        } catch(e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
-            throw e
-        }
-    }
+            //-------------------------------
+            // Etape 3.1 : Edition des fichiers de proprietes
+            //-------------------------------
+            stage("[${candidateModules[moduleIndex]}] Edit properties files") {
+                try {
+                    echo "Edition application-${mavenProfil}.properties"
+                    echo "--------------------------"
 
-    stage ('stop tomcat'){
+                    original = readFile "${candidateModules[moduleIndex]}/src/main/resources/application-${mavenProfil}.properties"
+                    newconfig = original
 
-        try {
+                    // **** DEBUT DE ZONE A EDITER n°2 ****
 
-            if (ENV == 'DEV') {
-                echo 'stop tomcat on cirse1-dev'
-                sshagent(credentials: ['cirse1-dev-ssh-key']) {
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
+                    /*
+                      Cette zone permet d'editer les fichiers de proprietes pour les environnements cibles.
+                      C'est ici que l'on insere les donnees sensibles dans les fichiers de proprietes (application.properties)
+                      Les donnees sensibles sont stockees dans Jenkins comme des Credentials de type Secret Text.
+                      A vous d'ajouter dans Jenkins vos credentials de donnees sensensibles et de les remplacer ici
+                     */
 
-                        try {
-                            echo 'get status cirse1 dev (should be running)'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                            echo 'stop cirse1 dev'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'cirse1 dev is not running'
-
-                            echo 'we try to start cirse1 dev'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                            echo 'get status cirse1 dev'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                            echo 'stop cirse1 dev'
-                            sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
+                    // Module web
+                    if ("${candidateModules[moduleIndex]}" == 'web') {
+                        withCredentials([
+                                // on charge le credential "periscope.solr-dev" dans la variable 'url'
+                                string(credentialsId: "periscope.solr.v1-${mavenProfil}", variable: 'urlV1'),
+                                string(credentialsId: "periscope.solr.v2-${mavenProfil}", variable: 'urlV2')
+                        ]) {
+                            newconfig = newconfig.replaceAll("solr.v1.baseurl=*", "solr.v1.baseurl=${urlV1}")
+                            newconfig = newconfig.replaceAll("solr.v2.baseurl=*", "solr.v2.baseurl=${urlV2}")
                         }
                     }
-                }
 
-                echo 'stop tomcat on cirse2-dev'
-                sshagent(credentials: ['cirse2-dev-ssh-key']) {
+                    // **** FIN DE ZONE A EDITER n°2 ****
 
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-                        try {
-                            echo 'get status cirse2 dev (should be running)'
-                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+                    writeFile file: "${candidateModules[moduleIndex]}/src/main/resources/application-${mavenProfil}.properties", text: "${newconfig}"
 
-                            echo 'stop cirse2 dev'
-                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'cirse2 dev is not running'
-
-                            echo 'we try to start cirse2 dev'
-                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                            echo 'get status cirse2 dev'
-                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                            echo 'stop cirse2 dev'
-                            sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-                        }
-                    }
+                } catch (e) {
+                    currentBuild.result = hudson.model.Result.FAILURE.toString()
+                    notifySlack(slackChannel, "Failed to edit module ${candidateModules[moduleIndex]} properties files: "+e.getLocalizedMessage())
+                    throw e
                 }
             }
 
-            if (ENV == 'TEST') {
-                echo 'stop tomcat on cirse1-test'
-                sshagent(credentials: ['cirse1-test-ssh-key']) {
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
+            //-------------------------------
+            // Etape 3.2 : Compilation
+            //-------------------------------
+            stage("[${candidateModules[moduleIndex]}] Compile package") {
+                try {
+                    sh "'${maventool}/bin/mvn' -Dmaven.test.skip='${!executeTests}' clean package  -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DwarName='${backApplicationFileName}' -DwebBaseDir='${backTargetDir}${backApplicationFileName}'"
+                    // ATTENTION #1, rtMaven.run ne tient pas compte des arguments de compilation -D
+                    //buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean package -Dmaven.test.skip=${!executeTests} -pl ${candidateModules[moduleIndex]} -am -P${mavenProfil} -DfinalName=${backApplicationFileName} -DwebBaseDir=${backTargetDir}${backApplicationFileName} -DbatchBaseDir=${batchTargetDir}${backApplicationFileName}".toString()
 
-                        try {
-                            echo 'get status cirse1 test (should be running)'
-                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                            echo 'stop cirse1 test'
-                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'cirse1 test is not running'
-
-                            echo 'we try to start cirse1 test'
-                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                            echo 'get status cirse1 test'
-                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                            echo 'stop cirse1 test'
-                            sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-                        }
-                    }
-                }
-
-                echo 'stop tomcat on cirse2-test'
-                sshagent(credentials: ['cirse2-test-ssh-key']) {
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-
-                        try {
-                            echo 'get status cirse2 test (should be running)'
-                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                            echo 'stop cirse2 test'
-                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'cirse2 test is not running'
-
-                            echo 'we try to start cirse2 test'
-                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                            echo 'get status cirse2 test'
-                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                            echo 'stop cirse2 test'
-                            sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-                        }
-                    }
+                } catch (e) {
+                    currentBuild.result = hudson.model.Result.FAILURE.toString()
+                    notifySlack(slackChannel, "Failed to build module ${candidateModules[moduleIndex]}: "+e.getLocalizedMessage())
+                    throw e
                 }
             }
-
-            if (ENV == 'PROD') {
-                echo 'stop tomcat on cirse1-prod'
-                sshagent(credentials: ['cirse1-prod-ssh-key']) {
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-
-                        try {
-                            echo 'get status cirse1 prod (should be running)'
-                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                            echo 'stop cirse1 prod'
-                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'cirse1 prod is not running'
-
-                            echo 'we try to start cirse1 prod'
-                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                            echo 'get status cirse1 prod'
-                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                            echo 'stop cirse1 prod'
-                            sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-                        }
-                    }
-                }
-
-                echo 'stop tomcat on cirse2-prod'
-                sshagent(credentials: ['cirse2-prod-ssh-key']) {
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-
-                        try {
-                            echo 'get status cirse2 prod (should be running)'
-                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                            echo 'stop cirse2 prod'
-                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-                        } catch(e) {
-                            // Maybe the tomcat is not running
-                            echo 'cirse2 prod is not running'
-
-                            echo 'we try to start cirse2 prod'
-                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                            echo 'get status cirse2 prod'
-                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-
-                            echo 'stop cirse2 prod'
-                            sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl stop ${tomcatServiceName}\""
-                        }
-                    }
-                }
-            }
-
-        } catch(e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
-            throw e
         }
-    }
 
-    stage ('deploy to tomcat'){
-        try {
+        if ( deployArtifactoy && "${executeBuild[moduleIndex]}" == 'true') {
 
-            if (ENV == 'DEV') {
-                //here we have the choice : we can create the credential in jenkins/configuration/ssh servers
-                //or in the space project (so the credential can only be accessed by the project)
-                //or in jenkins/identifiants/system/identifiants globaux (so the credential can be accessed by all the projects)
+            //-------------------------------
+            // Etape 3.3 : Deploiement sur Artifactory
+            //-------------------------------
+            stage("[${candidateModules[moduleIndex]}] Archive to Artifactory") {
+                try {
+                    rtMaven.deployer server: artifactoryServer, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
+                    buildInfo = rtMaven.run pom: 'pom.xml', goals: "clean package -Dmaven.test.skip=${!executeTests} -P${mavenProfil} -DwarName=${backApplicationFileName} -DwebBaseDir=${backTargetDir}${backApplicationFileName}".toString()
+                    buildInfo.name = "${artifactoryBuildName}"
+                    rtMaven.deployer.deployArtifacts buildInfo
+                    artifactoryServer.publishBuildInfo buildInfo
 
-                echo 'deployment on cirse1-dev'
-                sshagent(credentials: ['cirse1-dev-ssh-key']) { //one key per tomcat
-                    sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                    sh "scp ${warDir}${warName}.war tomcat@cirse1-dev.v3.abes.fr:${tomcatWebappsDir}"
-                }
-
-                echo 'deployment on cirse2-dev'
-                sshagent(credentials: ['cirse2-dev-ssh-key']) {
-                    sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                    sh "scp ${warDir}${warName}.war tomcat@cirse2-dev.v3.abes.fr:${tomcatWebappsDir}"
+                } catch (e) {
+                    currentBuild.result = hudson.model.Result.FAILURE.toString()
+                    notifySlack(slackChannel, "Failed to deploy and publish module ${candidateModules[moduleIndex]} to Artifactory: " + e.getLocalizedMessage())
+                    throw e
                 }
             }
-            if (ENV == 'TEST') {
-                echo 'deployment on cirse1-test'
-                sshagent(credentials: ['cirse1-test-ssh-key']) {
-                    sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                    sh "scp ${warDir}${warName}.war tomcat@cirse1-test.v3.abes.fr:${tomcatWebappsDir}"
-                }
-
-                echo 'deployment on cirse2-test'
-                sshagent(credentials: ['cirse2-test-ssh-key']) {
-                    sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                    sh "scp ${warDir}${warName}.war tomcat@cirse2-test.v3.abes.fr:${tomcatWebappsDir}"
-                }
-            }
-            if (ENV == 'PROD') {
-                echo 'deployment on cirse1-prod'
-                sshagent(credentials: ['cirse1-prod-ssh-key']) {
-                    sh "ssh -tt tomcat@cirse1.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                    sh "scp ${warDir}${warName}.war tomcat@cirse1.v3.abes.fr:${tomcatWebappsDir}"
-                }
-
-                echo 'deployment on cirse2-prod'
-                sshagent(credentials: ['cirse2-prod-ssh-key']) {
-                    sh "ssh -tt tomcat@cirse2.v3.abes.fr \"rm -r ${tomcatWebappsDir}${warName} ${tomcatWebappsDir}${warName}.war\""
-                    sh "scp ${warDir}${warName}.war tomcat@cirse2.v3.abes.fr:${tomcatWebappsDir}"
-                }
-            }
-
-        } catch(e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
-            throw e
         }
-    }
 
-    stage ('restart tomcat'){
+        //-------------------------------
+        // Etape 4 : Deploiement
+        //-------------------------------
+        if ("${executeDeploy[moduleIndex]}" == 'true') {
 
-        try {
+            if(buildNumber != -1) {
 
-            if (ENV == 'DEV') {
-                echo 'restart tomcat on cirse1-dev'
-                sshagent(credentials: ['cirse1-dev-ssh-key']) {
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
+                //-------------------------------
+                // Etape 4.0 : On recupere depuis Artifactory
+                //-------------------------------
+                try {
+                    // On clean l'espace de travail
+                    sh("${maventool}/bin/mvn clean")
+                    sh("mkdir -p ${candidateModules[moduleIndex]}/target")
 
-                        echo 'start cirse1 dev'
-                        sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
+                    if ("${candidateModules[moduleIndex]}" == 'web') {
 
-                        echo 'finally we get status cirse1 dev (should be running)'
-                        sh "ssh -tt tomcat@cirse1-dev.v3.abes.fr  \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+                        downloadSpec = """{                    
+                         "files": [
+                          {  
+                              "aql": {
+                                    "items.find": {
+                                    "archive.item.artifact.module.build.name": {"\$eq":"${artifactoryBuildName}"},
+                                    "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
+                                    "name":{"\$match":"${candidateModules[moduleIndex]}*.war"}
+                                    }                              
+                                },
+                              "target": "${candidateModules[moduleIndex]}/target/",
+                              "flat": true                      
+                            }
+                         ]
+                        }"""
+
+                        artifactoryServer.download spec: downloadSpec
+                        // Suite au bug #1, on renomme le war
+                        sh("mv ${candidateModules[moduleIndex]}/target/*.war ${candidateModules[moduleIndex]}/target/${backApplicationFileName}.war")
                     }
-                }
 
-                echo 'restart tomcat on cirse2-dev'
-                sshagent(credentials: ['cirse2-dev-ssh-key']) {
+                    if ("${candidateModules[moduleIndex]}" == 'batch') {
 
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
+                        downloadSpec = """{                    
+                         "files": [
+                          {  
+                              "aql": {
+                                    "items.find": {
+                                    "archive.item.artifact.module.build.name": {"\$eq":"${artifactoryBuildName}"},
+                                    "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
+                                    "name":{"\$match":"${candidateModules[moduleIndex]}*.jar"}
+                                    }                              
+                                },
+                              "target": "${candidateModules[moduleIndex]}/target/",
+                              "flat": true                      
+                            }
+                         ]
+                        }"""
 
-                        echo 'start cirse2 dev'
-                        sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                        echo 'finally we get status cirse2 dev (should be running)'
-                        sh "ssh -tt tomcat@cirse2-dev.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
+                        artifactoryServer.download spec: downloadSpec
                     }
-                }
-            }
 
-            if (ENV == 'TEST') {
-                echo 'restart tomcat on cirse1-test'
-                sshagent(credentials: ['cirse1-test-ssh-key']) {
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-
-                        echo 'start cirse1 test'
-                        sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                        echo 'finally we get status cirse1 test (should be running)'
-                        sh "ssh -tt tomcat@cirse1-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                    }
-                }
-
-                echo 'restart tomcat on cirse2-test'
-                sshagent(credentials: ['cirse2-test-ssh-key']) {
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-
-                        echo 'start cirse2 test'
-                        sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                        echo 'finally we get status cirse2 test (should be running)'
-                        sh "ssh -tt tomcat@cirse2-test.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                    }
-                }
-            }
-
-            if (ENV == 'PROD') {
-                echo 'restart tomcat on cirse1-prod'
-                sshagent(credentials: ['cirse1-prod-ssh-key']) {
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-
-                        echo 'start cirse1 prod'
-                        sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                        echo 'finally we get status cirse1 prod (should be running)'
-                        sh "ssh -tt tomcat@cirse1-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                    }
-                }
-
-                echo 'restart tomcat on cirse2-prod'
-                sshagent(credentials: ['cirse2-prod-ssh-key']) {
-                    withCredentials([usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username')]) {
-
-                        echo 'start cirse2 prod'
-                        sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && sudo systemctl start ${tomcatServiceName}\""
-
-                        echo 'finally we get status cirse2 prod (should be running)'
-                        sh "ssh -tt tomcat@cirse2-prod.v3.abes.fr \"cd /usr/local/ && systemctl status ${tomcatServiceName}\""
-                    }
+                } catch (e) {
+                    currentBuild.result = hudson.model.Result.FAILURE.toString()
+                    notifySlack(slackChannel, "Failed to retrieve module ${candidateModules[moduleIndex]} from Artifactory: " + e.getLocalizedMessage())
+                    throw e
                 }
             }
 
-        } catch(e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
-            throw e
+            //-------------------------------
+            // Etape 4.1 : Serveur Web
+            //-------------------------------
+            if ("${candidateModules[moduleIndex]}" == 'web') {
+
+                stage("Deploy to web servers") {
+
+                    for (int i = 0; i < backTargetHostnames.size(); i++) { //Pour chaque serveur
+                        withCredentials([
+                                usernamePassword(credentialsId: 'tomcatuser', passwordVariable: 'pass', usernameVariable: 'username'),
+                                string(credentialsId: "${backTargetHostnames[i]}", variable: 'hostname'),
+                                string(credentialsId: 'service.status', variable: 'status'),
+                                string(credentialsId: 'service.stop', variable: 'stop'),
+                                string(credentialsId: 'service.start', variable: 'start')
+                        ]) {
+
+                            echo "Stop service on ${backTargetHostnames[i]}"
+                            echo "--------------------------"
+
+                            try {
+
+                                try {
+                                    echo 'get service status'
+                                    sh "ssh -tt ${username}@${hostname} \"${status} ${backServiceName}\""
+
+                                    echo 'stop the service'
+                                    sh "ssh -tt ${username}@${hostname} \"${stop} ${backServiceName}\""
+
+                                } catch (e) {
+                                    // Maybe the tomcat is not running
+                                    echo 'maybe the service is not running'
+
+                                    echo 'we try to start the service'
+                                    sh "ssh -tt ${username}@${hostname} \"${start} ${backServiceName}\""
+
+                                    echo 'get service status'
+                                    sh "ssh -tt ${username}@${hostname} \"${status} ${backServiceName}\""
+
+                                    echo 'stop the service'
+                                    sh "ssh -tt ${username}@${hostname} \"${stop} ${backServiceName}\""
+                                }
+
+                            } catch (e) {
+                                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                                notifySlack(slackChannel, "Failed to stop the web service on ${backTargetHostnames[i]} :" + e.getLocalizedMessage())
+                                throw e
+                            }
+
+                            echo "Deploy to ${backTargetHostnames[i]}"
+                            echo "--------------------------"
+
+                            try {
+                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${backApplicationFileName} ${backTargetDir}${backApplicationFileName}.war\""
+                                sh "scp ${candidateModules[moduleIndex]}/target/${backApplicationFileName}.war ${username}@${hostname}:${backTargetDir}"
+
+                            } catch (e) {
+                                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                                notifySlack(slackChannel, "Failed to deploy the webapp to ${backTargetHostnames[i]} :" + e.getLocalizedMessage())
+                                throw e
+                            }
+
+                            echo "Restart service on ${backTargetHostnames[i]}"
+                            echo "--------------------------"
+
+                            try {
+                                echo 'start service'
+                                sh "ssh -tt ${username}@${hostname} \"${start} ${backServiceName}\""
+
+                                echo 'get service status'
+                                sh "ssh -tt ${username}@${hostname} \"${status} ${backServiceName}\""
+
+                            } catch (e) {
+                                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                                notifySlack(slackChannel, "Failed to restrat the web service on ${backTargetHostnames[i]} :" + e.getLocalizedMessage())
+                                throw e
+                            }
+                        }
+
+                    }//Pour chaque serveur
+                }
+            }
         }
-    }
-
-    stage ('Artifactory configuration') {
-        try {
-            rtMaven.deployer server: server, releaseRepo: 'libs-release-local', snapshotRepo: 'libs-snapshot-local'
-            buildInfo = Artifactory.newBuildInfo()
-            buildInfo = rtMaven.run pom: 'pom.xml', goals: '-U clean install -Dmaven.test.skip=true '
-
-            rtMaven.deployer.deployArtifacts buildInfo
-            buildInfo = rtMaven.run pom: 'pom.xml', goals: 'clean install -Dmaven.repo.local=.m2 -Dmaven.test.skip=true'
-            buildInfo.env.capture = true
-            server.publishBuildInfo buildInfo
-
-        } catch(e) {
-            currentBuild.result = hudson.model.Result.FAILURE.toString()
-            notifySlack(slackChannel,e.getLocalizedMessage())
-            throw e
-        }
-    }
+    } //Pour chaque module du projet
 
     currentBuild.result = hudson.model.Result.SUCCESS.toString()
     notifySlack(slackChannel,"Congratulation !")

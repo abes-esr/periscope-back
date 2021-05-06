@@ -36,7 +36,7 @@ public class CriterionCountry extends Criterion {
         super(blocOperator);
 
         if (candidatesCountry.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         if (candidatesOperator.size() != candidatesCountry.size()) {
@@ -69,7 +69,7 @@ public class CriterionCountry extends Criterion {
         super();
 
         if (candidatesCountry.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         if (candidatesOperator.size() != candidatesCountry.size()) {

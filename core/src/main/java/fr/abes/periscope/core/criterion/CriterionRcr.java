@@ -36,7 +36,7 @@ public class CriterionRcr extends Criterion {
         super(blocOperator);
 
         if (candidatesRcr.isEmpty()) {
-            throw new IllegalCriterionException("Criteria list cannot be empty");
+            throw new IllegalCriterionException("Criteria list is empty");
         }
 
         if (candidatesOperator.size() != candidatesRcr.size()) {

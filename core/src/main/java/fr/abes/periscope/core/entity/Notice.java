@@ -4,21 +4,19 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Représente une Notice au format Periscope
  */
-@Getter
-@Setter
-public class Notice {
+@Getter @Setter
+public abstract class Notice {
 
     private String ppn;
 
     private String issn;
 
-    private HashSet<String> pcpList;
-
-    private HashSet<String> rcrList;
+    private Set<String> pcpList = new HashSet<>();
 
     private String editor;
 
