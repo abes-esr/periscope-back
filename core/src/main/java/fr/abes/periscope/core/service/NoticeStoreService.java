@@ -4,7 +4,9 @@ import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionSort;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
+import fr.abes.periscope.core.entity.v2.solr.FacetteSolr;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
+import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
 import fr.abes.periscope.core.repository.solr.v1.NoticeSolrV1Repository;
 import fr.abes.periscope.core.repository.solr.v2.NoticeSolrV2Repository;
 import fr.abes.periscope.core.util.NoticeMapper;
@@ -12,11 +14,15 @@ import fr.abes.periscope.core.util.TrackExecutionTime;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.solr.core.query.result.FacetFieldEntry;
+import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -80,5 +86,26 @@ public class NoticeStoreService {
     @TrackExecutionTime
     public List<Notice> findNoticesByCriteria(List<Criterion> criteria, List<CriterionSort> criteriaSort, int page, int size) {
         return findNoticesByCriteria(DEFAULT_REPOSITORY,criteria,criteriaSort,page,size);
+    }
+
+    public ResultSolr findNoticesWithFacets(List<Criterion> criteriaNotice, List<Criterion> criteriaExemp, List<String> facettes, List<CriterionSort> criterionSorts, int page, int size) {
+        List<Sort.Order> orders = new ArrayList<>();
+        criterionSorts.forEach(c -> orders.add(new Sort.Order(c.getOrder(), c.getSort())));
+        FacetPage<NoticeV2Solr> noticesWithFacet = noticeV2Repository.findNoticesWithFacetQuery(criteriaNotice, criteriaExemp, facettes, Sort.by(orders), PageRequest.of(page, size));
+        ResultSolr result = new ResultSolr();
+        result.setNotices(noticeMapper.mapList(noticesWithFacet.getContent(), Notice.class));
+
+        List<Page<FacetFieldEntry>> resultFacettes = new ArrayList<>();
+        resultFacettes.addAll(noticesWithFacet.getFacetResultPages());
+        resultFacettes.stream().forEach(f -> {
+            FacetteSolr facetteSolr = new FacetteSolr(f.getContent().get(0).getKey().getName());
+            f.forEach(field -> {
+
+                facetteSolr.setZone(field.getKey().getName());
+
+            });
+
+        });
+        return result;
     }
 }

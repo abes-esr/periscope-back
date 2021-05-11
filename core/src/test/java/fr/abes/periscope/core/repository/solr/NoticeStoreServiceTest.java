@@ -5,6 +5,8 @@ import fr.abes.periscope.core.EnableOnIntegrationTest;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.OnGoingResourceType;
+import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
 import fr.abes.periscope.core.repository.solr.v1.NoticeSolrV1Repository;
 import fr.abes.periscope.core.repository.solr.v1.configuration.SolrV1Config;
 import fr.abes.periscope.core.repository.solr.v1.impl.AdvancedNoticeSolrV1RepositoryImpl;
@@ -24,6 +26,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -168,6 +171,34 @@ public class NoticeStoreServiceTest {
 
         candidate = noticeService.findNoticesByCriteria("v2",criteria1,  new LinkedList<>(),0,5).get(0);
         Assert.assertEquals(expected,candidate.getProperTitle());
+
+    }
+
+    @DisplayName("Test requête avec facettes")
+    @Test
+    void testFacet() {
+        List<Criterion> criteresNotices = new LinkedList<>();
+        List<Criterion> criteresExemp = new LinkedList<>();
+
+        List<String> titleWord = Arrays.asList("monde");
+        List<String> titleOperators = Arrays.asList("ET");
+        CriterionTitleWords titleWords = new CriterionTitleWords(titleWord, titleOperators);
+        criteresNotices.add(titleWords);
+
+        /*List<String> rcr = Arrays.asList("341725201");
+        List<String> rcrOperators = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr, rcrOperators);
+        criteresExemp.add(criterionRcr);*/
+
+        List<String> facette = Arrays.asList(NoticeV2SolrField.DOCUMENT_TYPE, NoticeV2SolrField.NB_LOC);
+
+        ResultSolr candidates = noticeService.findNoticesWithFacets(criteresNotices, new LinkedList<>(), facette, new LinkedList<>(), 0, 10);
+
+        Iterator<Notice> it = candidates.getNotices().listIterator();
+        while (it.hasNext()) {
+            Notice notice = it.next();
+            System.out.println(notice.getProperTitle());
+        }
 
     }
 }
