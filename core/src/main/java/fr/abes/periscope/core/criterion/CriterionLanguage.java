@@ -3,6 +3,7 @@ package fr.abes.periscope.core.criterion;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
+import fr.abes.periscope.core.util.TYPE_NOTICE;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -32,7 +33,7 @@ public class CriterionLanguage extends Criterion {
      * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit
      */
     public CriterionLanguage(String blocOperator, List<String> candidatesLanguage, List<String> candidatesOperator) {
-        super(blocOperator);
+        super(blocOperator, TYPE_NOTICE.BIBLIO);
 
         if (candidatesLanguage.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");

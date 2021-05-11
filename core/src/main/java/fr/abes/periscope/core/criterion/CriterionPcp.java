@@ -3,6 +3,7 @@ package fr.abes.periscope.core.criterion;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
+import fr.abes.periscope.core.util.TYPE_NOTICE;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class CriterionPcp extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionPcp(String blocOperator, List<String> candidatesPcp, List<String> candidatesOperator) {
-        super(blocOperator);
+        super(blocOperator, TYPE_NOTICE.EXEMPLAIRE);
 
         if (candidatesPcp.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");

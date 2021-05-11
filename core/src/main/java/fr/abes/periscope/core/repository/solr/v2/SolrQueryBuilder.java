@@ -569,24 +569,16 @@ public class SolrQueryBuilder {
         facets.stream().forEach(f -> {
             //cas ou la facette est une zone d'exemplaire
             Arrays.stream(ItemSolrField.class.getFields()).forEach(field -> {
-                try {
-                    if (field.get(0).equals(f)) {
-                        query.addCriteria(new Criteria("facet.child.field").is(f));
+                    if (field.getName().equals(f)) {
+                        query.addCriteria(new Criteria("facet.child.field").is(field.toString()));
                     }
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
             });
 
             //cas ou la facette est une zone de la notice bibliographique
             Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
-                try {
-                    if (field.get(0).equals(f)) {
-                        options.addFacetOnField(f);
+                    if (field.getName().equals(f)) {
+                        options.addFacetOnField(field.toString());
                     }
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                }
             });
 
         });

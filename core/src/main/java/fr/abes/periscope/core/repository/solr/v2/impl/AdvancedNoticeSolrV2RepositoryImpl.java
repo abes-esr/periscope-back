@@ -121,8 +121,8 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
 
         query.setRequestHandler("bjqfacet");
 
-        query.projectAllFields();
-        query.addProjectionOnField(new SimpleField("[child]"));
+        query.addProjectionOnField(Field.of("*"));
+        query.addProjectionOnField(Field.of("[child]"));
         query.addSort(sort);
         query = builderQuery.addFacets(query, facettes);
 

@@ -7,23 +7,14 @@ import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
-import fr.abes.periscope.core.repository.solr.v1.NoticeSolrV1Repository;
-import fr.abes.periscope.core.repository.solr.v1.configuration.SolrV1Config;
-import fr.abes.periscope.core.repository.solr.v1.impl.AdvancedNoticeSolrV1RepositoryImpl;
-import fr.abes.periscope.core.repository.solr.v2.impl.AdvancedNoticeSolrV2RepositoryImpl;
 import fr.abes.periscope.core.service.NoticeStoreService;
-import fr.abes.periscope.core.util.NoticeMapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 import java.util.Iterator;
@@ -185,20 +176,16 @@ public class NoticeStoreServiceTest {
         CriterionTitleWords titleWords = new CriterionTitleWords(titleWord, titleOperators);
         criteresNotices.add(titleWords);
 
-        /*List<String> rcr = Arrays.asList("341725201");
+        List<String> rcr = Arrays.asList("341725201");
         List<String> rcrOperators = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr(rcr, rcrOperators);
-        criteresExemp.add(criterionRcr);*/
+        criteresExemp.add(criterionRcr);
 
         List<String> facette = Arrays.asList(NoticeV2SolrField.DOCUMENT_TYPE, NoticeV2SolrField.NB_LOC);
 
-        ResultSolr candidates = noticeService.findNoticesWithFacets(criteresNotices, new LinkedList<>(), facette, new LinkedList<>(), 0, 10);
+        ResultSolr candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(), 0, 10);
 
-        Iterator<Notice> it = candidates.getNotices().listIterator();
-        while (it.hasNext()) {
-            Notice notice = it.next();
-            System.out.println(notice.getProperTitle());
-        }
+        assertEquals(candidates.getFacettes().size(), 2);
 
     }
 }

@@ -15,4 +15,8 @@ public class FacetteSolr {
         this.zone = name;
         this.valeurs = new ArrayList<>();
     }
+
+    public void addValeurs(Map<String, Integer> val) {
+        valeurs.add(val);
+    }
 }
