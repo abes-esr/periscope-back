@@ -4,8 +4,7 @@ import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionPcp;
 import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionTitleWords;
-import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
+import fr.abes.periscope.core.criterion.CriterionRcr;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.repository.solr.v2.SolrQueryBuilder;
 import org.junit.jupiter.api.DisplayName;
@@ -63,6 +62,15 @@ public class SolrQueryBuilderV2Test {
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(query, null);
         assertEquals(actualQuery, "{!parent which=notice_type:notice}(zone_930$z:PCAq OR zone_930$z:PCAuv)");
+
+        List<String> rcr = Arrays.asList("123456789");
+        List<String> rcrOperators = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr, rcrOperators);
+        criteresExemp.add(criterionRcr);
+
+        query = builderQuery.constructFacetQuery(new LinkedList<>(), criteresExemp, PageRequest.of(0, 10));
+        actualQuery = dqp.getQueryString(query, null);
+        assertEquals(actualQuery, "{!parent which=notice_type:notice}(zone_930$z:PCAq OR zone_930$z:PCAuv) AND (zone_930$b:123456789)");
     }
 
     @Test
@@ -94,15 +102,16 @@ public class SolrQueryBuilderV2Test {
     @DisplayName("Test ajout facettes")
     public void testAjoutFacette(){
         List<String> facettes = new ArrayList<>();
-        facettes.add(NoticeV2SolrField.DOCUMENT_TYPE);
+        facettes.add("DOCUMENT_TYPE");
         FacetQuery query = new SimpleFacetQuery();
-        query = builderQuery.addFacets(query, facettes);
+        query = builderQuery.addFacetsNotices(query, facettes);
         assertTrue(query.hasFacetOptions());
         assertTrue(query.getFacetOptions().getFacetOnFields().contains(new SimpleField(NoticeV2SolrField.DOCUMENT_TYPE)));
 
-        facettes.add(ItemSolrField.PCP);
-        query = builderQuery.addFacets(query, facettes);
+        facettes.add("NB_LOC");
+        query = builderQuery.addFacetsNotices(query, facettes);
         assertTrue(query.hasFacetOptions());
-        assertEquals(query.getCriteria().getField().getName(), "facet.child.field");
+        assertEquals(query.getFacetOptions().getFacetOnFields().size(), 2);
+        assertTrue(query.getFacetOptions().getFacetOnFields().contains(new SimpleField(NoticeV2SolrField.NB_LOC)));
     }
 }

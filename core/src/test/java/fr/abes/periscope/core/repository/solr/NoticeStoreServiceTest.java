@@ -13,13 +13,16 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Sort;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test la conversion d'une Notice SolR vers une Notice.
@@ -169,7 +172,6 @@ public class NoticeStoreServiceTest {
     @Test
     void testFacet() {
         List<Criterion> criteresNotices = new LinkedList<>();
-        List<Criterion> criteresExemp = new LinkedList<>();
 
         List<String> titleWord = Arrays.asList("monde");
         List<String> titleOperators = Arrays.asList("ET");
@@ -179,13 +181,29 @@ public class NoticeStoreServiceTest {
         List<String> rcr = Arrays.asList("341725201");
         List<String> rcrOperators = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr(rcr, rcrOperators);
-        criteresExemp.add(criterionRcr);
+        criteresNotices.add(criterionRcr);
 
-        List<String> facette = Arrays.asList(NoticeV2SolrField.DOCUMENT_TYPE, NoticeV2SolrField.NB_LOC);
+        List<String> facette = Arrays.asList("DOCUMENT_TYPE", "NB_LOC");
 
         ResultSolr candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(), 0, 10);
 
         assertEquals(candidates.getFacettes().size(), 2);
+        assertTrue(candidates.getNbPages() > 0);
 
+        // test avec critère de tri
+        String sort = NoticeV2SolrField.PPN;
+        CriterionSort criterionSort = new CriterionSort(sort, Sort.Direction.ASC);
+        List<CriterionSort> listSort = new LinkedList<>();
+        listSort.add(criterionSort);
+
+        candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, listSort, 0, 10);
+        assertEquals(candidates.getFacettes().size(), 2);
+        assertTrue(candidates.getNbPages() > 0);
+
+        // test avec facettes vides
+        facette = new ArrayList<>();
+        candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(), 0, 10);
+        assertEquals(candidates.getFacettes().size(), 0);
+        assertTrue(candidates.getNbPages() > 0);
     }
 }

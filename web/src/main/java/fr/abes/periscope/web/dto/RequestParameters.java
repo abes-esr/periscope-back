@@ -5,7 +5,6 @@ import fr.abes.periscope.web.dto.criterion.CriterionFacetteWebDto;
 import fr.abes.periscope.web.dto.criterion.CriterionSortWebDto;
 import fr.abes.periscope.web.dto.criterion.CriterionWebDto;
 import lombok.Data;
-import org.springframework.hateoas.Link;
 
 import javax.validation.constraints.NotNull;
 import java.util.LinkedList;

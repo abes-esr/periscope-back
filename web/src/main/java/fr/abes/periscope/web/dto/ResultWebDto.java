@@ -13,4 +13,6 @@ public class ResultWebDto {
     private List<NoticeWebV2Dto> notices;
     @JsonProperty("facettes")
     private List<FacetteWebDto> facettes;
+    @JsonProperty("nbPages")
+    private int nbPages;
 }

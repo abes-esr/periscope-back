@@ -67,7 +67,7 @@ public class CriterionCountry extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionCountry(List<String> candidatesCountry, List<String> candidatesOperator) {
-        super();
+        super(TYPE_NOTICE.BIBLIO);
 
         if (candidatesCountry.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");

@@ -65,7 +65,7 @@ public class CriterionLanguage extends Criterion {
      * @exception IllegalOperatorException Si la liste de connecteurs contient des connecteurs inexistant ou interdit
      */
     public CriterionLanguage(List<String> candidatesLanguage, List<String> candidatesOperator) {
-        super();
+        super(TYPE_NOTICE.BIBLIO);
 
         if (candidatesLanguage.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");

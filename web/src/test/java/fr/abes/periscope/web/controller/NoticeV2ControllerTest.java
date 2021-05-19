@@ -31,24 +31,24 @@ public class NoticeV2ControllerTest extends PeriscopeApplicationTest {
                 "    \"criteres\":\n" +
                 "    [\n" +
                 "        {\"type\":\"CriterionPcp\",\"bloc_operator\":\"OU\",\"pcp\":[\"PCAM\"],\"pcp_operator\":[\"ET\"]},\n" +
-                "        {\"type\":\"CriterionRcr\",\"bloc_operator\":\"ET\",\"rcr\":[\"341725201\"],\"rcr_operator\":[\"ET\"]}\n" +
+                "        {\"type\":\"CriterionRcr\",\"bloc_operator\":\"ET\",\"rcr\":[\"730512301\"],\"rcr_operator\":[\"ET\"]}\n" +
                 "    ],\n" +
                 "    \"tri\":\n" +
                 "    [\n" +
-                "        {\"sort\":\"EDITOR\",\"order\":\"DESC\"},\n" +
                 "        {\"sort\":\"KEY_TITLE\",\"order\":\"ASC\"}\n" +
                 "    ],\n" +
                 "   \"facettes\":\n" +
                 "   [\n" +
                 "       {\"zone\":\"DOCUMENT_TYPE\"},\n" +
-                "       {\"zone\":\"PCP\"}\n" +
+                "       {\"zone\":\"NB_LOC\"}\n" +
                 "   ]\n" +
                 "}\n";
 
-        mockMvc.perform(post("/api/v2/notice/findByCriteriaWithFacets?page=0&size=10")
+        this.mockMvc.perform(post("/api/v2/notice/findByCriteriaWithFacets?page=0&size=10")
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.timestamp").isNotEmpty());
+                .andExpect(jsonPath("$.notice").isNotEmpty())
+                .andExpect(jsonPath("$.nbPages").isNumber());
 
     }
 

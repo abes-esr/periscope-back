@@ -66,7 +66,7 @@ public class CriterionPcp extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionPcp(List<String> candidatesPcp, List<String> candidatesOperator) {
-        super();
+        super(TYPE_NOTICE.EXEMPLAIRE);
 
         if (candidatesPcp.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");

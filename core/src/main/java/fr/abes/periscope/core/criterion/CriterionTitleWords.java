@@ -66,7 +66,7 @@ public class CriterionTitleWords extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionTitleWords(List<String> candidatesTitleWords, List<String> candidatesOperator) {
-        super();
+        super(TYPE_NOTICE.BIBLIO);
 
         if (candidatesTitleWords.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");

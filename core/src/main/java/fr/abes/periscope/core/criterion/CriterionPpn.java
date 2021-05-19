@@ -41,7 +41,7 @@ public class CriterionPpn extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionPpn(List<String> candidatesPpn) {
-        super();
+        super(TYPE_NOTICE.BIBLIO);
 
         if (candidatesPpn.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");

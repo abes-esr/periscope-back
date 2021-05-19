@@ -39,7 +39,7 @@ public class CriterionPpnParent extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionPpnParent(List<String> candidatesPpn) {
-        super();
+        super(TYPE_NOTICE.EXEMPLAIRE);
 
         if (candidatesPpn.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");

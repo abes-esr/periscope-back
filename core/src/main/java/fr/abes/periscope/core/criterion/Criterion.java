@@ -33,6 +33,12 @@ public abstract class Criterion {
         this.blocOperator = LogicalOperator.AND; //Par defaut
     }
 
+    protected Criterion(TYPE_NOTICE typeNotice) {
+        this.isFirst = true;
+        this.typeNotice = typeNotice;
+        this.blocOperator = LogicalOperator.AND;
+    }
+
     /**
      * Constrcteur de critère de recherche avec un connecteur de bloc
      * @param operator String Connecteur logique

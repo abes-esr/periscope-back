@@ -10,10 +10,12 @@ import java.util.List;
 public class ResultSolr {
     private List<Notice> notices;
     private List<FacetteSolr> facettes;
+    private int nbPages;
 
     public ResultSolr() {
         notices = new ArrayList<>();
         facettes = new ArrayList<>();
+        nbPages = 0;
     }
 
     public void addFacette(FacetteSolr facette) {

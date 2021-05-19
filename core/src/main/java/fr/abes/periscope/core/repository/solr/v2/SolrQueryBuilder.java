@@ -11,6 +11,7 @@ import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.query.*;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -558,32 +559,59 @@ public class SolrQueryBuilder {
     }
 
     /**
-     * Méthode permettant d'ajouter une liste de facette à la requête. Permet de distinguer les facettes niveau notices et exemplaires
+     * Méthode permettant d'ajouter une liste de facette sur des zones de la notices biblio à la requête
      *
      * @param query  : requête sur laquelle ajouter les facettes
-     * @param facets : liste de chaine correspondant aux zones sur lesquelles on souhaite ajouter les facettes
+     * @param facets : liste générale des zones de facettes (biblio + exemplaire)
      * @return requête mise à jour
      */
-    public FacetQuery addFacets(FacetQuery query, List<String> facets) {
+    public FacetQuery addFacetsNotices(FacetQuery query, List<String> facets) {
         FacetOptions options = new FacetOptions();
-        facets.stream().forEach(f -> {
-            //cas ou la facette est une zone d'exemplaire
-            Arrays.stream(ItemSolrField.class.getFields()).forEach(field -> {
-                    if (field.getName().equals(f)) {
-                        query.addCriteria(new Criteria("facet.child.field").is(field.toString()));
-                    }
-            });
-
+        Iterator<String> itFacet = facets.iterator();
+        while (itFacet.hasNext()) {
+            String f = itFacet.next();
             //cas ou la facette est une zone de la notice bibliographique
             Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
-                    if (field.getName().equals(f)) {
-                        options.addFacetOnField(field.toString());
+                if (field.getName().equals(f)) {
+                    try {
+                        options.addFacetOnField((String) field.get(null));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
                     }
+                }
             });
-
-        });
-        query.setFacetOptions(options);
+            if (options.hasFields()) {
+                query.setFacetOptions(options);
+            }
+        }
         return query;
+    }
+
+    /**
+     * Méthode permettant de générer une chaine à concaténer à une requête correspondant aux facettes d'exemplaires
+     * @param facets liste générale des zones de facettes (biblio + exemplaire)
+     * @return la chaine à concaténer à la requête
+     */
+    public String addFacetsExemplaires(List<String> facets) {
+        String queryFacet = "";
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        Iterator<String> itFacet = facets.iterator();
+        while (itFacet.hasNext()) {
+            String f = itFacet.next();
+            //cas ou la facette est une zone d'exemplaire
+            Iterator<Field> it = Arrays.asList(ItemSolrField.class.getFields()).iterator();
+            while (it.hasNext()) {
+                Field solrField = it.next();
+                if (solrField.getName().equals(f)) {
+                    try {
+                        queryFacet +=  "&child.facet.field=" + solrField.get(null);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return queryFacet;
     }
 
     public FacetQuery constructFacetQuery(List<Criterion> criteriaNotice, List<Criterion> criteriaExemp, Pageable page) {
@@ -600,8 +628,7 @@ public class SolrQueryBuilder {
             if (!criteriaNotice.isEmpty()) {
                 query.addFilterQuery(new SimpleFilterQuery(buildQuery(criteriaNotice)));
             }
-        }
-        else {
+        } else {
             query.addCriteria(buildQuery(criteriaNotice));
         }
         return query;

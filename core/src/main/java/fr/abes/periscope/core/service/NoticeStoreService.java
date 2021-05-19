@@ -87,6 +87,16 @@ public class NoticeStoreService {
         return findNoticesByCriteria(DEFAULT_REPOSITORY,criteria,criteriaSort,page,size);
     }
 
+    /**
+     * Retourne une liste de notices, une liste de facettes et le nombre de pages total
+     * en fonction des critères de recherche, des critères de tri et du numéro de page (fonctionne uniquement sur la V2 de l'API)
+     * @param criteriaNotice les critères de recherche
+     * @param facettes liste des facettes (uniquement sur des zones de la notice bibliographique)
+     * @param criterionSorts les critères de tri
+     * @param page numéro de page
+     * @param size nombre d'élément par page
+     * @return list de résultat comprendre la liste des notices, la liste des facettes et le nombre de page total du jeu de résultat
+     */
     public ResultSolr findNoticesWithFacets(List<Criterion> criteriaNotice, List<String> facettes, List<CriterionSort> criterionSorts, int page, int size) {
         List<Criterion> criteresBiblio = new LinkedList<>();
         List<Criterion> criteresExemp = new LinkedList<>();
@@ -102,16 +112,26 @@ public class NoticeStoreService {
             }
         });
         FacetPage<NoticeV2Solr> noticesWithFacet = noticeV2Repository.findNoticesWithFacetQuery(criteresBiblio, criteresExemp, facettes, Sort.by(orders), PageRequest.of(page, size));
+
+        return getResultFromQueryFacet(noticesWithFacet);
+    }
+
+    /**
+     * Méthode permettant de construire le json correspondant au résultat de la requête
+     * @param noticesWithFacet Listes des notices et des facettes
+     * @return le résultat mappé
+     */
+    private ResultSolr getResultFromQueryFacet(FacetPage<NoticeV2Solr> noticesWithFacet) {
         ResultSolr result = new ResultSolr();
         result.setNotices(noticeMapper.mapList(noticesWithFacet.getContent(), Notice.class));
+        result.setNbPages(noticesWithFacet.getTotalPages());
 
-        List<Page<FacetFieldEntry>> resultFacettes = new ArrayList<>();
-        resultFacettes.addAll(noticesWithFacet.getFacetResultPages());
-        resultFacettes.stream().forEach(f -> {
+        List<Page<FacetFieldEntry>> resultFacettes = new ArrayList<>(noticesWithFacet.getFacetResultPages());
+        resultFacettes.forEach(f -> {
             FacetteSolr facetteSolr = new FacetteSolr(f.getContent().get(0).getKey().getName());
             f.getContent().forEach(field -> {
                 Map<String, Integer> map = new HashMap<>();
-                map.put(field.getValue(), (int)field.getValueCount());
+                map.put(field.getValue(), (int) field.getValueCount());
                 facetteSolr.addValeurs(map);
             });
             result.addFacette(facetteSolr);

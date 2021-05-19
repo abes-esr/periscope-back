@@ -42,7 +42,7 @@ public class CriterionIssn extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionIssn(List<String> candidatesIssn) {
-        super();
+        super(TYPE_NOTICE.BIBLIO);
 
         if (candidatesIssn.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");

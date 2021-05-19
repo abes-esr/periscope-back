@@ -67,7 +67,7 @@ public class CriterionEditor extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionEditor(List<String> candidatesEditor, List<String> candidatesOperator) {
-        super();
+        super(TYPE_NOTICE.BIBLIO);
 
         if (candidatesEditor.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");
