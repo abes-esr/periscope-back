@@ -1,6 +1,7 @@
 package fr.abes.periscope.core.criterion;
 
 import fr.abes.periscope.core.exception.IllegalOperatorException;
+import fr.abes.periscope.core.util.TYPE_NOTICE;
 import lombok.Getter;
 
 /**
@@ -21,23 +22,32 @@ public abstract class Criterion {
     /** Connecteur logique pour le bloc (ET/OU/SAUF) */
     protected String blocOperator;
 
+    protected TYPE_NOTICE typeNotice;
     /**
      * Constrcteur de critère de recherche pour un premier bloc.
      * L'opérateur appliqué par défaut est @link{LogicalOperator.AND}
      */
     protected Criterion() {
         this.isFirst = true;
+        this.typeNotice = TYPE_NOTICE.BIBLIO;
         this.blocOperator = LogicalOperator.AND; //Par defaut
+    }
+
+    protected Criterion(TYPE_NOTICE typeNotice) {
+        this.isFirst = true;
+        this.typeNotice = typeNotice;
+        this.blocOperator = LogicalOperator.AND;
     }
 
     /**
      * Constrcteur de critère de recherche avec un connecteur de bloc
      * @param operator String Connecteur logique
+     * @param typeNotice Indique le type de notice concernée par le critère
      * @throws IllegalOperatorException si le connecteur n'est pas reconnu
      */
-    protected Criterion(String operator) {
-
+    protected Criterion(String operator, TYPE_NOTICE typeNotice) {
         this.isFirst = false;
+        this.typeNotice = typeNotice;
 
         switch (operator) {
             case LogicalOperator.AND:

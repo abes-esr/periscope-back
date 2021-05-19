@@ -1,7 +1,6 @@
 package fr.abes.periscope.core.repository.solr.v2.impl;
 
 import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.entity.v2.solr.ItemSolr;
 import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
@@ -16,14 +15,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.SolrTemplate;
-import org.springframework.data.solr.core.query.SimpleField;
-import org.springframework.data.solr.core.query.SimpleQuery;
+import org.springframework.data.solr.core.query.*;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Représente un dépôt de Notice SolR avec des requêtes complexes
@@ -118,4 +114,25 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
         Page results = solrTemplate.queryForPage(core,solrQuery, NoticeV2Solr.class);
         return results.getContent();
     }
+
+    @Override
+    public FacetPage<NoticeV2Solr> findNoticesWithFacetQuery(List<Criterion> criteriaNotice, List<Criterion> criteriaExemp, List<String> facettes, Sort sort, Pageable page) {
+        FacetQuery query = builderQuery.constructFacetQuery(criteriaNotice, criteriaExemp, page);
+
+        //request handler nécessaire pour les facettes au niveau exemplaire
+        query.setRequestHandler("bjqfacet");
+
+        query.addProjectionOnField(new SimpleField("*"));
+        query.addProjectionOnField(new SimpleField("[child]"));
+        query.addSort(sort);
+        query = builderQuery.addFacetsNotices(query, facettes);
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        String actualQuery = dqp.getQueryString(query, null);
+        log.debug(actualQuery);
+        FacetPage<NoticeV2Solr> facetPage = solrTemplate.queryForFacetPage(core, query, NoticeV2Solr.class);
+
+        return facetPage;
+    }
+
+
 }

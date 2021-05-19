@@ -2,6 +2,7 @@ package fr.abes.periscope.core.criterion;
 
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
+import fr.abes.periscope.core.util.TYPE_NOTICE;
 import lombok.Getter;
 
 import java.util.List;
@@ -21,7 +22,7 @@ public class CriterionPpnParent extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionPpnParent(String blocOperator, List<String> candidatesPpn) {
-        super(blocOperator);
+        super(blocOperator, TYPE_NOTICE.EXEMPLAIRE);
 
         if (candidatesPpn.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");
@@ -38,7 +39,7 @@ public class CriterionPpnParent extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionPpnParent(List<String> candidatesPpn) {
-        super();
+        super(TYPE_NOTICE.EXEMPLAIRE);
 
         if (candidatesPpn.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");

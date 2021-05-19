@@ -1,15 +1,18 @@
 package fr.abes.periscope.core.repository.solr.v2;
 
 import fr.abes.periscope.core.criterion.*;
+import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.data.solr.core.query.Criteria;
-import org.springframework.data.solr.core.query.FilterQuery;
-import org.springframework.data.solr.core.query.SimpleFilterQuery;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.solr.core.DefaultQueryParser;
+import org.springframework.data.solr.core.query.*;
 import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -21,6 +24,7 @@ public class SolrQueryBuilder {
 
     /**
      * Construit la requête SolR à partir des critères de recherche
+     *
      * @param criteria Critères de recherche
      * @return Criteria Requête SolR
      */
@@ -39,7 +43,7 @@ public class SolrQueryBuilder {
 
             // Bloc de critère RCR
             if (criterion instanceof CriterionRcr) {
-                 Criteria rcrQuery = buildRcrQuery((CriterionRcr) criterion);
+                Criteria rcrQuery = buildRcrQuery((CriterionRcr) criterion);
                 filterQuery.addCriteria(rcrQuery);
             }
 
@@ -62,7 +66,7 @@ public class SolrQueryBuilder {
 
             //Bloc de critère pays
             if (criterion instanceof CriterionCountry) {
-                 Criteria countryQuery = buildCountryQuery((CriterionCountry) criterion);
+                Criteria countryQuery = buildCountryQuery((CriterionCountry) criterion);
                 filterQuery.addCriteria(countryQuery);
             }
 
@@ -80,7 +84,7 @@ public class SolrQueryBuilder {
 
             // bloc de critère ISSN
             if (criterion instanceof CriterionIssn) {
-                Criteria issnQuery = buildIssnQuery((CriterionIssn)criterion);
+                Criteria issnQuery = buildIssnQuery((CriterionIssn) criterion);
                 filterQuery.addCriteria(issnQuery);
             }
         }
@@ -121,6 +125,7 @@ public class SolrQueryBuilder {
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par PCP
+     *
      * @param criterion Les critères de recherche par PCP
      * @return Criteria Requête SolR
      */
@@ -153,6 +158,7 @@ public class SolrQueryBuilder {
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par RCR
+     *
      * @param criterion Les critères de recherche par RCR
      * @return Criteria Requête SolR
      */
@@ -212,6 +218,7 @@ public class SolrQueryBuilder {
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par mots du titre
+     *
      * @param criterion Les critères de recherche par mots du titre
      * @return Criteria Requête SolR
      */
@@ -300,10 +307,11 @@ public class SolrQueryBuilder {
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par code pays
+     *
      * @param criterion Les critères de recherche par code pays
      * @return Criteria Requête SolR
      */
-    private Criteria buildCountryQuery(CriterionCountry criterion){
+    private Criteria buildCountryQuery(CriterionCountry criterion) {
 
         Iterator<String> valueIterator = criterion.getCountries().iterator();
         Iterator<String> operatorIterator = criterion.getCountryOperators().iterator();
@@ -358,6 +366,7 @@ public class SolrQueryBuilder {
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par PPN
+     *
      * @param criterion Les critères de recherche par PPN
      * @return Criteria Requête SolR
      */
@@ -395,6 +404,7 @@ public class SolrQueryBuilder {
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par code langue
+     *
      * @param criterion Les critères de recherche par code langue
      * @return Criteria Requête SolR
      */
@@ -454,6 +464,7 @@ public class SolrQueryBuilder {
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par éditeur
+     *
      * @param criterion Les critères de recherche par editeur
      * @return Criteria Requête SolR
      */
@@ -512,6 +523,7 @@ public class SolrQueryBuilder {
 
     /**
      * Construit la requête SolR à partir d'un critère de recherche par ISSN
+     *
      * @param criterion Les critères de recherche par ISSN
      * @return Criteria Requête SolR
      */
@@ -544,5 +556,81 @@ public class SolrQueryBuilder {
         }
 
         return myCriteria;
+    }
+
+    /**
+     * Méthode permettant d'ajouter une liste de facette sur des zones de la notices biblio à la requête
+     *
+     * @param query  : requête sur laquelle ajouter les facettes
+     * @param facets : liste générale des zones de facettes (biblio + exemplaire)
+     * @return requête mise à jour
+     */
+    public FacetQuery addFacetsNotices(FacetQuery query, List<String> facets) {
+        FacetOptions options = new FacetOptions();
+        Iterator<String> itFacet = facets.iterator();
+        while (itFacet.hasNext()) {
+            String f = itFacet.next();
+            //cas ou la facette est une zone de la notice bibliographique
+            Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
+                if (field.getName().equals(f)) {
+                    try {
+                        options.addFacetOnField((String) field.get(null));
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+            if (options.hasFields()) {
+                query.setFacetOptions(options);
+            }
+        }
+        return query;
+    }
+
+    /**
+     * Méthode permettant de générer une chaine à concaténer à une requête correspondant aux facettes d'exemplaires
+     * @param facets liste générale des zones de facettes (biblio + exemplaire)
+     * @return la chaine à concaténer à la requête
+     */
+    public String addFacetsExemplaires(List<String> facets) {
+        String queryFacet = "";
+        DefaultQueryParser dqp = new DefaultQueryParser(null);
+        Iterator<String> itFacet = facets.iterator();
+        while (itFacet.hasNext()) {
+            String f = itFacet.next();
+            //cas ou la facette est une zone d'exemplaire
+            Iterator<Field> it = Arrays.asList(ItemSolrField.class.getFields()).iterator();
+            while (it.hasNext()) {
+                Field solrField = it.next();
+                if (solrField.getName().equals(f)) {
+                    try {
+                        queryFacet +=  "&child.facet.field=" + solrField.get(null);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        return queryFacet;
+    }
+
+    public FacetQuery constructFacetQuery(List<Criterion> criteriaNotice, List<Criterion> criteriaExemp, Pageable page) {
+        SimpleQuery parent = new SimpleQuery();
+        if (!criteriaExemp.isEmpty()) {
+            SimpleQuery solrQuery = new SimpleQuery(buildQuery(criteriaExemp), page);
+            DefaultQueryParser dqp = new DefaultQueryParser(null);
+            String actualQuery = dqp.getQueryString(solrQuery, null);
+            parent = new SimpleQuery("{!parent which=notice_type:notice}" + actualQuery);
+        }
+        FacetQuery query = new SimpleFacetQuery();
+        if (parent.getCriteria() != null) {
+            query = new SimpleFacetQuery(parent.getCriteria(), page);
+            if (!criteriaNotice.isEmpty()) {
+                query.addFilterQuery(new SimpleFilterQuery(buildQuery(criteriaNotice)));
+            }
+        } else {
+            query.addCriteria(buildQuery(criteriaNotice));
+        }
+        return query;
     }
 }

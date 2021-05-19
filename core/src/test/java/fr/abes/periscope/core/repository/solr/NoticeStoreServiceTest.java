@@ -5,27 +5,24 @@ import fr.abes.periscope.core.EnableOnIntegrationTest;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.OnGoingResourceType;
-import fr.abes.periscope.core.repository.solr.v1.NoticeSolrV1Repository;
-import fr.abes.periscope.core.repository.solr.v1.configuration.SolrV1Config;
-import fr.abes.periscope.core.repository.solr.v1.impl.AdvancedNoticeSolrV1RepositoryImpl;
-import fr.abes.periscope.core.repository.solr.v2.impl.AdvancedNoticeSolrV2RepositoryImpl;
+import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
 import fr.abes.periscope.core.service.NoticeStoreService;
-import fr.abes.periscope.core.util.NoticeMapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.AutoConfigurationPackage;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.core.annotation.Order;
+import org.springframework.data.domain.Sort;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Test la conversion d'une Notice SolR vers une Notice.
@@ -169,5 +166,44 @@ public class NoticeStoreServiceTest {
         candidate = noticeService.findNoticesByCriteria("v2",criteria1,  new LinkedList<>(),0,5).get(0);
         Assert.assertEquals(expected,candidate.getProperTitle());
 
+    }
+
+    @DisplayName("Test requête avec facettes")
+    @Test
+    void testFacet() {
+        List<Criterion> criteresNotices = new LinkedList<>();
+
+        List<String> titleWord = Arrays.asList("monde");
+        List<String> titleOperators = Arrays.asList("ET");
+        CriterionTitleWords titleWords = new CriterionTitleWords(titleWord, titleOperators);
+        criteresNotices.add(titleWords);
+
+        List<String> rcr = Arrays.asList("341725201");
+        List<String> rcrOperators = Arrays.asList("ET");
+        CriterionRcr criterionRcr = new CriterionRcr(rcr, rcrOperators);
+        criteresNotices.add(criterionRcr);
+
+        List<String> facette = Arrays.asList("DOCUMENT_TYPE", "NB_LOC");
+
+        ResultSolr candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(), 0, 10);
+
+        assertEquals(candidates.getFacettes().size(), 2);
+        assertTrue(candidates.getNbPages() > 0);
+
+        // test avec critère de tri
+        String sort = NoticeV2SolrField.PPN;
+        CriterionSort criterionSort = new CriterionSort(sort, Sort.Direction.ASC);
+        List<CriterionSort> listSort = new LinkedList<>();
+        listSort.add(criterionSort);
+
+        candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, listSort, 0, 10);
+        assertEquals(candidates.getFacettes().size(), 2);
+        assertTrue(candidates.getNbPages() > 0);
+
+        // test avec facettes vides
+        facette = new ArrayList<>();
+        candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(), 0, 10);
+        assertEquals(candidates.getFacettes().size(), 0);
+        assertTrue(candidates.getNbPages() > 0);
     }
 }

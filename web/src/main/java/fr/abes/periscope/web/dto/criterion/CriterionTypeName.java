@@ -14,5 +14,6 @@ public abstract class CriterionTypeName {
     public static final String CRITERION_LANGUAGE = "CriterionLanguage";
     public static final String CRITERION_EDITOR = "CriterionEditor";
     public static final String CRITERION_ISSN = "CriterionIssn";
+    public static final String CRITERION_FACETTE ="CriterionFacette";
 
 }

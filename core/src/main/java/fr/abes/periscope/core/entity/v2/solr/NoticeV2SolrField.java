@@ -73,8 +73,6 @@ public abstract class NoticeV2SolrField {
     //--------------------------------
     // Type de document
     public static final String DOCUMENT_TYPE = "document_type";
-    // Support avec la V1
-    public static final String CONTINIOUS_TYPE = "document_type";
     //--------------------------------
 
     //--------------------------------

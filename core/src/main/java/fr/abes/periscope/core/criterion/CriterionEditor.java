@@ -3,6 +3,7 @@ package fr.abes.periscope.core.criterion;
 import fr.abes.periscope.core.exception.CriterionOperatorMismatchException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
+import fr.abes.periscope.core.util.TYPE_NOTICE;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ public class CriterionEditor extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionEditor(String blocOperator, List<String> candidatesEditor, List<String> candidatesOperator) {
-        super(blocOperator);
+        super(blocOperator, TYPE_NOTICE.BIBLIO);
 
         if (candidatesEditor.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");
@@ -66,7 +67,7 @@ public class CriterionEditor extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionEditor(List<String> candidatesEditor, List<String> candidatesOperator) {
-        super();
+        super(TYPE_NOTICE.BIBLIO);
 
         if (candidatesEditor.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");
