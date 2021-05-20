@@ -3,13 +3,10 @@ package fr.abes.periscope.core.repository.solr.v2;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
-import fr.abes.periscope.core.exception.IllegalCriterionException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.query.*;
-import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
@@ -99,12 +96,12 @@ public class SolrQueryBuilder {
 
         String value = valueIterator.next();
 
-        myCriteria = new Criteria(NoticeV2SolrField.PPN_PARENT).is(value);
+        myCriteria = new Criteria(ItemSolrField.PPN_PARENT).is(value);
 
         // les autres
         while (valueIterator.hasNext()) {
             value = valueIterator.next();
-            myCriteria = myCriteria.or(NoticeV2SolrField.PPN_PARENT).is(value);
+            myCriteria = myCriteria.or(ItemSolrField.PPN_PARENT).is(value);
         }
 
         // pour le bloc entier
@@ -470,38 +467,38 @@ public class SolrQueryBuilder {
      */
     private Criteria buildEditorQuery(CriterionEditor criterion) {
 
-        Iterator<String> rcrIterator = criterion.getEditors().iterator();
-        Iterator<String> rcrOperatorIterator = criterion.getEditorOperators().iterator();
+        Iterator<String> editorIteror = criterion.getEditors().iterator();
+        Iterator<String> editorOperatorIterator = criterion.getEditorOperators().iterator();
 
         Criteria myCriteria = null;
 
-        String rcrCode = rcrIterator.next();
-        String rcrOperator = rcrOperatorIterator.next();
+        String editor = editorIteror.next();
+        String editorOperator = editorOperatorIterator.next();
 
         // 1er critère
-        switch (rcrOperator) {
+        switch (editorOperator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = new Criteria(NoticeV2SolrField.EDITOR).is(rcrCode).not().connect();
+                myCriteria = new Criteria(NoticeV2SolrField.EDITOR).is(editor).not().connect();
                 break;
             default:
-                myCriteria = new Criteria(NoticeV2SolrField.EDITOR).is(rcrCode).connect();
+                myCriteria = new Criteria(NoticeV2SolrField.EDITOR).is(editor).connect();
                 break;
         }
 
         // les autres
-        while (rcrIterator.hasNext()) {
-            rcrCode = rcrIterator.next();
-            rcrOperator = rcrOperatorIterator.next();
+        while (editorIteror.hasNext()) {
+            editor = editorIteror.next();
+            editorOperator = editorOperatorIterator.next();
 
-            switch (rcrOperator) {
+            switch (editorOperator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.EDITOR).is(rcrCode);
+                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.EDITOR).is(editor);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.EDITOR).is(rcrCode);
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.EDITOR).is(editor);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.EDITOR).is(rcrCode).not();
+                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.EDITOR).is(editor).not();
                     break;
             }
         }

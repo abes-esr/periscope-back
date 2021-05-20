@@ -11,6 +11,7 @@ import lombok.Setter;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Représente un Notice V2 au format JSON de l'API
@@ -25,34 +26,81 @@ public class NoticeWebV2Dto {
     private String issn;
 
     @JsonProperty("editeur")
-    private String editor;
+    private String editeur;
 
-    @JsonProperty("titre_cle")
-    private String keyTitle;
+    @JsonIgnore
+    private String titrePropre;
 
-    @JsonProperty("titre_court")
-    private String keyShortedTitle;
+    @JsonIgnore
+    private String titreAuteurDifferent;
 
-    @JsonProperty("titre_propre")
-    private String properTitle;
+    @JsonIgnore
+    private String titreParallele;
 
-    @JsonProperty("titre_different_auteur")
-    private String titleFromDifferentAuthor;
+    @JsonIgnore
+    private String titreComplement;
 
-    @JsonProperty("titre_parallel")
-    private String parallelTitle;
+    @JsonIgnore
+    private String titreSection;
 
-    @JsonProperty("complement_titre")
-    private String titleComplement;
+    @JsonIgnore
+    private String titreCle;
 
-    @JsonProperty("section_titre")
-    private String sectionTitle;
+    @JsonIgnore
+    private String titreCleQualifie;
 
-    @JsonProperty("qualitificatif")
-    private String keyTitleQualifer;
+    @JsonIgnore
+    private String titreCleCourt;
 
-    @JsonProperty("type")
-    private String continiousType;
+    @JsonGetter("titre")
+    protected String getTitre() {
+        String titre = this.titreCle;
+        if (titre != null && !titre.isEmpty() && this.titreCleQualifie != null) {
+            titre += " " + this.titreCleQualifie;
+        }
+        if (titre == null || titre.isEmpty()) {
+            if (this.titreCleCourt != null && !this.titreCleCourt.isEmpty()) {
+                titre = this.titreCleCourt;
+            }
+        }
+
+        if (titre == null || titre.isEmpty()) {
+            if (this.titrePropre != null && !this.titrePropre.isEmpty()) {
+                titre = this.titrePropre;
+            }
+        }
+
+        if (titre == null || titre.isEmpty()) {
+            if (this.titreAuteurDifferent != null && !this.titreAuteurDifferent.isEmpty()) {
+                titre = this.titreAuteurDifferent;
+            }
+        }
+
+        if (titre == null || titre.isEmpty()) {
+            if (this.titreParallele != null && !this.titreParallele.isEmpty()) {
+                titre = this.titreParallele;
+            }
+        }
+
+        if (titre == null || titre.isEmpty()) {
+            if (this.titreComplement != null && !this.titreComplement.isEmpty()) {
+                titre = this.titreComplement;
+            }
+        }
+        return titre;
+    }
+
+    @JsonProperty("typeDocument")
+    private String typeRessourceContinue;
+
+    @JsonProperty("typeSupport")
+    private String typeSupport;
+
+    @JsonProperty("langue")
+    private String langue;
+
+    @JsonProperty("pays")
+    private String pays;
 
     @JsonIgnore
     private PublicationYear startYear;
@@ -102,7 +150,7 @@ public class NoticeWebV2Dto {
     private Integer nbLocation;
 
     @JsonProperty("exemplaires")
-    private List<ItemWebDto> items;
+    private Set<ItemWebDto> items = new HashSet<>();
 
     // Support avec la V1
     @JsonGetter("pcpList")
@@ -112,7 +160,10 @@ public class NoticeWebV2Dto {
         Iterator<ItemWebDto> itemIterator = getItems().iterator();
         while(itemIterator.hasNext()) {
             ItemWebDto item = itemIterator.next();
-            list.add(item.getPcp());
+            if (item.getPcp() != null)
+                list.add(item.getPcp());
+            else
+                list.add("Non assigné");
         }
 
         return list;
@@ -129,6 +180,10 @@ public class NoticeWebV2Dto {
         }
 
         return list;
+    }
+
+    public void addItem(ItemWebDto item) {
+        this.items.add(item);
     }
 
 }

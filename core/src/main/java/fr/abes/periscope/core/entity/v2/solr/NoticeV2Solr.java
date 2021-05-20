@@ -9,6 +9,7 @@ import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -39,55 +40,87 @@ public class NoticeV2Solr implements Serializable {
 
     @Field(NoticeV2SolrField.EDITOR)
     @Indexed(name = NoticeV2SolrField.EDITOR)
-    private String editor;
+    protected List<String> editor = new ArrayList<>();
+
+    @Field(NoticeV2SolrField.EDITOR_Z)
+    @Indexed(name = NoticeV2SolrField.EDITOR_Z)
+    protected String editorForDisplay;
 
     @Field(NoticeV2SolrField.PROCESSING_GLOBAL_DATA)
     @Indexed(name = NoticeV2SolrField.PROCESSING_GLOBAL_DATA)
-    private String processingGlobalData;
+    protected String processingGlobalData;
 
-    @Field(NoticeV2SolrField.KEY_TITLE)
-    @Indexed(name = NoticeV2SolrField.KEY_TITLE)
-    private String keyTitle;
-
-    @Field(NoticeV2SolrField.KEY_SHORTED_TITLE)
-    @Indexed(name = NoticeV2SolrField.KEY_SHORTED_TITLE)
-    private String keyShortedTitle;
+    @Field(NoticeV2SolrField.PROPER_TITLE_Z)
+    @Indexed(name = NoticeV2SolrField.PROPER_TITLE_Z)
+    protected String properTitleForDisplay;
 
     @Field(NoticeV2SolrField.PROPER_TITLE)
     @Indexed(name = NoticeV2SolrField.PROPER_TITLE)
-    private String properTitle;
+    protected List<String> properTitle = new ArrayList<>();
+
+    @Field(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR_Z)
+    @Indexed(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR_Z)
+    protected String titleFromDifferentAuthorForDisplay;
 
     @Field(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR)
     @Indexed(name = NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR)
-    private String titleFromDifferentAuthor;
+    protected List<String> titleFromDifferentAuthor = new ArrayList<>();
+
+    @Field(NoticeV2SolrField.PARALLEL_TITLE_Z)
+    @Indexed(name = NoticeV2SolrField.PARALLEL_TITLE_Z)
+    protected String parallelTitleForDisplay;
 
     @Field(NoticeV2SolrField.PARALLEL_TITLE)
     @Indexed(name = NoticeV2SolrField.PARALLEL_TITLE)
-    private String parallelTitle;
+    protected List<String> parallelTitle = new ArrayList<>();
+
+    @Field(NoticeV2SolrField.TITLE_COMPLEMENT_Z)
+    @Indexed(name = NoticeV2SolrField.TITLE_COMPLEMENT_Z)
+    protected String titleComplementForDisplay;
 
     @Field(NoticeV2SolrField.TITLE_COMPLEMENT)
     @Indexed(name = NoticeV2SolrField.TITLE_COMPLEMENT)
-    private String titleComplement;
+    protected List<String> titleComplement = new ArrayList<>();
+
+    @Field(NoticeV2SolrField.SECTION_TITLE_Z)
+    @Indexed(name = NoticeV2SolrField.SECTION_TITLE_Z)
+    protected String sectionTitleForDisplay;
 
     @Field(NoticeV2SolrField.SECTION_TITLE)
     @Indexed(name = NoticeV2SolrField.SECTION_TITLE)
-    private String sectionTitle;
+    protected List<String> sectionTitle = new ArrayList<>();
+
+    @Field(NoticeV2SolrField.KEY_TITLE)
+    @Indexed(name = NoticeV2SolrField.KEY_TITLE)
+    protected String keyTitle;
 
     @Field(NoticeV2SolrField.KEY_TITLE_QUALIFIER)
     @Indexed(name = NoticeV2SolrField.KEY_TITLE_QUALIFIER)
-    private String keyTitleQualifer;
+    protected String keyTitleQualifer;
+
+    @Field(NoticeV2SolrField.KEY_SHORTED_TITLE_Z)
+    @Indexed(name = NoticeV2SolrField.KEY_SHORTED_TITLE_Z)
+    protected String keyShortedTitleForDisplay;
+
+    @Field(NoticeV2SolrField.KEY_SHORTED_TITLE)
+    @Indexed(name = NoticeV2SolrField.KEY_SHORTED_TITLE)
+    protected List<String> keyShortedTitle = new ArrayList<>();
 
     @Field(NoticeV2SolrField.DOCUMENT_TYPE)
     @Indexed(name = NoticeV2SolrField.DOCUMENT_TYPE)
-    private String typeDocument;
+    protected String continuousType;
+
+    @Field(NoticeV2SolrField.SUPPORT_TYPE)
+    @Indexed(name = NoticeV2SolrField.SUPPORT_TYPE)
+    protected String supportType;
 
     @Field(NoticeV2SolrField.EXTERNAL_URLS)
     @Indexed(name = NoticeV2SolrField.EXTERNAL_URLS)
-    private List<String> externalURLs;
+    protected List<String> externalURLs = new ArrayList<>();
 
     @Field(NoticeV2SolrField.NB_LOC)
     @Indexed(name = NoticeV2SolrField.NB_LOC)
-    private Integer nbLocation;
+    protected Integer nbLocation;
 
     @Field(NoticeV2SolrField.LANGUAGE)
     @Indexed(name = NoticeV2SolrField.LANGUAGE)

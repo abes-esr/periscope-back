@@ -45,73 +45,45 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
      * Retourne les Notices SolR selon une liste de critères, un critère de tri
      * et une page.
      * La liste des champs SolR a récupéré est inscrites en dur dans la méthode
+     *
      * @param criteria Les critères de la recherche
-     * @param sort Les critères de tri
-     * @param page La page souhaitée
+     * @param sort     Les critères de tri
+     * @param page     La page souhaitée
      * @return List<NoticeV2Solr> Liste de Notices SolR
      */
     @Override
     public List<NoticeV2Solr> findNoticesByCriteria(List<Criterion> criteria, Sort sort, Pageable page) {
 
-        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria),page);
+        SimpleQuery solrQuery = new SimpleQuery(builderQuery.buildQuery(criteria), page);
 
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
 
-        return findNoticesBySolrQuery(actualQuery,sort,page);
+        return findNoticesBySolrQuery(actualQuery, sort, page);
     }
 
     /**
      * Retourne les Notices SolR selon une requête SolR, un critère de tri
      * et une page.
      * La liste des champs SolR a récupéré est inscrites en dur dans la méthode
+     *
      * @param query Requête SolR
-     * @param sort Les critères de tri
-     * @param page La page souhaitée
+     * @param sort  Les critères de tri
+     * @param page  La page souhaitée
      * @return List<NoticeV2Solr> Liste de Notices SolR
      */
     public List<NoticeV2Solr> findNoticesBySolrQuery(String query, Sort sort, Pageable page) {
 
-        SimpleQuery solrQuery = new SimpleQuery("{!parent which=notice_type:notice}" + query,page);
-        solrQuery.addProjectionOnFields(
-                // notice
-                NoticeV2SolrField.ID,
-                NoticeV2SolrField.PPN,
-                NoticeV2SolrField.ISSN,
-                NoticeV2SolrField.EDITOR,
-                NoticeV2SolrField.PROCESSING_GLOBAL_DATA,
-                NoticeV2SolrField.KEY_TITLE,
-                NoticeV2SolrField.ISSN,
-                NoticeV2SolrField.KEY_SHORTED_TITLE,
-                NoticeV2SolrField.PROPER_TITLE,
-                NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR,
-                NoticeV2SolrField.PARALLEL_TITLE,
-                NoticeV2SolrField.TITLE_COMPLEMENT,
-                NoticeV2SolrField.SECTION_TITLE,
-                NoticeV2SolrField.KEY_TITLE_QUALIFIER,
-                NoticeV2SolrField.DOCUMENT_TYPE,
-                NoticeV2SolrField.EXTERNAL_URLS,
-                NoticeV2SolrField.NB_LOC,
-                NoticeV2SolrField.DOCUMENT_TYPE,
-                NoticeV2SolrField.LANGUAGE,
-                NoticeV2SolrField.COUNTRY,
-                NoticeV2SolrField.START_YEAR,
-                NoticeV2SolrField.START_YEAR_CONFIDENCE_INDEX,
-                NoticeV2SolrField.END_YEAR,
-                NoticeV2SolrField.END_YEAR_CONFIDENCE_INDEX,
-                // exemplaire
-                ItemSolrField.EPN,
-                ItemSolrField.PCP,
-                ItemSolrField.RCR
-        );
+        SimpleQuery solrQuery = new SimpleQuery("{!parent which=notice_type:notice}" + query, page);
+        setProjectionsFieldsOnQuery(solrQuery);
         solrQuery.addSort(sort);
         solrQuery.addProjectionOnField("[child]");
         // Debug query
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(solrQuery, null);
-        log.debug("SolR query : "+actualQuery);
+        log.debug("SolR query : " + actualQuery);
 
-        Page results = solrTemplate.queryForPage(core,solrQuery, NoticeV2Solr.class);
+        Page results = solrTemplate.queryForPage(core, solrQuery, NoticeV2Solr.class);
         return results.getContent();
     }
 
@@ -121,17 +93,50 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
 
         //request handler nécessaire pour les facettes au niveau exemplaire
         query.setRequestHandler("bjqfacet");
+        setProjectionsFieldsOnQuery(query);
 
-        query.addProjectionOnField(new SimpleField("*"));
-        query.addProjectionOnField(new SimpleField("[child]"));
         query.addSort(sort);
         query = builderQuery.addFacetsNotices(query, facettes);
-        DefaultQueryParser dqp = new DefaultQueryParser(null);
-        String actualQuery = dqp.getQueryString(query, null);
-        log.debug(actualQuery);
-        FacetPage<NoticeV2Solr> facetPage = solrTemplate.queryForFacetPage(core, query, NoticeV2Solr.class);
+        return solrTemplate.queryForFacetPage(core, query, NoticeV2Solr.class);
+    }
 
-        return facetPage;
+    private void setProjectionsFieldsOnQuery(Query query) {
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.ID));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.PPN));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.EDITOR));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.EDITOR_Z));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.PROCESSING_GLOBAL_DATA));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.KEY_TITLE));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.ISSN));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.KEY_SHORTED_TITLE));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.KEY_SHORTED_TITLE_Z));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.PROPER_TITLE));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.PROPER_TITLE_Z));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR_Z));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.PARALLEL_TITLE));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.PARALLEL_TITLE_Z));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.TITLE_COMPLEMENT));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.TITLE_COMPLEMENT_Z));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.SECTION_TITLE));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.SECTION_TITLE_Z));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.KEY_TITLE_QUALIFIER));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.DOCUMENT_TYPE));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.SUPPORT_TYPE));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.EXTERNAL_URLS));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.NB_LOC));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.LANGUAGE));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.COUNTRY));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.START_YEAR));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.START_YEAR_CONFIDENCE_INDEX));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.END_YEAR));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.END_YEAR_CONFIDENCE_INDEX));
+        query.addProjectionOnField(new SimpleField(ItemSolrField.EPN));
+        query.addProjectionOnField(new SimpleField(ItemSolrField.PPN_PARENT));
+        query.addProjectionOnField(new SimpleField(ItemSolrField.RCR));
+        query.addProjectionOnField(new SimpleField(ItemSolrField.PCP));
+
+        query.addProjectionOnField(new SimpleField("[child limit=100]"));
     }
 
 

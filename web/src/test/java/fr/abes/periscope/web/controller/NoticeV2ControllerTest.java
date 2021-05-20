@@ -35,7 +35,8 @@ public class NoticeV2ControllerTest extends PeriscopeApplicationTest {
                 "    ],\n" +
                 "    \"tri\":\n" +
                 "    [\n" +
-                "        {\"sort\":\"KEY_TITLE\",\"order\":\"ASC\"}\n" +
+                "        {\"sort\":\"TITLE\",\"order\":\"ASC\"},\n" +
+                "        {\"sort\":\"EDITOR\",\"order\":\"DESC\"}\n" +
                 "    ],\n" +
                 "   \"facettes\":\n" +
                 "   [\n" +
@@ -48,6 +49,7 @@ public class NoticeV2ControllerTest extends PeriscopeApplicationTest {
                 .contentType(MediaType.APPLICATION_JSON).content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.notice").isNotEmpty())
+                .andExpect(jsonPath("$.facettes").isNotEmpty())
                 .andExpect(jsonPath("$.nbPages").isNumber());
 
     }

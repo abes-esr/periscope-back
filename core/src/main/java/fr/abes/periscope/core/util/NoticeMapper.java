@@ -21,7 +21,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -74,16 +73,16 @@ public class NoticeMapper {
 
         Converter<NoticeV1Solr, Notice> myConverter = new Converter<NoticeV1Solr, Notice>() {
 
-            public Notice convert(MappingContext<NoticeV1Solr, Notice> context) {
+            public NoticeV1 convert(MappingContext<NoticeV1Solr, Notice> context) {
                 NoticeV1Solr source = context.getSource();
-                Notice target = new NoticeV1();
+                NoticeV1 target = new NoticeV1();
 
                 try {
 
                     target.setPpn(source.getPpn());
                     target.setIssn((source.getIssn()));
                     target.setPcpList(source.getPcpList());
-                    ((NoticeV1)target).setRcrList(source.getRcrList());
+                    target.setRcrList(source.getRcrList());
                     target.setEditor(source.getEditor());
                     target.setKeyTitle(source.getKeyTitle());
                     target.setKeyShortedTitle(source.getKeyShortedTitle());
@@ -112,7 +111,7 @@ public class NoticeMapper {
                     }
 
                     //Extraction du type de ressource continue
-                    target.setContiniousType(extractOnGoingResourceType(source.getContiniousType()));
+                    target.setContinuousType(extractOnGoingResourceType(source.getContiniousType()));
 
                     //Extraction du lien exterieur de Mirabel
                     target.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
@@ -137,9 +136,9 @@ public class NoticeMapper {
 
         Converter<NoticeV2Solr, Notice> myConverter = new Converter<NoticeV2Solr, Notice>() {
 
-            public Notice convert(MappingContext<NoticeV2Solr, Notice> context) {
+            public NoticeV2 convert(MappingContext<NoticeV2Solr, Notice> context) {
                 NoticeV2Solr source = context.getSource();
-                Notice target = new NoticeV2();
+                NoticeV2 target = new NoticeV2();
 
                 try {
 
@@ -157,20 +156,21 @@ public class NoticeMapper {
                         item.setRcr(itemSolR.getRcr());
                         item.setPcp(itemSolR.getPcp());
 
-                        ((NoticeV2)target).addItem(item);
+                        target.addItem(item);
                     }
 
-                    target.setEditor(source.getEditor());
+                    target.setEditor(source.getEditorForDisplay());
                     target.setKeyTitle(source.getKeyTitle());
-                    target.setKeyShortedTitle(source.getKeyShortedTitle());
-                    target.setProperTitle(source.getProperTitle());
-                    target.setTitleFromDifferentAuthor(source.getTitleFromDifferentAuthor());
-                    target.setParallelTitle(source.getParallelTitle());
-                    target.setTitleComplement(source.getTitleComplement());
-                    target.setSectionTitle(source.getSectionTitle());
-                    target.setContiniousType(source.getTypeDocument());
-                    ((NoticeV2) target).setLanguage(source.getLanguage());
-                    ((NoticeV2) target).setCountry(source.getCountry());
+                    target.setKeyShortedTitle(source.getKeyShortedTitleForDisplay());
+                    target.setProperTitle(source.getProperTitleForDisplay());
+                    target.setTitleFromDifferentAuthor(source.getTitleFromDifferentAuthorForDisplay());
+                    target.setParallelTitle(source.getParallelTitleForDisplay());
+                    target.setTitleComplement(source.getTitleComplementForDisplay());
+                    target.setSectionTitle(source.getSectionTitleForDisplay());
+                    target.setContinuousType(source.getContinuousType());
+                    target.setSupportType(source.getSupportType());
+                    target.setLanguage(source.getLanguage());
+                    target.setCountry(source.getCountry());
 
                     if(source.getStartYear() != null ) {
                         target.setStartYear(new PublicationYear(source.getStartYear(), source.getStartYearConfidenceIndex()));

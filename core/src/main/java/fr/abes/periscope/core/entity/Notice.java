@@ -12,39 +12,27 @@ import java.util.Set;
 @Getter @Setter
 public abstract class Notice {
 
-    private String ppn;
+    protected String ppn;
 
-    private String issn;
+    protected String issn;
 
-    private Set<String> pcpList = new HashSet<>();
+    protected String editor;
 
-    private String editor;
+    protected String keyTitle;
 
-    private String keyTitle;
+    protected Set<String> pcpList = new HashSet<>();
 
-    private String keyShortedTitle;
+    protected String continuousType;
 
-    private String properTitle;
+    protected String supportType;
 
-    private String titleFromDifferentAuthor;
+    protected PublicationYear startYear;
 
-    private String parallelTitle;
+    protected PublicationYear endYear;
 
-    private String titleComplement;
+    protected String mirabelURL;
 
-    private String sectionTitle;
-
-    private String keyTitleQualifer;
-
-    private String continiousType;
-
-    private PublicationYear startYear;
-
-    private PublicationYear endYear;
-
-    private String mirabelURL;
-
-    private Integer nbLocation;
+    protected Integer nbLocation;
 
     @Override
     public boolean equals(Object obj) {

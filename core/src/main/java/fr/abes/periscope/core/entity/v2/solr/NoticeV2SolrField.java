@@ -76,6 +76,11 @@ public abstract class NoticeV2SolrField {
     //--------------------------------
 
     //--------------------------------
+    //Type de support
+    public static final String SUPPORT_TYPE = "support_type";
+    //--------------------------------
+
+    //--------------------------------
     // Zone 181
     public static final String ZONE_181_6 = "zone_181$6";
     public static final String ZONE_181_C = "zone_181$c";
@@ -91,14 +96,20 @@ public abstract class NoticeV2SolrField {
 
     //--------------------------------
     // Zone 200
-    public static final String PROPER_TITLE = "zone_200$a";
+
+    public static final String PROPER_TITLE_Z = "zone_200$a_z";
+    public static final String PROPER_TITLE = "zone_200$a_t";
     public static final String ZONE_200_B = "zone_200$b";
-    public static final String TITLE_FROM_DIFFERENT_AUTHOR = "zone_200$c";
-    public static final String PARALLEL_TITLE = "zone_200$d";
-    public static final String TITLE_COMPLEMENT = "zone_200$e";
+    public static final String TITLE_FROM_DIFFERENT_AUTHOR_Z = "zone_200$c_z";
+    public static final String TITLE_FROM_DIFFERENT_AUTHOR = "zone_200$c_t";
+    public static final String PARALLEL_TITLE_Z = "zone_200$d_z";
+    public static final String PARALLEL_TITLE = "zone_200$d_t";
+    public static final String TITLE_COMPLEMENT_Z = "zone_200$e_z";
+    public static final String TITLE_COMPLEMENT = "zone_200$e_t";
     public static final String ZONE_200_F = "zone_200$f";
     public static final String ZONE_200_G = "zone_200$g";
-    public static final String SECTION_TITLE = "zone_200$i";
+    public static final String SECTION_TITLE_Z = "zone_200$i_z";
+    public static final String SECTION_TITLE = "zone_200$i_t";
     //--------------------------------
 
     //--------------------------------
@@ -109,7 +120,8 @@ public abstract class NoticeV2SolrField {
     //--------------------------------
     // Zone 210
     public static final String ZONE_210_A = "zone_210$a";
-    public static final String EDITOR = "zone_210$c";
+    public static final String EDITOR_Z = "zone_210$c_z";
+    public static final String EDITOR = "zone_210$c_t";
     //--------------------------------
 
     //--------------------------------
@@ -120,7 +132,8 @@ public abstract class NoticeV2SolrField {
 
     //--------------------------------
     // Zone 531
-    public static final String KEY_SHORTED_TITLE = "zone_531$a";
+    public static final String KEY_SHORTED_TITLE_Z = "zone_531$a_z";
+    public static final String KEY_SHORTED_TITLE = "zone_531$a_t";
     //--------------------------------
 
     //--------------------------------
@@ -143,7 +156,6 @@ public abstract class NoticeV2SolrField {
     public static final String DATE_INDEX_TYPE = "pdate";
     public static final String NB_LOC = "NbLocs";
     public static final String PCP_RCR = "pcprcr";
-    public static final String PPN_PARENT = "ppn_parent";
 
     public static final String START_YEAR = "start_year";
     public static final String START_YEAR_CONFIDENCE_INDEX = "start_year_confidence_index";

@@ -14,4 +14,6 @@ public abstract class ItemSolrField {
     public static final String RCR = "zone_930$b";
     //--------------------------------
 
+    public static final String PPN_PARENT = "ppn_parent";
+
 }

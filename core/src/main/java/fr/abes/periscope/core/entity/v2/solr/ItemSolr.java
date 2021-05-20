@@ -6,7 +6,6 @@ import org.apache.solr.client.solrj.beans.Field;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
-import org.springframework.data.solr.repository.Facet;
 
 import java.io.Serializable;
 
@@ -26,8 +25,8 @@ public class ItemSolr implements Serializable {
     @Indexed(name = ItemSolrField.EPN)
     private String epn;
 
-    @Field(NoticeV2SolrField.PPN)
-    @Indexed(name = NoticeV2SolrField.PPN)
+    @Field(ItemSolrField.PPN_PARENT)
+    @Indexed(name = ItemSolrField.PPN_PARENT)
     private String ppn;
 
     @Field(NoticeV2SolrField.TITLE_TYPE)

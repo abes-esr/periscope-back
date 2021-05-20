@@ -1,10 +1,14 @@
 package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.*;
+import fr.abes.periscope.core.entity.v2.Item;
+import fr.abes.periscope.core.entity.v2.NoticeV2;
 import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.exception.*;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
+import fr.abes.periscope.web.dto.ItemWebDto;
+import fr.abes.periscope.web.dto.NoticeWebV2Dto;
 import fr.abes.periscope.web.dto.criterion.*;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -15,7 +19,9 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 /**
@@ -52,9 +58,47 @@ public class DtoMapper {
                 .collect(Collectors.toList());
     }
 
+    @Bean
+    public void converterNotice() {
+        Converter<NoticeV2, NoticeWebV2Dto> myConverter = new Converter<NoticeV2, NoticeWebV2Dto>() {
+            @Override
+            public NoticeWebV2Dto convert(MappingContext<NoticeV2, NoticeWebV2Dto> mappingContext) {
+                NoticeV2 notice = mappingContext.getSource();
+                NoticeWebV2Dto noticeWeb = new NoticeWebV2Dto();
+                noticeWeb.setPpn(notice.getPpn());
+                noticeWeb.setIssn(notice.getIssn());
+                noticeWeb.setEditeur(notice.getEditor());
+                noticeWeb.setTitrePropre(notice.getProperTitle());
+                noticeWeb.setTitreAuteurDifferent(notice.getTitleFromDifferentAuthor());
+                noticeWeb.setTitreParallele(notice.getParallelTitle());
+                noticeWeb.setTitreComplement(notice.getTitleComplement());
+                noticeWeb.setTitreSection(notice.getSectionTitle());
+                noticeWeb.setTitreCle(notice.getKeyTitle());
+                noticeWeb.setTitreCleQualifie(notice.getKeyTitleQualifer());
+                noticeWeb.setTitreCleCourt(notice.getKeyShortedTitle());
+                noticeWeb.setTypeRessourceContinue(notice.getContinuousType());
+                noticeWeb.setTypeSupport(notice.getSupportType());
+                noticeWeb.setLangue(notice.getLanguage());
+                noticeWeb.setPays(notice.getCountry());
+                noticeWeb.setStartYear(notice.getStartYear());
+                noticeWeb.setEndYear(notice.getEndYear());
+                noticeWeb.setMirabelURL(notice.getMirabelURL());
+                noticeWeb.setNbLocation(notice.getNbLocation());
+                notice.getItems().forEach(i -> {
+                    ItemWebDto itemWebDto = new ItemWebDto();
+                    itemWebDto.setEpn(i.getEpn());
+                    itemWebDto.setPcp(i.getPcp());
+                    itemWebDto.setRcr(i.getRcr());
+                    noticeWeb.addItem(itemWebDto);
+                });
+                return noticeWeb;
+            }
+        };
+        modelMapper.addConverter(myConverter);
+    }
     /**
      * Convertisseur pour les critères de tri
-     * On vérifie la definition des champs depuis la classe NoticeV1SolrField
+     * On vérifie la definition des champs depuis la classe NoticeV1SolrField ou NoticeV2SolrField en fonction de la version
      */
     @Bean
     public void converterSort() {
@@ -64,20 +108,11 @@ public class DtoMapper {
                 CriterionSortWebDto s = mappingContext.getSource();
                 final String[] field = {""};
                 try {
-                    Class c = NoticeV1SolrField.class;
                     if (s.getVersion().equalsIgnoreCase("v2")) {
-                        c = NoticeV2SolrField.class;
+                        field[0] = getSortFieldForV2(s);
+                    } else {
+                        field[0] = getSortFieldForV1(s);
                     }
-
-                    Arrays.stream(c.getDeclaredFields()).forEach(n -> {
-                        if (n.getName().equalsIgnoreCase(s.getSort())) {
-                            try {
-                                field[0] = String.valueOf(n.get(s.getSort()));
-                            } catch (IllegalAccessException e) {
-                                throw new IllegalSortException(s.getSort() + " : Critère de tri inconnu");
-                            }
-                        }
-                    });
                     if (field[0].isEmpty()) {
                         throw new IllegalSortException(s.getSort() + " : Critère de tri inconnu");
                     }
@@ -91,6 +126,53 @@ public class DtoMapper {
         modelMapper.addConverter(myConverter);
     }
 
+    private String getSortFieldForV1(CriterionSortWebDto s) {
+        Iterator<Field> it = Arrays.stream(NoticeV1SolrField.class.getDeclaredFields()).iterator();
+        while (it.hasNext()) {
+            Field n = it.next();
+            if (n.getName().equalsIgnoreCase(s.getSort())) {
+                try {
+                    return String.valueOf(n.get(s.getSort()));
+                } catch (IllegalAccessException e) {
+                    throw new IllegalSortException(s.getSort() + " : Critère de tri inconnu");
+                }
+            }
+        }
+        return "";
+    }
+
+    private String getSortFieldForV2(CriterionSortWebDto s) {
+        switch (s.getSort().toLowerCase(Locale.ROOT)) {
+            case "title_type":
+                return NoticeV2SolrField.TITLE_TYPE;
+            case "ppn":
+                return NoticeV2SolrField.PPN;
+            case "issn":
+                return NoticeV2SolrField.ISSN;
+            case "language":
+                return NoticeV2SolrField.LANGUAGE;
+            case "country":
+                return NoticeV2SolrField.COUNTRY;
+            case "document_type":
+                return NoticeV2SolrField.DOCUMENT_TYPE;
+            case "support_type":
+                return NoticeV2SolrField.SUPPORT_TYPE;
+            case "editor":
+                return NoticeV2SolrField.EDITOR_Z;
+            case "title":
+                return NoticeV2SolrField.KEY_TITLE;
+            case "start_year":
+                return NoticeV2SolrField.START_YEAR;
+            case "end_year":
+                return NoticeV2SolrField.END_YEAR;
+            default:
+                throw new IllegalSortException(s.getSort() + " : Critère de tri inconnu");
+        }
+    }
+
+    /**
+     * Convertisseur pour les facettes (DTO vers Objet Métier)
+     */
     @Bean
     public void converterFacette() {
         Converter<CriterionFacetteWebDto, String> myConverter = new Converter<CriterionFacetteWebDto, String>() {

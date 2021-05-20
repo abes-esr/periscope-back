@@ -3,7 +3,9 @@ package fr.abes.periscope.core.service;
 import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionSort;
 import fr.abes.periscope.core.entity.Notice;
+import fr.abes.periscope.core.entity.v1.NoticeV1;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
+import fr.abes.periscope.core.entity.v2.NoticeV2;
 import fr.abes.periscope.core.entity.v2.solr.FacetteSolr;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
 import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
@@ -48,11 +50,12 @@ public class NoticeStoreService {
     /**
      * Retourne une liste de Notice en fonction des critères de recherche,
      * du critère de tri et du numéro de page     *
-     * @param repository Repository à utiliser
-     * @param criteria Les critères de recherche
+     *
+     * @param repository   Repository à utiliser
+     * @param criteria     Les critères de recherche
      * @param criteriaSort Les critères de tri
-     * @param page     Numéro de page
-     * @param size     Nombre d'élément
+     * @param page         Numéro de page
+     * @param size         Nombre d'élément
      * @return List<Notice> Liste de Notice répondant aux critères de recherche
      * @throws IllegalArgumentException Si le repository ne peut pas être décodé
      */
@@ -64,37 +67,39 @@ public class NoticeStoreService {
         switch (repository) {
             case "v1":
                 List<NoticeV1Solr> noticesV1 = noticeV1Repository.findNoticesByCriteria(criteria, Sort.by(orders), PageRequest.of(page, size));
-                return noticeMapper.mapList(noticesV1,Notice.class);
+                return noticeMapper.mapList(noticesV1, Notice.class);
             case "v2":
                 List<NoticeV2Solr> noticesV2 = noticeV2Repository.findNoticesByCriteria(criteria, Sort.by(orders), PageRequest.of(page, size));
-                return noticeMapper.mapList(noticesV2,Notice.class);
+                return noticeMapper.mapList(noticesV2, Notice.class);
             default:
-                throw new IllegalArgumentException("Unable to decode repository :"+repository);
+                throw new IllegalArgumentException("Unable to decode repository :" + repository);
         }
     }
 
     /**
      * Retourne une liste de Notice en fonction des critères de recherche,
      * du critère de tri et du numéro de page avec le repository par défaut     *
-     * @param criteria Les critères de recherche
+     *
+     * @param criteria     Les critères de recherche
      * @param criteriaSort Les critères de tri
-     * @param page     Numéro de page
-     * @param size     Nombre d'élément
+     * @param page         Numéro de page
+     * @param size         Nombre d'élément
      * @return List<Notice> Liste de Notice répondant aux critères de recherche
      */
     @TrackExecutionTime
     public List<Notice> findNoticesByCriteria(List<Criterion> criteria, List<CriterionSort> criteriaSort, int page, int size) {
-        return findNoticesByCriteria(DEFAULT_REPOSITORY,criteria,criteriaSort,page,size);
+        return findNoticesByCriteria(DEFAULT_REPOSITORY, criteria, criteriaSort, page, size);
     }
 
     /**
      * Retourne une liste de notices, une liste de facettes et le nombre de pages total
      * en fonction des critères de recherche, des critères de tri et du numéro de page (fonctionne uniquement sur la V2 de l'API)
+     *
      * @param criteriaNotice les critères de recherche
-     * @param facettes liste des facettes (uniquement sur des zones de la notice bibliographique)
+     * @param facettes       liste des facettes (uniquement sur des zones de la notice bibliographique)
      * @param criterionSorts les critères de tri
-     * @param page numéro de page
-     * @param size nombre d'élément par page
+     * @param page           numéro de page
+     * @param size           nombre d'élément par page
      * @return list de résultat comprendre la liste des notices, la liste des facettes et le nombre de page total du jeu de résultat
      */
     public ResultSolr findNoticesWithFacets(List<Criterion> criteriaNotice, List<String> facettes, List<CriterionSort> criterionSorts, int page, int size) {
@@ -118,23 +123,26 @@ public class NoticeStoreService {
 
     /**
      * Méthode permettant de construire le json correspondant au résultat de la requête
+     *
      * @param noticesWithFacet Listes des notices et des facettes
      * @return le résultat mappé
      */
     private ResultSolr getResultFromQueryFacet(FacetPage<NoticeV2Solr> noticesWithFacet) {
         ResultSolr result = new ResultSolr();
-        result.setNotices(noticeMapper.mapList(noticesWithFacet.getContent(), Notice.class));
+        result.setNotices(noticeMapper.mapList(noticesWithFacet.getContent(), NoticeV2.class));
         result.setNbPages(noticesWithFacet.getTotalPages());
 
         List<Page<FacetFieldEntry>> resultFacettes = new ArrayList<>(noticesWithFacet.getFacetResultPages());
         resultFacettes.forEach(f -> {
-            FacetteSolr facetteSolr = new FacetteSolr(f.getContent().get(0).getKey().getName());
-            f.getContent().forEach(field -> {
-                Map<String, Integer> map = new HashMap<>();
-                map.put(field.getValue(), (int) field.getValueCount());
-                facetteSolr.addValeurs(map);
-            });
-            result.addFacette(facetteSolr);
+            if (f.getContent().size() > 0) {
+                FacetteSolr facetteSolr = new FacetteSolr(f.getContent().get(0).getKey().getName());
+                f.getContent().forEach(field -> {
+                    Map<String, Integer> map = new HashMap<>();
+                    map.put(field.getValue(), (int) field.getValueCount());
+                    facetteSolr.addValeurs(map);
+                });
+                result.addFacette(facetteSolr);
+            }
         });
         return result;
     }

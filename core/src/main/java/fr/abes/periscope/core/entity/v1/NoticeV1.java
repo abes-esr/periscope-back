@@ -2,6 +2,7 @@ package fr.abes.periscope.core.entity.v1;
 
 import fr.abes.periscope.core.entity.Notice;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
@@ -13,7 +14,21 @@ import java.util.Set;
 @Getter
 @Setter
 @Deprecated
+@NoArgsConstructor
 public class NoticeV1 extends Notice {
+    private String keyShortedTitle;
+
+    private String properTitle;
+
+    private String titleFromDifferentAuthor;
+
+    private String parallelTitle;
+
+    private String titleComplement;
+
+    private String sectionTitle;
+
+    private String keyTitleQualifer;
 
     private Set<String> rcrList = new HashSet<>();
 

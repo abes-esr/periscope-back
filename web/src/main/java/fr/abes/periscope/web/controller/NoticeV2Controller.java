@@ -55,7 +55,7 @@ public class NoticeV2Controller extends NoticeAbstractController {
      * @param page Numéro de la page (URL)
      * @param size Nombre d'élement (URL)
      * @param requestParameters Paramètre de la requêtes (body-content)
-     * @return List<NoticeWebV1Dto> Liste de Notices V2 au format DTO
+     * @return List<NoticeWebV2Dto> Liste de Notices V2 au format DTO
      */
     @PostMapping("/notice/findByCriteria")
     public List<NoticeWebV2Dto> findNoticesbyCriteria(@RequestParam int page, @RequestParam int size, @RequestBody @Valid RequestParameters requestParameters) {
