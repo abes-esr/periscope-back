@@ -64,6 +64,14 @@ public class NoticeV2Controller extends NoticeAbstractController {
         return dtoMapper.mapList(candidate, NoticeWebV2Dto.class);
     }
 
+    /**
+     * Rechercher des notices par des critères de recherche et des tris, possibilité de rajouter des facettes
+     * @param page numéro de la page (URL)
+     * @param size nombre d'éléments (URL)
+     * @param requestParameters paramètre de la requête (body-content)
+     *                          Liste des critères de tris acceptés : title_type, ppn, issn, language, country, document_type, support_type, editor, title, start_year, end_year (case insensitive)
+     * @return ResultWebDto : structure contenant la liste des notices, le nombre total de pages et les facettes
+     */
     @PostMapping("/notice/findByCriteriaWithFacets")
     public ResultWebDto findNoticesByCriteriaWithFacets(@RequestParam int page, @RequestParam int size, @RequestBody @Valid RequestParameters requestParameters) {
         handleParameters(requestParameters);

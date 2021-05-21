@@ -12,7 +12,7 @@ import lombok.Setter;
 public class PublicationYear {
 
     /** Année de publication */
-    private Integer year;
+    private String year;
 
     /**
      * Indice de confiance entre 0 et 100.
@@ -35,7 +35,7 @@ public class PublicationYear {
      * @param candidateYear Année de publication
      * @param candidateConfidenceIndex Indice de confiance
      */
-    public PublicationYear(int candidateYear, int candidateConfidenceIndex) {
+    public PublicationYear(String candidateYear, int candidateConfidenceIndex) {
         this.year = candidateYear;
         if (candidateConfidenceIndex < 0 || candidateConfidenceIndex > 100) {
             throw new IllegalPublicationYearException("Confidence index is out of range [0:100]");

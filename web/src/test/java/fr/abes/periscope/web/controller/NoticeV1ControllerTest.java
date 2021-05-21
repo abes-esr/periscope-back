@@ -211,7 +211,6 @@ public class NoticeV1ControllerTest extends PeriscopeApplicationTest {
 
     @Test
     @DisplayName("POST findByCriteria - bon JSON")
-    @EnableOnIntegrationTest
     public void findByCriteriaPostMethodGoodJSON() throws Exception {
         String json = "{\n" +
                 "    \"criteres\":\n" +

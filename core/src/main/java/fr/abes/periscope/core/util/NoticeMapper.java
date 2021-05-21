@@ -203,7 +203,6 @@ public class NoticeMapper {
     public PublicationYear buildStartPublicationYear(String value) throws IllegalPublicationYearException {
         String yearCode = value.substring(8, 9);
         String candidateYear;
-        PublicationYear year = new PublicationYear();
         switch (yearCode) {
             case "b":
             case "a":
@@ -279,17 +278,18 @@ public class NoticeMapper {
      */
     private PublicationYear extractDate(String candidateYear) throws IllegalPublicationYearException {
         PublicationYear year = new PublicationYear();
+        if (candidateYear.equals("    ")) return year;
         if (candidateYear.charAt(2) == ' ' && candidateYear.charAt(3) == ' ') {
-            year.setYear(Integer.valueOf(candidateYear.substring(0, 2)));
+            year.setYear(candidateYear.substring(0, 2) + "XX");
             year.setConfidenceIndex(100);
         } else if (candidateYear.charAt(2) == ' ') {
             new IllegalPublicationYearException("Unable to decode year format like" + candidateYear);
 
         } else if (candidateYear.charAt(3) == ' ') {
-            year.setYear(Integer.valueOf(candidateYear.substring(0, 3)));
+            year.setYear(candidateYear.substring(0, 3) + "X");
             year.setConfidenceIndex(10);
         } else {
-            year.setYear(Integer.valueOf(candidateYear.substring(0, 4)));
+            year.setYear(candidateYear.substring(0, 4));
             year.setConfidenceIndex(0);
         }
         return year;
@@ -303,19 +303,24 @@ public class NoticeMapper {
      * @throws IllegalPublicationYearException
      */
     private PublicationYear extractCaseF(String candidateOldestYear, String candidateNewestYear) throws IllegalPublicationYearException {
-        int cdtOldestYear = Integer.parseInt(candidateOldestYear.trim());
+        int cdtOldestYear = (candidateOldestYear.equals("    ")) ? 0 : Integer.parseInt(candidateOldestYear.trim());
         int cdtNewestYear = (candidateNewestYear.equals("    ")) ? 9999 : Integer.parseInt(candidateNewestYear.trim());
         PublicationYear year = new PublicationYear();
         if (cdtOldestYear > cdtNewestYear) {
             throw new IllegalPublicationYearException("Oldest Year can't be superior to newest Year");
         }
-        year.setYear(cdtOldestYear);
-        if (cdtNewestYear != 9999)
+        if (cdtOldestYear == 0) {
+            year.setYear(candidateNewestYear);
+        } else {
+            year.setYear(candidateOldestYear);
+        }
+        if (cdtNewestYear != 9999 && cdtOldestYear != 0)
             year.setConfidenceIndex(cdtNewestYear - cdtOldestYear);
         else
             year.setConfidenceIndex(0);
         return year;
     }
+
 
     /**
      * Extrait l'URL vers MIRABEL

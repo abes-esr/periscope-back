@@ -132,7 +132,7 @@ public class NoticeV2Solr implements Serializable {
 
     @Field(NoticeV2SolrField.START_YEAR)
     @Indexed(name = NoticeV2SolrField.START_YEAR)
-    protected Integer startYear;
+    protected String startYear;
 
     @Field(NoticeV2SolrField.START_YEAR_CONFIDENCE_INDEX)
     @Indexed(name = NoticeV2SolrField.START_YEAR_CONFIDENCE_INDEX)
@@ -140,7 +140,7 @@ public class NoticeV2Solr implements Serializable {
 
     @Field(NoticeV2SolrField.END_YEAR)
     @Indexed(name = NoticeV2SolrField.END_YEAR)
-    protected Integer endYear;
+    protected String endYear;
 
     @Field(NoticeV2SolrField.END_YEAR_CONFIDENCE_INDEX)
     @Indexed(name = NoticeV2SolrField.END_YEAR_CONFIDENCE_INDEX)

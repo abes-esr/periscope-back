@@ -108,7 +108,7 @@ public class NoticeWebV2Dto {
     private PublicationYear endYear;
 
     @JsonGetter("date_debut")
-    protected Integer getStartYear() {
+    protected String getStartYear() {
         if (startYear == null) {
             return null;
         } else {
@@ -126,7 +126,7 @@ public class NoticeWebV2Dto {
     }
 
     @JsonGetter("date_fin")
-    protected Integer getEndYear() {
+    protected String getEndYear() {
         if (endYear == null) {
             return null;
         } else {

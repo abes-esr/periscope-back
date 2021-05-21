@@ -63,7 +63,7 @@ public class NoticeWebV1Dto {
     private PublicationYear endYear;
 
     @JsonGetter("date_debut")
-    protected Integer getStartYear() {
+    protected String getStartYear() {
         return startYear.getYear();
     }
 
@@ -73,7 +73,7 @@ public class NoticeWebV1Dto {
     }
 
     @JsonGetter("date_fin")
-    protected Integer getEndYear() {
+    protected String getEndYear() {
         return endYear.getYear();
     }
 

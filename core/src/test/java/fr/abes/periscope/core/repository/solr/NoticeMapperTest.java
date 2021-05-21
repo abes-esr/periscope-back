@@ -30,9 +30,9 @@ public class NoticeMapperTest {
     public void testDeadTitle() throws ParseException {
 
         String input = "19970418b19972004k y0frey50 ba";
-        Integer expectedStartYear = 1997;
+        String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
-        Integer expectedEndYear = 2004;
+        String expectedEndYear = "2004";
         Integer expectedEndYearConfidenceIndex = 0;
 
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
@@ -52,9 +52,9 @@ public class NoticeMapperTest {
     @DisplayName("Titre mort avec année de début approximative (décennie)")
     public void testDeatTitleWithApproximateStartYear1() throws ParseException {
         String input = "19970418b199 2004k y0frey50 ba";
-        Integer expectedStartYear = 199;
+        String expectedStartYear = "199X";
         Integer expectedStartYearConfidenceIndex = 10;
-        Integer expectedEndYear = 2004;
+        String expectedEndYear = "2004";
         Integer expectedEndYearConfidenceIndex = 0;
 
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
@@ -74,9 +74,9 @@ public class NoticeMapperTest {
     @DisplayName("Titre mort avec année de début approximative (siècle)")
     public void testDeatTitleWithApproximateStartYear2() throws ParseException {
         String input = "19970418b19  2004k y0frey50 ba";
-        Integer expectedStartYear = 19;
+        String expectedStartYear = "19XX";
         Integer expectedStartYearConfidenceIndex = 100;
-        Integer expectedEndYear = 2004;
+        String expectedEndYear = "2004";
         Integer expectedEndYearConfidenceIndex = 0;
 
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
@@ -96,9 +96,9 @@ public class NoticeMapperTest {
     @DisplayName("Titre mort avec année de fin approximative (décennie)")
     public void testDeatTitleWithApproximateEndYear1() throws ParseException {
         String input = "19970418b1997200 k y0frey50 ba";
-        Integer expectedStartYear = 1997;
+        String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
-        Integer expectedEndYear = 200;
+        String expectedEndYear = "200X";
         Integer expectedEndYearConfidenceIndex = 10;
 
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
@@ -118,9 +118,9 @@ public class NoticeMapperTest {
     @DisplayName("Titre mort avec année de fin approximative (siècle)")
     public void testDeatTitleWithApproximateEndYear2() throws ParseException {
         String input = "19970418b199720  k y0frey50 ba";
-        Integer expectedStartYear = 1997;
+        String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
-        Integer expectedEndYear = 20;
+        String expectedEndYear = "20XX";
         Integer expectedEndYearConfidenceIndex = 100;
 
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
@@ -140,7 +140,7 @@ public class NoticeMapperTest {
     @Test
     public void testOngoingResource() throws ParseException {
         String input = "19970418a19979999k y0frey50 ba";
-        Integer expectedStartYear = 1997;
+        String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
 
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
@@ -171,7 +171,7 @@ public class NoticeMapperTest {
     @Test
     public void testOnGoingResourceWithUnknownSituation() throws ParseException {
         String input = "19970418c1997    k y0frey50 ba";
-        Integer expectedStartYear = 1997;
+        String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
 
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
@@ -202,7 +202,7 @@ public class NoticeMapperTest {
     @Test
     public void testReproduction() throws ParseException {
         String input = "19970418e19972000k y0frey50 ba";
-        Integer expectedStartYear = 1997;
+        String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
 
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
@@ -222,7 +222,7 @@ public class NoticeMapperTest {
     @Test
     public void testMonographyWithUncertainDate() throws ParseException {
         String input = "19970418f19972000k y0frey50 ba";
-        Integer expectedStartYear = 1997;
+        String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 3;
 
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
@@ -241,7 +241,7 @@ public class NoticeMapperTest {
     @Test
     public void testMonographyWithUncertainDateAndNoEndDate() throws ParseException {
         String input = "19970418f1997    k y0frey50 ba";
-        Integer expectedStartYear = 1997;
+        String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
 
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
@@ -260,7 +260,7 @@ public class NoticeMapperTest {
     @Test
     public void testMonographyOnManyYears() throws ParseException {
         String input = "19970418g19979999k y0frey50 ba";
-        Integer expectedStartYear = 1997;
+        String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
 
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
@@ -279,9 +279,9 @@ public class NoticeMapperTest {
     @Test
     public void testMonographyOnManyYearsStillInProgress() throws ParseException {
         String input = "19970418g19971998k y0frey50 ba";
-        Integer expectedStartYear = 1997;
+        String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
-        Integer expectedEndYear = 1998;
+        String expectedEndYear = "1998";
         Integer expectedEndYearConfidenceIndex = 0;
 
         PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
