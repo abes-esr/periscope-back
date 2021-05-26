@@ -41,7 +41,8 @@ public class NoticeV2ControllerTest extends PeriscopeApplicationTest {
                 "   \"facettes\":\n" +
                 "   [\n" +
                 "       {\"zone\":\"DOCUMENT_TYPE\"},\n" +
-                "       {\"zone\":\"NB_LOC\"}\n" +
+                "       {\"zone\":\"NB_LOC\"},\n" +
+                "       {\"zone\":\"COUNTRY\"}\n" +
                 "   ]\n" +
                 "}\n";
 

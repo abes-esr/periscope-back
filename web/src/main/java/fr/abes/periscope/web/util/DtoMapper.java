@@ -10,6 +10,7 @@ import fr.abes.periscope.core.exception.*;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
 import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.dto.criterion.*;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
  * Utilitaire de mapping de objets Entité (core) et des objets DTO (API)
  */
 @Service
+@Slf4j
 public class DtoMapper {
 
     @Autowired
@@ -65,9 +67,17 @@ public class DtoMapper {
                 resultWebDto.setNotices(mapList(resultSolr.getNotices(), NoticeWebV2Dto.class));
                 resultSolr.getFacettes().forEach(f -> {
                     FacetteWebDto facetteWebDto = new FacetteWebDto();
-                    facetteWebDto.setZone(f.getZone());
+                    Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
+                        try {
+                            if (field.get(null).equals(f.getZone())) {
+                                facetteWebDto.setZone(field.getName());
+                            }
+                        } catch (IllegalAccessException e) {
+                            log.error("Impossible de récupérer la facette " + f.getZone());
+                        }
+                    });
                     Iterator<Map<String, Integer>> itValeurs = f.getValeurs().iterator();
-                    while (itValeurs.hasNext())  {
+                    while (itValeurs.hasNext()) {
                         Map<String, Integer> val = itValeurs.next();
                         FacetteContentWebDto mapCleValeur = new FacetteContentWebDto();
                         Iterator<String> itKey = val.keySet().iterator();
@@ -124,6 +134,7 @@ public class DtoMapper {
         };
         modelMapper.addConverter(myConverter);
     }
+
     /**
      * Convertisseur pour les critères de tri
      * On vérifie la definition des champs depuis la classe NoticeV1SolrField ou NoticeV2SolrField en fonction de la version
@@ -208,7 +219,7 @@ public class DtoMapper {
             public String convert(MappingContext<CriterionFacetteWebDto, String> context) {
                 CriterionFacetteWebDto s = context.getSource();
                 if (!Arrays.stream(NoticeV2SolrField.class.getDeclaredFields()).anyMatch(f -> f.getName().toLowerCase(Locale.ROOT).equals(s.getZone().toLowerCase(Locale.ROOT)))
-                    && (!Arrays.stream(ItemSolrField.class.getDeclaredFields()).anyMatch(f -> f.getName().toLowerCase(Locale.ROOT).equals(s.getZone().toLowerCase(Locale.ROOT))))) {
+                        && (!Arrays.stream(ItemSolrField.class.getDeclaredFields()).anyMatch(f -> f.getName().toLowerCase(Locale.ROOT).equals(s.getZone().toLowerCase(Locale.ROOT))))) {
                     throw new IllegalFacetteException("Facette : " + s.getZone() + " non disponible dans le schéma d'indexation");
                 }
                 return s.getZone();
