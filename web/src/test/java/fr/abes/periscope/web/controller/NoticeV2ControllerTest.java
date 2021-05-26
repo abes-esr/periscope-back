@@ -36,7 +36,8 @@ public class NoticeV2ControllerTest extends PeriscopeApplicationTest {
                 "    \"tri\":\n" +
                 "    [\n" +
                 "        {\"sort\":\"TITLE\",\"order\":\"ASC\"},\n" +
-                "        {\"sort\":\"EDITOR\",\"order\":\"DESC\"}\n" +
+                "        {\"sort\":\"EDITOR\",\"order\":\"DESC\"},\n" +
+                "        {\"sort\":\"NB_LOC\",\"order\":\"DESC\"}\n" +
                 "    ],\n" +
                 "   \"facettes\":\n" +
                 "   [\n" +

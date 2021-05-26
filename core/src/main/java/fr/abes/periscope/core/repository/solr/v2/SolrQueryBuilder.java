@@ -574,7 +574,7 @@ public class SolrQueryBuilder {
                     try {
                         options.addFacetOnField((String) field.get(null));
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        log.error("Impossible d'accéder à la facette " + field.getName());
                     }
                 }
             });
@@ -604,7 +604,7 @@ public class SolrQueryBuilder {
                     try {
                         queryFacet +=  "&child.facet.field=" + solrField.get(null);
                     } catch (IllegalAccessException e) {
-                        e.printStackTrace();
+                        log.error("Impossible d'accéder à la facette " + solrField.getName());
                     }
                 }
             }

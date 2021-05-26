@@ -1,6 +1,7 @@
 package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.*;
+import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.v2.Item;
 import fr.abes.periscope.core.entity.v2.NoticeV2;
 import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
@@ -206,6 +207,8 @@ public class DtoMapper {
                 return NoticeV2SolrField.START_YEAR;
             case "end_year":
                 return NoticeV2SolrField.END_YEAR;
+            case "nb_loc":
+                return NoticeV2SolrField.NB_LOC;
             default:
                 throw new IllegalSortException(s.getSort() + " : Critère de tri inconnu");
         }
