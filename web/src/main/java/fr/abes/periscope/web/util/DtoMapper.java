@@ -64,6 +64,7 @@ public class DtoMapper {
             public ResultWebDto convert(MappingContext<ResultSolr, ResultWebDto> mappingContext) {
                 ResultSolr resultSolr = mappingContext.getSource();
                 ResultWebDto resultWebDto = new ResultWebDto();
+                resultWebDto.setNbPages(resultSolr.getNbPages());
                 resultWebDto.setNotices(mapList(resultSolr.getNotices(), NoticeWebV2Dto.class));
                 resultSolr.getFacettes().forEach(f -> {
                     FacetteWebDto facetteWebDto = new FacetteWebDto();
@@ -90,6 +91,7 @@ public class DtoMapper {
                     }
                     resultWebDto.addFacette(facetteWebDto);
                 });
+
                 return resultWebDto;
             }
         };
