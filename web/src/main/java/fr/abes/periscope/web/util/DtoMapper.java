@@ -5,10 +5,10 @@ import fr.abes.periscope.core.entity.v2.Item;
 import fr.abes.periscope.core.entity.v2.NoticeV2;
 import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
 import fr.abes.periscope.core.exception.*;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
-import fr.abes.periscope.web.dto.ItemWebDto;
-import fr.abes.periscope.web.dto.NoticeWebV2Dto;
+import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.dto.criterion.*;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -18,10 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -56,6 +53,37 @@ public class DtoMapper {
                 .stream()
                 .map(element -> modelMapper.map(element, targetClass))
                 .collect(Collectors.toList());
+    }
+
+    @Bean
+    public void converterResultWebDto() {
+        Converter<ResultSolr, ResultWebDto> myConverter = new Converter<ResultSolr, ResultWebDto>() {
+            @Override
+            public ResultWebDto convert(MappingContext<ResultSolr, ResultWebDto> mappingContext) {
+                ResultSolr resultSolr = mappingContext.getSource();
+                ResultWebDto resultWebDto = new ResultWebDto();
+                resultWebDto.setNotices(mapList(resultSolr.getNotices(), NoticeWebV2Dto.class));
+                resultSolr.getFacettes().forEach(f -> {
+                    FacetteWebDto facetteWebDto = new FacetteWebDto();
+                    facetteWebDto.setZone(f.getZone());
+                    Iterator<Map<String, Integer>> itValeurs = f.getValeurs().iterator();
+                    while (itValeurs.hasNext())  {
+                        Map<String, Integer> val = itValeurs.next();
+                        FacetteContentWebDto mapCleValeur = new FacetteContentWebDto();
+                        Iterator<String> itKey = val.keySet().iterator();
+                        while (itKey.hasNext()) {
+                            String key = itKey.next();
+                            mapCleValeur.setKey(key);
+                            mapCleValeur.setOccurrence(val.get(key));
+                        }
+                        facetteWebDto.addValeur(mapCleValeur);
+                    }
+                    resultWebDto.addFacette(facetteWebDto);
+                });
+                return resultWebDto;
+            }
+        };
+        modelMapper.addConverter(myConverter);
     }
 
     @Bean
@@ -179,8 +207,8 @@ public class DtoMapper {
             @Override
             public String convert(MappingContext<CriterionFacetteWebDto, String> context) {
                 CriterionFacetteWebDto s = context.getSource();
-                if (!Arrays.stream(NoticeV2SolrField.class.getDeclaredFields()).anyMatch(f -> f.getName().equals(s.getZone()))
-                    && (!Arrays.stream(ItemSolrField.class.getDeclaredFields()).anyMatch(f -> f.getName().equals(s.getZone())))) {
+                if (!Arrays.stream(NoticeV2SolrField.class.getDeclaredFields()).anyMatch(f -> f.getName().toLowerCase(Locale.ROOT).equals(s.getZone().toLowerCase(Locale.ROOT)))
+                    && (!Arrays.stream(ItemSolrField.class.getDeclaredFields()).anyMatch(f -> f.getName().toLowerCase(Locale.ROOT).equals(s.getZone().toLowerCase(Locale.ROOT))))) {
                     throw new IllegalFacetteException("Facette : " + s.getZone() + " non disponible dans le schéma d'indexation");
                 }
                 return s.getZone();

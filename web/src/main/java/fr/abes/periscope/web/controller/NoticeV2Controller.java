@@ -6,7 +6,6 @@ import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
 import fr.abes.periscope.core.service.NoticeStoreService;
-import fr.abes.periscope.web.dto.FacetteWebDto;
 import fr.abes.periscope.web.dto.NoticeWebV2Dto;
 import fr.abes.periscope.web.dto.RequestParameters;
 import fr.abes.periscope.web.dto.ResultWebDto;

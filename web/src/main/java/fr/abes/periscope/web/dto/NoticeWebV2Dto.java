@@ -16,7 +16,8 @@ import java.util.Set;
 /**
  * Représente un Notice V2 au format JSON de l'API
  */
-@Getter @Setter
+@Getter
+@Setter
 public class NoticeWebV2Dto {
 
     @JsonProperty("ppn")
@@ -57,34 +58,27 @@ public class NoticeWebV2Dto {
         String titre = this.titreCle;
         if (titre != null && !titre.isEmpty() && this.titreCleQualifie != null) {
             titre += " " + this.titreCleQualifie;
+            return titre;
         }
         if (titre == null || titre.isEmpty()) {
             if (this.titreCleCourt != null && !this.titreCleCourt.isEmpty()) {
-                titre = this.titreCleCourt;
+                return this.titreCleCourt;
             }
-        }
 
-        if (titre == null || titre.isEmpty()) {
             if (this.titrePropre != null && !this.titrePropre.isEmpty()) {
-                titre = this.titrePropre;
+                return this.titrePropre;
             }
-        }
 
-        if (titre == null || titre.isEmpty()) {
             if (this.titreAuteurDifferent != null && !this.titreAuteurDifferent.isEmpty()) {
-                titre = this.titreAuteurDifferent;
+                return this.titreAuteurDifferent;
             }
-        }
 
-        if (titre == null || titre.isEmpty()) {
             if (this.titreParallele != null && !this.titreParallele.isEmpty()) {
-                titre = this.titreParallele;
+                return this.titreParallele;
             }
-        }
 
-        if (titre == null || titre.isEmpty()) {
             if (this.titreComplement != null && !this.titreComplement.isEmpty()) {
-                titre = this.titreComplement;
+                return this.titreComplement;
             }
         }
         return titre;
@@ -158,7 +152,7 @@ public class NoticeWebV2Dto {
         HashSet<String> list = new HashSet<>();
 
         Iterator<ItemWebDto> itemIterator = getItems().iterator();
-        while(itemIterator.hasNext()) {
+        while (itemIterator.hasNext()) {
             ItemWebDto item = itemIterator.next();
             if (item.getPcp() != null)
                 list.add(item.getPcp());
@@ -174,7 +168,7 @@ public class NoticeWebV2Dto {
         HashSet<String> list = new HashSet<>();
 
         Iterator<ItemWebDto> itemIterator = getItems().iterator();
-        while(itemIterator.hasNext()) {
+        while (itemIterator.hasNext()) {
             ItemWebDto item = itemIterator.next();
             list.add(item.getRcr());
         }

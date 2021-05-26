@@ -12,6 +12,7 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Représente un constructeur de requête SolR pour Periscope V2
@@ -569,7 +570,7 @@ public class SolrQueryBuilder {
             String f = itFacet.next();
             //cas ou la facette est une zone de la notice bibliographique
             Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
-                if (field.getName().equals(f)) {
+                if (field.getName().toLowerCase(Locale.ROOT).equals(f.toLowerCase(Locale.ROOT))) {
                     try {
                         options.addFacetOnField((String) field.get(null));
                     } catch (IllegalAccessException e) {
