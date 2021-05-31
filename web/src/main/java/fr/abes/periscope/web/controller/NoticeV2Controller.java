@@ -84,6 +84,7 @@ public class NoticeV2Controller extends NoticeAbstractController {
 
         LinkedList<CriterionSortWebDto> userSortCriteria = requestParameters.getSortCriteria();
         if (userSortCriteria != null && !userSortCriteria.isEmpty()) {
+            this.sortCriteria.clear(); // On vide le tampon
             Iterator<CriterionSortWebDto> userSortCriteriaIterator = userSortCriteria.iterator();
             while (userSortCriteriaIterator.hasNext()) {
                 CriterionSortWebDto sortCriterion = userSortCriteriaIterator.next();
@@ -96,6 +97,7 @@ public class NoticeV2Controller extends NoticeAbstractController {
 
         LinkedList<CriterionFacetteWebDto> facettesCriteria = requestParameters.getFacetCriteria();
         if (facettesCriteria != null && !facettesCriteria.isEmpty()) {
+            this.facettes.clear(); // On vide le tampon
             Iterator<CriterionFacetteWebDto> facettesCriteriaIterator = facettesCriteria.iterator();
             while (facettesCriteriaIterator.hasNext()) {
                 CriterionFacetteWebDto facetteCriterion = facettesCriteriaIterator.next();
