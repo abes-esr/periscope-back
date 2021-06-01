@@ -52,7 +52,8 @@ public class NoticeV2ControllerTest extends PeriscopeApplicationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.notice").isNotEmpty())
                 .andExpect(jsonPath("$.facettes").isNotEmpty())
-                .andExpect(jsonPath("$.nbPages").isNumber());
+                .andExpect(jsonPath("$.nbPages").isNumber())
+                .andExpect(jsonPath("$.nbNotices").isNumber());
 
     }
 

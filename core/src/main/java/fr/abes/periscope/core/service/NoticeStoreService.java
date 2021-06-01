@@ -131,6 +131,7 @@ public class NoticeStoreService {
         ResultSolr result = new ResultSolr();
         result.setNotices(noticeMapper.mapList(noticesWithFacet.getContent(), NoticeV2.class));
         result.setNbPages(noticesWithFacet.getTotalPages());
+        result.setNbNotices(noticesWithFacet.getTotalElements());
 
         List<Page<FacetFieldEntry>> resultFacettes = new ArrayList<>(noticesWithFacet.getFacetResultPages());
         resultFacettes.forEach(f -> {

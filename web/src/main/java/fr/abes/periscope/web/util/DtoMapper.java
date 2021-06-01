@@ -66,6 +66,7 @@ public class DtoMapper {
                 ResultSolr resultSolr = mappingContext.getSource();
                 ResultWebDto resultWebDto = new ResultWebDto();
                 resultWebDto.setNbPages(resultSolr.getNbPages());
+                resultWebDto.setNbNotices(resultSolr.getNbNotices());
                 resultWebDto.setNotices(mapList(resultSolr.getNotices(), NoticeWebV2Dto.class));
                 resultSolr.getFacettes().forEach(f -> {
                     FacetteWebDto facetteWebDto = new FacetteWebDto();

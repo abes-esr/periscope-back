@@ -16,6 +16,8 @@ public class ResultWebDto {
     private List<FacetteWebDto> facettes = new ArrayList<>();
     @JsonProperty("nbPages")
     private int nbPages;
+    @JsonProperty("nbNotices")
+    private long nbNotices;
 
     public void addFacette(FacetteWebDto facette) {
         this.facettes.add(facette);
