@@ -16,7 +16,7 @@ public abstract class Notice {
 
     protected String issn;
 
-    protected String editor;
+    protected String publisher;
 
     protected String keyTitle;
 

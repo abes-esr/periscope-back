@@ -1,8 +1,6 @@
 package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.v2.Item;
 import fr.abes.periscope.core.entity.v2.NoticeV2;
 import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
@@ -109,7 +107,7 @@ public class DtoMapper {
                 NoticeWebV2Dto noticeWeb = new NoticeWebV2Dto();
                 noticeWeb.setPpn(notice.getPpn());
                 noticeWeb.setIssn(notice.getIssn());
-                noticeWeb.setEditeur(notice.getEditor());
+                noticeWeb.setEditeur(notice.getPublisher());
                 noticeWeb.setTitrePropre(notice.getProperTitle());
                 noticeWeb.setTitreAuteurDifferent(notice.getTitleFromDifferentAuthor());
                 noticeWeb.setTitreParallele(notice.getParallelTitle());

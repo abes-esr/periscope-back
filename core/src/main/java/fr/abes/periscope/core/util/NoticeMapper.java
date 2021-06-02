@@ -83,7 +83,7 @@ public class NoticeMapper {
                     target.setIssn((source.getIssn()));
                     target.setPcpList(source.getPcpList());
                     target.setRcrList(source.getRcrList());
-                    target.setEditor(source.getEditor());
+                    target.setPublisher(source.getEditor());
                     target.setKeyTitle(source.getKeyTitle());
                     target.setKeyShortedTitle(source.getKeyShortedTitle());
                     target.setProperTitle(source.getProperTitle());
@@ -159,7 +159,7 @@ public class NoticeMapper {
                         target.addItem(item);
                     }
 
-                    target.setEditor(source.getEditorForDisplay());
+                    target.setPublisher(source.getEditorForDisplay());
                     target.setKeyTitle(source.getKeyTitle());
                     target.setKeyShortedTitle(source.getKeyShortedTitleForDisplay());
                     target.setProperTitle(source.getProperTitleForDisplay());
