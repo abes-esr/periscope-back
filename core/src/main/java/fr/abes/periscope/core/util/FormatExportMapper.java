@@ -291,7 +291,10 @@ public class FormatExportMapper {
         int annee = 0;
         int mois = 0;
         int jour = 1;
+        //flag d'un intervalle ouvert
         boolean intervalleOuvert = false;
+        //flag d'un jour présent dans la 955 (pour gérer le cas ou le mois est fourni sans le jour)
+        boolean jourPresent = false;
         while (subFieldIterator.hasNext()) {
             SubField subField = subFieldIterator.next();
             if (subField.getCode().equalsIgnoreCase("g")) {
@@ -333,6 +336,7 @@ public class FormatExportMapper {
                     //jour
                     if (subField.getCode().equalsIgnoreCase("k")) {
                         jour = Integer.parseInt(subField.getValue());
+                        jourPresent = true;
                     }
                     //annee
                     if (subField.getCode().equalsIgnoreCase("i")) {
@@ -343,18 +347,24 @@ public class FormatExportMapper {
             sousZonePrecedente = subField.getCode().toLowerCase(Locale.ROOT);
             if (sousZonePrecedente.equals("i")) {
                 if (bloc instanceof BlocDebut) {
-                    dateBloc = new GregorianCalendar(annee, (mois != 0) ? mois : 0, (jour != 0) ? jour : 1);
+                    dateBloc = new GregorianCalendar(annee, (mois != 0) ? mois : Calendar.JANUARY, jour);
                     bloc.setDate(dateBloc);
                     sequence.setBlocDebut((BlocDebut) bloc);
                     bloc = new BlocFin();
                 } else {
-                    dateBloc = new GregorianCalendar(annee, (mois != 0) ? mois : Calendar.DECEMBER, (jour != 0) ? jour : 31);
+                    dateBloc = new GregorianCalendar(annee, (mois != 0) ? mois : Calendar.DECEMBER, jour);
+                    if (!jourPresent && mois != 0) {
+                        //si le mois est renseigné sans le jour, on renseigne le dernier jour du mois dans la date de fin
+                        //peut arriver sur des revues non quotidiennes
+                        dateBloc.set(Calendar.DAY_OF_MONTH, dateBloc.getActualMaximum(Calendar.DAY_OF_MONTH));
+                    }
                     bloc.setDate(dateBloc);
                     sequence.setBlocFin((BlocFin) bloc);
                 }
                 annee = 0;
                 mois = 0;
                 jour = 1;
+                jourPresent = false;
             }
         }
         if (sequence.getBlocFin()==null && !intervalleOuvert && sequence.getBlocDebut() != null) {

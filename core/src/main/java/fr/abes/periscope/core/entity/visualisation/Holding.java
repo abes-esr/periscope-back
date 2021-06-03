@@ -116,13 +116,4 @@ public class Holding {
         newListeSequence.add(sequenceFin);
         return newListeSequence;
     }
-
-    /**
-     * Méthode de construction du texte de l'état de collection global de l'exemplaire au format HTML
-     * @return l'état de collection complet formatté avec la prise en compte des textes de lacunes et des codes couleurs
-     */
-    public String getTextEtatCollectionHTML() {
-        return "";
-    }
-
 }

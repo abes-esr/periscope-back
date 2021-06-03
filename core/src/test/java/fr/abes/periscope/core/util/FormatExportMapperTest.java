@@ -2,14 +2,12 @@ package fr.abes.periscope.core.util;
 
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import fr.abes.periscope.core.entity.visualisation.Holding;
 import fr.abes.periscope.core.entity.visualisation.Lacune;
 import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
 import fr.abes.periscope.core.entity.visualisation.Sequence;
 import fr.abes.periscope.core.entity.xml.NoticeXml;
 import fr.abes.periscope.core.exception.IllegalHoldingException;
 import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -96,7 +94,7 @@ public class FormatExportMapperTest {
 
         Calendar calendar = new GregorianCalendar(2000, Calendar.JANUARY, 28);
         Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(sequence.getBlocDebut().getDate().getTime()));
-        calendar =  new GregorianCalendar(2017, Calendar.MARCH, 31);
+        calendar =  new GregorianCalendar(2017, Calendar.FEBRUARY, 28);
         Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(sequence.getBlocFin().getDate().getTime()));
 
         Assertions.assertEquals("23", sequence.getBlocDebut().getVolume());
