@@ -13,7 +13,7 @@ public class HoldingTest {
 
     private Holding holding = new Holding();
 
-    @BeforeEach
+    /*@BeforeEach
     void init() {
         //Création d'un holding de base pour les tests
         Sequence sequence1 = new Sequence();
@@ -46,5 +46,5 @@ public class HoldingTest {
     @DisplayName("test ordonnancement des séquences")
     void testOrdoSequence() {
         this.holding.getSequencesOrdonnees();
-    }
+    }*/
 }

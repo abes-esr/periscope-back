@@ -23,6 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 import static fr.abes.periscope.core.entity.EnumMonth.*;
@@ -32,7 +33,7 @@ import static fr.abes.periscope.core.entity.EnumMonth.*;
  */
 @Component
 @Slf4j
-public class FormatExportMapper {
+public class NoticeFormatExportMapper {
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
@@ -224,9 +225,6 @@ public class FormatExportMapper {
 
                             if (holding == null) {
                                 holding = new Holding(epn);
-                            } else {
-                                //on supprime l'exemplaire pour pouvoir le rajouter une fois le traitement terminé
-                                target.getHoldings().remove(holding);
                             }
 
                             handleHolding(dataField, epn, holding);
@@ -260,7 +258,7 @@ public class FormatExportMapper {
                 holding.addSequence(genererEtatCollection(dataField));
             } else {
                 if (dataField.getTag().equalsIgnoreCase("959")) {
-                    holding.setLacune(genererLacunes(dataField));
+                    genererLacunes(holding, dataField);
                 } else {
                     // On itère sur les autres sous-zone
                     for (SubField subField : dataField.getSubFields()) {
@@ -282,11 +280,10 @@ public class FormatExportMapper {
      * @return : la sequence générée
      * @throws IllegalHoldingException si une erreur est détectée dans la 955
      */
-    Sequence genererEtatCollection(DataField dataField) throws IllegalHoldingException {
+    SequenceContinue genererEtatCollection(DataField dataField) throws IllegalHoldingException {
         Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
         String sousZonePrecedente;
-        Sequence sequence = new Sequence();
-        Bloc bloc = new BlocDebut();
+        SequenceContinue sequence = new SequenceContinue();
         Calendar dateBloc;
         int annee = 0;
         int mois = 0;
@@ -295,6 +292,18 @@ public class FormatExportMapper {
         boolean intervalleOuvert = false;
         //flag d'un jour présent dans la 955 (pour gérer le cas ou le mois est fourni sans le jour)
         boolean jourPresent = false;
+
+        // Compteurs d'occurence des balises
+        int rCount = 0;
+        int wCount = 0;
+        int zCount = 0;
+        int fiveCount = 0;
+        int aCount = 0;
+        int bCount = 0;
+        int jCount = 0;
+        int kCount = 0;
+        int iCount = 0;
+
         while (subFieldIterator.hasNext()) {
             SubField subField = subFieldIterator.next();
             if (subField.getCode().equalsIgnoreCase("g")) {
@@ -318,16 +327,26 @@ public class FormatExportMapper {
                     if (subField.getValue() == null) {
                         //si on a une sous zone vide l'intervalle ouvert sans date de fin, on sort de la boucle
                         intervalleOuvert = true;
-                        sequence.setBlocFin(null);
+                        sequence.setEndDate(null);
                         break;
                     }
                     //volume
                     if (subField.getCode().equalsIgnoreCase("a")) {
-                        bloc.setVolume(subField.getValue());
+                        if (aCount == 0) { //Première fois qu'on rencontre la balise
+                            sequence.setStartVolume(subField.getValue());
+                        } else if (aCount == 1) {
+                            sequence.setEndVolume(subField.getValue());
+                        }
+                        aCount++;
                     }
                     //numéro
                     if (subField.getCode().equalsIgnoreCase("b")) {
-                        bloc.setNumero(subField.getValue());
+                        if (bCount == 0) { //Première fois qu'on rencontre la balise
+                            sequence.setStartNumero(subField.getValue());
+                        } else if (bCount == 1) {
+                            sequence.setEndNumero(subField.getValue());
+                        }
+                        bCount++;
                     }
                     //mois
                     if (subField.getCode().equalsIgnoreCase("j")) {
@@ -346,67 +365,64 @@ public class FormatExportMapper {
             }
             sousZonePrecedente = subField.getCode().toLowerCase(Locale.ROOT);
             if (sousZonePrecedente.equals("i")) {
-                if (bloc instanceof BlocDebut) {
+                if (iCount == 0) { //Première fois qu'on rencontre la balise
                     dateBloc = new GregorianCalendar(annee, (mois != 0) ? mois : Calendar.JANUARY, jour);
-                    bloc.setDate(dateBloc);
-                    sequence.setBlocDebut((BlocDebut) bloc);
-                    bloc = new BlocFin();
-                } else {
+                    sequence.setStartDate(dateBloc);
+                } else if (iCount == 1) {
                     dateBloc = new GregorianCalendar(annee, (mois != 0) ? mois : Calendar.DECEMBER, jour);
                     if (!jourPresent && mois != 0) {
                         //si le mois est renseigné sans le jour, on renseigne le dernier jour du mois dans la date de fin
                         //peut arriver sur des revues non quotidiennes
                         dateBloc.set(Calendar.DAY_OF_MONTH, dateBloc.getActualMaximum(Calendar.DAY_OF_MONTH));
                     }
-                    bloc.setDate(dateBloc);
-                    sequence.setBlocFin((BlocFin) bloc);
+                    sequence.setEndDate(dateBloc);
                 }
+                iCount++;
+
                 annee = 0;
                 mois = 0;
                 jour = 1;
                 jourPresent = false;
+
             }
         }
-        if (sequence.getBlocFin()==null && !intervalleOuvert && sequence.getBlocDebut() != null) {
+        if (sequence.getEndDate() == null && !intervalleOuvert && sequence.getStartDate() != null) {
             //si le bloc de fin est null et qu'on n'est pas dans le cas d'un intervalle ouvert, on doit fermer la séquence au 31/12 de l'année du bloc de début
-            sequence.setBlocFin(new BlocFin(new GregorianCalendar(sequence.getBlocDebut().getDate().get(Calendar.YEAR), Calendar.DECEMBER, 31), "", ""));
+            sequence.setEndDate(new GregorianCalendar(sequence.getStartDate().get(Calendar.YEAR), Calendar.DECEMBER, 31));
         }
         return sequence;
     }
 
-    Lacune genererLacunes(DataField dataField) throws IllegalHoldingException {
-        Lacune lacune = new Lacune();
-
+    void genererLacunes(Holding holding, DataField dataField) throws IllegalHoldingException {
+        SequenceLacune sequence = new SequenceLacune();
         Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-        BlocDebut blocDates = new BlocDebut();
         int mois = 0;
         int jour = 1;
         int annee = 0;
+
         while (subFieldIterator.hasNext()) {
             SubField subField = subFieldIterator.next();
 
             switch (subField.getCode()) {
                 case "r":
-                    lacune.setCommentaire(subField.getValue());
+                    holding.setCommentaire(subField.getValue());
                     break;
                 case "5":
                     break;
                 default:
                     if (subField.getCode().equals("0")) {
                         //si on arrive sur une $0, on crée un nouveau bloc
-                        Calendar dateBloc = new GregorianCalendar(annee, mois, jour);
-                        blocDates.setDate(dateBloc);
-                        lacune.addBloc(blocDates);
-                        blocDates = new BlocDebut();
-                        annee = 0;
-                        mois = 0;
-                        jour = 1;
+                        sequence.setStartDate(new GregorianCalendar(annee, mois, jour));
+                        holding.addSequence(sequence);
+                        sequence = new SequenceLacune();
+                        //Calendar dateBloc = new GregorianCalendar(startAnnee, startMois, startJour);
+                        // sequence.setStartDate(dateBloc);
                     }
                     if (subField.getCode().equalsIgnoreCase("d")) {
-                        blocDates.setVolume(subField.getValue());
+                        sequence.setStartVolume(subField.getValue());
                     }
                     if (subField.getCode().equalsIgnoreCase("e")) {
-                        blocDates.setNumero(subField.getValue());
+                        sequence.setStartNumero(subField.getValue());
                     }
                     if (subField.getCode().equalsIgnoreCase("c")) {
                         mois = getMoisFromEnum(EnumUtils.getEnum(EnumMonth.class, subField.getValue()));
@@ -419,13 +435,10 @@ public class FormatExportMapper {
                     }
             }
         }
+
         //ajout du dernier bloc qui n'est pas ajouté en début de boucle
-        if (blocDates != null) {
-            Calendar dateBloc = new GregorianCalendar(annee, mois, jour);
-            blocDates.setDate(dateBloc);
-            lacune.addBloc(blocDates);
-        }
-        return lacune;
+        sequence.setStartDate(new GregorianCalendar(annee, mois, jour));
+        holding.addSequence(sequence);
     }
 
     private Integer getMoisFromEnum(EnumMonth anEnum) {

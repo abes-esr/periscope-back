@@ -1,6 +1,5 @@
 package fr.abes.periscope.core.entity.visualisation;
 
-import fr.abes.periscope.core.entity.Notice;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,17 +7,8 @@ import lombok.NoArgsConstructor;
 import java.util.Calendar;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-public abstract class Sequence {
-    protected Calendar startDate;
-    protected String startVolume;
-    protected String startNumero;
-
-    protected Calendar endDate;
-    protected String endVolume;
-    protected String endNumero;
-    protected String note;
+public class SequenceMissing extends Sequence {
 
     @Override
     public boolean equals(Object obj) {
@@ -35,10 +25,5 @@ public abstract class Sequence {
         }
 
         return startDate.equals(((Sequence) obj).startDate) ;
-    }
-
-    @Override
-    public String toString() {
-        return "Sequence {"+ "startDate="+ startDate.getTime() +", endDate="+ endDate.getTime() +"}";
     }
 }

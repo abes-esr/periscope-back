@@ -1,5 +1,6 @@
 package fr.abes.periscope.core.entity.visualisation;
 
+import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.PublicationYear;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,11 +10,7 @@ import java.util.List;
 
 @Getter
 @Setter
-public class NoticeVisu {
-
-    private String ppn;
-
-    private String issn;
+public class NoticeVisu extends Notice {
 
     private String editor;
 
@@ -31,6 +28,10 @@ public class NoticeVisu {
 
     private String keyTitleQualifer;
 
+    private String language;
+
+    private String country;
+
     private String keyTitle;
 
     private String frequency;
@@ -39,11 +40,7 @@ public class NoticeVisu {
 
     private String supportType;
 
-    private PublicationYear startYear;
-
-    private PublicationYear endYear;
-
-    private List<Holding> holdings = new ArrayList<>();
+    protected List<Holding> holdings = new ArrayList<>();
 
     public void addHolding(Holding holding) {
         this.holdings.add(holding);

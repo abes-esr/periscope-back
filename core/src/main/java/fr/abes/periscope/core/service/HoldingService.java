@@ -3,17 +3,17 @@ package fr.abes.periscope.core.service;
 import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
 import fr.abes.periscope.core.entity.xml.NoticesBibio;
 import fr.abes.periscope.core.repository.baseXml.NoticesBibioRepository;
-import fr.abes.periscope.core.util.FormatExportMapper;
+import fr.abes.periscope.core.util.NoticeFormatExportMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class HoldingService {
-    private FormatExportMapper mapper;
+    private NoticeFormatExportMapper mapper;
     private NoticesBibioRepository repository;
 
     @Autowired
-    public HoldingService(FormatExportMapper mapper, NoticesBibioRepository repository) {
+    public HoldingService(NoticeFormatExportMapper mapper, NoticesBibioRepository repository) {
         this.mapper = mapper;
         this.repository = repository;
     }
