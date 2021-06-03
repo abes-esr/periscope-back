@@ -1,13 +1,17 @@
 package fr.abes.periscope.core.entity.visualisation;
 
-import fr.abes.periscope.core.entity.EnumMonth;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Calendar;
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Bloc {
+    private Calendar date;
     private String volume;
     private String numero;
-    private Integer annee;
-    private Integer jour;
-    private EnumMonth mois;
+
 }

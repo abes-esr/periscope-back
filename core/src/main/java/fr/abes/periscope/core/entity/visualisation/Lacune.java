@@ -4,6 +4,7 @@ import lombok.Data;
 import org.apache.solr.client.solrj.beans.Field;
 
 import javax.persistence.Id;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class Lacune {
     private String commentaire;
 
     public Lacune() {
-        blocs = new LinkedList<>();
+        blocs = new ArrayList<>();
     }
 
     public void addBloc(BlocDebut bloc) {

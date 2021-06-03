@@ -4,6 +4,7 @@ import fr.abes.periscope.core.entity.PublicationYear;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -42,7 +43,7 @@ public class NoticeVisu {
 
     private PublicationYear endYear;
 
-    private List<Holding> holdings;
+    private List<Holding> holdings = new ArrayList<>();
 
     public void addHolding(Holding holding) {
         this.holdings.add(holding);

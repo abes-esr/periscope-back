@@ -1,10 +1,13 @@
 package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.*;
+import fr.abes.periscope.core.entity.PublicationYear;
 import fr.abes.periscope.core.entity.v2.NoticeV2;
 import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
+import fr.abes.periscope.core.entity.visualisation.Holding;
+import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
 import fr.abes.periscope.core.exception.*;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
 import fr.abes.periscope.web.dto.*;
@@ -167,6 +170,11 @@ public class DtoMapper {
         modelMapper.addConverter(myConverter);
     }
 
+    /**
+     * Méthode de récupération d'un critère de tri pour la v1 de périscope
+     * @param s critère de tri
+     * @return valeur dans NoticeV1SolrField correspondant au critère saisi
+     */
     private String getSortFieldForV1(CriterionSortWebDto s) {
         Iterator<Field> it = Arrays.stream(NoticeV1SolrField.class.getDeclaredFields()).iterator();
         while (it.hasNext()) {
@@ -182,6 +190,11 @@ public class DtoMapper {
         return "";
     }
 
+    /**
+     * Méthode de récupération d'un critère de tri pour la v2 de périscope
+     * @param s critère de tri
+     * @return valeur dans NoticeV2SolrField correspondant au critère saisi
+     */
     private String getSortFieldForV2(CriterionSortWebDto s) {
         switch (s.getSort().toLowerCase(Locale.ROOT)) {
             case "title_type":
@@ -503,5 +516,40 @@ public class DtoMapper {
             }
         };
         modelMapper.addConverter(myConverter);
+    }
+
+
+    private Integer getDiffEndYearStartYear(PublicationYear startYear, PublicationYear endYear) {
+        return Integer.parseInt(endYear.getYear()) - Integer.parseInt(startYear.getYear());
+    }
+
+    private String getTitre(NoticeVisu noticeVisu) {
+        String titre = noticeVisu.getKeyTitle();
+        if (titre != null && !titre.isEmpty() && noticeVisu.getKeyTitleQualifer() != null) {
+            titre += " " + noticeVisu.getKeyTitleQualifer();
+            return titre;
+        }
+        if (titre == null || titre.isEmpty()) {
+            if (noticeVisu.getKeyShortedTitle() != null && !noticeVisu.getKeyShortedTitle().isEmpty()) {
+                return noticeVisu.getKeyShortedTitle();
+            }
+
+            if (noticeVisu.getProperTitle() != null && !noticeVisu.getProperTitle().isEmpty()) {
+                return noticeVisu.getProperTitle();
+            }
+
+            if (noticeVisu.getTitleFromDifferentAuthor() != null && !noticeVisu.getTitleFromDifferentAuthor().isEmpty()) {
+                return noticeVisu.getTitleFromDifferentAuthor();
+            }
+
+            if (noticeVisu.getParallelTitle() != null && !noticeVisu.getParallelTitle().isEmpty()) {
+                return noticeVisu.getParallelTitle();
+            }
+
+            if (noticeVisu.getTitleComplement() != null && !noticeVisu.getTitleComplement().isEmpty()) {
+                return noticeVisu.getTitleComplement();
+            }
+        }
+        return titre;
     }
 }

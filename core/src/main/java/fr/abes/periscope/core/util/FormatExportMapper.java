@@ -22,17 +22,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
+
+import static fr.abes.periscope.core.entity.EnumMonth.*;
 
 /**
  * Convertisseurs entre les notices issues de la base XML et les notices pour PERISCOPE
  */
 @Component
 @Slf4j
-public class BaseXmlMapper {
+public class FormatExportMapper {
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
@@ -67,7 +67,7 @@ public class BaseXmlMapper {
     }
 
     /**
-     * Convertisseur pour les notices XML vers les notices SolR avec des exemplaires
+     * Convertisseur pour les notices XML vers les notices de visualisation
      */
     @Bean
     public void converterNoticeXML() {
@@ -84,16 +84,11 @@ public class BaseXmlMapper {
                     target.setPpn(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().orElseThrow().getValue());
 
                     // Champs data fields
-                    Iterator<DataField> iterator = source.getDataFields().iterator();
-                    while (iterator.hasNext()) {
-                        DataField dataField = iterator.next();
-
+                    for (DataField dataField : source.getDataFields()) {
                         // Zone 011
                         if (dataField.getTag().equalsIgnoreCase("011")) {
 
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 011-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
                                     target.setIssn(subField.getValue());
@@ -103,10 +98,7 @@ public class BaseXmlMapper {
 
                         // Zone 100
                         if (dataField.getTag().equalsIgnoreCase("100")) {
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 100-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
                                     String value = subField.getValue();
@@ -134,10 +126,7 @@ public class BaseXmlMapper {
 
                         // Zone 110
                         if (dataField.getTag().equalsIgnoreCase("110")) {
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 110-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
                                     target.setContinuousType(extractOnGoingResourceType(subField.getValue()));
@@ -148,10 +137,7 @@ public class BaseXmlMapper {
                         // Zone 200
                         if (dataField.getTag().equalsIgnoreCase("200")) {
 
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 200-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
                                     if (target.getProperTitle() == null) {
@@ -167,40 +153,28 @@ public class BaseXmlMapper {
                                 }
 
                                 // zone 200-d
-                                if (subField.getCode().equalsIgnoreCase("d")) {
-                                    if (target.getParallelTitle() == null) {
-                                        target.setParallelTitle(subField.getValue());
-                                    }
+                                if (subField.getCode().equalsIgnoreCase("d") && (target.getParallelTitle() == null)) {
+                                    target.setParallelTitle(subField.getValue());
                                 }
 
                                 // zone 200-e
-                                if (subField.getCode().equalsIgnoreCase("e")) {
-                                    if (target.getTitleComplement() == null) {
-                                        target.setTitleComplement(subField.getValue());
-                                    }
+                                if (subField.getCode().equalsIgnoreCase("e") && (target.getTitleComplement() == null)) {
+                                    target.setTitleComplement(subField.getValue());
                                 }
 
                                 // zone 200-i
-                                if (subField.getCode().equalsIgnoreCase("i")) {
-                                    if (target.getSectionTitle() == null) {
-                                        target.setSectionTitle(subField.getValue());
-                                    }
+                                if (subField.getCode().equalsIgnoreCase("i") && (target.getSectionTitle() == null)) {
+                                    target.setSectionTitle(subField.getValue());
                                 }
                             }
                         }
 
                         // Zone 210
                         if (dataField.getTag().equalsIgnoreCase("210")) {
-
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 210-c
-                                if (subField.getCode().equalsIgnoreCase("c")) {
-                                    if (target.getEditor() == null) {
-                                        target.setEditor(subField.getValue());
-                                    }
+                                if (subField.getCode().equalsIgnoreCase("c") && (target.getEditor() == null)) {
+                                    target.setEditor(subField.getValue());
                                 }
                             }
                         }
@@ -208,10 +182,7 @@ public class BaseXmlMapper {
                         // Zone 530
                         if (dataField.getTag().equalsIgnoreCase("530")) {
 
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 530-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
                                     target.setKeyTitle(subField.getValue());
@@ -227,9 +198,7 @@ public class BaseXmlMapper {
                         // Zone 531
                         if (dataField.getTag().equalsIgnoreCase("531")) {
 
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
+                            for (SubField subField : dataField.getSubFields()) {
                                 if (target.getKeyShortedTitle() == null) {
                                     target.setKeyShortedTitle(subField.getValue());
                                 }
@@ -255,40 +224,21 @@ public class BaseXmlMapper {
 
                             if (holding == null) {
                                 holding = new Holding(epn);
+                            } else {
+                                //on supprime l'exemplaire pour pouvoir le rajouter une fois le traitement terminé
+                                target.getHoldings().remove(holding);
                             }
-                            try {
-                                if (dataField.getTag().equalsIgnoreCase("955")) {
-                                    holding.addSequence(genererEtatCollection(dataField));
-                                }
 
-                                if (dataField.getTag().equalsIgnoreCase("959")) {
-                                    holding.setLacune(genererLacunes(dataField));
-                                }
-                            } catch (IllegalHoldingException ex) {
-                                holding.addErreur("Erreur sur état de collection epn " + epn + " : " + ex.getMessage());
-                            }
-                            // On itère sur les autres sous-zone
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
-                                if (dataField.getTag().equalsIgnoreCase("930")) {
-                                    if (subField.getCode().equalsIgnoreCase("b")) {
-                                        holding.setRcr(subField.getValue());
-                                    }
-                                }
-                            }
+                            handleHolding(dataField, epn, holding);
                             target.addHolding(holding);
                         }
                     }
-
-
                     return target;
 
                 } catch (NullPointerException ex) {
-                    throw new MappingException(Arrays.asList(new ErrorMessage("NoticeSolr has null field")));
+                    throw new MappingException(Collections.singletonList(new ErrorMessage("Notice has null field")));
                 } catch (Exception ex) {
-                    throw new MappingException(Arrays.asList(new ErrorMessage(ex.getMessage())));
+                    throw new MappingException(Collections.singletonList(new ErrorMessage(ex.getMessage())));
                 }
 
             }
@@ -297,11 +247,51 @@ public class BaseXmlMapper {
     }
 
 
-    Sequence genererEtatCollection(DataField dataField) {
+    /**
+     * Méthode de mapping d'une zone d'exemplaire
+     *
+     * @param dataField zone du format d'export à mapper
+     * @param epn       identifiant de l'exemplaire
+     * @param holding   objet exemplaire
+     */
+    private void handleHolding(DataField dataField, String epn, Holding holding) {
+        try {
+            if (dataField.getTag().equalsIgnoreCase("955")) {
+                holding.addSequence(genererEtatCollection(dataField));
+            } else {
+                if (dataField.getTag().equalsIgnoreCase("959")) {
+                    holding.setLacune(genererLacunes(dataField));
+                } else {
+                    // On itère sur les autres sous-zone
+                    for (SubField subField : dataField.getSubFields()) {
+                        if (dataField.getTag().equalsIgnoreCase("930") && (subField.getCode().equalsIgnoreCase("b"))) {
+                            holding.setRcr(subField.getValue());
+                        }
+                    }
+                }
+            }
+        } catch (IllegalHoldingException ex) {
+            holding.addErreur("Erreur sur état de collection epn " + epn + " : " + ex.getMessage());
+        }
+    }
+
+    /**
+     * Méthode permettant de générer une séquence d'un état de collection contenu dans une 955 du format d'export
+     *
+     * @param dataField : la zone 955 à parser
+     * @return : la sequence générée
+     * @throws IllegalHoldingException si une erreur est détectée dans la 955
+     */
+    Sequence genererEtatCollection(DataField dataField) throws IllegalHoldingException {
         Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-        String sousZonePrecedente = "i";
-        Bloc blocDates = new BlocDebut();
+        String sousZonePrecedente;
         Sequence sequence = new Sequence();
+        Bloc bloc = new BlocDebut();
+        Calendar dateBloc;
+        int annee = 0;
+        int mois = 0;
+        int jour = 1;
+        boolean intervalleOuvert = false;
         while (subFieldIterator.hasNext()) {
             SubField subField = subFieldIterator.next();
             if (subField.getCode().equalsIgnoreCase("g")) {
@@ -322,56 +312,69 @@ public class BaseXmlMapper {
                 case "5":
                     break;
                 default:
-                    if (sousZonePrecedente.equals("i")) {
-                        //si la sous zone précédente est une $i, on est dans un nouveau bloc de numérotation
-                        if (sequence.getBlocDebut() != null) {
-                            //si le bloc de début existe, on crée un bloc de fin
-                            blocDates = new BlocFin();
-                            sequence.setBlocFin((BlocFin) blocDates);
-                        } else {
-                            blocDates = new BlocDebut();
-                            sequence.setBlocDebut((BlocDebut) blocDates);
-                        }
+                    if (subField.getValue() == null) {
+                        //si on a une sous zone vide l'intervalle ouvert sans date de fin, on sort de la boucle
+                        intervalleOuvert = true;
+                        sequence.setBlocFin(null);
+                        break;
                     }
+                    //volume
                     if (subField.getCode().equalsIgnoreCase("a")) {
-                        blocDates.setVolume(subField.getValue());
-                        sousZonePrecedente = "a";
+                        bloc.setVolume(subField.getValue());
                     }
+                    //numéro
                     if (subField.getCode().equalsIgnoreCase("b")) {
-                        blocDates.setNumero(subField.getValue());
-                        sousZonePrecedente = "b";
+                        bloc.setNumero(subField.getValue());
                     }
+                    //mois
                     if (subField.getCode().equalsIgnoreCase("j")) {
-                        if (EnumUtils.isValidEnum(EnumMonth.class, subField.getValue())) {
-                            blocDates.setMois(EnumUtils.getEnum(EnumMonth.class, subField.getValue()));
-                        } else {
-                            if (blocDates instanceof BlocDebut)
-                                throw new IllegalHoldingException("Erreur dans la zone 955 : valeur non autorisée en $c");
-                            else
-                                throw new IllegalHoldingException("Erreur dans la zone 955 : valeur non autorisée en $m");
-                        }
-                        sousZonePrecedente = "j";
+                        mois = getMoisFromEnum(EnumUtils.getEnum(EnumMonth.class, subField.getValue()));
                     }
+                    //jour
                     if (subField.getCode().equalsIgnoreCase("k")) {
-                        blocDates.setJour(Integer.parseInt(subField.getValue()));
-                        sousZonePrecedente = "k";
+                        jour = Integer.parseInt(subField.getValue());
                     }
+                    //annee
                     if (subField.getCode().equalsIgnoreCase("i")) {
-                        blocDates.setAnnee(Integer.parseInt(subField.getValue()));
-                        sousZonePrecedente = "i";
+                        annee = Integer.parseInt(subField.getValue());
                     }
+
             }
+            sousZonePrecedente = subField.getCode().toLowerCase(Locale.ROOT);
+            if (sousZonePrecedente.equals("i")) {
+                if (bloc instanceof BlocDebut) {
+                    dateBloc = new GregorianCalendar(annee, (mois != 0) ? mois : 0, (jour != 0) ? jour : 1);
+                    bloc.setDate(dateBloc);
+                    sequence.setBlocDebut((BlocDebut) bloc);
+                    bloc = new BlocFin();
+                } else {
+                    dateBloc = new GregorianCalendar(annee, (mois != 0) ? mois : Calendar.DECEMBER, (jour != 0) ? jour : 31);
+                    bloc.setDate(dateBloc);
+                    sequence.setBlocFin((BlocFin) bloc);
+                }
+                annee = 0;
+                mois = 0;
+                jour = 1;
+            }
+        }
+        if (sequence.getBlocFin()==null && !intervalleOuvert && sequence.getBlocDebut() != null) {
+            //si le bloc de fin est null et qu'on n'est pas dans le cas d'un intervalle ouvert, on doit fermer la séquence au 31/12 de l'année du bloc de début
+            sequence.setBlocFin(new BlocFin(new GregorianCalendar(sequence.getBlocDebut().getDate().get(Calendar.YEAR), Calendar.DECEMBER, 31), "", ""));
         }
         return sequence;
     }
 
-    Lacune genererLacunes(DataField dataField) {
+    Lacune genererLacunes(DataField dataField) throws IllegalHoldingException {
         Lacune lacune = new Lacune();
 
         Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
         BlocDebut blocDates = new BlocDebut();
+        int mois = 0;
+        int jour = 1;
+        int annee = 0;
         while (subFieldIterator.hasNext()) {
             SubField subField = subFieldIterator.next();
+
             switch (subField.getCode()) {
                 case "r":
                     lacune.setCommentaire(subField.getValue());
@@ -381,8 +384,13 @@ public class BaseXmlMapper {
                 default:
                     if (subField.getCode().equals("0")) {
                         //si on arrive sur une $0, on crée un nouveau bloc
+                        Calendar dateBloc = new GregorianCalendar(annee, mois, jour);
+                        blocDates.setDate(dateBloc);
                         lacune.addBloc(blocDates);
                         blocDates = new BlocDebut();
+                        annee = 0;
+                        mois = 0;
+                        jour = 1;
                     }
                     if (subField.getCode().equalsIgnoreCase("d")) {
                         blocDates.setVolume(subField.getValue());
@@ -391,24 +399,56 @@ public class BaseXmlMapper {
                         blocDates.setNumero(subField.getValue());
                     }
                     if (subField.getCode().equalsIgnoreCase("c")) {
-                        if (EnumUtils.isValidEnum(EnumMonth.class, subField.getValue())) {
-                            blocDates.setMois(EnumUtils.getEnum(EnumMonth.class, subField.getValue()));
-                        } else {
-                            throw new IllegalHoldingException("Erreur dans la zone 959 : valeur non autorisée en $c");
-                        }
+                        mois = getMoisFromEnum(EnumUtils.getEnum(EnumMonth.class, subField.getValue()));
                     }
                     if (subField.getCode().equalsIgnoreCase("b")) {
-                        blocDates.setJour(Integer.parseInt(subField.getValue()));
+                        jour = Integer.parseInt(subField.getValue());
                     }
                     if (subField.getCode().equalsIgnoreCase("a")) {
-                        blocDates.setAnnee(Integer.parseInt(subField.getValue()));
+                        annee = Integer.parseInt(subField.getValue());
                     }
             }
         }
+        //ajout du dernier bloc qui n'est pas ajouté en début de boucle
         if (blocDates != null) {
+            Calendar dateBloc = new GregorianCalendar(annee, mois, jour);
+            blocDates.setDate(dateBloc);
             lacune.addBloc(blocDates);
         }
         return lacune;
+    }
+
+    private Integer getMoisFromEnum(EnumMonth anEnum) {
+        try {
+            switch (anEnum) {
+                case jan:
+                    return Calendar.JANUARY;
+                case fev:
+                    return Calendar.FEBRUARY;
+                case mar:
+                    return Calendar.MARCH;
+                case avr:
+                    return Calendar.APRIL;
+                case mai:
+                    return Calendar.MAY;
+                case jun:
+                    return Calendar.JUNE;
+                case jul:
+                    return Calendar.JULY;
+                case aou:
+                    return Calendar.AUGUST;
+                case sep:
+                    return Calendar.SEPTEMBER;
+                case oct:
+                    return Calendar.OCTOBER;
+                case nov:
+                    return Calendar.NOVEMBER;
+                default:
+                    return Calendar.DECEMBER;
+            }
+        } catch (NullPointerException ex) {
+            throw new IllegalHoldingException("Erreur dans la zone 959 : valeur non autorisée en $c");
+        }
     }
 
     /**
