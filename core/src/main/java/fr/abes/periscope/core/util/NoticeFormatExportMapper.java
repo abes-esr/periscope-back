@@ -23,10 +23,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.*;
-import java.util.logging.Logger;
 import java.util.stream.Collectors;
-
-import static fr.abes.periscope.core.entity.EnumMonth.*;
 
 /**
  * Convertisseurs entre les notices issues de la base XML et les notices pour PERISCOPE
@@ -35,7 +32,7 @@ import static fr.abes.periscope.core.entity.EnumMonth.*;
 @Slf4j
 public class NoticeFormatExportMapper {
     @Bean
-    public ModelMapper modelMapper() {
+    public ModelMapper NoticeFormatExportmodelMapper() {
         return new ModelMapper();
     }
 
@@ -131,6 +128,7 @@ public class NoticeFormatExportMapper {
                                 // zone 110-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
                                     target.setContinuousType(extractOnGoingResourceType(subField.getValue()));
+                                    target.setFrequency(extractFrequency(subField.getValue()));
                                 }
                             }
                         }
@@ -220,7 +218,7 @@ public class NoticeFormatExportMapper {
                             String epn = specimenIdField.getValue().split(":")[1];
 
                             // On récupère l'exemplaire ou on le crée s'il n'existe pas
-                            Holding holding = target.getHoldings().stream().filter(elm -> elm.getId().equalsIgnoreCase(epn))
+                            Holding holding = target.getHoldings().stream().filter(elm -> elm.getEpn().equalsIgnoreCase(epn))
                                     .findAny().orElse(null);
 
                             if (holding == null) {
@@ -255,7 +253,10 @@ public class NoticeFormatExportMapper {
     private void handleHolding(DataField dataField, String epn, Holding holding) {
         try {
             if (dataField.getTag().equalsIgnoreCase("955")) {
-                holding.addSequence(genererEtatCollection(dataField));
+                Sequence sequence = genererEtatCollection(holding, dataField);
+                if (sequence.getStartDate() != null)
+                    //on ajout la séquence uniquement si elle a une date de début pour gérer le cas ou la 955 n'a que des sous zones de note
+                    holding.addSequence(sequence);
             } else {
                 if (dataField.getTag().equalsIgnoreCase("959")) {
                     genererLacunes(holding, dataField);
@@ -280,7 +281,7 @@ public class NoticeFormatExportMapper {
      * @return : la sequence générée
      * @throws IllegalHoldingException si une erreur est détectée dans la 955
      */
-    SequenceContinue genererEtatCollection(DataField dataField) throws IllegalHoldingException {
+    SequenceContinue genererEtatCollection(Holding holding, DataField dataField) throws IllegalHoldingException {
         Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
         String sousZonePrecedente;
         SequenceContinue sequence = new SequenceContinue();
@@ -294,14 +295,8 @@ public class NoticeFormatExportMapper {
         boolean jourPresent = false;
 
         // Compteurs d'occurence des balises
-        int rCount = 0;
-        int wCount = 0;
-        int zCount = 0;
-        int fiveCount = 0;
         int aCount = 0;
         int bCount = 0;
-        int jCount = 0;
-        int kCount = 0;
         int iCount = 0;
 
         while (subFieldIterator.hasNext()) {
@@ -313,13 +308,13 @@ public class NoticeFormatExportMapper {
             }
             switch (subField.getCode()) {
                 case "r":
-                    sequence.setTexteEtatCollectionZone(subField.getValue());
+                    holding.setTextEtatCollection(subField.getValue());
                     break;
                 case "w":
-                    sequence.setMentionDeLacune(subField.getValue());
+                    holding.setMentionDeLacune(subField.getValue());
                     break;
                 case "z":
-                    sequence.setNote(subField.getValue());
+                    holding.setNote(subField.getValue());
                     break;
                 case "5":
                     break;
@@ -383,7 +378,6 @@ public class NoticeFormatExportMapper {
                 mois = 0;
                 jour = 1;
                 jourPresent = false;
-
             }
         }
         if (sequence.getEndDate() == null && !intervalleOuvert && sequence.getStartDate() != null) {
@@ -405,7 +399,7 @@ public class NoticeFormatExportMapper {
 
             switch (subField.getCode()) {
                 case "r":
-                    holding.setCommentaire(subField.getValue());
+                    holding.setTextLacune(subField.getValue());
                     break;
                 case "5":
                     break;
@@ -635,6 +629,10 @@ public class NoticeFormatExportMapper {
             default:
                 return OnGoingResourceType.X;
         }
+    }
+
+    private String extractFrequency(String value) {
+        return null;
     }
 
     public String extractSupportType(String typeSupport) {

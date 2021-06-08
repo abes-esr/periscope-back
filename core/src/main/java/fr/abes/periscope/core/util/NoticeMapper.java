@@ -5,7 +5,7 @@ import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.entity.PublicationYear;
 import fr.abes.periscope.core.entity.v1.NoticeV1;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
-import fr.abes.periscope.core.entity.v2.Item;
+import fr.abes.periscope.core.entity.Item;
 import fr.abes.periscope.core.entity.v2.NoticeV2;
 import fr.abes.periscope.core.entity.v2.solr.ItemSolr;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
@@ -150,7 +150,6 @@ public class NoticeMapper {
                         ItemSolr itemSolR = itemIterator.next();
                         Item item = new Item();
 
-                        item.setId(itemSolR.getId());
                         item.setEpn(itemSolR.getEpn());
                         item.setPpn(itemSolR.getPpn());
                         item.setRcr(itemSolR.getRcr());

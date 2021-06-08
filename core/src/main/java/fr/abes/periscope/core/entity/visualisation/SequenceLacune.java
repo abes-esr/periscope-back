@@ -32,6 +32,6 @@ public class SequenceLacune extends Sequence {
 
     @Override
     public String toString() {
-        return "SequenceLacune {"+ "startDate="+ startDate.getTime() +"}";
+        return "SequenceLacune {"+ "startDate="+ startDate.getTime() +", endDate=" + endDate.getTime() + "}";
     }
 }

@@ -9,12 +9,12 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class HoldingService {
-    private NoticeFormatExportMapper mapper;
+    private NoticeFormatExportMapper noticeFormatExportmodelMapper;
     private NoticesBibioRepository repository;
 
     @Autowired
     public HoldingService(NoticeFormatExportMapper mapper, NoticesBibioRepository repository) {
-        this.mapper = mapper;
+        this.noticeFormatExportmodelMapper = mapper;
         this.repository = repository;
     }
 
@@ -25,6 +25,6 @@ public class HoldingService {
      */
     public NoticeVisu getNoticeWithHoldings(String ppn) {
         NoticesBibio noticesBibio = repository.findFirstByPpn(ppn);
-        return mapper.map(noticesBibio, NoticeVisu.class);
+        return noticeFormatExportmodelMapper.map(noticesBibio, NoticeVisu.class);
     }
 }

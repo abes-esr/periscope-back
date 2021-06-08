@@ -1,19 +1,19 @@
 package fr.abes.periscope.core.entity.visualisation;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Calendar;
-
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
 public class SequenceContinue extends Sequence {
-
-    protected String texteEtatCollectionZone;
-    protected String note;
-    protected String mentionDeLacune;
+    public SequenceContinue(Sequence sequence) {
+        this.startDate = sequence.getStartDate();
+        this.endDate = sequence.getEndDate();
+        this.startNumero = sequence.getStartNumero();
+        this.endNumero = sequence.getEndNumero();
+        this.startVolume = sequence.getStartVolume();
+        this.endVolume = sequence.getEndVolume();
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -34,7 +34,14 @@ public class SequenceContinue extends Sequence {
 
     @Override
     public String toString() {
-        return "Sequence {"+ "startDate="+ startDate.getTime() +", endDate="+ endDate.getTime() +"}";
+        String str = "";
+        if (this.startDate != null) {
+            str += "Sequence {" + "startDate=" + startDate.getTime();
+            if (this.endDate != null) {
+                str += ", endDate=" + endDate.getTime() + "}";
+            }
+        }
+        return str;
     }
 
 }

@@ -7,7 +7,6 @@ import fr.abes.periscope.core.entity.xml.NoticeXml;
 import fr.abes.periscope.core.exception.IllegalHoldingException;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,9 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = NoticeFormatExportMapper.class)
 @ComponentScan(excludeFilters = @ComponentScan.Filter(BaseXMLConfiguration.class))
-public class FormatExportMapperTest {
+public class NoticeFormatExportMapperTest {
     @Autowired
-    private NoticeFormatExportMapper noticeMapper;
+    private NoticeFormatExportMapper noticeFormatExportmodelMapper;
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
@@ -66,8 +65,9 @@ public class FormatExportMapperTest {
         module.setDefaultUseWrapper(false);
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
+        Holding hold = new Holding();
 
-        Sequence sequence = noticeMapper.genererEtatCollection(notice.getDataFields().get(0));
+        Sequence sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0));
 
         Assertions.assertEquals(2000, sequence.getStartDate().get(Calendar.YEAR));
         Assertions.assertEquals(Calendar.JANUARY, sequence.getStartDate().get(Calendar.MONTH));
@@ -88,8 +88,9 @@ public class FormatExportMapperTest {
         module.setDefaultUseWrapper(false);
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
+        Holding hold = new Holding();
 
-        Sequence sequence = noticeMapper.genererEtatCollection(notice.getDataFields().get(0));
+        Sequence sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0));
 
         Calendar calendar = new GregorianCalendar(2000, Calendar.JANUARY, 28);
         Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(sequence.getStartDate().getTime()));
@@ -111,8 +112,9 @@ public class FormatExportMapperTest {
         module.setDefaultUseWrapper(false);
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
+        Holding hold = new Holding();
 
-        Sequence sequence = noticeMapper.genererEtatCollection(notice.getDataFields().get(0));
+        Sequence sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0));
 
         Calendar calendar = new GregorianCalendar(2000, Calendar.JANUARY, 28);
         Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(sequence.getStartDate().getTime()));
@@ -135,8 +137,9 @@ public class FormatExportMapperTest {
         module.setDefaultUseWrapper(false);
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
+        Holding hold = new Holding();
 
-        Sequence sequence = noticeMapper.genererEtatCollection(notice.getDataFields().get(0));
+        Sequence sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0));
 
         Calendar calendar = new GregorianCalendar(2000, Calendar.JANUARY, 1);
         Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(sequence.getStartDate().getTime()));
@@ -152,12 +155,13 @@ public class FormatExportMapperTest {
         module.setDefaultUseWrapper(false);
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
+        Holding hold = new Holding();
 
-        SequenceContinue sequence = noticeMapper.genererEtatCollection(notice.getDataFields().get(0));
+        SequenceContinue sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0));
 
-        Assertions.assertEquals("vol. 23 no. 38 (28-jan-2000)", sequence.getTexteEtatCollectionZone());
-        Assertions.assertEquals("Lacune", sequence.getMentionDeLacune());
-        Assertions.assertEquals("commentaire ensemble", sequence.getNote());
+        Assertions.assertEquals("vol. 23 no. 38 (28-jan-2000)", hold.getTextEtatCollection());
+        Assertions.assertEquals("Lacune", hold.getMentionDeLacune());
+        Assertions.assertEquals("commentaire ensemble", hold.getNote());
     }
 
     @Test
@@ -169,8 +173,9 @@ public class FormatExportMapperTest {
         module.setDefaultUseWrapper(false);
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
+        Holding hold = new Holding();
 
-        assertThrows(IllegalHoldingException.class, () -> noticeMapper.genererEtatCollection(notice.getDataFields().get(0)));
+        assertThrows(IllegalHoldingException.class, () -> noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0)));
     }
 
     @Test
@@ -184,9 +189,9 @@ public class FormatExportMapperTest {
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
         Holding hold = new Holding();
 
-        noticeMapper.genererLacunes(hold, notice.getDataFields().get(0));
+        noticeFormatExportmodelMapper.genererLacunes(hold, notice.getDataFields().get(0));
 
-        Assertions.assertTrue(hold.getCommentaire().contains("no.101 (1949 )  ; no.1620 (1979)  ; no.1937 (1985)  ; no.2331 (1993)"));
+        Assertions.assertTrue(hold.getTextLacune().contains("no.101 (1949 )  ; no.1620 (1979)  ; no.1937 (1985)  ; no.2331 (1993)"));
         Assertions.assertEquals(hold.getSequences().size(), 12);
         Calendar calendar = new GregorianCalendar(1949, Calendar.JANUARY, 1);
         Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(hold.getSequences().get(11).getStartDate().getTime()));
@@ -198,7 +203,6 @@ public class FormatExportMapperTest {
 
     @Test
     @DisplayName("test mapper notice entière")
-    @Disabled
     void buildNotice() throws IOException {
         String xml = IOUtils.toString(new FileInputStream(xmlFileNotice.getFile()), StandardCharsets.UTF_8);
 
@@ -207,11 +211,16 @@ public class FormatExportMapperTest {
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
 
-        NoticeVisu noticeVisu = noticeMapper.map(notice, NoticeVisu.class);
+        NoticeVisu noticeVisu = noticeFormatExportmodelMapper.map(notice, NoticeVisu.class);
 
         Assertions.assertEquals("13282261X", noticeVisu.getPpn());
         Assertions.assertEquals(5, noticeVisu.getHoldings().size());
-        Assertions.assertEquals(5, noticeVisu.getHoldings().get(0).getSequences().size());
+        Assertions.assertEquals(9, noticeVisu.getHoldings().stream().filter(h -> h.getEpn().equalsIgnoreCase("363392556")).findFirst().get().getSequences().size());
+        Assertions.assertEquals(4, noticeVisu.getHoldings().stream().filter(h -> h.getEpn().equalsIgnoreCase("431295026")).findFirst().get().getSequences().size());
+        Assertions.assertEquals("no.1987, 3000 (2000) ; no.1000 (2010)", noticeVisu.getHoldings().stream().filter(h -> h.getEpn().equalsIgnoreCase("431295026")).findFirst().get().getTextLacune());
+        Assertions.assertEquals(1, noticeVisu.getHoldings().stream().filter(h -> h.getEpn().equalsIgnoreCase("41133793901")).findFirst().get().getSequences().size());
+        Assertions.assertEquals(1, noticeVisu.getHoldings().stream().filter(h -> h.getEpn().equalsIgnoreCase("46868145001")).findFirst().get().getSequences().size());
+        Assertions.assertEquals(1, noticeVisu.getHoldings().stream().filter(h -> h.getEpn().equalsIgnoreCase("51274287101")).findFirst().get().getSequences().size());
 
     }
 

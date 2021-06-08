@@ -1,6 +1,5 @@
-package fr.abes.periscope.core.entity.v2;
+package fr.abes.periscope.core.entity;
 
-import fr.abes.periscope.core.entity.Notice;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,15 +9,13 @@ import lombok.Setter;
 @Getter @Setter
 public class Item {
 
-    private String id;
+    protected String epn;
 
-    private String epn;
+    protected String ppn;
 
-    private String ppn;
+    protected String rcr;
 
-    private String rcr;
-
-    private String pcp;
+    protected String pcp;
 
     @Override
     public boolean equals(Object obj) {
