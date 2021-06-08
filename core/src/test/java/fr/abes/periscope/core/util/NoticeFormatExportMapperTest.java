@@ -21,6 +21,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -67,7 +68,7 @@ public class NoticeFormatExportMapperTest {
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
         Holding hold = new Holding();
 
-        Sequence sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0));
+        Sequence sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0), "a");
 
         Assertions.assertEquals(2000, sequence.getStartDate().get(Calendar.YEAR));
         Assertions.assertEquals(Calendar.JANUARY, sequence.getStartDate().get(Calendar.MONTH));
@@ -75,8 +76,8 @@ public class NoticeFormatExportMapperTest {
         Assertions.assertEquals("23", sequence.getStartVolume());
         Assertions.assertEquals("38", sequence.getStartNumero());
         Assertions.assertEquals(2000, sequence.getEndDate().get(Calendar.YEAR));
-        Assertions.assertEquals(Calendar.DECEMBER, sequence.getEndDate().get(Calendar.MONTH));
-        Assertions.assertEquals(31, sequence.getEndDate().get(Calendar.DAY_OF_MONTH));
+        Assertions.assertEquals(Calendar.JANUARY, sequence.getEndDate().get(Calendar.MONTH));
+        Assertions.assertEquals(29, sequence.getEndDate().get(Calendar.DAY_OF_MONTH));
     }
 
     @Test
@@ -90,7 +91,7 @@ public class NoticeFormatExportMapperTest {
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
         Holding hold = new Holding();
 
-        Sequence sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0));
+        Sequence sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0), "f");
 
         Calendar calendar = new GregorianCalendar(2000, Calendar.JANUARY, 28);
         Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(sequence.getStartDate().getTime()));
@@ -114,7 +115,7 @@ public class NoticeFormatExportMapperTest {
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
         Holding hold = new Holding();
 
-        Sequence sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0));
+        Sequence sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0), "f");
 
         Calendar calendar = new GregorianCalendar(2000, Calendar.JANUARY, 28);
         Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(sequence.getStartDate().getTime()));
@@ -139,7 +140,7 @@ public class NoticeFormatExportMapperTest {
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
         Holding hold = new Holding();
 
-        Sequence sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0));
+        Sequence sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0), "f");
 
         Calendar calendar = new GregorianCalendar(2000, Calendar.JANUARY, 1);
         Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(sequence.getStartDate().getTime()));
@@ -157,7 +158,7 @@ public class NoticeFormatExportMapperTest {
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
         Holding hold = new Holding();
 
-        SequenceContinue sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0));
+        SequenceContinue sequence = noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0), "f");
 
         Assertions.assertEquals("vol. 23 no. 38 (28-jan-2000)", hold.getTextEtatCollection());
         Assertions.assertEquals("Lacune", hold.getMentionDeLacune());
@@ -175,7 +176,7 @@ public class NoticeFormatExportMapperTest {
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
         Holding hold = new Holding();
 
-        assertThrows(IllegalHoldingException.class, () -> noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0)));
+        assertThrows(IllegalHoldingException.class, () -> noticeFormatExportmodelMapper.genererEtatCollection(hold, notice.getDataFields().get(0), "f"));
     }
 
     @Test
@@ -188,11 +189,13 @@ public class NoticeFormatExportMapperTest {
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
         Holding hold = new Holding();
-
-        noticeFormatExportmodelMapper.genererLacunes(hold, notice.getDataFields().get(0));
+        Sequence sequence = new SequenceContinue(new GregorianCalendar(1948, 0, 1));
+        sequence.setEndDate(new GregorianCalendar(2017, Calendar.DECEMBER, 31));
+        hold.addSequence(sequence);
+        noticeFormatExportmodelMapper.genererLacunes(hold, notice.getDataFields().get(0), "f");
 
         Assertions.assertTrue(hold.getTextLacune().contains("no.101 (1949 )  ; no.1620 (1979)  ; no.1937 (1985)  ; no.2331 (1993)"));
-        Assertions.assertEquals(hold.getSequences().size(), 12);
+        Assertions.assertEquals(12, hold.getSequences().stream().filter(sequence1 -> sequence1 instanceof SequenceLacune).collect(Collectors.toList()).size());
         Calendar calendar = new GregorianCalendar(1949, Calendar.JANUARY, 1);
         Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(hold.getSequences().get(11).getStartDate().getTime()));
         calendar = new GregorianCalendar(2015, Calendar.JANUARY, 1);
@@ -222,6 +225,15 @@ public class NoticeFormatExportMapperTest {
         Assertions.assertEquals(1, noticeVisu.getHoldings().stream().filter(h -> h.getEpn().equalsIgnoreCase("46868145001")).findFirst().get().getSequences().size());
         Assertions.assertEquals(1, noticeVisu.getHoldings().stream().filter(h -> h.getEpn().equalsIgnoreCase("51274287101")).findFirst().get().getSequences().size());
 
+    }
+
+    @Test
+    @DisplayName("test méthode récupération fréquence")
+    void testExtractFrequency() throws NoSuchFieldException, IllegalAccessException {
+        String frequency = "u";
+        Assertions.assertEquals("Périodicité inconnue", noticeFormatExportmodelMapper.extractFrequency(frequency));
+        frequency = "b";
+        Assertions.assertEquals("Bihebdomadaire", noticeFormatExportmodelMapper.extractFrequency(frequency));
     }
 
 

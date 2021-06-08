@@ -137,7 +137,7 @@
         <subfield code="b">38</subfield>
         <subfield code="k">28</subfield>
         <subfield code="j">jan</subfield>
-        <subfield code="i">2000</subfield>
+        <subfield code="i">2001</subfield>
         <subfield code="a">46</subfield>
         <subfield code="b">42</subfield>
         <subfield code="k">31</subfield>
@@ -150,12 +150,12 @@
         <subfield code="b">38</subfield>
         <subfield code="k">28</subfield>
         <subfield code="j">jan</subfield>
-        <subfield code="i">2000</subfield>
+        <subfield code="i">2018</subfield>
         <subfield code="a">46</subfield>
         <subfield code="b">42</subfield>
         <subfield code="k">31</subfield>
         <subfield code="j">mar</subfield>
-        <subfield code="i">2017</subfield>
+        <subfield code="i">2018</subfield>
         <subfield code="g"/>
         <subfield code="a">31</subfield>
         <subfield code="b">53</subfield>
@@ -172,7 +172,7 @@
         <subfield code="5">751052304:363392556</subfield>
         <subfield code="k">28</subfield>
         <subfield code="j">jan</subfield>
-        <subfield code="i">2000</subfield>
+        <subfield code="i">2019</subfield>
     </datafield>
     <datafield tag="955" ind1="4" ind2="1">
         <subfield code="5">751052304:363392556</subfield>
@@ -237,7 +237,7 @@
         <subfield code="0"/>
         <subfield code="e">1000</subfield>
         <subfield code="a">2010</subfield>
-        <subfield code="0"/>
+        <subfield code="r">no.1987, 3000 (2000) ; no.1000 (2010)</subfield>
     </datafield>
     <datafield tag="940" ind1=" " ind2=" ">
         <subfield code="5">751195202:431295026</subfield>

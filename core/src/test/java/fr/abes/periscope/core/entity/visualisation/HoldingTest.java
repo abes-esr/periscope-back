@@ -10,23 +10,17 @@ import java.util.GregorianCalendar;
 
 @SpringBootTest(classes = Holding.class)
 public class HoldingTest {
-
-    private Holding holding = new Holding();
-
     @Test
     void findCloserTest() {
         Holding holding = new Holding();
-        Sequence sequenceToAdd = new SequenceLacune();
-        sequenceToAdd.setStartDate(new GregorianCalendar(1989, Calendar.FEBRUARY, 28));
+        Sequence sequenceToAdd = new SequenceLacune(new GregorianCalendar(1989, Calendar.FEBRUARY, 28));
         Assertions.assertNull(holding.findCloser(sequenceToAdd));
 
-        Sequence sequence1 = new SequenceContinue();
-        sequence1.setStartDate(new GregorianCalendar(1990, Calendar.JANUARY, 1));
+        Sequence sequence1 = new SequenceContinue(new GregorianCalendar(1990, Calendar.JANUARY, 1));
         holding.addSequence(sequence1);
         Assertions.assertEquals(sequence1, holding.findCloser(sequenceToAdd));
 
-        Sequence sequence2 = new SequenceContinue();
-        sequence2.setStartDate(new GregorianCalendar(1995, Calendar.JANUARY, 31));
+        Sequence sequence2 = new SequenceContinue(new GregorianCalendar(1995, Calendar.JANUARY, 31));
         holding.addSequence(sequence2);
 
         sequenceToAdd.setStartDate(new GregorianCalendar(1996, Calendar.MARCH, 31));
@@ -34,47 +28,52 @@ public class HoldingTest {
     }
 
     @Test
+    @DisplayName("test ajout séquence continue")
+    void addSequenceContinue() {
+        Holding holding = new Holding();
+
+    }
+    @Test
     @DisplayName("test ajout de lacune dans état de collection vide")
     void addLacuneOnEmptyHolding() {
         Holding holding = new Holding();
-        Sequence sequenceToAdd = new SequenceLacune();
-        sequenceToAdd.setStartDate(new GregorianCalendar(1989, Calendar.FEBRUARY, 28));
+        Sequence sequenceToAdd = new SequenceLacune(new GregorianCalendar(1989, Calendar.FEBRUARY, 28));
         sequenceToAdd.setEndDate(new GregorianCalendar(1989, Calendar.MARCH, 31));
         holding.addSequence(sequenceToAdd);
-        Assertions.assertEquals("Impossible d'ajouter la lacune " + sequenceToAdd.toString() + " dans un état de collection vide", holding.getErreurs().get(0));
-        Assertions.assertNull(holding.getSequences());
+        Assertions.assertEquals("Impossible d'ajouter la lacune " + sequenceToAdd.toString() + " dans un état de collection vide", holding.getErreurs().get(0).getMessage());
+        Assertions.assertEquals(0, holding.getSequences().size());
+        Assertions.assertEquals(1, holding.getErreurs().size());
     }
 
     @Test
     @DisplayName("test ajout de lacune mal placée")
     void addLacuneMisplaced(){
         Holding holding = new Holding();
-        Sequence sequenceToAdd = new SequenceLacune();
-        sequenceToAdd.setStartDate(new GregorianCalendar(1989, Calendar.FEBRUARY, 28));
-        sequenceToAdd.setEndDate(new GregorianCalendar(1989, Calendar.MARCH, 31));
-        Sequence sequence1 = new SequenceContinue();
-        sequence1.setStartDate(new GregorianCalendar(1990, Calendar.JANUARY, 1));
+        Sequence sequence1 = new SequenceContinue(new GregorianCalendar(1990, Calendar.JANUARY, 1));
         holding.addSequence(sequence1);
 
+        Sequence sequenceToAdd = new SequenceLacune(new GregorianCalendar(1989, Calendar.FEBRUARY, 28));
+        sequenceToAdd.setEndDate(new GregorianCalendar(1989, Calendar.MARCH, 31));
         holding.addSequence(sequenceToAdd);
-        Assertions.assertEquals("Lacune : " + sequenceToAdd.toString() + " en dehors de l'état de collection", holding.getErreurs().get(0));
+
+        Assertions.assertEquals("Lacune : " + sequenceToAdd.toString() + " en dehors de l'état de collection", holding.getErreurs().get(0).getMessage());
         Assertions.assertEquals(1, holding.getSequences().size());
+        Assertions.assertEquals(1, holding.getErreurs().size());
     }
 
     @Test
     @DisplayName("test ajout lacune avec découpage de séquence existante")
     void addLacuneWithCutSequence() {
         Holding holding = new Holding();
-        Sequence sequenceToAdd = new SequenceLacune();
-        sequenceToAdd.setStartDate(new GregorianCalendar(1991, Calendar.FEBRUARY, 28));
-        sequenceToAdd.setEndDate(new GregorianCalendar(1991, Calendar.MARCH, 31));
 
-        Sequence sequence1 = new SequenceContinue();
-        sequence1.setStartDate(new GregorianCalendar(1990, Calendar.JANUARY, 1));
+        Sequence sequence1 = new SequenceContinue(new GregorianCalendar(1990, Calendar.JANUARY, 1));
         sequence1.setEndDate(new GregorianCalendar(1992, Calendar.APRIL, 20));
         holding.addSequence(sequence1);
 
+        Sequence sequenceToAdd = new SequenceLacune(new GregorianCalendar(1991, Calendar.FEBRUARY, 28));
+        sequenceToAdd.setEndDate(new GregorianCalendar(1991, Calendar.MARCH, 31));
         holding.addSequence(sequenceToAdd);
+
         Assertions.assertEquals(3, holding.getSequences().size());
         Assertions.assertEquals(new GregorianCalendar(1990, Calendar.JANUARY, 1), holding.getSequences().get(0).getStartDate());
         Assertions.assertEquals(new GregorianCalendar(1991, Calendar.FEBRUARY, 27), holding.getSequences().get(0).getEndDate());
@@ -88,19 +87,16 @@ public class HoldingTest {
     @DisplayName("test ajout lacune avec découpage de séquence lacunaire existante")
     void addLacuneWithCutSequenceLacune() {
         Holding holding = new Holding();
-        Sequence sequenceToAdd = new SequenceLacune();
-        sequenceToAdd.setStartDate(new GregorianCalendar(1991, Calendar.FEBRUARY, 28));
-        sequenceToAdd.setEndDate(new GregorianCalendar(1991, Calendar.MARCH, 31));
 
-        Sequence sequence1 = new SequenceContinue();
-        sequence1.setStartDate(new GregorianCalendar(1990, Calendar.JANUARY, 1));
+        Sequence sequence1 = new SequenceContinue(new GregorianCalendar(1990, Calendar.JANUARY, 1));
         sequence1.setEndDate(new GregorianCalendar(1992, Calendar.OCTOBER, 20));
         holding.addSequence(sequence1);
 
+        Sequence sequenceToAdd = new SequenceLacune(new GregorianCalendar(1991, Calendar.FEBRUARY, 28));
+        sequenceToAdd.setEndDate(new GregorianCalendar(1991, Calendar.MARCH, 31));
         holding.addSequence(sequenceToAdd);
 
-        Sequence sequenceToAdd2 = new SequenceLacune();
-        sequenceToAdd2.setStartDate(new GregorianCalendar(1991, Calendar.APRIL, 1));
+        Sequence sequenceToAdd2 = new SequenceLacune(new GregorianCalendar(1991, Calendar.APRIL, 1));
         sequenceToAdd2.setEndDate(new GregorianCalendar(1991, Calendar.APRIL, 30));
 
         holding.addSequence(sequenceToAdd2);

@@ -1,9 +1,6 @@
 package fr.abes.periscope.core.util;
 
-import fr.abes.periscope.core.entity.EnumMonth;
-import fr.abes.periscope.core.entity.OnGoingResourceType;
-import fr.abes.periscope.core.entity.PublicationYear;
-import fr.abes.periscope.core.entity.SupportType;
+import fr.abes.periscope.core.entity.*;
 import fr.abes.periscope.core.entity.visualisation.*;
 import fr.abes.periscope.core.entity.xml.DataField;
 import fr.abes.periscope.core.entity.xml.NoticeXml;
@@ -127,8 +124,8 @@ public class NoticeFormatExportMapper {
                             for (SubField subField : dataField.getSubFields()) {
                                 // zone 110-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
-                                    target.setContinuousType(extractOnGoingResourceType(subField.getValue()));
-                                    target.setFrequency(extractFrequency(subField.getValue()));
+                                    target.setContinuousType(extractOnGoingResourceType(subField.getValue().substring(0, 1)));
+                                    target.setFrequency(subField.getValue().substring(1,2));
                                 }
                             }
                         }
@@ -225,7 +222,7 @@ public class NoticeFormatExportMapper {
                                 holding = new Holding(epn);
                             }
 
-                            handleHolding(dataField, epn, holding);
+                            handleHolding(dataField, holding, target.getFrequency());
                             target.addHolding(holding);
                         }
                     }
@@ -247,30 +244,26 @@ public class NoticeFormatExportMapper {
      * Méthode de mapping d'une zone d'exemplaire
      *
      * @param dataField zone du format d'export à mapper
-     * @param epn       identifiant de l'exemplaire
      * @param holding   objet exemplaire
+     * @param frequency fréquence de la ressource pour le calcul des dates de fin de lacunes
      */
-    private void handleHolding(DataField dataField, String epn, Holding holding) {
-        try {
-            if (dataField.getTag().equalsIgnoreCase("955")) {
-                Sequence sequence = genererEtatCollection(holding, dataField);
-                if (sequence.getStartDate() != null)
-                    //on ajout la séquence uniquement si elle a une date de début pour gérer le cas ou la 955 n'a que des sous zones de note
-                    holding.addSequence(sequence);
+    private void handleHolding(DataField dataField,Holding holding, String frequency) {
+        if (dataField.getTag().equalsIgnoreCase("955")) {
+            Sequence sequence = genererEtatCollection(holding, dataField, frequency);
+            if (sequence.getStartDate() != null)
+                //on ajout la séquence uniquement si elle a une date de début pour gérer le cas ou la 955 n'a que des sous zones de note
+                holding.addSequence(sequence);
+        } else {
+            if (dataField.getTag().equalsIgnoreCase("959")) {
+                genererLacunes(holding, dataField, frequency);
             } else {
-                if (dataField.getTag().equalsIgnoreCase("959")) {
-                    genererLacunes(holding, dataField);
-                } else {
-                    // On itère sur les autres sous-zone
-                    for (SubField subField : dataField.getSubFields()) {
-                        if (dataField.getTag().equalsIgnoreCase("930") && (subField.getCode().equalsIgnoreCase("b"))) {
-                            holding.setRcr(subField.getValue());
-                        }
+                // On itère sur les autres sous-zone
+                for (SubField subField : dataField.getSubFields()) {
+                    if (dataField.getTag().equalsIgnoreCase("930") && (subField.getCode().equalsIgnoreCase("b"))) {
+                        holding.setRcr(subField.getValue());
                     }
                 }
             }
-        } catch (IllegalHoldingException ex) {
-            holding.addErreur("Erreur sur état de collection epn " + epn + " : " + ex.getMessage());
         }
     }
 
@@ -281,7 +274,7 @@ public class NoticeFormatExportMapper {
      * @return : la sequence générée
      * @throws IllegalHoldingException si une erreur est détectée dans la 955
      */
-    SequenceContinue genererEtatCollection(Holding holding, DataField dataField) throws IllegalHoldingException {
+    SequenceContinue genererEtatCollection(Holding holding, DataField dataField, String frequency) throws IllegalHoldingException {
         Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
         String sousZonePrecedente;
         SequenceContinue sequence = new SequenceContinue();
@@ -363,6 +356,7 @@ public class NoticeFormatExportMapper {
                 if (iCount == 0) { //Première fois qu'on rencontre la balise
                     dateBloc = new GregorianCalendar(annee, (mois != 0) ? mois : Calendar.JANUARY, jour);
                     sequence.setStartDate(dateBloc);
+                    sequence.calculEndDateFromFrequency(frequency);
                 } else if (iCount == 1) {
                     dateBloc = new GregorianCalendar(annee, (mois != 0) ? mois : Calendar.DECEMBER, jour);
                     if (!jourPresent && mois != 0) {
@@ -387,7 +381,7 @@ public class NoticeFormatExportMapper {
         return sequence;
     }
 
-    void genererLacunes(Holding holding, DataField dataField) throws IllegalHoldingException {
+    void genererLacunes(Holding holding, DataField dataField, String frequency) {
         SequenceLacune sequence = new SequenceLacune();
         Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
         int mois = 0;
@@ -407,10 +401,9 @@ public class NoticeFormatExportMapper {
                     if (subField.getCode().equals("0")) {
                         //si on arrive sur une $0, on crée un nouveau bloc
                         sequence.setStartDate(new GregorianCalendar(annee, mois, jour));
+                        sequence.calculEndDateFromFrequency(frequency);
                         holding.addSequence(sequence);
                         sequence = new SequenceLacune();
-                        //Calendar dateBloc = new GregorianCalendar(startAnnee, startMois, startJour);
-                        // sequence.setStartDate(dateBloc);
                     }
                     if (subField.getCode().equalsIgnoreCase("d")) {
                         sequence.setStartVolume(subField.getValue());
@@ -432,6 +425,7 @@ public class NoticeFormatExportMapper {
 
         //ajout du dernier bloc qui n'est pas ajouté en début de boucle
         sequence.setStartDate(new GregorianCalendar(annee, mois, jour));
+        sequence.calculEndDateFromFrequency(frequency);
         holding.addSequence(sequence);
     }
 
@@ -604,68 +598,32 @@ public class NoticeFormatExportMapper {
      *
      * @param continiousType
      * @return String Type de ressource continue
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
      */
-    public String extractOnGoingResourceType(String continiousType) {
-
-        if (continiousType == null) {
-            return OnGoingResourceType.X;
-        }
-
-        switch (continiousType.substring(0, 1)) {
-            case "a":
-                return OnGoingResourceType.A;
-            case "b":
-                return OnGoingResourceType.B;
-            case "c":
-                return OnGoingResourceType.C;
-            case "e":
-                return OnGoingResourceType.E;
-            case "f":
-                return OnGoingResourceType.F;
-            case "g":
-                return OnGoingResourceType.G;
-            case "z":
-                return OnGoingResourceType.Z;
-            default:
-                return OnGoingResourceType.X;
-        }
+    public String extractOnGoingResourceType(String continiousType) throws NoSuchFieldException, IllegalAccessException {
+        return Arrays.stream(OnGoingResourceType.class.getFields()).filter(elm -> elm.getName().equalsIgnoreCase(continiousType)).findFirst().orElse(OnGoingResourceType.class.getField("X")).get(null).toString();
     }
 
-    private String extractFrequency(String value) {
-        return null;
+    /**
+     * Extrait la fréquence d'une ressource continue
+     * @param frequency
+     * @return intitulé fréquence
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
+    String extractFrequency(String frequency) throws NoSuchFieldException, IllegalAccessException {
+        return Arrays.stream(Frequency.class.getFields()).filter(elm -> elm.getName().equalsIgnoreCase(frequency)).findFirst().orElse(Frequency.class.getField("U")).get(null).toString();
     }
 
-    public String extractSupportType(String typeSupport) {
-        if (typeSupport == null) {
-            return SupportType.X;
-        }
-        switch (typeSupport) {
-            case "a":
-                return SupportType.A;
-            case "b":
-                return SupportType.B;
-            case "c":
-                return SupportType.C;
-            case "d":
-                return SupportType.D;
-            case "e":
-                return SupportType.E;
-            case "f":
-                return SupportType.F;
-            case "g":
-                return SupportType.G;
-            case "i":
-                return SupportType.I;
-            case "j":
-                return SupportType.J;
-            case "l":
-                return SupportType.L;
-            case "m":
-                return SupportType.M;
-            case "r":
-                return SupportType.R;
-            default:
-                return SupportType.X;
-        }
+    /**
+     * Extrait le type de support
+     * @param typeSupport
+     * @return intitulé type de support
+     * @throws NoSuchFieldException
+     * @throws IllegalAccessException
+     */
+    public String extractSupportType(String typeSupport) throws NoSuchFieldException, IllegalAccessException {
+        return Arrays.stream(SupportType.class.getFields()).filter(elm -> elm.getName().equalsIgnoreCase(typeSupport)).findFirst().orElse(SupportType.class.getField("X")).get(null).toString();
     }
 }

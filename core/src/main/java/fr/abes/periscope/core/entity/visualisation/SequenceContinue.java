@@ -3,6 +3,8 @@ package fr.abes.periscope.core.entity.visualisation;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Calendar;
+
 @Data
 @NoArgsConstructor
 public class SequenceContinue extends Sequence {
@@ -13,6 +15,10 @@ public class SequenceContinue extends Sequence {
         this.endNumero = sequence.getEndNumero();
         this.startVolume = sequence.getStartVolume();
         this.endVolume = sequence.getEndVolume();
+    }
+
+    public SequenceContinue(Calendar startDate) {
+        super(startDate);
     }
 
     @Override
@@ -29,17 +35,14 @@ public class SequenceContinue extends Sequence {
             return false;
         }
 
-        return startDate.equals(((Sequence) obj).startDate) ;
+        return startDate.equals(((Sequence) obj).startDate);
     }
 
     @Override
     public String toString() {
-        String str = "";
-        if (this.startDate != null) {
-            str += "Sequence {" + "startDate=" + startDate.getTime();
-            if (this.endDate != null) {
-                str += ", endDate=" + endDate.getTime() + "}";
-            }
+        String str = "Sequence continue {" + "startDate=" + startDate.getTime();
+        if (this.endDate != null) {
+            str += ", endDate=" + endDate.getTime() + "}";
         }
         return str;
     }

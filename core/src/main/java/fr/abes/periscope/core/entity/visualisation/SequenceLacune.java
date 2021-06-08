@@ -13,6 +13,10 @@ public class SequenceLacune extends Sequence {
     protected String volume;
     protected String numero;
 
+    public SequenceLacune(Calendar startDate) {
+        super(startDate);
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
