@@ -4,6 +4,7 @@ import fr.abes.periscope.core.entity.Notice;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.time.Period;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -33,7 +34,7 @@ public class NoticeVisu extends Notice {
 
     private String keyTitle;
 
-    private String frequency;
+    private Period frequency;
 
     private String continuousType;
 
@@ -42,6 +43,7 @@ public class NoticeVisu extends Notice {
     protected Set<Holding> holdings = new HashSet<>();
 
     public void addHolding(Holding holding) {
+        holding.updateLacuneSequenceWithFrequency(frequency);
         this.holdings.add(holding);
     }
 

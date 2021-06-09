@@ -1,13 +1,11 @@
 package fr.abes.periscope.core.util;
 
-import fr.abes.periscope.core.entity.EnumMonth;
-import fr.abes.periscope.core.entity.OnGoingResourceType;
-import fr.abes.periscope.core.entity.PublicationYear;
-import fr.abes.periscope.core.entity.SupportType;
+import fr.abes.periscope.core.entity.*;
 import fr.abes.periscope.core.entity.visualisation.*;
 import fr.abes.periscope.core.entity.xml.DataField;
 import fr.abes.periscope.core.entity.xml.NoticeXml;
 import fr.abes.periscope.core.entity.xml.SubField;
+import fr.abes.periscope.core.exception.IllegalDateException;
 import fr.abes.periscope.core.exception.IllegalHoldingException;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import fr.abes.periscope.core.exception.MissingFieldException;
@@ -22,8 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
+import java.time.Period;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Convertisseurs entre les notices issues de la base XML et les notices pour PERISCOPE
@@ -31,38 +29,9 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 public class NoticeFormatExportMapper {
-    @Bean
-    public ModelMapper NoticeFormatExportmodelMapper() {
-        return new ModelMapper();
-    }
 
     @Autowired
     private ModelMapper modelMapper;
-
-    /**
-     * Fonction de mapping générique pour des listes
-     *
-     * @param source      Liste source
-     * @param targetClass Classe des objets cibles
-     * @return Liste des objets cibles
-     */
-    public <S, T> List<T> mapList(List<S> source, Class<T> targetClass) {
-        return source
-                .stream()
-                .map(element -> modelMapper.map(element, targetClass))
-                .collect(Collectors.toList());
-    }
-
-    /**
-     * Fonction de mapping générique pour un objet
-     *
-     * @param source      Objet source
-     * @param targetClass Classe de l'objet cible
-     * @return Objet cible
-     */
-    public <S, T> T map(S source, Class<T> targetClass) {
-        return modelMapper.map(source, targetClass);
-    }
 
     /**
      * Convertisseur pour les notices XML vers les notices de visualisation
@@ -75,160 +44,179 @@ public class NoticeFormatExportMapper {
             public NoticeVisu convert(MappingContext<NoticeXml, NoticeVisu> context) {
                 NoticeXml source = context.getSource();
                 NoticeVisu target = new NoticeVisu();
+                int maxPass = 1;
                 try {
                     // Champ type de support
                     target.setSupportType(extractSupportType(source.getLeader().substring(6, 7)));
                     // Champs PPN
                     target.setPpn(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().orElseThrow().getValue());
 
-                    // Champs data fields
-                    for (DataField dataField : source.getDataFields()) {
-                        // Zone 011
-                        if (dataField.getTag().equalsIgnoreCase("011")) {
+                    for (int currentPass = 1; currentPass < maxPass + 1; currentPass++) {
 
-                            for (SubField subField : dataField.getSubFields()) {
-                                // zone 011-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
-                                    target.setIssn(subField.getValue());
-                                }
-                            }
-                        }
+                        // Champs data fields
+                        for (DataField dataField : source.getDataFields()) {
+                            // Zone 011
+                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("011")) {
 
-                        // Zone 100
-                        if (dataField.getTag().equalsIgnoreCase("100")) {
-                            for (SubField subField : dataField.getSubFields()) {
-                                // zone 100-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
-                                    String value = subField.getValue();
-
-                                    // Extraction de la date de début
-                                    try {
-                                        PublicationYear year = buildStartPublicationYear(value);
-                                        target.setStartYear(year);
-                                    } catch (IllegalPublicationYearException e) {
-                                        log.debug("Unable to parse start publication year :" + e.getLocalizedMessage());
-                                        target.setStartYear(null);
-                                    }
-
-                                    // Extraction de la date de fin
-                                    try {
-                                        PublicationYear year = buildEndPublicationYear(value);
-                                        target.setEndYear(year);
-                                    } catch (IllegalPublicationYearException e) {
-                                        log.debug("Unable to parse end publication year :" + e.getLocalizedMessage());
-                                        target.setEndYear(null);
+                                for (SubField subField : dataField.getSubFields()) {
+                                    // zone 011-a
+                                    if (subField.getCode().equalsIgnoreCase("a")) {
+                                        target.setIssn(subField.getValue());
                                     }
                                 }
                             }
-                        }
 
-                        // Zone 110
-                        if (dataField.getTag().equalsIgnoreCase("110")) {
-                            for (SubField subField : dataField.getSubFields()) {
-                                // zone 110-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
-                                    target.setContinuousType(extractOnGoingResourceType(subField.getValue()));
-                                    target.setFrequency(extractFrequency(subField.getValue()));
+                            // Zone 100
+                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("100")) {
+                                for (SubField subField : dataField.getSubFields()) {
+                                    // zone 100-a
+                                    if (subField.getCode().equalsIgnoreCase("a")) {
+                                        String value = subField.getValue();
+
+                                        // Extraction de la date de début
+                                        try {
+                                            PublicationYear year = buildStartPublicationYear(value);
+                                            target.setStartYear(year);
+                                        } catch (IllegalPublicationYearException e) {
+                                            log.debug("Unable to parse start publication year :" + e.getLocalizedMessage());
+                                            target.setStartYear(null);
+                                        }
+
+                                        // Extraction de la date de fin
+                                        try {
+                                            PublicationYear year = buildEndPublicationYear(value);
+                                            target.setEndYear(year);
+                                        } catch (IllegalPublicationYearException e) {
+                                            log.debug("Unable to parse end publication year :" + e.getLocalizedMessage());
+                                            target.setEndYear(null);
+                                        }
+                                    }
                                 }
                             }
-                        }
 
-                        // Zone 200
-                        if (dataField.getTag().equalsIgnoreCase("200")) {
+                            // Zone 110
+                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("110")) {
+                                for (SubField subField : dataField.getSubFields()) {
+                                    // zone 110-a
+                                    if (subField.getCode().equalsIgnoreCase("a")) {
+                                        target.setContinuousType(extractOnGoingResourceType(subField.getValue()));
+                                        target.setFrequency(extractFrequency(subField.getValue()));
+                                    }
+                                }
+                            }
 
-                            for (SubField subField : dataField.getSubFields()) {
-                                // zone 200-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
-                                    if (target.getProperTitle() == null) {
-                                        target.setProperTitle(subField.getValue());
+                            // Zone 200
+                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("200")) {
+
+                                for (SubField subField : dataField.getSubFields()) {
+                                    // zone 200-a
+                                    if (subField.getCode().equalsIgnoreCase("a")) {
+                                        if (target.getProperTitle() == null) {
+                                            target.setProperTitle(subField.getValue());
+                                        }
+                                    }
+
+                                    // zone 200-c
+                                    if (subField.getCode().equalsIgnoreCase("c")) {
+                                        if (target.getTitleFromDifferentAuthor() == null) {
+                                            target.setTitleFromDifferentAuthor(subField.getValue());
+                                        }
+                                    }
+
+                                    // zone 200-d
+                                    if (subField.getCode().equalsIgnoreCase("d") && (target.getParallelTitle() == null)) {
+                                        target.setParallelTitle(subField.getValue());
+                                    }
+
+                                    // zone 200-e
+                                    if (subField.getCode().equalsIgnoreCase("e") && (target.getTitleComplement() == null)) {
+                                        target.setTitleComplement(subField.getValue());
+                                    }
+
+                                    // zone 200-i
+                                    if (subField.getCode().equalsIgnoreCase("i") && (target.getSectionTitle() == null)) {
+                                        target.setSectionTitle(subField.getValue());
+                                    }
+                                }
+                            }
+
+                            // Zone 210
+                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("210")) {
+                                for (SubField subField : dataField.getSubFields()) {
+                                    // zone 210-c
+                                    if (subField.getCode().equalsIgnoreCase("c") && (target.getEditor() == null)) {
+                                        target.setEditor(subField.getValue());
+                                    }
+                                }
+                            }
+
+                            // Zone 530
+                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("530")) {
+
+                                for (SubField subField : dataField.getSubFields()) {
+                                    // zone 530-a
+                                    if (subField.getCode().equalsIgnoreCase("a")) {
+                                        target.setKeyTitle(subField.getValue());
+                                    }
+
+                                    // zone 530-b
+                                    if (subField.getCode().equalsIgnoreCase("b")) {
+                                        target.setKeyTitleQualifer(subField.getValue());
+                                    }
+                                }
+                            }
+
+                            // Zone 531
+                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("531")) {
+
+                                for (SubField subField : dataField.getSubFields()) {
+                                    if (target.getKeyShortedTitle() == null) {
+                                        target.setKeyShortedTitle(subField.getValue());
+                                    }
+                                }
+                            }
+
+                            // Zone 9XX
+                            if (dataField.getTag().startsWith("9")) {
+
+                                // On cherche la sous-zone 5 qui contient le EPN
+                                SubField specimenIdField = dataField.getSubFields().stream().filter(elm -> elm.getCode().equalsIgnoreCase("5"))
+                                        .findAny().orElse(null);
+
+                                if (specimenIdField == null) {
+                                    throw new MissingFieldException("Zone " + dataField.getTag() + " doesn't have a subfield code=\"5\"");
+                                }
+
+                                String epn = specimenIdField.getValue().split(":")[1];
+
+                                // On récupère l'exemplaire ou on le crée s'il n'existe pas
+                                Holding holding = target.getHoldings().stream().filter(elm -> elm.getEpn().equalsIgnoreCase(epn))
+                                        .findAny().orElse(null);
+
+                                if (holding == null) {
+                                    holding = new Holding(epn);
+                                }
+
+                                if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("955")) {
+                                    processEtatCollection(holding, dataField);
+                                } else if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("959")) {
+                                    // On traite les lacunes dans la deuxième passe
+                                    processLacunes(holding, dataField);
+                                } else if (currentPass == 1) {
+                                    // On itère sur les autres sous-zone
+                                    for (SubField subField : dataField.getSubFields()) {
+                                        if (dataField.getTag().equalsIgnoreCase("930") && (subField.getCode().equalsIgnoreCase("b"))) {
+                                            holding.setRcr(subField.getValue());
+                                        }
                                     }
                                 }
 
-                                // zone 200-c
-                                if (subField.getCode().equalsIgnoreCase("c")) {
-                                    if (target.getTitleFromDifferentAuthor() == null) {
-                                        target.setTitleFromDifferentAuthor(subField.getValue());
-                                    }
-                                }
-
-                                // zone 200-d
-                                if (subField.getCode().equalsIgnoreCase("d") && (target.getParallelTitle() == null)) {
-                                    target.setParallelTitle(subField.getValue());
-                                }
-
-                                // zone 200-e
-                                if (subField.getCode().equalsIgnoreCase("e") && (target.getTitleComplement() == null)) {
-                                    target.setTitleComplement(subField.getValue());
-                                }
-
-                                // zone 200-i
-                                if (subField.getCode().equalsIgnoreCase("i") && (target.getSectionTitle() == null)) {
-                                    target.setSectionTitle(subField.getValue());
-                                }
-                            }
-                        }
-
-                        // Zone 210
-                        if (dataField.getTag().equalsIgnoreCase("210")) {
-                            for (SubField subField : dataField.getSubFields()) {
-                                // zone 210-c
-                                if (subField.getCode().equalsIgnoreCase("c") && (target.getEditor() == null)) {
-                                    target.setEditor(subField.getValue());
-                                }
-                            }
-                        }
-
-                        // Zone 530
-                        if (dataField.getTag().equalsIgnoreCase("530")) {
-
-                            for (SubField subField : dataField.getSubFields()) {
-                                // zone 530-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
-                                    target.setKeyTitle(subField.getValue());
-                                }
-
-                                // zone 530-b
-                                if (subField.getCode().equalsIgnoreCase("b")) {
-                                    target.setKeyTitleQualifer(subField.getValue());
-                                }
-                            }
-                        }
-
-                        // Zone 531
-                        if (dataField.getTag().equalsIgnoreCase("531")) {
-
-                            for (SubField subField : dataField.getSubFields()) {
-                                if (target.getKeyShortedTitle() == null) {
-                                    target.setKeyShortedTitle(subField.getValue());
-                                }
-                            }
-                        }
-
-                        // Zone 9XX
-                        if (dataField.getTag().startsWith("9")) {
-
-                            // On cherche la sous-zone 5 qui contient le EPN
-                            SubField specimenIdField = dataField.getSubFields().stream().filter(elm -> elm.getCode().equalsIgnoreCase("5"))
-                                    .findAny().orElse(null);
-
-                            if (specimenIdField == null) {
-                                throw new MissingFieldException("Zone " + dataField.getTag() + " doesn't have a subfield code=\"5\"");
+                                target.addHolding(holding);
                             }
 
-                            String epn = specimenIdField.getValue().split(":")[1];
-
-                            // On récupère l'exemplaire ou on le crée s'il n'existe pas
-                            Holding holding = target.getHoldings().stream().filter(elm -> elm.getEpn().equalsIgnoreCase(epn))
-                                    .findAny().orElse(null);
-
-                            if (holding == null) {
-                                holding = new Holding(epn);
-                            }
-
-                            handleHolding(dataField, epn, holding);
-                            target.addHolding(holding);
                         }
                     }
+
                     return target;
 
                 } catch (NullPointerException ex) {
@@ -242,38 +230,6 @@ public class NoticeFormatExportMapper {
         modelMapper.addConverter(myConverter);
     }
 
-
-    /**
-     * Méthode de mapping d'une zone d'exemplaire
-     *
-     * @param dataField zone du format d'export à mapper
-     * @param epn       identifiant de l'exemplaire
-     * @param holding   objet exemplaire
-     */
-    private void handleHolding(DataField dataField, String epn, Holding holding) {
-        try {
-            if (dataField.getTag().equalsIgnoreCase("955")) {
-                Sequence sequence = genererEtatCollection(holding, dataField);
-                if (sequence.getStartDate() != null)
-                    //on ajout la séquence uniquement si elle a une date de début pour gérer le cas ou la 955 n'a que des sous zones de note
-                    holding.addSequence(sequence);
-            } else {
-                if (dataField.getTag().equalsIgnoreCase("959")) {
-                    genererLacunes(holding, dataField);
-                } else {
-                    // On itère sur les autres sous-zone
-                    for (SubField subField : dataField.getSubFields()) {
-                        if (dataField.getTag().equalsIgnoreCase("930") && (subField.getCode().equalsIgnoreCase("b"))) {
-                            holding.setRcr(subField.getValue());
-                        }
-                    }
-                }
-            }
-        } catch (IllegalHoldingException ex) {
-            holding.addErreur("Erreur sur état de collection epn " + epn + " : " + ex.getMessage());
-        }
-    }
-
     /**
      * Méthode permettant de générer une séquence d'un état de collection contenu dans une 955 du format d'export
      *
@@ -281,18 +237,22 @@ public class NoticeFormatExportMapper {
      * @return : la sequence générée
      * @throws IllegalHoldingException si une erreur est détectée dans la 955
      */
-    SequenceContinue genererEtatCollection(Holding holding, DataField dataField) throws IllegalHoldingException {
+    protected void processEtatCollection(Holding holding, DataField dataField) throws IllegalHoldingException {
         Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
         String sousZonePrecedente;
-        SequenceContinue sequence = new SequenceContinue();
-        Calendar dateBloc;
-        int annee = 0;
-        int mois = 0;
-        int jour = 1;
-        //flag d'un intervalle ouvert
-        boolean intervalleOuvert = false;
-        //flag d'un jour présent dans la 955 (pour gérer le cas ou le mois est fourni sans le jour)
-        boolean jourPresent = false;
+
+        // Prorpiété d'une séquence continue
+        Integer startYear = null;
+        Integer startMonth = null;
+        Integer startDay = null;
+        String startVolume = null;
+        String startNumero = null;
+
+        Integer endYear = null;
+        Integer endMonth = null;
+        Integer endtDay = null;
+        String endNumero = null;
+        String endVolume = null;
 
         // Compteurs d'occurence des balises
         int aCount = 0;
@@ -320,79 +280,88 @@ public class NoticeFormatExportMapper {
                     break;
                 default:
                     if (subField.getValue() == null) {
-                        //si on a une sous zone vide l'intervalle ouvert sans date de fin, on sort de la boucle
-                        intervalleOuvert = true;
-                        sequence.setEndDate(null);
+                        //si on a une sous zone vide, c'est un intervalle ouvert sans date de fin, on sort de la boucle
                         break;
                     }
                     //volume
                     if (subField.getCode().equalsIgnoreCase("a")) {
                         if (aCount == 0) { //Première fois qu'on rencontre la balise
-                            sequence.setStartVolume(subField.getValue());
+                            startVolume = subField.getValue();
                         } else if (aCount == 1) {
-                            sequence.setEndVolume(subField.getValue());
+                            endVolume = subField.getValue();
                         }
                         aCount++;
                     }
                     //numéro
                     if (subField.getCode().equalsIgnoreCase("b")) {
                         if (bCount == 0) { //Première fois qu'on rencontre la balise
-                            sequence.setStartNumero(subField.getValue());
+                            startNumero = subField.getValue();
                         } else if (bCount == 1) {
-                            sequence.setEndNumero(subField.getValue());
+                            endNumero = subField.getValue();
                         }
                         bCount++;
                     }
                     //mois
                     if (subField.getCode().equalsIgnoreCase("j")) {
-                        mois = getMoisFromEnum(EnumUtils.getEnum(EnumMonth.class, subField.getValue()));
+                        if (iCount == 0) { //Première fois qu'on rencontre la balise
+                            startMonth = getMoisFromEnum(subField.getValue().trim());
+                        } else if (iCount == 1) {
+                            endMonth = getMoisFromEnum(subField.getValue().trim());
+                        }
                     }
                     //jour
                     if (subField.getCode().equalsIgnoreCase("k")) {
-                        jour = Integer.parseInt(subField.getValue());
-                        jourPresent = true;
+                        if (iCount == 0) { //Première fois qu'on rencontre la balise
+                            startDay = Integer.parseInt(subField.getValue().trim());
+                        } else if (iCount == 1) {
+                            endtDay = Integer.parseInt(subField.getValue().trim());
+                        }
                     }
                     //annee
                     if (subField.getCode().equalsIgnoreCase("i")) {
-                        annee = Integer.parseInt(subField.getValue());
+                        if (iCount == 0) { //Première fois qu'on rencontre la balise
+                            startYear = Integer.parseInt(subField.getValue().trim());
+                        } else if (iCount == 1) {
+                            endYear = Integer.parseInt(subField.getValue().trim());
+                        }
                     }
-
             }
             sousZonePrecedente = subField.getCode().toLowerCase(Locale.ROOT);
             if (sousZonePrecedente.equals("i")) {
-                if (iCount == 0) { //Première fois qu'on rencontre la balise
-                    dateBloc = new GregorianCalendar(annee, (mois != 0) ? mois : Calendar.JANUARY, jour);
-                    sequence.setStartDate(dateBloc);
-                } else if (iCount == 1) {
-                    dateBloc = new GregorianCalendar(annee, (mois != 0) ? mois : Calendar.DECEMBER, jour);
-                    if (!jourPresent && mois != 0) {
-                        //si le mois est renseigné sans le jour, on renseigne le dernier jour du mois dans la date de fin
-                        //peut arriver sur des revues non quotidiennes
-                        dateBloc.set(Calendar.DAY_OF_MONTH, dateBloc.getActualMaximum(Calendar.DAY_OF_MONTH));
-                    }
-                    sequence.setEndDate(dateBloc);
-                }
                 iCount++;
-
-                annee = 0;
-                mois = 0;
-                jour = 1;
-                jourPresent = false;
             }
         }
-        if (sequence.getEndDate() == null && !intervalleOuvert && sequence.getStartDate() != null) {
-            //si le bloc de fin est null et qu'on n'est pas dans le cas d'un intervalle ouvert, on doit fermer la séquence au 31/12 de l'année du bloc de début
-            sequence.setEndDate(new GregorianCalendar(sequence.getStartDate().get(Calendar.YEAR), Calendar.DECEMBER, 31));
+
+        if (iCount >= 0) {
+            // La date de début a été trouvé
+            //on ajout la séquence uniquement si elle a une date de début pour gérer le cas ou la 955 n'a que des sous zones de note
+            try {
+                SequenceContinue sequence = new SequenceContinue(startYear, startMonth, startDay, startVolume, startNumero);
+                if (iCount >= 2) {
+                    // La date de fin a été trouvé
+                    sequence.setEndDate(endYear, endMonth, endtDay, endVolume, endNumero);
+                }
+                holding.addSequence(sequence);
+
+            } catch (IllegalDateException ex) {
+                log.error("Impossible de créer la séquence continue : " + ex.getLocalizedMessage());
+                if (startYear != null) {
+                    // Il ne s'agit pas d'une séquence vide alors remonte l'erreur
+                    throw new IllegalHoldingException("Impossible de créer la séquence continue : " + ex.getLocalizedMessage());
+                }
+            }
         }
-        return sequence;
     }
 
-    void genererLacunes(Holding holding, DataField dataField) throws IllegalHoldingException {
-        SequenceLacune sequence = new SequenceLacune();
+    void processLacunes(Holding holding, DataField dataField) throws IllegalHoldingException {
         Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-        int mois = 0;
-        int jour = 1;
-        int annee = 0;
+
+        // Prorpiété d'une séquence continue
+        Integer startYear = null;
+        Integer startMonth = null;
+        Integer startDay = null;
+        String volume = null;
+        String numero = null;
 
         while (subFieldIterator.hasNext()) {
             SubField subField = subFieldIterator.next();
@@ -406,59 +375,56 @@ public class NoticeFormatExportMapper {
                 default:
                     if (subField.getCode().equals("0")) {
                         //si on arrive sur une $0, on crée un nouveau bloc
-                        sequence.setStartDate(new GregorianCalendar(annee, mois, jour));
+                        SequenceLacune sequence = new SequenceLacune(startYear, startMonth, startDay, volume, numero);
                         holding.addSequence(sequence);
-                        sequence = new SequenceLacune();
-                        //Calendar dateBloc = new GregorianCalendar(startAnnee, startMois, startJour);
-                        // sequence.setStartDate(dateBloc);
                     }
                     if (subField.getCode().equalsIgnoreCase("d")) {
-                        sequence.setStartVolume(subField.getValue());
+                        volume = subField.getValue();
                     }
                     if (subField.getCode().equalsIgnoreCase("e")) {
-                        sequence.setStartNumero(subField.getValue());
+                        numero = subField.getValue();
                     }
                     if (subField.getCode().equalsIgnoreCase("c")) {
-                        mois = getMoisFromEnum(EnumUtils.getEnum(EnumMonth.class, subField.getValue()));
+                        startMonth = getMoisFromEnum(subField.getValue());
                     }
                     if (subField.getCode().equalsIgnoreCase("b")) {
-                        jour = Integer.parseInt(subField.getValue());
+                        startDay = Integer.parseInt(subField.getValue());
                     }
                     if (subField.getCode().equalsIgnoreCase("a")) {
-                        annee = Integer.parseInt(subField.getValue());
+                        startYear = Integer.parseInt(subField.getValue());
                     }
             }
         }
 
         //ajout du dernier bloc qui n'est pas ajouté en début de boucle
-        sequence.setStartDate(new GregorianCalendar(annee, mois, jour));
+        SequenceLacune sequence = new SequenceLacune(startYear, startMonth, startDay, volume, numero);
         holding.addSequence(sequence);
     }
 
-    private Integer getMoisFromEnum(EnumMonth anEnum) {
+    private Integer getMoisFromEnum(String value) {
         try {
-            switch (anEnum) {
-                case jan:
+            switch (value) {
+                case "jan":
                     return Calendar.JANUARY;
-                case fev:
+                case "fev":
                     return Calendar.FEBRUARY;
-                case mar:
+                case "mar":
                     return Calendar.MARCH;
-                case avr:
+                case "avr":
                     return Calendar.APRIL;
-                case mai:
+                case "mai":
                     return Calendar.MAY;
-                case jun:
+                case "jun":
                     return Calendar.JUNE;
-                case jul:
+                case "jul":
                     return Calendar.JULY;
-                case aou:
+                case "aou":
                     return Calendar.AUGUST;
-                case sep:
+                case "sep":
                     return Calendar.SEPTEMBER;
-                case oct:
+                case "oct":
                     return Calendar.OCTOBER;
-                case nov:
+                case "nov":
                     return Calendar.NOVEMBER;
                 default:
                     return Calendar.DECEMBER;
@@ -611,7 +577,7 @@ public class NoticeFormatExportMapper {
             return OnGoingResourceType.X;
         }
 
-        switch (continiousType.substring(0, 1)) {
+        switch (continiousType.substring(0, 1).toLowerCase()) {
             case "a":
                 return OnGoingResourceType.A;
             case "b":
@@ -631,15 +597,67 @@ public class NoticeFormatExportMapper {
         }
     }
 
-    private String extractFrequency(String value) {
-        return null;
+    protected Period extractFrequency(String value) {
+        switch(value.toUpperCase()) {
+            case "A":
+                // Quotidienne
+                return Period.ofDays(1);
+            case "B":
+                // Bihebdomadaire
+                return Period.ofDays(3);
+            case "C":
+                // Hebdomadaire
+                return Period.ofDays(7);
+            case "D":
+                // Toutes les deux semaines
+                return Period.ofWeeks(2);
+            case "E":
+                // Bimensuelle
+                return Period.ofWeeks(2);
+            case "F":
+                // Mensuelle
+                return Period.ofMonths(1);
+            case "G":
+                // Bimestrielle
+                return Period.ofMonths(2);
+            case "H":
+                // Trimestrielle
+                return Period.ofMonths(3);
+            case "I":
+                // Trois fois par an
+                return Period.ofMonths(4);
+            case "J":
+                // Semestrielle
+                return Period.ofMonths(4);
+            case "K":
+                return Period.ZERO;
+            case "L" :
+                return Period.ZERO;
+            case "M" :
+                return Period.ZERO;
+            case "N" :
+                return Period.ZERO;
+            case "O" :
+                return Period.ZERO;
+            case "P" :
+                return Period.ZERO;
+            case "U" :
+                return Period.ZERO;
+            case "Y" :
+                return Period.ZERO;
+            case "Z" :
+                // Autre
+                return Period.ZERO;
+            default:
+                return Period.ZERO;
+        }
     }
 
     public String extractSupportType(String typeSupport) {
         if (typeSupport == null) {
             return SupportType.X;
         }
-        switch (typeSupport) {
+        switch (typeSupport.toLowerCase()) {
             case "a":
                 return SupportType.A;
             case "b":

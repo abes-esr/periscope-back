@@ -1,23 +1,91 @@
 package fr.abes.periscope.core.entity.visualisation;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import fr.abes.periscope.core.exception.IllegalDateException;
 
 import java.util.Calendar;
+import java.util.GregorianCalendar;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
 public abstract class Sequence implements Cloneable {
     protected Calendar startDate;
-    protected String startVolume;
-    protected String startNumero;
-
     protected Calendar endDate;
-    protected String endVolume;
-    protected String endNumero;
+    private boolean closedInterval = false;
     protected String note;
+
+    public Sequence(Integer startYear, Integer startMonth, Integer startDay) {
+        this.setStartDate(startYear, startMonth, startDay);
+        this.endDate = this.startDate;
+    }
+
+    public Sequence(Integer startYear, Integer startMonth, Integer startDay, Integer endYear, Integer endMonth, Integer endDay) {
+        this.setStartDate(startYear, startMonth, startDay);
+        this.setEndDate(endYear, endMonth, endDay);
+    }
+
+    protected void setStartDate(Integer startYear, Integer startMonth, Integer startDay) {
+        if (startYear != null && startMonth != null && startDay != null) {
+            this.startDate = new GregorianCalendar(startYear, startMonth, startDay);
+        } else if (startYear != null && startMonth != null && startDay == null) {
+            //si le mois est renseigné sans le jour, on renseigne le premier jour du mois
+            //peut arriver sur des revues non quotidiennes
+            this.startDate = new GregorianCalendar(startYear, startMonth, 1);
+        } else if (startYear != null && startMonth == null && startDay != null) {
+            this.startDate = new GregorianCalendar(startYear, Calendar.JANUARY, startDay);
+        } else if (startYear != null && startMonth == null && startDay == null) {
+            this.startDate = new GregorianCalendar(startYear, Calendar.JANUARY, 1);
+        } else {
+            throw new IllegalDateException("Start date of the sequence is not valid.");
+        }
+
+        this.checkDate();
+    }
+
+    public Calendar getStartDate() {
+        return this.startDate;
+    }
+
+    void setEndDate(Integer endYear, Integer endMonth, Integer endDay) {
+        if (endYear == null && endMonth == null && endDay == null) {
+            return;
+        }
+
+        if (endYear != null && endMonth != null && endDay != null) {
+            this.endDate = new GregorianCalendar(endYear, endMonth, endDay);
+        } else if (endYear != null && endMonth != null && endDay == null) {
+            //si le mois est renseigné sans le jour, on renseigne le dernier jour du mois dans la date de fin
+            //peut arriver sur des revues non quotidiennes
+            this.endDate = new GregorianCalendar(endYear, endMonth, 1);
+            this.endDate.set(Calendar.DAY_OF_MONTH, endDate.getActualMaximum(Calendar.DAY_OF_MONTH));
+        } else if (endYear != null && endMonth == null && endDay != null) {
+            this.endDate = new GregorianCalendar(endYear, Calendar.DECEMBER, endDay);
+        } else if (endYear != null && endMonth == null && endDay == null) {
+            this.endDate = new GregorianCalendar(endYear, Calendar.DECEMBER, 31);
+        } else {
+            throw new IllegalDateException("Unable to decode the end date");
+        }
+
+        this.closedInterval = true;
+
+        this.checkDate();
+    }
+
+    public Calendar getEndDate() {
+        return this.endDate;
+    }
+
+    public boolean isClosedInterval() {
+        return this.closedInterval;
+    }
+
+    private void checkDate() {
+        if (startDate != null && endDate != null) {
+            if (startDate.after(endDate)) {
+                // On échange les dates
+                Calendar temp = endDate;
+                endDate = startDate;
+                startDate = temp;
+            }
+        }
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -33,20 +101,23 @@ public abstract class Sequence implements Cloneable {
             return false;
         }
 
-        return startDate.equals(((Sequence) obj).startDate) ;
+        return startDate.equals(((Sequence) obj).startDate) && endDate.equals(((Sequence) obj).endDate);
     }
 
     @Override
     public String toString() {
-        return "Sequence {"+ "startDate="+ startDate.getTime() +", endDate="+ endDate.getTime() +"}";
+        if (isClosedInterval()) {
+            return "Sequence {" + "startDate=" + startDate.getTime() + ", endDate=" + endDate.getTime() + "}";
+        } else {
+            return "Sequence {" + "startDate=" + startDate.getTime() + ", endDate=undefined }";
+        }
     }
 
     @Override
     public Object clone() {
         try {
             return super.clone();
-        }
-        catch (CloneNotSupportedException e){
+        } catch (CloneNotSupportedException e) {
             throw new InternalError();
         }
     }

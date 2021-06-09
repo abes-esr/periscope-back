@@ -1,12 +1,34 @@
 package fr.abes.periscope.core.entity.visualisation;
 
+import java.util.Calendar;
+
 public class SequenceError extends Sequence {
-    public SequenceError(Sequence sequence) {
-        this.startDate = sequence.getStartDate();
-        this.endDate = sequence.getEndDate();
-        this.startNumero = sequence.getStartNumero();
-        this.endNumero = sequence.getEndNumero();
-        this.startVolume = sequence.getStartVolume();
-        this.endVolume = sequence.getEndVolume();
+
+    private String message;
+    private Sequence sequence = null;
+
+    public SequenceError(Integer startYear, Integer startMonth, Integer startDay, Integer endYear, Integer endMonth, Integer endDay, String message) {
+        super(startYear,startMonth,startDay,endYear,endMonth,endDay);
+        this.message = message;
+    }
+
+    public SequenceError(Sequence sequence, String message) {
+        super(sequence.getStartDate().get(Calendar.YEAR), sequence.getStartDate().get(Calendar.MONTH), sequence.getStartDate().get(Calendar.DAY_OF_MONTH),sequence.getEndDate().get(Calendar.YEAR), sequence.getEndDate().get(Calendar.MONTH), sequence.getEndDate().get(Calendar.DAY_OF_MONTH));
+        this.message = message;
+        this.sequence = sequence;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public String toString() {
+        return "SequenceError {"+ "startDate="+ startDate.getTime() +", endDate=" + endDate.getTime() +", message=" + message +"}";
     }
 }

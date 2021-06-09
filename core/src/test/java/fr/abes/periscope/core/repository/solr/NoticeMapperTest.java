@@ -4,6 +4,7 @@ import fr.abes.periscope.core.entity.OnGoingResourceType;
 import fr.abes.periscope.core.entity.PublicationYear;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import fr.abes.periscope.core.util.NoticeMapper;
+import fr.abes.periscope.core.util.NoticeSolRMapper;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -16,11 +17,11 @@ import java.text.ParseException;
 /**
  * Test l'extraction des dates de publication de la zone 100$a d'une NoticeSolr.
  */
-@SpringBootTest(classes = {NoticeMapper.class})
+@SpringBootTest(classes = {NoticeMapper.class, NoticeSolRMapper.class})
 public class NoticeMapperTest {
 
     @Autowired
-    private NoticeMapper noticeMapper;
+    private NoticeSolRMapper noticeMapper;
 
     /**
      * Test titre mort
