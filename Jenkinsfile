@@ -260,9 +260,9 @@ node {
                         withCredentials([
                                 // on charge le credential "periscope.solr-dev" dans la variable 'url'
                                 string(credentialsId: "periscope.solr.v1-${mavenProfil}", variable: 'urlV1'),
-                                string(credentialsId: "periscope.solr.v2-${mavenProfil}", variable: 'urlV2')
-                                string(credentialsId: "basexml.datasource.url-${mavenProfil}", variable: 'urlbaseXml')
-                                string(credentialsId: "basexml.datasource.username-${mavenProfil}", variable: 'usernameBaseXml')
+                                string(credentialsId: "periscope.solr.v2-${mavenProfil}", variable: 'urlV2'),
+                                string(credentialsId: "basexml.datasource.url-${mavenProfil}", variable: 'urlbaseXml'),
+                                string(credentialsId: "basexml.datasource.username-${mavenProfil}", variable: 'usernameBaseXml'),
                                 string(credentialsId: "basexml.datasource.password-${mavenProfil}", variable: 'passwordBaseXml')
                         ]) {
                             newconfig = newconfig.replaceAll("solr.v1.baseurl=*", "solr.v1.baseurl=${urlV1}")
