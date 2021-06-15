@@ -1,6 +1,7 @@
 package fr.abes.periscope.web.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import fr.abes.periscope.web.util.TYPE_SEQUENCE;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +13,7 @@ public class SequenceWebDto {
     @JsonProperty("dateFin")
     private String dateFin;
     @JsonProperty("typeSequence")
-    private String typeSequence;
+    private TYPE_SEQUENCE typeSequence;
     @JsonProperty("rcr")
     private String rcr;
 }

@@ -118,7 +118,7 @@ public class NoticeStoreService {
         });
         FacetPage<NoticeV2Solr> noticesWithFacet = noticeV2Repository.findNoticesWithFacetQuery(criteresBiblio, criteresExemp, facettes, Sort.by(orders), PageRequest.of(page, size));
 
-        return getResultFromQueryFacet(noticesWithFacet);
+        return getResultFromQueryFacet(noticesWithFacet, size);
     }
 
     /**
@@ -127,10 +127,10 @@ public class NoticeStoreService {
      * @param noticesWithFacet Listes des notices et des facettes
      * @return le résultat mappé
      */
-    private ResultSolr getResultFromQueryFacet(FacetPage<NoticeV2Solr> noticesWithFacet) {
+    private ResultSolr getResultFromQueryFacet(FacetPage<NoticeV2Solr> noticesWithFacet, Integer size) {
         ResultSolr result = new ResultSolr();
         result.setNotices(noticeMapper.mapList(noticesWithFacet.getContent(), NoticeV2.class));
-        result.setNbPages(noticesWithFacet.getTotalPages());
+        result.setNbPages(size == 0 ? 1 : (int)Math.ceil((double)noticesWithFacet.getTotalElements() / (double)size));
         result.setNbNotices(noticesWithFacet.getTotalElements());
 
         List<Page<FacetFieldEntry>> resultFacettes = new ArrayList<>(noticesWithFacet.getFacetResultPages());

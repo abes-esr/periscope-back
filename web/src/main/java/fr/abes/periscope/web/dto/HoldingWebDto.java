@@ -26,4 +26,11 @@ public class HoldingWebDto {
     public void addErreurs(List<String> erreurs) {
         this.erreurs.addAll(erreurs);
     }
+
+    public void addErreur(String erreur) { this.erreurs.add(erreur); }
+
+    public void clearSequence() { this.sequencesList.clear(); }
+
+    public void addSequences(List<SequenceWebDto> sequencesList) {this.sequencesList.addAll(sequencesList); }
+
 }
