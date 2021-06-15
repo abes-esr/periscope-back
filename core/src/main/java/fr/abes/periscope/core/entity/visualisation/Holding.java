@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 public class Holding extends Item {
     private String textEtatCollection;
     private String mentionDeLacune;
-    @Setter
     private List<Sequence> sequences = new LinkedList<>();
     private String textLacune;
     private String note;
