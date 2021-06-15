@@ -6,8 +6,10 @@ import fr.abes.periscope.core.entity.v2.NoticeV2;
 import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
-import fr.abes.periscope.core.entity.visualisation.Holding;
 import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
+import fr.abes.periscope.core.entity.visualisation.SequenceContinue;
+import fr.abes.periscope.core.entity.visualisation.SequenceError;
+import fr.abes.periscope.core.entity.visualisation.SequenceLacune;
 import fr.abes.periscope.core.exception.*;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
 import fr.abes.periscope.web.dto.*;
@@ -21,6 +23,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -172,6 +176,7 @@ public class DtoMapper {
 
     /**
      * Méthode de récupération d'un critère de tri pour la v1 de périscope
+     *
      * @param s critère de tri
      * @return valeur dans NoticeV1SolrField correspondant au critère saisi
      */
@@ -192,6 +197,7 @@ public class DtoMapper {
 
     /**
      * Méthode de récupération d'un critère de tri pour la v2 de périscope
+     *
      * @param s critère de tri
      * @return valeur dans NoticeV2SolrField correspondant au critère saisi
      */
@@ -551,5 +557,40 @@ public class DtoMapper {
             }
         }
         return titre;
+    }
+
+    @Bean
+    public void converterNoticeVisuWebDto() {
+        String datePattern = "yyyy-MM-dd";
+        DateFormat format = new SimpleDateFormat(datePattern);
+        Converter<NoticeVisu, NoticeVisuWebDto> myConverter = new Converter<NoticeVisu, NoticeVisuWebDto>() {
+            @Override
+            public NoticeVisuWebDto convert(MappingContext<NoticeVisu, NoticeVisuWebDto> context) {
+                NoticeVisu notice = context.getSource();
+                NoticeVisuWebDto noticeVisuWebDto = new NoticeVisuWebDto();
+
+                notice.getHoldings().forEach(h -> {
+                    HoldingWebDto holding = new HoldingWebDto();
+                    StringBuilder etatCollection = new StringBuilder(h.getTextEtatCollection());
+                    etatCollection.append(h.getMentionDeLacune());
+                    etatCollection.append(h.getTextLacune());
+                    holding.setEtatCollectionTextuel(etatCollection.toString());
+                    holding.addErreurs(h.getErreurs());
+                    h.getAllNonEmptySequences().forEach(s -> {
+                        SequenceWebDto sequenceWebDto = new SequenceWebDto();
+                        if (s instanceof SequenceContinue) sequenceWebDto.setTypeSequence("continue");
+                        else if (s instanceof SequenceError) sequenceWebDto.setTypeSequence("erreur");
+                        else if (s instanceof SequenceLacune) sequenceWebDto.setTypeSequence("lacune");
+                        sequenceWebDto.setDateDebut(format.format(s.getStartDate().getTime()));
+                        sequenceWebDto.setDateFin(format.format(s.getEndDate().getTime()));
+                        sequenceWebDto.setRcr(h.getRcr());
+                        holding.addSequence(sequenceWebDto);
+                    });
+                    noticeVisuWebDto.addHolding(holding);
+                });
+                return noticeVisuWebDto;
+            }
+        };
+        modelMapper.addConverter(myConverter);
     }
 }

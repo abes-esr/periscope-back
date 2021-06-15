@@ -12,10 +12,14 @@ public class SequenceContinue extends Sequence {
     protected String endVolume;
     protected String endNumero;
 
-    public SequenceContinue(Integer startYear, Integer startMonth, Integer startDay, String startVolume, String startNumero) {
+    public SequenceContinue(Integer startYear, Integer startMonth, Integer startDay, String startVolume, String startNumero, boolean ouvert) {
         super(startYear, startMonth, startDay);
-        Calendar now = Calendar.getInstance();
-        setEndDate(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+        if (ouvert) {
+            Calendar now = Calendar.getInstance();
+            setEndDate(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+        } else {
+            setEndDate(startYear, startMonth, startDay, "", "");
+        }
 
         setStartVolume(startVolume);
         setStartNumero(startNumero);

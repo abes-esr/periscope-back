@@ -1,6 +1,8 @@
 package fr.abes.periscope.core.entity.visualisation;
 
 import fr.abes.periscope.core.entity.Item;
+import fr.abes.periscope.core.util.binaryTree.Node;
+import fr.abes.periscope.core.util.binaryTree.Tree;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -16,6 +18,7 @@ public class Holding extends Item {
     private List<Sequence> sequences = new LinkedList<>();
     private String textLacune;
     private String note;
+    private List<String> erreurs = new ArrayList<>();
 
     public Holding(String epn) {
         super(epn);
@@ -37,6 +40,16 @@ public class Holding extends Item {
         this.note = value;
     }
 
+    public void addErreur(String message) {
+        this.erreurs.add(message);
+    }
+
+    public List<Sequence> getAllNonEmptySequences() {
+        return this.sequences.stream()
+                .filter(p -> (p instanceof SequenceLacune || p instanceof SequenceContinue || p instanceof SequenceError))
+                .collect(Collectors.toList());
+    }
+
     public List<SequenceContinue> getContinueSequences() {
         return this.sequences.stream()
                 .filter(p -> p instanceof SequenceContinue)
@@ -48,6 +61,12 @@ public class Holding extends Item {
         return this.sequences.stream()
                 .filter(p -> p instanceof SequenceLacune)
                 .map(p -> (SequenceLacune) p)
+                .collect(Collectors.toList());
+    }
+
+    public List<Sequence> getContinueSequenceAndLacunes() {
+        return this.sequences.stream()
+                .filter(s -> (s instanceof SequenceContinue || s instanceof SequenceLacune))
                 .collect(Collectors.toList());
     }
 
@@ -69,56 +88,78 @@ public class Holding extends Item {
         if (sequence instanceof SequenceLacune) {
             this.addLacuneSequence((SequenceLacune) sequence);
         } else {
-            Sequence nearestSeq = this.findNearestSequence(sequence);
-
-            if (nearestSeq == null) {
-                this.sequences.add(0, sequence);
-            } else {
-
-                int nearestIndex = this.sequences.indexOf(nearestSeq);
-                if (sequence.getStartDate().after(nearestSeq.getStartDate())) {
-                    if (sequence.getEndDate().before(nearestSeq.getEndDate()) || sequence.getEndDate().equals(nearestSeq.getEndDate())) {
-                        insertInTheMiddleOfSequence(sequence, nearestSeq, nearestIndex);
-                    } else {
+            if (!this.getContinueSequences().stream().anyMatch(s -> (s.getStartDate().equals(sequence.getStartDate()) && s.getEndDate().equals(sequence.getEndDate())))) {
+                Sequence intraSequence = this.findIntraSequence(sequence);
+                if (intraSequence != null) {
+                    int nearestIndex = this.sequences.indexOf(intraSequence);
+                    if (sequence.getStartDate().after(intraSequence.getStartDate())) {
+                        insertInTheMiddleOfSequence(sequence, intraSequence, nearestIndex);
+                    } else if (sequence.getStartDate().equals(intraSequence.getStartDate())) {
                         insertAfterSequence(sequence, nearestIndex);
                     }
                 } else {
-                    insertBeforeSequence(sequence, nearestIndex);
+                    Sequence nearestSeq = this.findNearestSequence(sequence);
+
+                    if (nearestSeq == null) {
+                        this.sequences.add(0, sequence);
+                    } else {
+
+                        int nearestIndex = this.sequences.indexOf(nearestSeq);
+                        if (sequence.getStartDate().after(nearestSeq.getStartDate())) {
+                            if (sequence.getEndDate().before(nearestSeq.getEndDate()) || sequence.getEndDate().equals(nearestSeq.getEndDate())) {
+                                insertInTheMiddleOfSequence(sequence, nearestSeq, nearestIndex);
+                            } else {
+                                insertAfterSequence(sequence, nearestIndex);
+                            }
+                        } else {
+                            insertBeforeSequence(sequence, nearestIndex);
+                        }
+                    }
                 }
             }
         }
     }
 
-    public void updateLacuneSequenceWithFrequency(Period frequency) {
-
-        for (SequenceLacune lacune : getLacuneSequences()) {
-            if (lacune.updateToFrequency(frequency)) {
-                int index = this.sequences.indexOf(lacune);
-                if (index != this.getSequences().size()) {
-                    // Ce n'est pas le dernier de la liste, on mets à jour la date de début de la séquence suivante
-                    this.getSequences().get(index + 1).setStartDate(lacune.getEndDate().get(Calendar.YEAR), lacune.getEndDate().get(Calendar.MONTH), lacune.getEndDate().get(Calendar.DAY_OF_MONTH));
+    public void updateSequenceWithFrequency(Period frequency) {
+        this.getSequences().forEach(sequence -> {
+            int index = this.sequences.indexOf(sequence);
+            if (sequence.updateToFrequency(frequency)) {
+                if (index < this.getSequences().size() - 1) {
+                    // Ce n'est pas le dernier de la liste, on met à jour la date de début de la séquence suivante
+                    this.getSequences().get(index + 1).setStartDate(sequence.getEndDate().get(Calendar.YEAR), sequence.getEndDate().get(Calendar.MONTH), sequence.getEndDate().get(Calendar.DAY_OF_MONTH));
+                    if (this.getSequences().get(index + 1).getStartDate().compareTo(this.getSequences().get(index + 1).getEndDate()) > 0) {
+                        //si la séquence qu'on vient de modifier se retrouve avec une date de début supérieure à sa date de fin, on la supprime et on met à jour la date de début de la séquence suivante
+                        this.sequences.remove(index + 1);
+                        if (index < this.getSequences().size() - 2)
+                            this.sequences.get(index + 2).setStartDate(sequence.getEndDate().get(Calendar.YEAR), sequence.getEndDate().get(Calendar.MONTH), sequence.getEndDate().get(Calendar.DAY_OF_MONTH));
+                    }
                 }
             }
-        }
+        });
     }
 
     private void addLacuneSequence(final SequenceLacune sequence) {
-        Sequence closerSequence = this.findNearestSequenceContinue(sequence);
-        if (closerSequence == null) {
-            SequenceError sequenceError = new SequenceError(sequence, "Impossible d'ajouter la lacune dans un état de collection vide");
-            this.addSequence(sequenceError);
-        } else {
-            int nearestIndex = this.sequences.indexOf(closerSequence);
-
-            log.debug("current=" + sequence.getStartDate().getTime() + " plus proche =" + closerSequence.getStartDate().getTime() + " index =" + nearestIndex);
-
-            if (sequence.getStartDate().after(closerSequence.getStartDate())) {
-                insertInTheMiddleOfSequence(sequence, closerSequence, nearestIndex);
-            } else if (sequence.getStartDate().equals(closerSequence.getStartDate())) {
-                insertAfterSequence(sequence, nearestIndex);
-            } else {
-                SequenceError sequenceError = new SequenceError(sequence, "Lacune en dehors de l'état de collection");
+        //on ne fait le traitement que si on n'a pas déjà ajouté une lacune identique dans la liste
+        if (this.getLacuneSequences().stream().filter(s -> s.getStartDate().equals(sequence.getStartDate()) && s.getEndDate().equals(sequence.getEndDate())).count() == 0) {
+            Sequence closerSequence = this.findIntraSequence(sequence);
+            if (this.sequences.size() == 0) {
+                SequenceError sequenceError = new SequenceError(sequence, "Impossible d'ajouter la lacune dans un état de collection vide");
                 this.addSequence(sequenceError);
+            } else {
+                if (closerSequence == null) {
+                    SequenceError sequenceError = new SequenceError(sequence, "Lacune en dehors de l'état de collection");
+                    this.addSequence(sequenceError);
+                } else {
+                    int nearestIndex = this.sequences.indexOf(closerSequence);
+
+                    log.debug(this.getEpn() + "current=" + sequence.getStartDate().getTime() + " plus proche =" + closerSequence.getStartDate().getTime() + " index =" + nearestIndex);
+
+                    if (sequence.getStartDate().after(closerSequence.getStartDate())) {
+                        insertInTheMiddleOfSequence(sequence, closerSequence, nearestIndex);
+                    } else if (sequence.getStartDate().equals(closerSequence.getStartDate())) {
+                        insertAfterSequence(sequence, nearestIndex);
+                    }
+                }
             }
         }
     }
@@ -148,9 +189,7 @@ public class Holding extends Item {
         } else {
             SequenceEmpty empty = new SequenceEmpty(sequence.getEndDate().get(Calendar.YEAR), sequence.getEndDate().get(Calendar.MONTH), sequence.getEndDate().get(Calendar.DAY_OF_MONTH),
                     nearestSequence.getStartDate().get(Calendar.YEAR), nearestSequence.getStartDate().get(Calendar.MONTH), nearestSequence.getStartDate().get(Calendar.DAY_OF_MONTH));
-            if (!(sequence instanceof SequenceError)) {
-                this.sequences.add(Math.max(0, nearestIndex), empty);
-            }
+            this.sequences.add(Math.max(0, nearestIndex), empty);
             this.sequences.add(Math.max(0, nearestIndex), sequence);
         }
     }
@@ -170,16 +209,26 @@ public class Holding extends Item {
         }
     }
 
-    public Sequence findNearestSequence(Sequence sequence) {
+    public Sequence findIntraSequence(Sequence sequence) {
         if (this.sequences.size() == 0) {
             return null;
         } else {
-            return Collections.min(this.sequences, (d1, d2) -> {
-                long diff1 = Math.abs(d1.getStartDate().getTime().getTime() - sequence.getStartDate().getTime().getTime());
-                long diff2 = Math.abs(d2.getStartDate().getTime().getTime() - sequence.getStartDate().getTime().getTime());
-                return Long.compare(diff1, diff2);
-            });
+            Tree tree = new Tree();
+            this.sequences.forEach(s -> tree.add(s));
+            Node nodeFound = tree.search(tree.root, sequence);
+            return (nodeFound != null) ? nodeFound.getElement() : null;
         }
+    }
+
+    public Sequence findNearestSequence(Sequence sequence) {
+        if (this.sequences.size() == 0) {
+            return null;
+        }
+        return Collections.min(this.sequences, (d1, d2) -> {
+            long diff1 = Math.abs(d1.getStartDate().getTime().getTime() - sequence.getStartDate().getTime().getTime());
+            long diff2 = Math.abs(d2.getStartDate().getTime().getTime() - sequence.getStartDate().getTime().getTime());
+            return Long.compare(diff1, diff2);
+        });
     }
 
     public Sequence findNearestSequenceContinue(Sequence sequence) {

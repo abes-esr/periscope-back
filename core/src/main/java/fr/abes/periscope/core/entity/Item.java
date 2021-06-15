@@ -2,6 +2,7 @@ package fr.abes.periscope.core.entity;
 
 import fr.abes.periscope.core.exception.IllegalValueException;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -10,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
  */
 @Slf4j
 @Getter @Setter
+@NoArgsConstructor
 public class Item {
 
     protected String epn;
@@ -21,7 +23,7 @@ public class Item {
     protected String pcp;
 
     public Item(String epn) {
-        if (epn.matches("[0-9]{9,11}")) {
+        if (epn.matches("(\\d{1,9}X?)(\\d{2})?")) {
             this.epn = epn;
         } else {
             throw new IllegalValueException("EPN do not respect the format : 9 to 11 numbers");

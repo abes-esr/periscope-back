@@ -10,6 +10,7 @@ import fr.abes.periscope.core.exception.IllegalHoldingException;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import fr.abes.periscope.core.exception.MissingFieldException;
 import lombok.extern.slf4j.Slf4j;
+import net.sf.saxon.Err;
 import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Converter;
 import org.modelmapper.MappingException;
@@ -100,7 +101,7 @@ public class NoticeFormatExportMapper {
                                     // zone 110-a
                                     if (subField.getCode().equalsIgnoreCase("a")) {
                                         target.setContinuousType(extractOnGoingResourceType(subField.getValue()));
-                                        target.setFrequency(extractFrequency(subField.getValue()));
+                                        target.setFrequency(extractFrequency(subField.getValue().substring(1, 2)));
                                     }
                                 }
                             }
@@ -210,19 +211,17 @@ public class NoticeFormatExportMapper {
                                         }
                                     }
                                 }
-
                                 target.addHolding(holding);
                             }
-
                         }
                     }
-
                     return target;
-
                 } catch (NullPointerException ex) {
                     throw new MappingException(Collections.singletonList(new ErrorMessage("Notice has null field")));
+                } catch (IllegalHoldingException ex) {
+                    throw new MappingException(Collections.singletonList(new ErrorMessage(ex.getLocalizedMessage())));
                 } catch (Exception ex) {
-                    throw new MappingException(Collections.singletonList(new ErrorMessage(ex.getMessage())));
+                    throw new MappingException(Collections.singletonList(new ErrorMessage(ex.getLocalizedMessage())));
                 }
 
             }
@@ -254,11 +253,14 @@ public class NoticeFormatExportMapper {
         String endNumero = null;
         String endVolume = null;
 
+        boolean ouvert = false;
+
         // Compteurs d'occurence des balises
         int aCount = 0;
         int bCount = 0;
         int iCount = 0;
 
+        boolean erreur = false;
         while (subFieldIterator.hasNext()) {
             SubField subField = subFieldIterator.next();
             if (subField.getCode().equalsIgnoreCase("g")) {
@@ -280,7 +282,8 @@ public class NoticeFormatExportMapper {
                     break;
                 default:
                     if (subField.getValue() == null) {
-                        //si on a une sous zone vide, c'est un intervalle ouvert sans date de fin, on sort de la boucle
+                        //si la valeur de la sous zone est vide, on est dans le cas d'un intervale ouvert, on sort de la boucle
+                        ouvert = true;
                         break;
                     }
                     //volume
@@ -303,10 +306,14 @@ public class NoticeFormatExportMapper {
                     }
                     //mois
                     if (subField.getCode().equalsIgnoreCase("j")) {
-                        if (iCount == 0) { //Première fois qu'on rencontre la balise
-                            startMonth = getMoisFromEnum(subField.getValue().trim());
-                        } else if (iCount == 1) {
-                            endMonth = getMoisFromEnum(subField.getValue().trim());
+                        try {
+                            if (iCount == 0) { //Première fois qu'on rencontre la balise
+                                startMonth = getMoisFromEnum(subField.getValue().trim());
+                            } else if (iCount == 1) {
+                                endMonth = getMoisFromEnum(subField.getValue().trim());
+                            }
+                        } catch (IllegalDateException ex) {
+                            erreur = true;
                         }
                     }
                     //jour
@@ -332,16 +339,21 @@ public class NoticeFormatExportMapper {
             }
         }
 
-        if (iCount >= 0) {
+        if (iCount >= 0 && startYear != null) {
             // La date de début a été trouvé
             //on ajout la séquence uniquement si elle a une date de début pour gérer le cas ou la 955 n'a que des sous zones de note
             try {
-                SequenceContinue sequence = new SequenceContinue(startYear, startMonth, startDay, startVolume, startNumero);
+                SequenceContinue sequence = new SequenceContinue(startYear, startMonth, startDay, startVolume, startNumero, ouvert);
                 if (iCount >= 2) {
                     // La date de fin a été trouvé
                     sequence.setEndDate(endYear, endMonth, endtDay, endVolume, endNumero);
                 }
-                holding.addSequence(sequence);
+                if (erreur) {
+                    SequenceError sequenceError = new SequenceError(sequence, "Erreur dans la saisie du mois");
+                    holding.addSequence(sequenceError);
+                } else {
+                    holding.addSequence(sequence);
+                }
 
             } catch (IllegalDateException ex) {
                 log.error("Impossible de créer la séquence continue : " + ex.getLocalizedMessage());
@@ -363,6 +375,8 @@ public class NoticeFormatExportMapper {
         String volume = null;
         String numero = null;
 
+        boolean error = false;
+        String errorMessage = "";
         while (subFieldIterator.hasNext()) {
             SubField subField = subFieldIterator.next();
 
@@ -373,64 +387,78 @@ public class NoticeFormatExportMapper {
                 case "5":
                     break;
                 default:
-                    if (subField.getCode().equals("0")) {
-                        //si on arrive sur une $0, on crée un nouveau bloc
-                        SequenceLacune sequence = new SequenceLacune(startYear, startMonth, startDay, volume, numero);
-                        holding.addSequence(sequence);
-                    }
-                    if (subField.getCode().equalsIgnoreCase("d")) {
-                        volume = subField.getValue();
-                    }
-                    if (subField.getCode().equalsIgnoreCase("e")) {
-                        numero = subField.getValue();
-                    }
-                    if (subField.getCode().equalsIgnoreCase("c")) {
-                        startMonth = getMoisFromEnum(subField.getValue());
-                    }
-                    if (subField.getCode().equalsIgnoreCase("b")) {
-                        startDay = Integer.parseInt(subField.getValue());
-                    }
-                    if (subField.getCode().equalsIgnoreCase("a")) {
-                        startYear = Integer.parseInt(subField.getValue());
+                    try {
+                        if (subField.getCode().equals("0")) {
+                            //si on arrive sur une $0, on crée un nouveau bloc
+                            if (!error) {
+                                SequenceLacune sequence = new SequenceLacune(startYear, startMonth, startDay, volume, numero);
+                                holding.addSequence(sequence);
+                            }
+                        }
+                        if (subField.getCode().equalsIgnoreCase("d")) {
+                            volume = subField.getValue();
+                        }
+                        if (subField.getCode().equalsIgnoreCase("e")) {
+                            numero = subField.getValue();
+                        }
+                        if (subField.getCode().equalsIgnoreCase("c")) {
+                            startMonth = getMoisFromEnum(subField.getValue());
+                        }
+                        if (subField.getCode().equalsIgnoreCase("b")) {
+                            startDay = Integer.parseInt(subField.getValue());
+                        }
+                        if (subField.getCode().equalsIgnoreCase("a")) {
+                            startYear = Integer.parseInt(subField.getValue());
+
+                        }
+                    } catch (IllegalDateException | NumberFormatException ex) {
+                        holding.addErreur("Erreur epn " + holding.getEpn() + " : syntaxe de date incorrecte : " + ex.getLocalizedMessage());
+                        error = true;
                     }
             }
         }
 
-        //ajout du dernier bloc qui n'est pas ajouté en début de boucle
-        SequenceLacune sequence = new SequenceLacune(startYear, startMonth, startDay, volume, numero);
-        holding.addSequence(sequence);
+
+        if (error) {
+            if (startYear != null) {
+                SequenceError sequenceError = new SequenceError(startYear, startMonth, startDay, errorMessage);
+                holding.addSequence(sequenceError);
+            }
+        } else {
+            //ajout du dernier bloc qui n'est pas ajouté en début de boucle
+            Sequence sequence = new SequenceLacune(startYear, startMonth, startDay, volume, numero);
+            holding.addSequence(sequence);
+        }
     }
 
-    private Integer getMoisFromEnum(String value) {
-        try {
-            switch (value) {
-                case "jan":
-                    return Calendar.JANUARY;
-                case "fev":
-                    return Calendar.FEBRUARY;
-                case "mar":
-                    return Calendar.MARCH;
-                case "avr":
-                    return Calendar.APRIL;
-                case "mai":
-                    return Calendar.MAY;
-                case "jun":
-                    return Calendar.JUNE;
-                case "jul":
-                    return Calendar.JULY;
-                case "aou":
-                    return Calendar.AUGUST;
-                case "sep":
-                    return Calendar.SEPTEMBER;
-                case "oct":
-                    return Calendar.OCTOBER;
-                case "nov":
-                    return Calendar.NOVEMBER;
-                default:
-                    return Calendar.DECEMBER;
-            }
-        } catch (NullPointerException ex) {
-            throw new IllegalHoldingException("Erreur dans la zone 959 : valeur non autorisée en $c");
+    private Integer getMoisFromEnum(String value) throws IllegalDateException {
+        switch (value) {
+            case "jan":
+                return Calendar.JANUARY;
+            case "fev":
+                return Calendar.FEBRUARY;
+            case "mar":
+                return Calendar.MARCH;
+            case "avr":
+                return Calendar.APRIL;
+            case "mai":
+                return Calendar.MAY;
+            case "jun":
+                return Calendar.JUNE;
+            case "jul":
+                return Calendar.JULY;
+            case "aou":
+                return Calendar.AUGUST;
+            case "sep":
+                return Calendar.SEPTEMBER;
+            case "oct":
+                return Calendar.OCTOBER;
+            case "nov":
+                return Calendar.NOVEMBER;
+            case "dec":
+                return Calendar.DECEMBER;
+            default:
+                throw new IllegalDateException("Erreur dans la sous zone 'mois' " + value);
         }
     }
 
@@ -598,7 +626,7 @@ public class NoticeFormatExportMapper {
     }
 
     protected Period extractFrequency(String value) {
-        switch(value.toUpperCase()) {
+        switch (value.toUpperCase()) {
             case "A":
                 // Quotidienne
                 return Period.ofDays(1);
@@ -631,21 +659,21 @@ public class NoticeFormatExportMapper {
                 return Period.ofMonths(4);
             case "K":
                 return Period.ZERO;
-            case "L" :
+            case "L":
                 return Period.ZERO;
-            case "M" :
+            case "M":
                 return Period.ZERO;
-            case "N" :
+            case "N":
                 return Period.ZERO;
-            case "O" :
+            case "O":
                 return Period.ZERO;
-            case "P" :
+            case "P":
                 return Period.ZERO;
-            case "U" :
+            case "U":
                 return Period.ZERO;
-            case "Y" :
+            case "Y":
                 return Period.ZERO;
-            case "Z" :
+            case "Z":
                 // Autre
                 return Period.ZERO;
             default:

@@ -1,12 +1,18 @@
 package fr.abes.periscope.core.service;
 
+import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
+import fr.abes.periscope.core.entity.xml.NoticeXml;
 import fr.abes.periscope.core.entity.xml.NoticesBibio;
 import fr.abes.periscope.core.repository.baseXml.NoticesBibioRepository;
 import fr.abes.periscope.core.util.NoticeFormatExportMapper;
 import fr.abes.periscope.core.util.NoticeMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.sql.SQLException;
 
 @Service
 public class HoldingService {
@@ -24,8 +30,12 @@ public class HoldingService {
      * @param ppn ppn de la notice à récupérer
      * @return notice + exemplaires + états de collection
      */
-    public NoticeVisu getNoticeWithHoldings(String ppn) {
+    public NoticeVisu getNoticeWithHoldings(String ppn) throws SQLException, IOException {
         NoticesBibio noticesBibio = repository.findFirstByPpn(ppn);
-        return noticeFormatExportmodelMapper.map(noticesBibio, NoticeVisu.class);
+        JacksonXmlModule module = new JacksonXmlModule();
+        module.setDefaultUseWrapper(false);
+        XmlMapper xmlMapper = new XmlMapper(module);
+        NoticeXml noticeXml = xmlMapper.readValue(noticesBibio.getDataXml().getCharacterStream(), NoticeXml.class);
+        return noticeFormatExportmodelMapper.map(noticeXml, NoticeVisu.class);
     }
 }

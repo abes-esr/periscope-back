@@ -1,7 +1,9 @@
 package fr.abes.periscope.core.entity.visualisation;
 
 import fr.abes.periscope.core.exception.IllegalDateException;
+import lombok.Getter;
 
+import java.time.Period;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
@@ -10,10 +12,11 @@ public abstract class Sequence implements Cloneable {
     protected Calendar endDate;
     private boolean closedInterval = false;
     protected String note;
+    private boolean updateToFrequency = false;
 
     public Sequence(Integer startYear, Integer startMonth, Integer startDay) {
         this.setStartDate(startYear, startMonth, startDay);
-        this.endDate = this.startDate;
+        this.setEndDate(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.get(Calendar.DAY_OF_MONTH));
     }
 
     public Sequence(Integer startYear, Integer startMonth, Integer startDay, Integer endYear, Integer endMonth, Integer endDay) {
@@ -37,6 +40,10 @@ public abstract class Sequence implements Cloneable {
         }
 
         this.checkDate();
+    }
+
+    public boolean isUpdateToFrequency() {
+        return updateToFrequency;
     }
 
     public Calendar getStartDate() {
@@ -85,6 +92,22 @@ public abstract class Sequence implements Cloneable {
                 startDate = temp;
             }
         }
+    }
+
+    /**
+     * Permet la mise à jour de la date de fin en fonction de la périodicité de la publication
+     * @param frequency période à ajouter à la date de début pour obtenir la date de fin
+     * @return flag de modification de la date de fin pour éviter une modification ultérieure en cas de repassage
+     */
+    public boolean updateToFrequency(Period frequency) {
+        //on ne met à jour la date de fin que si elle est égale à la date de début et qu'on ne l'a pas déjà modifiée lors d'un appel précédent
+        if (!this.updateToFrequency && endDate.equals(startDate)) {
+            endDate.add(Calendar.DAY_OF_MONTH, frequency.getDays());
+            endDate.add(Calendar.MONTH, frequency.getMonths());
+            endDate.add(Calendar.YEAR, frequency.getYears());
+            this.updateToFrequency = true;
+        }
+        return this.updateToFrequency;
     }
 
     @Override
