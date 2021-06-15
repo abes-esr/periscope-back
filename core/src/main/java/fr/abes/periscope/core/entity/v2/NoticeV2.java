@@ -1,12 +1,12 @@
 package fr.abes.periscope.core.entity.v2;
 
+import fr.abes.periscope.core.entity.Item;
 import fr.abes.periscope.core.entity.Notice;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter @Setter

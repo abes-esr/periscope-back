@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class NoticeWebV2DtoTest {
     @Test
     public void testGetTitre() {
-        List<String> tempList = new ArrayList<>();
         NoticeWebV2Dto notice = new NoticeWebV2Dto();
         notice.setTitreCle("titre clé");
         assertEquals(notice.getTitre(), "titre clé");
