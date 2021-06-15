@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.time.Period;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -46,6 +47,7 @@ public class NoticeVisu extends Notice {
         holding.updateSequenceWithFrequency(frequency);
         this.holdings.add(holding);
     }
+
 
 
 }

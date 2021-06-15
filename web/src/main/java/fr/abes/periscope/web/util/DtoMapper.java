@@ -529,36 +529,6 @@ public class DtoMapper {
         return Integer.parseInt(endYear.getYear()) - Integer.parseInt(startYear.getYear());
     }
 
-    private String getTitre(NoticeVisu noticeVisu) {
-        String titre = noticeVisu.getKeyTitle();
-        if (titre != null && !titre.isEmpty() && noticeVisu.getKeyTitleQualifer() != null) {
-            titre += " " + noticeVisu.getKeyTitleQualifer();
-            return titre;
-        }
-        if (titre == null || titre.isEmpty()) {
-            if (noticeVisu.getKeyShortedTitle() != null && !noticeVisu.getKeyShortedTitle().isEmpty()) {
-                return noticeVisu.getKeyShortedTitle();
-            }
-
-            if (noticeVisu.getProperTitle() != null && !noticeVisu.getProperTitle().isEmpty()) {
-                return noticeVisu.getProperTitle();
-            }
-
-            if (noticeVisu.getTitleFromDifferentAuthor() != null && !noticeVisu.getTitleFromDifferentAuthor().isEmpty()) {
-                return noticeVisu.getTitleFromDifferentAuthor();
-            }
-
-            if (noticeVisu.getParallelTitle() != null && !noticeVisu.getParallelTitle().isEmpty()) {
-                return noticeVisu.getParallelTitle();
-            }
-
-            if (noticeVisu.getTitleComplement() != null && !noticeVisu.getTitleComplement().isEmpty()) {
-                return noticeVisu.getTitleComplement();
-            }
-        }
-        return titre;
-    }
-
     @Bean
     public void converterNoticeVisuWebDto() {
         String datePattern = "yyyy-MM-dd";
@@ -571,16 +541,19 @@ public class DtoMapper {
 
                 notice.getHoldings().forEach(h -> {
                     HoldingWebDto holding = new HoldingWebDto();
-                    StringBuilder etatCollection = new StringBuilder(h.getTextEtatCollection());
-                    etatCollection.append(h.getMentionDeLacune());
-                    etatCollection.append(h.getTextLacune());
+                    StringBuilder etatCollection = new StringBuilder();
+                    if (h.getTextEtatCollection() != null) etatCollection.append(h.getTextEtatCollection());
+                    if (h.getMentionDeLacune() != null) etatCollection.append(h.getMentionDeLacune());
+                    if (h.getTextLacune() != null) etatCollection.append("[ lacunes signalées : ").append(h.getTextLacune()).append(" ]");
                     holding.setEtatCollectionTextuel(etatCollection.toString());
                     holding.addErreurs(h.getErreurs());
                     h.getAllNonEmptySequences().forEach(s -> {
                         SequenceWebDto sequenceWebDto = new SequenceWebDto();
-                        if (s instanceof SequenceContinue) sequenceWebDto.setTypeSequence("continue");
-                        else if (s instanceof SequenceError) sequenceWebDto.setTypeSequence("erreur");
-                        else if (s instanceof SequenceLacune) sequenceWebDto.setTypeSequence("lacune");
+                        if (s instanceof SequenceContinue) sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.CONTINUE);
+                        else if (s instanceof SequenceError) {
+                            sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.ERREUR);
+                            holding.addErreur(((SequenceError) s).getMessage());
+                        } else if (s instanceof SequenceLacune) sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.LACUNE);
                         sequenceWebDto.setDateDebut(format.format(s.getStartDate().getTime()));
                         sequenceWebDto.setDateFin(format.format(s.getEndDate().getTime()));
                         sequenceWebDto.setRcr(h.getRcr());
