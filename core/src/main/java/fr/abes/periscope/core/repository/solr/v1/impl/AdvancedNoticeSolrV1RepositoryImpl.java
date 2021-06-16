@@ -33,7 +33,7 @@ public class AdvancedNoticeSolrV1RepositoryImpl implements AdvancedNoticeSolrV1R
     private final SolrQueryBuilder builderQuery;
 
     /** Core du serveur SolR */
-    @Value("${solr.v1.core}")
+    @Value("${periscope.solr.v1.core}")
     private String core;
 
     public AdvancedNoticeSolrV1RepositoryImpl(@Qualifier("solrV1Template") SolrTemplate template, @Qualifier("SolrQueryV1Builder") SolrQueryBuilder builder) {
