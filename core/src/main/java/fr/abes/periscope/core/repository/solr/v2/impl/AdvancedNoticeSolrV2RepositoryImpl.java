@@ -33,10 +33,10 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
 
     private final SolrQueryBuilder builderQuery;
 
-    @Value("${solr.v2.core}")
+    @Value("${periscope.solr.v2.core}")
     private String core;
 
-    @Value("${solr.v2.nbexemplaires}")
+    @Value("${periscope.solr.v2.nbexemplaires}")
     private String nbExemplaires;
 
     public AdvancedNoticeSolrV2RepositoryImpl(@Qualifier("solrV2Template") SolrTemplate template, @Qualifier("SolrQueryV2Builder") SolrQueryBuilder builder) {
