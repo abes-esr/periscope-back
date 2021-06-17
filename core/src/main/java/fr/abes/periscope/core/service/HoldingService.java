@@ -47,6 +47,6 @@ public class HoldingService {
             XmlMapper xmlMapper = new XmlMapper(module);
             return xmlMapper.readValue(noticesBibio.get().getDataXml().getCharacterStream(), NoticeXml.class);
         }
-        throw new IllegalPpnException("le PPN " + ppn + "n'existe pas");
+        throw new IllegalPpnException("le PPN " + ppn + " n'existe pas");
     }
 }
