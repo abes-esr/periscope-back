@@ -160,14 +160,14 @@ public class HoldingTest {
     @DisplayName("test ajout de lacune mal placée")
     void addLacuneMisplaced() {
         Holding holding = new Holding("41133793901");
-        Sequence sequenceToAdd = new SequenceLacune(1989, Calendar.FEBRUARY, 28, "", "");
+        Sequence sequenceToAdd = new SequenceLacune(1989, Calendar.FEBRUARY, 28, "2139", "3000");
         sequenceToAdd.setEndDate(1989, Calendar.MARCH, 31);
         Sequence sequence1 = new SequenceContinue(1990, Calendar.JANUARY, 1, "", "", true);
         holding.addSequence(sequence1);
 
         holding.addSequence(sequenceToAdd);
         Assertions.assertEquals(1, holding.getErrorSequences().size());
-        Assertions.assertEquals("Lacune en dehors de l'état de collection", holding.getErrorSequences().get(0).getMessage());
+        Assertions.assertEquals("Lacune en dehors de l'état de collection : no.3000 vol.2139 (1989)", holding.getErrorSequences().get(0).getMessage());
     }
 
     @Test

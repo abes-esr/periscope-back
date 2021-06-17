@@ -150,7 +150,7 @@ public class Holding extends Item {
                 this.addSequence(sequenceError);
             } else {
                 if (closerSequence == null) {
-                    SequenceError sequenceError = new SequenceError(sequence, "Lacune en dehors de l'état de collection");
+                    SequenceError sequenceError = new SequenceError(sequence, "Lacune en dehors de l'état de collection : " + ((!sequence.getNumero().equals("Non renseigné")) ? "no." + sequence.getNumero() : "") + ((!sequence.getVolume().equals("Non renseigné")) ? " vol." + sequence.getVolume() : "") + " (" + sequence.getStartDate().get(Calendar.YEAR) + ")");
                     this.addSequence(sequenceError);
                 } else {
                     int nearestIndex = this.sequences.indexOf(closerSequence);

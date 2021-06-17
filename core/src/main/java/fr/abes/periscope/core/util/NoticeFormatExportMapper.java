@@ -286,51 +286,56 @@ public class NoticeFormatExportMapper {
                         ouvert = true;
                         break;
                     }
-                    //volume
-                    if (subField.getCode().equalsIgnoreCase("a")) {
-                        if (aCount == 0) { //Première fois qu'on rencontre la balise
-                            startVolume = subField.getValue();
-                        } else if (aCount == 1) {
-                            endVolume = subField.getValue();
-                        }
-                        aCount++;
-                    }
-                    //numéro
-                    if (subField.getCode().equalsIgnoreCase("b")) {
-                        if (bCount == 0) { //Première fois qu'on rencontre la balise
-                            startNumero = subField.getValue();
-                        } else if (bCount == 1) {
-                            endNumero = subField.getValue();
-                        }
-                        bCount++;
-                    }
-                    //mois
-                    if (subField.getCode().equalsIgnoreCase("j")) {
-                        try {
-                            if (iCount == 0) { //Première fois qu'on rencontre la balise
-                                startMonth = getMoisFromEnum(subField.getValue().trim());
-                            } else if (iCount == 1) {
-                                endMonth = getMoisFromEnum(subField.getValue().trim());
+                    try {
+                        //volume
+                        if (subField.getCode().equalsIgnoreCase("a")) {
+                            if (aCount == 0) { //Première fois qu'on rencontre la balise
+                                startVolume = subField.getValue();
+                            } else if (aCount == 1) {
+                                endVolume = subField.getValue();
                             }
-                        } catch (IllegalDateException ex) {
-                            erreur = true;
+                            aCount++;
                         }
-                    }
-                    //jour
-                    if (subField.getCode().equalsIgnoreCase("k")) {
-                        if (iCount == 0) { //Première fois qu'on rencontre la balise
-                            startDay = Integer.parseInt(subField.getValue().trim());
-                        } else if (iCount == 1) {
-                            endtDay = Integer.parseInt(subField.getValue().trim());
+                        //numéro
+                        if (subField.getCode().equalsIgnoreCase("b")) {
+                            if (bCount == 0) { //Première fois qu'on rencontre la balise
+                                startNumero = subField.getValue();
+                            } else if (bCount == 1) {
+                                endNumero = subField.getValue();
+                            }
+                            bCount++;
                         }
-                    }
-                    //annee
-                    if (subField.getCode().equalsIgnoreCase("i")) {
-                        if (iCount == 0) { //Première fois qu'on rencontre la balise
-                            startYear = Integer.parseInt(subField.getValue().trim());
-                        } else if (iCount == 1) {
-                            endYear = Integer.parseInt(subField.getValue().trim());
+                        //mois
+                        if (subField.getCode().equalsIgnoreCase("j")) {
+                            try {
+                                if (iCount == 0) { //Première fois qu'on rencontre la balise
+                                    startMonth = getMoisFromEnum(subField.getValue().trim());
+                                } else if (iCount == 1) {
+                                    endMonth = getMoisFromEnum(subField.getValue().trim());
+                                }
+                            } catch (IllegalDateException ex) {
+                                erreur = true;
+                            }
                         }
+                        //jour
+                        if (subField.getCode().equalsIgnoreCase("k")) {
+                            if (iCount == 0) { //Première fois qu'on rencontre la balise
+                                startDay = Integer.parseInt(subField.getValue().trim());
+                            } else if (iCount == 1) {
+                                endtDay = Integer.parseInt(subField.getValue().trim());
+                            }
+                        }
+                        //annee
+                        if (subField.getCode().equalsIgnoreCase("i")) {
+                            if (iCount == 0) { //Première fois qu'on rencontre la balise
+                                startYear = Integer.parseInt(subField.getValue().trim());
+                            } else if (iCount == 1) {
+                                endYear = Integer.parseInt(subField.getValue().trim());
+                            }
+                        }
+                    } catch (IllegalDateException | NumberFormatException ex) {
+                        holding.addErreur("Erreur epn " + holding.getEpn() + " : syntaxe de date incorrecte : " + subField.getValue());
+                        erreur = true;
                     }
             }
             sousZonePrecedente = subField.getCode().toLowerCase(Locale.ROOT);

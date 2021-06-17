@@ -61,6 +61,9 @@ public class NoticeFormatExportMapperTest {
     @Value("classpath:noticeXml/erreurEtatColl.xml")
     private Resource xmlFileErreurs;
 
+    @Value("classpath:noticeXml/erreurEtatColl2.xml")
+    private Resource xmlFileErreurs2;
+
     @Value("classpath:noticeXml/13282261X.xml")
     private Resource xmlFileNotice;
 
@@ -204,6 +207,22 @@ public class NoticeFormatExportMapperTest {
     }
 
     @Test
+    @DisplayName("Test sur erreur dans date de début dans Etat de collection")
+    void testErreurEtatCollection2() throws IOException {
+        String xml = IOUtils.toString(new FileInputStream(xmlFileErreurs2.getFile()), StandardCharsets.UTF_8);
+
+        JacksonXmlModule module = new JacksonXmlModule();
+        module.setDefaultUseWrapper(false);
+        XmlMapper xmlMapper = new XmlMapper(module);
+        NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
+        Holding hold = new Holding("41133793901");
+        noticeFormatExportmodelMapper.processEtatCollection(hold, notice.getDataFields().get(0));
+
+        Assertions.assertEquals(1, hold.getErreurs().size());
+        Assertions.assertEquals("Erreur epn 41133793901 : syntaxe de date incorrecte : 1946/1947", hold.getErreurs().get(0));
+    }
+
+    @Test
     @DisplayName("test de construction des lacunes")
     void buildLacunes() throws IOException {
         String xml = IOUtils.toString(new FileInputStream(xmlFileLacunes.getFile()), StandardCharsets.UTF_8);
@@ -271,7 +290,6 @@ public class NoticeFormatExportMapperTest {
         NoticeVisu noticeVisu = mapper.map(notice, NoticeVisu.class);
 
         Assertions.assertEquals(1, noticeVisu.getHoldings().size());
-
     }
 
     @Test
