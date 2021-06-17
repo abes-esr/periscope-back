@@ -265,8 +265,8 @@ node {
                                 string(credentialsId: "basexml.datasource.username-${mavenProfil}", variable: 'usernameBaseXml'),
                                 string(credentialsId: "basexml.datasource.password-${mavenProfil}", variable: 'passwordBaseXml')
                         ]) {
-                            newconfig = newconfig.replaceAll("periscope.solr.v1=*", "periscope.solr.v1=${urlV1}")
-                            newconfig = newconfig.replaceAll("periscope.solr.v2=*", "periscope.solr.v2=${urlV2}")
+                            newconfig = newconfig.replaceAll("periscope.solr.v1.url=*", "periscope.solr.v1.url=${urlV1}")
+                            newconfig = newconfig.replaceAll("periscope.solr.v2.url=*", "periscope.solr.v2.url=${urlV2}")
                             newconfig = newconfig.replaceAll("basexml.datasource.url=*", "basexml.datasource.url=${urlbaseXml}")
                             newconfig = newconfig.replaceAll("basexml.datasource.username=*", "basexml.datasource.username=${usernameBaseXml}")
                             newconfig = newconfig.replaceAll("basexml.datasource.password=*", "basexml.datasource.password=${passwordBaseXml}")

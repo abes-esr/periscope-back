@@ -18,7 +18,7 @@ import org.springframework.data.solr.core.SolrTemplate;
 @Configuration
 public class SolrV2Config {
 
-    @Value("${periscope.solr.v2}")
+    @Value("${periscope.solr.v2.url}")
     private String baseURL;
 
     @Bean
