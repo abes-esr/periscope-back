@@ -30,4 +30,13 @@ public class HoldingsControllerTest extends PeriscopeApplicationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.holdings").isNotEmpty());
     }
+
+    @Test
+    @DisplayName("test levée exception en cas de PPN inconnu")
+    public void testHoldingWrongPpn() throws Exception {
+        String ppn = "987654321";
+
+        this.mockMvc.perform(get("/api/v2/holdings/" + ppn))
+                .andExpect(status().isBadRequest());
+    }
 }

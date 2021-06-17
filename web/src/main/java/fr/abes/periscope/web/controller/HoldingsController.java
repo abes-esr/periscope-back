@@ -1,5 +1,6 @@
 package fr.abes.periscope.web.controller;
 
+import fr.abes.periscope.core.exception.IllegalPpnException;
 import fr.abes.periscope.core.service.HoldingService;
 import fr.abes.periscope.web.dto.NoticeVisuWebDto;
 import fr.abes.periscope.web.dto.SequenceWebDto;
@@ -35,7 +36,7 @@ public class HoldingsController {
      * @throws IOException
      */
     @GetMapping("/holdings/{ppn}")
-    public NoticeVisuWebDto getHoldings(@PathVariable String ppn, @RequestParam(required = false) TYPE_SEQUENCE typeSequence) throws SQLException, IOException {
+    public NoticeVisuWebDto getHoldings(@PathVariable String ppn, @RequestParam(required = false) TYPE_SEQUENCE typeSequence) throws SQLException, IOException, IllegalPpnException {
         NoticeVisuWebDto notice = mapper.map(service.getNoticeWithHoldings(ppn), NoticeVisuWebDto.class);
         if (typeSequence != null) {
             notice.getHoldingWebDtoList().forEach(h -> {

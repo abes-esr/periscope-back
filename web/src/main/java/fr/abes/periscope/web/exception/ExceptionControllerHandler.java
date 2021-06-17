@@ -3,6 +3,7 @@ package fr.abes.periscope.web.exception;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
+import fr.abes.periscope.core.exception.IllegalPpnException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.modelmapper.MappingException;
@@ -167,5 +168,12 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         String error = "SolR server error";
         log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.INTERNAL_SERVER_ERROR, error, new Exception("Something was wrong with the database server")));
+    }
+
+    @ExceptionHandler(IllegalPpnException.class)
+    protected ResponseEntity<Object> handleIllegalPpnException(IllegalPpnException ex) {
+        String error = "Invalid PPN";
+        log.error(ex.getLocalizedMessage());
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 }
