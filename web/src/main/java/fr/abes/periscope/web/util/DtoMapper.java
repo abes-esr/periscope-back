@@ -14,6 +14,7 @@ import fr.abes.periscope.core.exception.*;
 import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
 import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.dto.criterion.*;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -534,11 +535,11 @@ public class DtoMapper {
         String datePattern = "yyyy-MM-dd";
         DateFormat format = new SimpleDateFormat(datePattern);
         Converter<NoticeVisu, NoticeVisuWebDto> myConverter = new Converter<NoticeVisu, NoticeVisuWebDto>() {
+            @SneakyThrows
             @Override
             public NoticeVisuWebDto convert(MappingContext<NoticeVisu, NoticeVisuWebDto> context) {
                 NoticeVisu notice = context.getSource();
-                NoticeVisuWebDto noticeVisuWebDto = new NoticeVisuWebDto();
-
+                NoticeVisuWebDto noticeVisuWebDto = new NoticeVisuWebDto(notice.getStartYear().getYear(), notice.getEndYear().getYear());
                 notice.getHoldings().forEach(h -> {
                     HoldingWebDto holding = new HoldingWebDto();
                     StringBuilder etatCollection = new StringBuilder();
@@ -548,19 +549,17 @@ public class DtoMapper {
                     holding.setEtatCollectionTextuel(etatCollection.toString());
                     holding.addErreurs(h.getErreurs());
                     h.getAllNonEmptySequences().forEach(s -> {
-                        SequenceWebDto sequenceWebDto = new SequenceWebDto();
+                        SequenceWebDto sequenceWebDto = new SequenceWebDto(format.format(s.getStartDate().getTime()), format.format(s.getEndDate().getTime()), h.getRcr());
                         if (s instanceof SequenceContinue) sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.CONTINUE);
                         else if (s instanceof SequenceError) {
                             sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.ERREUR);
                             holding.addErreur(((SequenceError) s).getMessage());
                         } else if (s instanceof SequenceLacune) sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.LACUNE);
-                        sequenceWebDto.setDateDebut(format.format(s.getStartDate().getTime()));
-                        sequenceWebDto.setDateFin(format.format(s.getEndDate().getTime()));
-                        sequenceWebDto.setRcr(h.getRcr());
                         holding.addSequence(sequenceWebDto);
                     });
                     noticeVisuWebDto.addHolding(holding);
                 });
+                noticeVisuWebDto.addHoldingAgregee();
                 return noticeVisuWebDto;
             }
         };
