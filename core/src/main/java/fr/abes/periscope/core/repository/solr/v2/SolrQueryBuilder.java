@@ -612,17 +612,17 @@ public class SolrQueryBuilder {
         return queryFacet;
     }
 
-    public FacetQuery constructFacetQuery(List<Criterion> criteriaNotice, List<Criterion> criteriaExemp, Pageable page) {
+    public FacetQuery constructFacetQuery(List<Criterion> criteriaNotice, List<Criterion> criteriaExemp) {
         SimpleQuery parent = new SimpleQuery();
         if (!criteriaExemp.isEmpty()) {
-            SimpleQuery solrQuery = new SimpleQuery(buildQuery(criteriaExemp), page);
+            SimpleQuery solrQuery = new SimpleQuery(buildQuery(criteriaExemp));
             DefaultQueryParser dqp = new DefaultQueryParser(null);
             String actualQuery = dqp.getQueryString(solrQuery, null);
             parent = new SimpleQuery("{!parent which=notice_type:notice}" + actualQuery);
         }
         FacetQuery query = new SimpleFacetQuery();
         if (parent.getCriteria() != null) {
-            query = new SimpleFacetQuery(parent.getCriteria(), page);
+            query = new SimpleFacetQuery(parent.getCriteria());
             if (!criteriaNotice.isEmpty()) {
                 query.addFilterQuery(new SimpleFilterQuery(buildQuery(criteriaNotice)));
             }
