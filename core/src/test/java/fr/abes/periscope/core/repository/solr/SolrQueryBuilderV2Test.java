@@ -42,7 +42,7 @@ public class SolrQueryBuilderV2Test {
         CriterionPpn criterionPpn = new CriterionPpn(ppnOperators, ppn);
         criteresNotices.add(criterionPpn);
 
-        FacetQuery query = builderQuery.constructFacetQuery(criteresNotices, new LinkedList<>(), PageRequest.of(0, 10));
+        FacetQuery query = builderQuery.constructFacetQuery(criteresNotices, new LinkedList<>());
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(query, null);
         assertEquals(actualQuery, "zone_001:123456789");
@@ -58,7 +58,7 @@ public class SolrQueryBuilderV2Test {
         CriterionPcp criterionPcp = new CriterionPcp(pcp, pcpOperators);
         criteresExemp.add(criterionPcp);
 
-        FacetQuery query = builderQuery.constructFacetQuery(new LinkedList<>(), criteresExemp, PageRequest.of(0, 10));
+        FacetQuery query = builderQuery.constructFacetQuery(new LinkedList<>(), criteresExemp);
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(query, null);
         assertEquals(actualQuery, "{!parent which=notice_type:notice}(zone_930$z:PCAq OR zone_930$z:PCAuv)");
@@ -68,7 +68,7 @@ public class SolrQueryBuilderV2Test {
         CriterionRcr criterionRcr = new CriterionRcr(rcr, rcrOperators);
         criteresExemp.add(criterionRcr);
 
-        query = builderQuery.constructFacetQuery(new LinkedList<>(), criteresExemp, PageRequest.of(0, 10));
+        query = builderQuery.constructFacetQuery(new LinkedList<>(), criteresExemp);
         actualQuery = dqp.getQueryString(query, null);
         assertEquals(actualQuery, "{!parent which=notice_type:notice}(zone_930$z:PCAq OR zone_930$z:PCAuv) AND (zone_930$b:123456789)");
     }
@@ -90,7 +90,7 @@ public class SolrQueryBuilderV2Test {
         CriterionPcp criterionPcp = new CriterionPcp(pcp, pcpOperators);
         criteresExemp.add(criterionPcp);
 
-        FacetQuery query = builderQuery.constructFacetQuery(criteresNotices, criteresExemp, PageRequest.of(0, 10));
+        FacetQuery query = builderQuery.constructFacetQuery(criteresNotices, criteresExemp);
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(query, null);
         assertEquals("{!parent which=notice_type:notice}(zone_930$z:PCAq OR zone_930$z:PCAuv)", actualQuery);

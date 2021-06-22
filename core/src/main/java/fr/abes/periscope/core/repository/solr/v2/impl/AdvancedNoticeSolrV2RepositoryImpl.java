@@ -92,13 +92,14 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
 
     @Override
     public FacetPage<NoticeV2Solr> findNoticesWithFacetQuery(List<Criterion> criteriaNotice, List<Criterion> criteriaExemp, List<String> facettes, Sort sort, Pageable page) {
-        FacetQuery query = builderQuery.constructFacetQuery(criteriaNotice, criteriaExemp, page);
+        FacetQuery query = builderQuery.constructFacetQuery(criteriaNotice, criteriaExemp);
 
         //request handler nécessaire pour les facettes au niveau exemplaire
         query.setRequestHandler("bjqfacet");
         setProjectionsFieldsOnQuery(query);
 
         query.addSort(sort);
+        query.setPageRequest(page);
         query = builderQuery.addFacetsNotices(query, facettes);
         return solrTemplate.queryForFacetPage(core, query, NoticeV2Solr.class);
     }
