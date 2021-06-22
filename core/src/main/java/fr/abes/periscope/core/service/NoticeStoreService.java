@@ -129,7 +129,7 @@ public class NoticeStoreService {
      */
     private ResultSolr getResultFromQueryFacet(FacetPage<NoticeV2Solr> noticesWithFacet, Integer size) {
         ResultSolr result = new ResultSolr();
-        result.setNotices(noticeMapper.mapList(noticesWithFacet.getContent(), NoticeV2.class));
+        result.setNotices(noticeMapper.mapList(noticesWithFacet.getContent(), Notice.class));
         result.setNbPages(size == 0 ? 1 : (int)Math.ceil((double)noticesWithFacet.getTotalElements() / (double)size));
         result.setNbNotices(noticesWithFacet.getTotalElements());
 

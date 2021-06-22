@@ -109,8 +109,8 @@ public class NoticeSolRMapper {
     public void converterNoticeV2Solr() {
 
         Converter<NoticeV2Solr, Notice> myConverter = new Converter<NoticeV2Solr, Notice>() {
-
-            public NoticeV2 convert(MappingContext<NoticeV2Solr, Notice> context) {
+            @Override
+            public Notice convert(MappingContext<NoticeV2Solr, Notice> context) {
                 NoticeV2Solr source = context.getSource();
                 NoticeV2 target = new NoticeV2();
 
@@ -118,19 +118,6 @@ public class NoticeSolRMapper {
 
                     target.setPpn(source.getPpn());
                     target.setIssn((source.getIssn()));
-
-                    Iterator<ItemSolr> itemIterator = source.getItems().iterator();
-                    while(itemIterator.hasNext()) {
-                        ItemSolr itemSolR = itemIterator.next();
-                        Item item = new Item(itemSolR.getEpn());
-
-                        item.setPpn(itemSolR.getPpn());
-                        item.setRcr(itemSolR.getRcr());
-                        item.setPcp(itemSolR.getPcp());
-
-                        target.addItem(item);
-                    }
-
                     target.setPublisher(source.getEditorForDisplay());
                     target.setKeyTitle(source.getKeyTitle());
                     target.setKeyShortedTitle(source.getKeyShortedTitleForDisplay());
@@ -155,6 +142,18 @@ public class NoticeSolRMapper {
                     target.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
 
                     target.setNbLocation(source.getNbLocation());
+
+                    Iterator<ItemSolr> itemIterator = source.getItems().iterator();
+                    while(itemIterator.hasNext()) {
+                        ItemSolr itemSolR = itemIterator.next();
+                        Item item = new Item(itemSolR.getEpn());
+
+                        item.setPpn(itemSolR.getPpn());
+                        item.setRcr(itemSolR.getRcr());
+                        item.setPcp(itemSolR.getPcp());
+
+                        target.addItem(item);
+                    }
 
                     return target;
 
