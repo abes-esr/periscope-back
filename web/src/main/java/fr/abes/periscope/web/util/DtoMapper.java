@@ -20,6 +20,7 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +36,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class DtoMapper {
+    @Value("${url.sudoc}")
+    private final String SUDOC_URL = "https://www.sudoc.fr/";
 
     @Autowired
     private ModelMapper modelMapper;
@@ -132,6 +135,8 @@ public class DtoMapper {
                 noticeWeb.setEndYear(notice.getEndYear());
                 noticeWeb.setMirabelURL(notice.getMirabelURL());
                 noticeWeb.setNbLocation(notice.getNbLocation());
+                if (notice.getNbLocation() != 0)
+                    noticeWeb.setSudocURL(SUDOC_URL + notice.getPpn());
                 notice.getItems().forEach(i -> {
                     ItemWebDto itemWebDto = new ItemWebDto();
                     itemWebDto.setEpn(i.getEpn());

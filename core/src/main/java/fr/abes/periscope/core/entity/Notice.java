@@ -34,6 +34,7 @@ public abstract class Notice {
 
     protected Integer nbLocation;
 
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
