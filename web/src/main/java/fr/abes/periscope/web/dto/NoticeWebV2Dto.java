@@ -81,7 +81,11 @@ public class NoticeWebV2Dto {
                 return this.titreComplement;
             }
         }
-        return titre;
+        if (titre != null) {
+            //suppression des caractères entourant les mots vides pour l'affichage
+            return titre.replace("\u0098", "").replace("\u009c", "");
+        }
+        return null;
     }
 
     @JsonProperty("typeDocument")
@@ -142,6 +146,9 @@ public class NoticeWebV2Dto {
 
     @JsonProperty("nb_location")
     private Integer nbLocation;
+
+    @JsonProperty("lien_sudoc")
+    private String sudocURL;
 
     @JsonProperty("exemplaires")
     private Set<ItemWebDto> items = new HashSet<>();
