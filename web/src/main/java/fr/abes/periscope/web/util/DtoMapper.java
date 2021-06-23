@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DtoMapper {
     @Value("${url.sudoc}")
-    private final String SUDOC_URL = "https://www.sudoc.fr/";
+    private final String SUDOC_URL;
 
     @Autowired
     private ModelMapper modelMapper;
