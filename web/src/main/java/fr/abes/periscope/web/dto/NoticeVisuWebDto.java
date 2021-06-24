@@ -24,8 +24,8 @@ public class NoticeVisuWebDto {
     private List<HoldingWebDto> holdingWebDtoList = new ArrayList<>();
 
     public NoticeVisuWebDto(String dateDebut, String dateFin) {
-        this.dateDebut = dateDebut;
-        this.dateFin = dateFin;
+        this.dateDebut = dateDebut+"-01-01";
+        this.dateFin = dateFin+"-12-31";
     }
 
     public void addHolding(HoldingWebDto holding) {
@@ -83,7 +83,7 @@ public class NoticeVisuWebDto {
         }
         else {
             holding.addSequence(new SequenceWebDto(this.getDateDebut(), this.getDateFin(), TYPE_SEQUENCE.LACUNE, "1"));
-            holding.setEtatCollectionTextuel("\nCollection incomplète de " + format.format(this.getDateDebut()) + " à " + format.format(this.getDateFin()));
+            holding.setEtatCollectionTextuel("\nCollection incomplète de " + this.getDateDebut() + " à " + this.getDateFin());
         }
         holdingWebDtoList.add(0, holding);
     }
