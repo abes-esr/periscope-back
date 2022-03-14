@@ -35,8 +35,7 @@ public class NoticeVisuWebDto {
     /**
      * Méthode permettant de créer le premier holding de la notice correspondant à l'agrégation de tous les exemplaires affichés
      */
-    public void addHoldingAgregee() throws ParseException {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    public void addHoldingAgregee() {
         HoldingWebDto holding = new HoldingWebDto();
         List<SequenceWebDto> sequences = new ArrayList<>();
         List<SequenceWebDto> resultSequences = new ArrayList<>();
@@ -83,7 +82,7 @@ public class NoticeVisuWebDto {
         }
         else {
             holding.addSequence(new SequenceWebDto(this.getAnneeDebut(), this.getAnneeFin(), TYPE_SEQUENCE.LACUNE, "1"));
-            holding.setEtatCollectionTextuel("\nCollection incomplète de " + format.format(this.getAnneeDebut()) + " à " + format.format(this.getAnneeFin()));
+            holding.setEtatCollectionTextuel("\nCollection incomplète de " + this.getAnneeDebut() + " à " + this.getAnneeFin());
         }
         holdingWebDtoList.add(0, holding);
     }
