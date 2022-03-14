@@ -44,7 +44,6 @@ public class NoticeVisu extends Notice {
     protected Set<Holding> holdings = new HashSet<>();
 
     public void addHolding(Holding holding) {
-        holding.updateSequenceWithFrequency(frequency);
         this.holdings.add(holding);
     }
 

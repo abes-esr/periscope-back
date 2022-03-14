@@ -565,9 +565,7 @@ public class SolrQueryBuilder {
      */
     public FacetQuery addFacetsNotices(FacetQuery query, List<String> facets) {
         FacetOptions options = new FacetOptions();
-        Iterator<String> itFacet = facets.iterator();
-        while (itFacet.hasNext()) {
-            String f = itFacet.next();
+        facets.forEach(f -> {
             //cas ou la facette est une zone de la notice bibliographique
             Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
                 if (field.getName().toLowerCase(Locale.ROOT).equals(f.toLowerCase(Locale.ROOT))) {
@@ -581,7 +579,7 @@ public class SolrQueryBuilder {
             if (options.hasFields()) {
                 query.setFacetOptions(options);
             }
-        }
+        });
         return query;
     }
 
@@ -590,26 +588,23 @@ public class SolrQueryBuilder {
      * @param facets liste générale des zones de facettes (biblio + exemplaire)
      * @return la chaine à concaténer à la requête
      */
-    public String addFacetsExemplaires(List<String> facets) {
-        String queryFacet = "";
-        DefaultQueryParser dqp = new DefaultQueryParser(null);
-        Iterator<String> itFacet = facets.iterator();
-        while (itFacet.hasNext()) {
-            String f = itFacet.next();
+    public FacetQuery addFacetsExemplaires(FacetQuery query, List<String> facets) {
+        FacetOptions options = new FacetOptions();
+        facets.forEach(f -> {
             //cas ou la facette est une zone d'exemplaire
-            Iterator<Field> it = Arrays.asList(ItemSolrField.class.getFields()).iterator();
-            while (it.hasNext()) {
-                Field solrField = it.next();
-                if (solrField.getName().equals(f)) {
+            Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
+                if (field.getName().toLowerCase(Locale.ROOT).equals(f.toLowerCase(Locale.ROOT))) {
                     try {
-                        queryFacet +=  "&child.facet.field=" + solrField.get(null);
+                        options.addFacetOnField((String) field.get(null));
                     } catch (IllegalAccessException e) {
-                        log.error("Impossible d'accéder à la facette " + solrField.getName());
+                        log.error("Impossible d'accéder à la facette " + field.getName());
                     }
                 }
-            }
-        }
-        return queryFacet;
+            });
+            if (options.hasFields())
+                query.setFacetOptions(options);
+        });
+        return query;
     }
 
     public FacetQuery constructFacetQuery(List<Criterion> criteriaNotice, List<Criterion> criteriaExemp) {

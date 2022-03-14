@@ -10,18 +10,18 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 public class SequenceWebDto {
-    @JsonProperty("dateDebut")
-    private String dateDebut;
-    @JsonProperty("dateFin")
-    private String dateFin;
+    @JsonProperty("anneeDebut")
+    private int anneeDebut;
+    @JsonProperty("anneeFin")
+    private int anneeFin;
     @JsonProperty("typeSequence")
     private TYPE_SEQUENCE typeSequence;
     @JsonProperty("rcr")
     private String rcr;
 
-    public SequenceWebDto(String dateDebut, String dateFin, String rcr) {
-        this.dateDebut = dateDebut;
-        this.dateFin = dateFin;
+    public SequenceWebDto(int anneeDebut, int anneeFin, String rcr) {
+        this.anneeDebut = anneeDebut;
+        this.anneeFin = anneeFin;
         this.rcr = rcr;
     }
 

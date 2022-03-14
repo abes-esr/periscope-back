@@ -86,7 +86,6 @@
         </dependency>
 
         <!-- === Mapping === -->
-        <!-- === Mapping === -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>

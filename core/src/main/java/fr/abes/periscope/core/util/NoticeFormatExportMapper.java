@@ -230,10 +230,11 @@ public class NoticeFormatExportMapper {
     }
 
     /**
-     * Méthode permettant de générer une séquence d'un état de collection contenu dans une 955 du format d'export
+     * Méthode permettant de générer les séquences d'un état de collection contenu dans une 955 du format d'export
      *
+     * @param holding : l'objet représentant les états de collection de la notice qui sera alimenté avec les séquences de la 955 parsée
      * @param dataField : la zone 955 à parser
-     * @return : la sequence générée
+     *
      * @throws IllegalHoldingException si une erreur est détectée dans la 955
      */
     protected void processEtatCollection(Holding holding, DataField dataField) throws IllegalHoldingException {
@@ -256,8 +257,11 @@ public class NoticeFormatExportMapper {
         boolean ouvert = false;
 
         // Compteurs d'occurence des balises
+        //compteur de volumes
         int aCount = 0;
+        //compteur de numéro
         int bCount = 0;
+        //compteur de date de début / date de fin
         int iCount = 0;
 
         boolean erreur = false;
@@ -370,6 +374,12 @@ public class NoticeFormatExportMapper {
         }
     }
 
+    /**
+     * Méthode permettant de générer générer les séquences lacunaires d'une 959
+     * @param holding : objet réprésentant les états de collection de la notice dans lequel seront ajoutées les séquences lacunaires
+     * @param dataField : la zone parsée pour extraire les séquences lacunaires
+     * @throws IllegalHoldingException
+     */
     void processLacunes(Holding holding, DataField dataField) throws IllegalHoldingException {
         Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
 

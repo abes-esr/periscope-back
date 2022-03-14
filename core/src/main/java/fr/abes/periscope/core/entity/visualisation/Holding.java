@@ -121,26 +121,6 @@ public class Holding extends Item {
         }
     }
 
-    public void updateSequenceWithFrequency(Period frequency) {
-        if (this.getSequences().size() > 0) {
-            this.getSequences().forEach(sequence -> {
-                int index = this.sequences.indexOf(sequence);
-                if (sequence.updateToFrequency(frequency)) {
-                    if (index < this.getSequences().size() - 1) {
-                        // Ce n'est pas le dernier de la liste, on met à jour la date de début de la séquence suivante
-                        this.getSequences().get(index + 1).setStartDate(sequence.getEndDate().get(Calendar.YEAR), sequence.getEndDate().get(Calendar.MONTH), sequence.getEndDate().get(Calendar.DAY_OF_MONTH));
-                        if (this.getSequences().get(index + 1).getStartDate().compareTo(this.getSequences().get(index + 1).getEndDate()) > 0) {
-                            //si la séquence qu'on vient de modifier se retrouve avec une date de début supérieure à sa date de fin, on la supprime et on met à jour la date de début de la séquence suivante
-                            this.sequences.remove(index + 1);
-                            if (index < this.getSequences().size() - 2)
-                                this.sequences.get(index + 2).setStartDate(sequence.getEndDate().get(Calendar.YEAR), sequence.getEndDate().get(Calendar.MONTH), sequence.getEndDate().get(Calendar.DAY_OF_MONTH));
-                        }
-                    }
-                }
-            });
-        }
-    }
-
     private void addLacuneSequence(final SequenceLacune sequence) {
         //on ne fait le traitement que si on n'a pas déjà ajouté une lacune identique dans la liste
         if (this.getLacuneSequences().stream().filter(s -> s.getStartDate().equals(sequence.getStartDate()) && s.getEndDate().equals(sequence.getEndDate())).count() == 0) {

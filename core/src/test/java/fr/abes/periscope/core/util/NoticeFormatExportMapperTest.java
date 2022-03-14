@@ -2,9 +2,10 @@ package fr.abes.periscope.core.util;
 
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import fr.abes.periscope.core.entity.visualisation.*;
+import fr.abes.periscope.core.entity.visualisation.Holding;
+import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
+import fr.abes.periscope.core.entity.visualisation.SequenceContinue;
 import fr.abes.periscope.core.entity.xml.NoticeXml;
-import fr.abes.periscope.core.exception.IllegalHoldingException;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -21,10 +22,7 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.Period;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
-
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest(classes = { NoticeMapper.class, NoticeFormatExportMapper.class})
 @ComponentScan(excludeFilters = @ComponentScan.Filter(BaseXMLConfiguration.class))

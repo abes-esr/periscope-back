@@ -83,6 +83,9 @@ public abstract class Sequence implements Cloneable {
         return this.closedInterval;
     }
 
+    /**
+     * Permet de vérifier si la date de début et la date de fin de la séquence ne sont pas inversée et les intervertit si elles le sont
+     */
     private void checkDate() {
         if (startDate != null && endDate != null) {
             if (startDate.after(endDate)) {
@@ -92,22 +95,6 @@ public abstract class Sequence implements Cloneable {
                 startDate = temp;
             }
         }
-    }
-
-    /**
-     * Permet la mise à jour de la date de fin en fonction de la périodicité de la publication
-     * @param frequency période à ajouter à la date de début pour obtenir la date de fin
-     * @return flag de modification de la date de fin pour éviter une modification ultérieure en cas de repassage
-     */
-    public boolean updateToFrequency(Period frequency) {
-        //on ne met à jour la date de fin que si elle est égale à la date de début et qu'on ne l'a pas déjà modifiée lors d'un appel précédent
-        if (!this.updateToFrequency && endDate.equals(startDate)) {
-            endDate.add(Calendar.DAY_OF_MONTH, frequency.getDays());
-            endDate.add(Calendar.MONTH, frequency.getMonths());
-            endDate.add(Calendar.YEAR, frequency.getYears());
-            this.updateToFrequency = true;
-        }
-        return this.updateToFrequency;
     }
 
     @Override

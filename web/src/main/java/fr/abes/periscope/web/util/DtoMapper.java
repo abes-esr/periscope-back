@@ -23,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
 import java.text.DateFormat;
@@ -544,7 +545,7 @@ public class DtoMapper {
             @Override
             public NoticeVisuWebDto convert(MappingContext<NoticeVisu, NoticeVisuWebDto> context) {
                 NoticeVisu notice = context.getSource();
-                NoticeVisuWebDto noticeVisuWebDto = new NoticeVisuWebDto(notice.getStartYear().getYear(), notice.getEndYear().getYear());
+                NoticeVisuWebDto noticeVisuWebDto = new NoticeVisuWebDto(Integer.parseInt(notice.getStartYear().getYear()), Integer.parseInt(notice.getEndYear().getYear()));
                 notice.getHoldings().forEach(h -> {
                     HoldingWebDto holding = new HoldingWebDto();
                     StringBuilder etatCollection = new StringBuilder();
@@ -554,7 +555,7 @@ public class DtoMapper {
                     holding.setEtatCollectionTextuel(etatCollection.toString());
                     holding.addErreurs(h.getErreurs());
                     h.getAllNonEmptySequences().forEach(s -> {
-                        SequenceWebDto sequenceWebDto = new SequenceWebDto(format.format(s.getStartDate().getTime()), format.format(s.getEndDate().getTime()), h.getRcr());
+                        SequenceWebDto sequenceWebDto = new SequenceWebDto(s.getStartDate().get(Calendar.YEAR), s.getEndDate().get(Calendar.YEAR), h.getRcr());
                         if (s instanceof SequenceContinue) sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.CONTINUE);
                         else if (s instanceof SequenceError) {
                             sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.ERREUR);
