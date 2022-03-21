@@ -101,6 +101,7 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
         query.addSort(sort);
         query.setPageRequest(page);
         query = builderQuery.addFacetsNotices(query, facettes);
+        //query = builderQuery.addFacetsExemplaires(query, facettes);
         return solrTemplate.queryForFacetPage(core, query, NoticeV2Solr.class);
     }
 
