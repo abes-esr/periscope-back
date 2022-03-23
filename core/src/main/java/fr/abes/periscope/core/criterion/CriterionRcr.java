@@ -34,7 +34,7 @@ public class CriterionRcr extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionRcr(String blocOperator, List<String> candidatesRcr, List<String> candidatesOperator) {
-        super(blocOperator, TYPE_NOTICE.EXEMPLAIRE);
+        super(blocOperator, TYPE_NOTICE.BIBLIO);
 
         if (candidatesRcr.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");
@@ -67,7 +67,7 @@ public class CriterionRcr extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionRcr(List<String> candidatesRcr, List<String> candidatesOperator) {
-        super(TYPE_NOTICE.EXEMPLAIRE);
+        super(TYPE_NOTICE.BIBLIO);
 
         if (candidatesRcr.isEmpty()) {
             throw new IllegalCriterionException("Criteria list cannot be empty");

@@ -138,10 +138,8 @@ public abstract class NoticeV2SolrField {
 
     //--------------------------------
     // Zone 930
-    @Deprecated
-    public static final String PCP_LIST = "zone_930$z";
-    @Deprecated
-    public static final String RCR_LIST = "zone_930$b";
+    public static final String PCP_LIST = "pcpList";
+    public static final String RCR_LIST = "rcrList";
     //--------------------------------
 
     //--------------------------------
