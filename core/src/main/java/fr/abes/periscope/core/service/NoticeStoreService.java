@@ -1,6 +1,7 @@
 package fr.abes.periscope.core.service;
 
 import fr.abes.periscope.core.criterion.Criterion;
+import fr.abes.periscope.core.criterion.CriterionFacette;
 import fr.abes.periscope.core.criterion.CriterionSort;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.v1.NoticeV1;
@@ -97,12 +98,13 @@ public class NoticeStoreService {
      *
      * @param criteriaNotice les critères de recherche
      * @param facettes       liste des facettes (uniquement sur des zones de la notice bibliographique)
+     * @param facetteFilter liste des filtres à appliquer aux facettes sélectionnées
      * @param criterionSorts les critères de tri
      * @param page           numéro de page
      * @param size           nombre d'élément par page
      * @return list de résultat comprendre la liste des notices, la liste des facettes et le nombre de page total du jeu de résultat
      */
-    public ResultSolr findNoticesWithFacets(List<Criterion> criteriaNotice, List<String> facettes, List<CriterionSort> criterionSorts, int page, int size) {
+    public ResultSolr findNoticesWithFacets(List<Criterion> criteriaNotice, List<String> facettes, List<CriterionFacette> facetteFilter, List<CriterionSort> criterionSorts, int page, int size) {
         List<Criterion> criteresBiblio = new LinkedList<>();
         List<Criterion> criteresExemp = new LinkedList<>();
         List<Sort.Order> orders = new ArrayList<>();
@@ -116,7 +118,7 @@ public class NoticeStoreService {
                 criteresExemp.add(c);
             }
         });
-        FacetPage<NoticeV2Solr> noticesWithFacet = noticeV2Repository.findNoticesWithFacetQuery(criteresBiblio, criteresExemp, facettes, Sort.by(orders), PageRequest.of(page, size));
+        FacetPage<NoticeV2Solr> noticesWithFacet = noticeV2Repository.findNoticesWithFacetQuery(criteresBiblio, criteresExemp, facettes, facetteFilter, Sort.by(orders), PageRequest.of(page, size));
 
         return getResultFromQueryFacet(noticesWithFacet, size);
     }
