@@ -1,15 +1,13 @@
 package fr.abes.periscope.web.controller;
 
 import fr.abes.periscope.core.criterion.Criterion;
+import fr.abes.periscope.core.criterion.CriterionFacette;
 import fr.abes.periscope.core.criterion.CriterionSort;
 import fr.abes.periscope.core.entity.Notice;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
 import fr.abes.periscope.core.service.NoticeStoreService;
-import fr.abes.periscope.web.dto.FacetteWebDto;
-import fr.abes.periscope.web.dto.NoticeWebV2Dto;
-import fr.abes.periscope.web.dto.RequestParameters;
-import fr.abes.periscope.web.dto.ResultWebDto;
+import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.dto.criterion.CriterionFacetteWebDto;
 import fr.abes.periscope.web.dto.criterion.CriterionSortWebDto;
 import fr.abes.periscope.web.dto.criterion.CriterionWebDto;
@@ -72,7 +70,8 @@ public class NoticeV2Controller extends NoticeAbstractController {
         List<Criterion> criteria = handleCriteria(requestParameters);
         List<CriterionSort> sortCriteria = handleSortCriteria(requestParameters);
         List<String> facettes = handleFacettes(requestParameters);
-        ResultSolr result = noticeStoreService.findNoticesWithFacets(criteria, facettes, sortCriteria, page, size);
+        List<CriterionFacette> facettesFilter = handleFacettesFilters(requestParameters);
+        ResultSolr result = noticeStoreService.findNoticesWithFacets(criteria, facettes, facettesFilter, sortCriteria, page, size);
         return dtoMapper.map(result, ResultWebDto.class);
     }
 
@@ -101,12 +100,17 @@ public class NoticeV2Controller extends NoticeAbstractController {
         List<String> facettes = new LinkedList();
         LinkedList<CriterionFacetteWebDto> facettesCriteria = requestParameters.getFacetCriteria();
         if (facettesCriteria != null && !facettesCriteria.isEmpty()) {
-            Iterator<CriterionFacetteWebDto> facettesCriteriaIterator = facettesCriteria.iterator();
-            while (facettesCriteriaIterator.hasNext()) {
-                CriterionFacetteWebDto facetteCriterion = facettesCriteriaIterator.next();
-                facettes.add(dtoMapper.map(facetteCriterion, String.class));
-            }
+            facettesCriteria.forEach(f -> facettes.add(f.getZone()));
         }
         return facettes;
+    }
+
+    private List<CriterionFacette> handleFacettesFilters(RequestParameters requestParameters) {
+        List<CriterionFacette> facettesFilters = new LinkedList<>();
+        LinkedList<FacetteFilterWebDto> facetteFilterCriteria = requestParameters.getFacetFilterCriteria();
+        if (facetteFilterCriteria != null && !facetteFilterCriteria.isEmpty()) {
+            facetteFilterCriteria.stream().forEach(f -> facettesFilters.add(new CriterionFacette(f.getZone(), f.getValeur())));
+        }
+        return facettesFilters;
     }
 }
