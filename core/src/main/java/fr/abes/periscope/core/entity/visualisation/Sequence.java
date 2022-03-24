@@ -50,8 +50,9 @@ public abstract class Sequence implements Cloneable {
         return this.startDate;
     }
 
-    void setEndDate(Integer endYear, Integer endMonth, Integer endDay) {
+    public void setEndDate(Integer endYear, Integer endMonth, Integer endDay) {
         if (endYear == null && endMonth == null && endDay == null) {
+            //pas de date de fin
             return;
         }
 

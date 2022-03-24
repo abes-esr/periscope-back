@@ -355,7 +355,9 @@ public class NoticeFormatExportMapper {
                 SequenceContinue sequence = new SequenceContinue(startYear, startMonth, startDay, startVolume, startNumero, ouvert);
                 if (iCount >= 2) {
                     // La date de fin a été trouvé
-                    sequence.setEndDate(endYear, endMonth, endtDay, endVolume, endNumero);
+                    sequence.setEndDate(endYear, endMonth, endtDay);
+                    sequence.setEndNumero(endNumero);
+                    sequence.setEndVolume(endVolume);
                 }
                 if (erreur) {
                     SequenceError sequenceError = new SequenceError(sequence, "Erreur dans la saisie du mois");
