@@ -163,8 +163,6 @@ public class NoticeWebV2Dto {
             ItemWebDto item = itemIterator.next();
             if (item.getPcp() != null)
                 list.add(item.getPcp());
-            else
-                list.add("Non assigné");
         }
 
         return list;
