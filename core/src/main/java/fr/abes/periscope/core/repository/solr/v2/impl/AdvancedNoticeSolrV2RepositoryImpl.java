@@ -1,6 +1,7 @@
 package fr.abes.periscope.core.repository.solr.v2.impl;
 
 import fr.abes.periscope.core.criterion.Criterion;
+import fr.abes.periscope.core.criterion.CriterionFacette;
 import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
@@ -19,6 +20,7 @@ import org.springframework.data.solr.core.query.*;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.stereotype.Repository;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -91,8 +93,10 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
     }
 
     @Override
-    public FacetPage<NoticeV2Solr> findNoticesWithFacetQuery(List<Criterion> criteriaNotice, List<Criterion> criteriaExemp, List<String> facettes, Sort sort, Pageable page) {
+    public FacetPage<NoticeV2Solr> findNoticesWithFacetQuery(List<Criterion> criteriaNotice, List<Criterion> criteriaExemp, List<String> facettes, List<CriterionFacette> facetteFilter, Sort sort, Pageable page) {
         FacetQuery query = builderQuery.constructFacetQuery(criteriaNotice, criteriaExemp);
+        query = builderQuery.addFacetsFilters(query, facetteFilter);
+
 
         //request handler nécessaire pour les facettes au niveau exemplaire
         query.setRequestHandler("bjqfacet");
@@ -100,6 +104,7 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
 
         query.addSort(sort);
         query.setPageRequest(page);
+
         query = builderQuery.addFacetsNotices(query, facettes);
         //query = builderQuery.addFacetsExemplaires(query, facettes);
         return solrTemplate.queryForFacetPage(core, query, NoticeV2Solr.class);

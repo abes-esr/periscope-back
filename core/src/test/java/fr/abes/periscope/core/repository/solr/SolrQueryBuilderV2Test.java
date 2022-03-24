@@ -1,12 +1,10 @@
 package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.CoreTestConfiguration;
-import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.criterion.CriterionPcp;
-import fr.abes.periscope.core.criterion.CriterionPpn;
-import fr.abes.periscope.core.criterion.CriterionRcr;
+import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
 import fr.abes.periscope.core.repository.solr.v2.SolrQueryBuilder;
+import org.junit.Assert;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +33,7 @@ public class SolrQueryBuilderV2Test {
 
     @Test
     @DisplayName("Test construction requête à facettes avec une zone biblio")
-    public void testConstructRequeteFacetteWithZoneBiblio() {
+    void testConstructRequeteFacetteWithZoneBiblio() {
         List<Criterion> criteresNotices = new LinkedList<>();
 
         List<String> ppn = Arrays.asList("123456789");
@@ -52,7 +50,7 @@ public class SolrQueryBuilderV2Test {
     @Test
     @DisplayName("Test construction requête à facettes avec une zone exemplaire")
     @Disabled
-    public void testConsructRequeteFacetteWithZoneExemplaire() {
+    void testConsructRequeteFacetteWithZoneExemplaire() {
         List<Criterion> criteresExemp = new LinkedList<>();
 
         List<String> pcp = Arrays.asList("PCAq", "PCAuv");
@@ -77,7 +75,7 @@ public class SolrQueryBuilderV2Test {
 
     @Test
     @DisplayName("Test construction requête à facette avec des zones de tous les niveaux")
-    public void testConstructRequeteFacetteWithZones() {
+    void testConstructRequeteFacetteWithZones() {
         List<Criterion> criteresNotices = new LinkedList<>();
         List<Criterion> criteresExemp = new LinkedList<>();
 
@@ -101,7 +99,7 @@ public class SolrQueryBuilderV2Test {
 
     @Test
     @DisplayName("Test ajout facettes")
-    public void testAjoutFacette(){
+    void testAjoutFacette(){
         List<String> facettes = new ArrayList<>();
         facettes.add("DOCUMENT_TYPE");
         FacetQuery query = new SimpleFacetQuery();
@@ -114,5 +112,33 @@ public class SolrQueryBuilderV2Test {
         assertTrue(query.hasFacetOptions());
         assertEquals(query.getFacetOptions().getFacetOnFields().size(), 2);
         assertTrue(query.getFacetOptions().getFacetOnFields().contains(new SimpleField(NoticeV2SolrField.NB_LOC)));
+    }
+
+    @Test
+    @DisplayName("test construction filtres facettes")
+    void testFiltreFacette() {
+        List<CriterionFacette> facettes = new LinkedList<>();
+        facettes.add(new CriterionFacette("DOCUMENT_TYPE", "Périodiques"));
+        facettes.add(new CriterionFacette("LANGUAGE", "FR"));
+
+        FacetQuery query = new SimpleFacetQuery();
+        query = builderQuery.addFacetsFilters(query, facettes);
+
+        assertEquals(2, query.getFilterQueries().size());
+        assertEquals("DOCUMENT_TYPE", query.getFilterQueries().get(0).getCriteria().getField().getName());
+        assertEquals("Périodiques", query.getFilterQueries().get(0).getCriteria().getPredicates().iterator().next().getValue());
+        assertEquals("LANGUAGE", query.getFilterQueries().get(1).getCriteria().getField().getName());
+        assertEquals("FR", query.getFilterQueries().get(1).getCriteria().getPredicates().iterator().next().getValue());
+    }
+
+    @Test
+    @DisplayName("test construction filtres facettes si vide")
+    void testFiltreFacetteEmpty() {
+        List<CriterionFacette> facettes = new LinkedList<>();
+
+        FacetQuery query = new SimpleFacetQuery();
+        query = builderQuery.addFacetsFilters(query, facettes);
+
+        assertEquals(0, query.getFilterQueries().size());
     }
 }

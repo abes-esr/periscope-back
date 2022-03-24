@@ -29,9 +29,7 @@ public class SolrQueryBuilder {
     public Criteria buildQuery(List<Criterion> criteria) {
         FilterQuery filterQuery = new SimpleFilterQuery();
 
-        Iterator<Criterion> criteriaIterator = criteria.iterator();
-        while (criteriaIterator.hasNext()) {
-            Criterion criterion = criteriaIterator.next();
+        criteria.stream().forEach(criterion -> {
 
             // Bloc de critère PCP
             if (criterion instanceof CriterionPcp) {
@@ -85,7 +83,7 @@ public class SolrQueryBuilder {
                 Criteria issnQuery = buildIssnQuery((CriterionIssn) criterion);
                 filterQuery.addCriteria(issnQuery);
             }
-        }
+        });
 
         return filterQuery.getCriteria();
     }
@@ -516,6 +514,7 @@ public class SolrQueryBuilder {
 
     /**
      * Méthode permettant de générer une chaine à concaténer à une requête correspondant aux facettes d'exemplaires
+     *
      * @param facets liste générale des zones de facettes (biblio + exemplaire)
      * @return la chaine à concaténer à la requête
      */
@@ -531,7 +530,7 @@ public class SolrQueryBuilder {
                 Field solrField = it.next();
                 if (solrField.getName().equals(f)) {
                     try {
-                        queryFacet +=  "&child.facet.field=" + solrField.get(null);
+                        queryFacet += "&child.facet.field=" + solrField.get(null);
                     } catch (IllegalAccessException e) {
                         log.error("Impossible d'accéder à la facette " + solrField.getName());
                     }
@@ -557,6 +556,23 @@ public class SolrQueryBuilder {
             }
         } else {
             query.addCriteria(buildQuery(criteriaNotice));
+        }
+        return query;
+    }
+
+    public FacetQuery addFacetsFilters(FacetQuery query, List<CriterionFacette> facetteFilter) {
+        if (!facetteFilter.isEmpty()) {
+            Iterator<CriterionFacette> fqIt = facetteFilter.iterator();
+            while (fqIt.hasNext()) {
+                CriterionFacette facette = fqIt.next();
+                Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
+                    String f = facette.getZone().toLowerCase(Locale.ROOT);
+                    if (field.getName().toLowerCase(Locale.ROOT).equals(f)) {
+                        query.addFilterQuery(new SimpleFilterQuery(new Criteria(f).is(facette.getValeur())));
+                    }
+                });
+
+            }
         }
         return query;
     }

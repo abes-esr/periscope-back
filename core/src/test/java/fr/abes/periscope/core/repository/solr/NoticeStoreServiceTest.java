@@ -185,7 +185,7 @@ public class NoticeStoreServiceTest {
 
         List<String> facette = Arrays.asList("DOCUMENT_TYPE", "NB_LOC");
 
-        ResultSolr candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(), 0, 10);
+        ResultSolr candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(), new LinkedList<>(), 0, 10);
 
         assertEquals(candidates.getFacettes().size(), 2);
         assertTrue(candidates.getNbPages() > 0);
@@ -196,13 +196,13 @@ public class NoticeStoreServiceTest {
         List<CriterionSort> listSort = new LinkedList<>();
         listSort.add(criterionSort);
 
-        candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, listSort, 0, 10);
+        candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(),  listSort, 0, 10);
         assertEquals(candidates.getFacettes().size(), 2);
         assertTrue(candidates.getNbPages() > 0);
 
         // test avec facettes vides
         facette = new ArrayList<>();
-        candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(), 0, 10);
+        candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(),  new LinkedList<>(), 0, 10);
         assertEquals(candidates.getFacettes().size(), 0);
         assertTrue(candidates.getNbPages() > 0);
     }
