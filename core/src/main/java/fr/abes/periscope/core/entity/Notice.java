@@ -20,8 +20,6 @@ public abstract class Notice {
 
     protected String keyTitle;
 
-    protected Set<String> pcpList = new HashSet<>();
-
     protected String continuousType;
 
     protected String supportType;

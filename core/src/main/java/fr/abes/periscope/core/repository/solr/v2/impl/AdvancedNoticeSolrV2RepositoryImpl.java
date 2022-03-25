@@ -97,7 +97,6 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
         FacetQuery query = builderQuery.constructFacetQuery(criteriaNotice, criteriaExemp);
         query = builderQuery.addFacetsFilters(query, facetteFilter);
 
-
         //request handler nécessaire pour les facettes au niveau exemplaire
         query.setRequestHandler("bjqfacet");
         setProjectionsFieldsOnQuery(query);
@@ -135,12 +134,15 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.SUPPORT_TYPE));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.EXTERNAL_URLS));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.NB_LOC));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.NB_PCP));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.LANGUAGE));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.COUNTRY));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.START_YEAR));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.START_YEAR_CONFIDENCE_INDEX));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.END_YEAR));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.END_YEAR_CONFIDENCE_INDEX));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.RCR_LIST));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.PCP_LIST));
         query.addProjectionOnField(new SimpleField(ItemSolrField.EPN));
         query.addProjectionOnField(new SimpleField(ItemSolrField.PPN_PARENT));
         query.addProjectionOnField(new SimpleField(ItemSolrField.RCR));

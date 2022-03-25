@@ -55,7 +55,6 @@ public class NoticeSolRMapper {
 
                     target.setPpn(source.getPpn());
                     target.setIssn((source.getIssn()));
-                    target.setPcpList(source.getPcpList());
                     target.setRcrList(source.getRcrList());
                     target.setPublisher(source.getEditor());
                     target.setKeyTitle(source.getKeyTitle());
@@ -120,6 +119,7 @@ public class NoticeSolRMapper {
                     target.setIssn((source.getIssn()));
                     target.setPublisher(source.getEditorForDisplay());
                     target.setKeyTitle(source.getKeyTitle());
+                    target.setKeyTitleQualifer(source.getKeyTitleQualifer());
                     target.setKeyShortedTitle(source.getKeyShortedTitleForDisplay());
                     target.setProperTitle(source.getProperTitleForDisplay());
                     target.setTitleFromDifferentAuthor(source.getTitleFromDifferentAuthorForDisplay());
@@ -142,6 +142,8 @@ public class NoticeSolRMapper {
                     target.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
 
                     target.setNbLocation(source.getNbLocation());
+                    target.setNbPcp(source.getNbPcp());
+                    target.setPcpList(source.getPcpList());
 
                     Iterator<ItemSolr> itemIterator = source.getItems().iterator();
                     while(itemIterator.hasNext()) {
