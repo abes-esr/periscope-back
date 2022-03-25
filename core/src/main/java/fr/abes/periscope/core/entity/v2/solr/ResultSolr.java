@@ -25,5 +25,6 @@ public class ResultSolr {
         this.facettes.add(facette);
     }
 
+    public void addNotice(Notice notice) { this.notices.add(notice); }
 
 }

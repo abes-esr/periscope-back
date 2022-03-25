@@ -2,6 +2,7 @@ package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.PublicationYear;
+import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
 import fr.abes.periscope.core.entity.v2.NoticeV2;
 import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
 import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
@@ -11,7 +12,6 @@ import fr.abes.periscope.core.entity.visualisation.SequenceContinue;
 import fr.abes.periscope.core.entity.visualisation.SequenceError;
 import fr.abes.periscope.core.entity.visualisation.SequenceLacune;
 import fr.abes.periscope.core.exception.*;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
 import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.dto.criterion.*;
 import lombok.SneakyThrows;
@@ -23,11 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
-import org.springframework.util.StringUtils;
 
 import java.lang.reflect.Field;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -134,17 +131,10 @@ public class DtoMapper {
                 noticeWeb.setPays(notice.getCountry());
                 noticeWeb.setStartYear(notice.getStartYear());
                 noticeWeb.setEndYear(notice.getEndYear());
-                noticeWeb.setMirabelURL(notice.getMirabelURL());
                 noticeWeb.setNbLocation(notice.getNbLocation());
                 if (notice.getNbLocation() != 0)
                     noticeWeb.setSudocURL(SUDOC_URL + notice.getPpn());
-                notice.getItems().forEach(i -> {
-                    ItemWebDto itemWebDto = new ItemWebDto();
-                    itemWebDto.setEpn(i.getEpn());
-                    itemWebDto.setPcp(i.getPcp());
-                    itemWebDto.setRcr(i.getRcr());
-                    noticeWeb.addItem(itemWebDto);
-                });
+                notice.getPcpList().forEach(p -> noticeWeb.addPcp(p));
                 return noticeWeb;
             }
         };
@@ -538,8 +528,6 @@ public class DtoMapper {
 
     @Bean
     public void converterNoticeVisuWebDto() {
-        String datePattern = "yyyy-MM-dd";
-        DateFormat format = new SimpleDateFormat(datePattern);
         Converter<NoticeVisu, NoticeVisuWebDto> myConverter = new Converter<NoticeVisu, NoticeVisuWebDto>() {
             @SneakyThrows
             @Override

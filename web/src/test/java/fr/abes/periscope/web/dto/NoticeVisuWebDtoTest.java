@@ -9,7 +9,7 @@ import java.text.ParseException;
 
 public class NoticeVisuWebDtoTest {
     @Test
-    void testAddHoldingAgregee() throws ParseException {
+    void testAddHoldingAgregee() {
         NoticeVisuWebDto notice = new NoticeVisuWebDto(1990, 2020);
         HoldingWebDto holding1 = new HoldingWebDto();
         holding1.addSequence(new SequenceWebDto(1990, 1995, TYPE_SEQUENCE.CONTINUE, "341725201"));
