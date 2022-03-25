@@ -132,6 +132,7 @@ public class DtoMapper {
                 noticeWeb.setStartYear(notice.getStartYear());
                 noticeWeb.setEndYear(notice.getEndYear());
                 noticeWeb.setNbLocation(notice.getNbLocation());
+
                 if (notice.getNbLocation() != 0)
                     noticeWeb.setSudocURL(SUDOC_URL + notice.getPpn());
                 notice.getPcpList().forEach(p -> noticeWeb.addPcp(p));
