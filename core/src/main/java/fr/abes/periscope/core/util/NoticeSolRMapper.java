@@ -145,17 +145,14 @@ public class NoticeSolRMapper {
                     target.setNbPcp(source.getNbPcp());
                     target.setPcpList(source.getPcpList());
 
-                    Iterator<ItemSolr> itemIterator = source.getItems().iterator();
-                    while(itemIterator.hasNext()) {
-                        ItemSolr itemSolR = itemIterator.next();
-                        Item item = new Item(itemSolR.getEpn());
-
-                        item.setPpn(itemSolR.getPpn());
-                        item.setRcr(itemSolR.getRcr());
-                        item.setPcp(itemSolR.getPcp());
+                    source.getItems().forEach(itemSolr -> {
+                        Item item = new Item(itemSolr.getEpn());
+                        item.setPpn(itemSolr.getPpn());
+                        item.setRcr(itemSolr.getRcr());
+                        item.setPcp(itemSolr.getPcp());
 
                         target.addItem(item);
-                    }
+                    });
 
                     return target;
 

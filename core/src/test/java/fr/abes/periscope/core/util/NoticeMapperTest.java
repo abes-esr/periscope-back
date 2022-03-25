@@ -369,10 +369,10 @@ class NoticeMapperTest {
         source.setRcrList(Sets.newLinkedHashSet("341725201", "751050001"));
         source.setPcpList(Sets.newLinkedHashSet("PCMed"));
         ItemSolr item1 = new ItemSolr("111111111", "999999999");
-        item1.setPcp("PCMed");
+        item1.setPcp(Lists.newArrayList("PCMed"));
         item1.setRcr("341725201");
         ItemSolr item2 = new ItemSolr("111111111", "888888888");
-        item2.setPcp("PCMed");
+        item2.setPcp(Lists.newArrayList("PCMed"));
         item2.setRcr("751050001");
         Set<ItemSolr> items = new HashSet<>();
         items.add(item1);

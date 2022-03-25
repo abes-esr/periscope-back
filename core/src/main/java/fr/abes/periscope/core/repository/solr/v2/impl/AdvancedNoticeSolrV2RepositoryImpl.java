@@ -148,7 +148,7 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
         query.addProjectionOnField(new SimpleField(ItemSolrField.RCR));
         query.addProjectionOnField(new SimpleField(ItemSolrField.PCP));
 
-         query.addProjectionOnField(new SimpleField("[child limit=" + nbExemplaires + "]"));
+        query.addProjectionOnField(new SimpleField("[child limit=" + nbExemplaires + "]"));
     }
 
 

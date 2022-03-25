@@ -8,6 +8,7 @@ import org.springframework.data.solr.core.mapping.Indexed;
 import org.springframework.data.solr.core.mapping.SolrDocument;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * Représente un exemplaire
@@ -39,7 +40,7 @@ public class ItemSolr implements Serializable {
 
     @Field(ItemSolrField.PCP)
     @Indexed(name = ItemSolrField.PCP)
-    private String pcp;
+    private List<String> pcp;
 
     public ItemSolr(String ppn, String epn) {
         this.id = epn;
