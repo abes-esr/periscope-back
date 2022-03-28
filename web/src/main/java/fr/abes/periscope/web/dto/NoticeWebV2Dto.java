@@ -156,28 +156,18 @@ public class NoticeWebV2Dto {
     // Support avec la V1
     @JsonGetter("pcpList")
     protected HashSet<String> getPcpList() {
-        HashSet<String> list = new HashSet<>();
-
-        Iterator<ItemWebDto> itemIterator = getItems().iterator();
-        while (itemIterator.hasNext()) {
-            ItemWebDto item = itemIterator.next();
+        HashSet<String> set = new HashSet<>();
+        this.getItems().forEach(item -> {
             if (item.getPcp() != null)
-                list.add(item.getPcp());
-        }
-
-        return list;
+                set.addAll(item.getPcp());
+        });
+        return set;
     }
 
     @JsonGetter("rcrList")
     protected HashSet<String> getRcrList() {
         HashSet<String> list = new HashSet<>();
-
-        Iterator<ItemWebDto> itemIterator = getItems().iterator();
-        while (itemIterator.hasNext()) {
-            ItemWebDto item = itemIterator.next();
-            list.add(item.getRcr());
-        }
-
+        this.getItems().forEach(item -> list.add(item.getRcr()));
         return list;
     }
 

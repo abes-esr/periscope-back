@@ -135,6 +135,7 @@ public class DtoMapper {
                 noticeWeb.setEndYear(notice.getEndYear());
                 noticeWeb.setMirabelURL(notice.getMirabelURL());
                 noticeWeb.setNbLocation(notice.getNbLocation());
+
                 if (notice.getNbLocation() != 0)
                     noticeWeb.setSudocURL(SUDOC_URL + notice.getPpn());
                 notice.getItems().forEach(i -> {

@@ -31,9 +31,15 @@ public class NoticeV2 extends Notice {
 
     private String country;
 
+    private Integer nbPcp;
+
+    private Set<String> pcpList = new HashSet<>();
+
     private Set<Item> items = new HashSet<>();
 
     public void addItem(Item item) {
         items.add(item);
     }
+
+    public void addPcp(String pcp) { this.pcpList.add(pcp); }
 }

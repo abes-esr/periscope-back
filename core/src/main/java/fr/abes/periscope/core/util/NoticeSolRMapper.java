@@ -55,7 +55,6 @@ public class NoticeSolRMapper {
 
                     target.setPpn(source.getPpn());
                     target.setIssn((source.getIssn()));
-                    target.setPcpList(source.getPcpList());
                     target.setRcrList(source.getRcrList());
                     target.setPublisher(source.getEditor());
                     target.setKeyTitle(source.getKeyTitle());
@@ -120,6 +119,7 @@ public class NoticeSolRMapper {
                     target.setIssn((source.getIssn()));
                     target.setPublisher(source.getEditorForDisplay());
                     target.setKeyTitle(source.getKeyTitle());
+                    target.setKeyTitleQualifer(source.getKeyTitleQualifer());
                     target.setKeyShortedTitle(source.getKeyShortedTitleForDisplay());
                     target.setProperTitle(source.getProperTitleForDisplay());
                     target.setTitleFromDifferentAuthor(source.getTitleFromDifferentAuthorForDisplay());
@@ -142,18 +142,17 @@ public class NoticeSolRMapper {
                     target.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
 
                     target.setNbLocation(source.getNbLocation());
+                    target.setNbPcp(source.getNbPcp());
+                    target.setPcpList(source.getPcpList());
 
-                    Iterator<ItemSolr> itemIterator = source.getItems().iterator();
-                    while(itemIterator.hasNext()) {
-                        ItemSolr itemSolR = itemIterator.next();
-                        Item item = new Item(itemSolR.getEpn());
-
-                        item.setPpn(itemSolR.getPpn());
-                        item.setRcr(itemSolR.getRcr());
-                        item.setPcp(itemSolR.getPcp());
+                    source.getItems().forEach(itemSolr -> {
+                        Item item = new Item(itemSolr.getEpn());
+                        item.setPpn(itemSolr.getPpn());
+                        item.setRcr(itemSolr.getRcr());
+                        item.setPcp(itemSolr.getPcp());
 
                         target.addItem(item);
-                    }
+                    });
 
                     return target;
 
