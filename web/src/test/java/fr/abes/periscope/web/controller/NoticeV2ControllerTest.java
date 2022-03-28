@@ -57,5 +57,45 @@ public class NoticeV2ControllerTest extends PeriscopeApplicationTest {
 
     }
 
+    @Test
+    @DisplayName("test WS avec facettes & filtres facettes")
+    public void testWsWithFacetsFilters() throws Exception {
+        String json = "\n" +
+                "\n" +
+                "{\n" +
+                "    \"criteres\":\n" +
+                "    [\n" +
+                "        {\"type\":\"CriterionPcp\",\"bloc_operator\":\"OU\",\"pcp\":[\"PCAM\"],\"pcp_operator\":[\"ET\"]},\n" +
+                "        {\"type\":\"CriterionRcr\",\"bloc_operator\":\"ET\",\"rcr\":[\"730512301\"],\"rcr_operator\":[\"ET\"]}\n" +
+                "    ],\n" +
+                "    \"tri\":\n" +
+                "    [\n" +
+                "        {\"sort\":\"TITLE\",\"order\":\"ASC\"},\n" +
+                "        {\"sort\":\"EDITOR\",\"order\":\"DESC\"},\n" +
+                "        {\"sort\":\"NB_LOC\",\"order\":\"DESC\"}\n" +
+                "    ],\n" +
+                "   \"facettes\":\n" +
+                "   [\n" +
+                "       {\"zone\":\"DOCUMENT_TYPE\"},\n" +
+                "       {\"zone\":\"NB_LOC\"},\n" +
+                "       {\"zone\":\"COUNTRY\"}\n" +
+                "   ],\n" +
+                "   \"filtresFacettes\":\n" +
+                "   [\n" +
+                "       {\"zone\":\"COUNTRY\",\"valeurs\":[\"FR\",\"US\"]},\n" +
+                "       {\"zone\":\"LANGUAGE\",\"valeurs\":[\"fre\"]}\n" +
+                "   ]\n" +
+                "}\n";
+
+        this.mockMvc.perform(post("/api/v2/notice/findByCriteriaWithFacets?page=0&size=10")
+                .contentType(MediaType.APPLICATION_JSON).content(json))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.notice").isNotEmpty())
+                .andExpect(jsonPath("$.facettes").isNotEmpty())
+                .andExpect(jsonPath("$.nbPages").isNumber())
+                .andExpect(jsonPath("$.nbNotices").isNumber());
+
+    }
+
 
 }

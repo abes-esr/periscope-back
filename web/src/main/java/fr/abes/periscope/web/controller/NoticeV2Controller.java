@@ -109,7 +109,7 @@ public class NoticeV2Controller extends NoticeAbstractController {
         List<CriterionFacette> facettesFilters = new LinkedList<>();
         LinkedList<FacetteFilterWebDto> facetteFilterCriteria = requestParameters.getFacetFilterCriteria();
         if (facetteFilterCriteria != null && !facetteFilterCriteria.isEmpty()) {
-            facetteFilterCriteria.stream().forEach(f -> facettesFilters.add(new CriterionFacette(f.getZone(), f.getValeur())));
+            facetteFilterCriteria.stream().forEach(f -> facettesFilters.add(new CriterionFacette(f.getZone(), f.getValeurs())));
         }
         return facettesFilters;
     }

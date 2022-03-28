@@ -4,20 +4,19 @@ import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
 import fr.abes.periscope.core.repository.solr.v2.SolrQueryBuilder;
+import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.solr.core.DefaultQueryParser;
+import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.FacetQuery;
 import org.springframework.data.solr.core.query.SimpleFacetQuery;
 import org.springframework.data.solr.core.query.SimpleField;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -116,17 +115,19 @@ public class SolrQueryBuilderV2Test {
     @DisplayName("test construction filtres facettes")
     void testFiltreFacette() {
         List<CriterionFacette> facettes = new LinkedList<>();
-        facettes.add(new CriterionFacette("DOCUMENT_TYPE", "Périodiques"));
-        facettes.add(new CriterionFacette("LANGUAGE", "FR"));
+        facettes.add(new CriterionFacette("DOCUMENT_TYPE", Lists.newArrayList("Périodiques")));
+        facettes.add(new CriterionFacette("LANGUAGE", Lists.newArrayList("FR", "US")));
 
         FacetQuery query = new SimpleFacetQuery();
         query = builderQuery.addFacetsFilters(query, facettes);
 
         assertEquals(2, query.getFilterQueries().size());
-        assertEquals("DOCUMENT_TYPE", query.getFilterQueries().get(0).getCriteria().getField().getName());
+        assertEquals("document_type", query.getFilterQueries().get(0).getCriteria().getField().getName());
         assertEquals("Périodiques", query.getFilterQueries().get(0).getCriteria().getPredicates().iterator().next().getValue());
-        assertEquals("LANGUAGE", query.getFilterQueries().get(1).getCriteria().getField().getName());
-        assertEquals("FR", query.getFilterQueries().get(1).getCriteria().getPredicates().iterator().next().getValue());
+        assertEquals("language", query.getFilterQueries().get(1).getCriteria().getField().getName());
+        Iterator<Criteria.Predicate> language = query.getFilterQueries().get(1).getCriteria().getPredicates().iterator();
+        assertEquals("FR", language.next().getValue());
+        assertEquals("US", language.next().getValue());
     }
 
     @Test
