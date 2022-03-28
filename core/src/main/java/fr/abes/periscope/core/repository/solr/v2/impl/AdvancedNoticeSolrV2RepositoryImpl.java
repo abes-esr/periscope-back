@@ -2,9 +2,9 @@ package fr.abes.periscope.core.repository.solr.v2.impl;
 
 import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionFacette;
-import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
+import fr.abes.periscope.core.entity.solr.v2.ItemSolrField;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2Solr;
 import fr.abes.periscope.core.repository.solr.v2.AdvancedNoticeSolrV2Repository;
 import fr.abes.periscope.core.repository.solr.v2.SolrQueryBuilder;
 import lombok.Data;
@@ -20,7 +20,6 @@ import org.springframework.data.solr.core.query.*;
 import org.springframework.data.solr.core.query.result.FacetPage;
 import org.springframework.stereotype.Repository;
 
-import java.util.Iterator;
 import java.util.List;
 
 /**

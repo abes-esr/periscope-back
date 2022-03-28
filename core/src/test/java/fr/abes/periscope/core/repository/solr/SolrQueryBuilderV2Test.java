@@ -2,15 +2,13 @@ package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
 import fr.abes.periscope.core.repository.solr.v2.SolrQueryBuilder;
-import org.junit.Assert;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.query.FacetQuery;
 import org.springframework.data.solr.core.query.SimpleFacetQuery;

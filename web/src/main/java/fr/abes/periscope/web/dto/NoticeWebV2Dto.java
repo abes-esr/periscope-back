@@ -3,7 +3,7 @@ package fr.abes.periscope.web.dto;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fr.abes.periscope.core.entity.PublicationYear;
+import fr.abes.periscope.core.entity.solr.PublicationYear;
 import lombok.Getter;
 import lombok.Setter;
 

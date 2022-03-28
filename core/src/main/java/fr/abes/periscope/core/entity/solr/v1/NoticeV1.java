@@ -1,6 +1,6 @@
-package fr.abes.periscope.core.entity.v1;
+package fr.abes.periscope.core.entity.solr.v1;
 
-import fr.abes.periscope.core.entity.Notice;
+import fr.abes.periscope.core.entity.solr.Notice;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

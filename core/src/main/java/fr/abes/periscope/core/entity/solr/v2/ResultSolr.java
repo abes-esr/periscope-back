@@ -1,7 +1,6 @@
-package fr.abes.periscope.core.entity.v2.solr;
+package fr.abes.periscope.core.entity.solr.v2;
 
-import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.v2.NoticeV2;
+import fr.abes.periscope.core.entity.solr.Notice;
 import lombok.Data;
 
 import java.util.ArrayList;

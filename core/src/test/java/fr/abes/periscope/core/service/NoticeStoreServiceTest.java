@@ -1,14 +1,14 @@
-package fr.abes.periscope.core.repository.solr;
+package fr.abes.periscope.core.service;
 
 import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.EnableOnIntegrationTest;
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.OnGoingResourceType;
-import fr.abes.periscope.core.entity.v1.NoticeV1;
-import fr.abes.periscope.core.entity.v2.NoticeV2;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
-import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
+import fr.abes.periscope.core.entity.solr.Notice;
+import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import org.junit.Assert;
 import org.junit.jupiter.api.DisplayName;

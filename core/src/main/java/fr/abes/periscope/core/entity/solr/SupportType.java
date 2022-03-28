@@ -1,4 +1,4 @@
-package fr.abes.periscope.core.entity;
+package fr.abes.periscope.core.entity.solr;
 
 public abstract class SupportType {
     public static final String A = "Ressource textuelle, sauf manuscrits";

@@ -1,14 +1,12 @@
 package fr.abes.periscope.core.repository.solr.v1;
 
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1SolrField;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.solr.core.query.Criteria;
 import org.springframework.data.solr.core.query.FilterQuery;
 import org.springframework.data.solr.core.query.SimpleFilterQuery;
-import org.springframework.stereotype.Component;
 
 import java.util.Iterator;
 import java.util.List;

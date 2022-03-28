@@ -2,8 +2,8 @@ package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.EnableOnIntegrationTest;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1Solr;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1SolrField;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.repository.solr.v1.impl.AdvancedNoticeSolrV1RepositoryImpl;
 import org.junit.Assert;

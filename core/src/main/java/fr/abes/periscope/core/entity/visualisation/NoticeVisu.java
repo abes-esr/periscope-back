@@ -1,12 +1,11 @@
 package fr.abes.periscope.core.entity.visualisation;
 
-import fr.abes.periscope.core.entity.Notice;
+import fr.abes.periscope.core.entity.solr.Notice;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Period;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter

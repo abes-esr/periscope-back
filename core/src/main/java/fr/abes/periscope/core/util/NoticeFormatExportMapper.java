@@ -1,6 +1,8 @@
 package fr.abes.periscope.core.util;
 
-import fr.abes.periscope.core.entity.*;
+import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
+import fr.abes.periscope.core.entity.solr.PublicationYear;
+import fr.abes.periscope.core.entity.solr.SupportType;
 import fr.abes.periscope.core.entity.visualisation.*;
 import fr.abes.periscope.core.entity.xml.DataField;
 import fr.abes.periscope.core.entity.xml.NoticeXml;
@@ -10,8 +12,6 @@ import fr.abes.periscope.core.exception.IllegalHoldingException;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import fr.abes.periscope.core.exception.MissingFieldException;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.saxon.Err;
-import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Converter;
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;

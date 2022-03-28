@@ -2,7 +2,7 @@ package fr.abes.periscope.core.repository.solr.v2;
 
 import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionFacette;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2Solr;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.solr.core.query.result.FacetPage;

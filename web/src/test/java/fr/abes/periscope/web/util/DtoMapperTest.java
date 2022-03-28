@@ -1,12 +1,11 @@
 package fr.abes.periscope.web.util;
 
-import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.OnGoingResourceType;
-import fr.abes.periscope.core.entity.PublicationYear;
-import fr.abes.periscope.core.entity.v2.NoticeV2;
-import fr.abes.periscope.core.entity.v2.solr.FacetteSolr;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
-import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
+import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
+import fr.abes.periscope.core.entity.solr.PublicationYear;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
+import fr.abes.periscope.core.entity.solr.v2.FacetteSolr;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
 import fr.abes.periscope.web.dto.NoticeWebV2Dto;
 import fr.abes.periscope.web.dto.ResultWebDto;
 import org.junit.jupiter.api.Assertions;

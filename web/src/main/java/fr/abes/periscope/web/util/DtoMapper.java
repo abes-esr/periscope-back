@@ -1,12 +1,12 @@
 package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.entity.PublicationYear;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
-import fr.abes.periscope.core.entity.v2.NoticeV2;
-import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
-import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
+import fr.abes.periscope.core.entity.solr.PublicationYear;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1SolrField;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
+import fr.abes.periscope.core.entity.solr.v2.ItemSolrField;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
 import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
 import fr.abes.periscope.core.entity.visualisation.SequenceContinue;
 import fr.abes.periscope.core.entity.visualisation.SequenceError;

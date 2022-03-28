@@ -2,8 +2,8 @@ package fr.abes.periscope.web.controller;
 
 import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionSort;
-import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
+import fr.abes.periscope.core.entity.solr.Notice;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1SolrField;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import fr.abes.periscope.web.dto.NoticeWebV1Dto;
 import fr.abes.periscope.web.dto.RequestParameters;

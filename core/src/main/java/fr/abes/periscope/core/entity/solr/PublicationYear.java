@@ -1,4 +1,4 @@
-package fr.abes.periscope.core.entity;
+package fr.abes.periscope.core.entity.solr;
 
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import lombok.Getter;
