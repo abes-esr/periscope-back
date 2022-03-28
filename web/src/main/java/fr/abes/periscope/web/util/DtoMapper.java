@@ -534,7 +534,8 @@ public class DtoMapper {
             @Override
             public NoticeVisuWebDto convert(MappingContext<NoticeVisu, NoticeVisuWebDto> context) {
                 NoticeVisu notice = context.getSource();
-                NoticeVisuWebDto noticeVisuWebDto = new NoticeVisuWebDto(Integer.parseInt(notice.getStartYear().getYear()), Integer.parseInt(notice.getEndYear().getYear()));
+                int endDate = (notice.getEndYear().getYear() == null) ? Calendar.getInstance().get(Calendar.YEAR) : Integer.parseInt(notice.getEndYear().getYear());
+                NoticeVisuWebDto noticeVisuWebDto = new NoticeVisuWebDto(Integer.parseInt(notice.getStartYear().getYear()), endDate);
                 notice.getHoldings().forEach(h -> {
                     HoldingWebDto holding = new HoldingWebDto();
                     StringBuilder etatCollection = new StringBuilder();

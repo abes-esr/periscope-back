@@ -145,8 +145,8 @@ public class NoticeFormatExportMapper {
                             if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("210")) {
                                 for (SubField subField : dataField.getSubFields()) {
                                     // zone 210-c
-                                    if (subField.getCode().equalsIgnoreCase("c") && (target.getEditor() == null)) {
-                                        target.setEditor(subField.getValue());
+                                    if (subField.getCode().equalsIgnoreCase("c") && (target.getPublisher() == null)) {
+                                        target.setPublisher(subField.getValue());
                                     }
                                 }
                             }

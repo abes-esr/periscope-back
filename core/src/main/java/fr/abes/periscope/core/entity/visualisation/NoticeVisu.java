@@ -11,9 +11,6 @@ import java.util.Set;
 @Getter
 @Setter
 public class NoticeVisu extends Notice {
-
-    private String editor;
-
     private String keyShortedTitle;
 
     private String properTitle;
@@ -28,17 +25,7 @@ public class NoticeVisu extends Notice {
 
     private String keyTitleQualifer;
 
-    private String language;
-
-    private String country;
-
-    private String keyTitle;
-
     private Period frequency;
-
-    private String continuousType;
-
-    private String supportType;
 
     protected Set<Holding> holdings = new HashSet<>();
 
