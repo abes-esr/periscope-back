@@ -5,9 +5,7 @@ import fr.abes.periscope.web.util.TYPE_SEQUENCE;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import java.text.ParseException;
-
-public class NoticeVisuWebDtoTest {
+class NoticeVisuWebDtoTest {
     @Test
     void testAddHoldingAgregee() {
         NoticeVisuWebDto notice = new NoticeVisuWebDto(1990, 2020);
@@ -41,4 +39,6 @@ public class NoticeVisuWebDtoTest {
         Assertions.assertEquals(2020, notice.getHoldingWebDtoList().get(0).getSequencesList().get(2).getAnneeFin());
         Assertions.assertEquals(TYPE_SEQUENCE.CONTINUE, notice.getHoldingWebDtoList().get(0).getSequencesList().get(2).getTypeSequence());
     }
+
+
 }

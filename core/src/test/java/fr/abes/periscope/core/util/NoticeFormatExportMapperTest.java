@@ -24,14 +24,14 @@ import java.time.Period;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
-@SpringBootTest(classes = { NoticeMapper.class, NoticeFormatExportMapper.class})
+@SpringBootTest(classes = { UtilsMapper.class, NoticeFormatExportMapper.class})
 @ComponentScan(excludeFilters = @ComponentScan.Filter(BaseXMLConfiguration.class))
 public class NoticeFormatExportMapperTest {
     @Autowired
     private NoticeFormatExportMapper noticeFormatExportmodelMapper;
 
     @Autowired
-    private NoticeMapper mapper;
+    private UtilsMapper mapper;
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 

@@ -25,4 +25,9 @@ public class SequenceWebDto {
         this.rcr = rcr;
     }
 
+    @Override
+    public String toString() {
+        return "Sequence " + this.typeSequence.toString() + " {" + "startDate=" + this.anneeDebut + ", endDate=" + this.anneeFin + "}";
+    }
+
 }

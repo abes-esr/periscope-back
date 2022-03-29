@@ -2,6 +2,7 @@ package fr.abes.periscope.web.controller;
 
 import fr.abes.periscope.core.exception.IllegalPpnException;
 import fr.abes.periscope.core.service.HoldingService;
+import fr.abes.periscope.core.util.UtilsMapper;
 import fr.abes.periscope.web.dto.NoticeVisuWebDto;
 import fr.abes.periscope.web.dto.SequenceWebDto;
 import fr.abes.periscope.web.util.DtoMapper;
@@ -20,9 +21,9 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v2")
 public class HoldingsController {
     private final HoldingService service;
-    private final DtoMapper mapper;
+    private final UtilsMapper mapper;
 
-    public HoldingsController(HoldingService service, DtoMapper mapper) {
+    public HoldingsController(HoldingService service, UtilsMapper mapper) {
         this.service = service;
         this.mapper = mapper;
     }

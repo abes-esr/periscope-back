@@ -27,9 +27,10 @@ import java.util.*;
 @Component
 @Slf4j
 public class NoticeSolRMapper {
+    private UtilsMapper utilsMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public NoticeSolRMapper(UtilsMapper utilsMapper) { this.utilsMapper = utilsMapper; }
 
     /**
      * Convertisseur pour les notices SolR V1 vers les notices PERISCOPE
@@ -90,7 +91,7 @@ public class NoticeSolRMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -153,7 +154,7 @@ public class NoticeSolRMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
