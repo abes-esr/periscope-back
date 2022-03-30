@@ -8,7 +8,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Représente un Notice V2 au format JSON de l'API
@@ -88,15 +90,6 @@ public class NoticeWebV2Dto {
     @JsonProperty("typeDocument")
     private String typeRessourceContinue;
 
-    @JsonProperty("typeSupport")
-    private String typeSupport;
-
-    @JsonProperty("langue")
-    private String langue;
-
-    @JsonProperty("pays")
-    private String pays;
-
     @JsonIgnore
     private PublicationYear startYear;
     @JsonIgnore
@@ -146,10 +139,17 @@ public class NoticeWebV2Dto {
     private String sudocURL;
 
     @JsonProperty("pcpList")
-    private List<String> pcpList = new ArrayList<>();
+    private Set<String> pcpList = new HashSet<>();
+
+    @JsonProperty("rcrList")
+    private List<String> rcrList = new ArrayList<>();
 
     public void addPcp(String pcp) {
         this.pcpList.add(pcp);
+    }
+
+    public void addRcr(String rcr) {
+        this.rcrList.add(rcr);
     }
 
 

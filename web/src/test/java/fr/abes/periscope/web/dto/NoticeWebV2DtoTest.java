@@ -1,15 +1,14 @@
 package fr.abes.periscope.web.dto;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class NoticeWebV2DtoTest {
+class NoticeWebV2DtoTest {
     @Test
-    public void testGetTitre() {
+    @DisplayName("test construction titre notice")
+    void testGetTitre() {
         NoticeWebV2Dto notice = new NoticeWebV2Dto();
         notice.setTitreCle("titre clé");
         assertEquals(notice.getTitre(), "titre clé");
