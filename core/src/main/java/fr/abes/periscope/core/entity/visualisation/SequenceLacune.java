@@ -5,14 +5,14 @@ public class SequenceLacune extends Sequence {
     protected String numero;
 
 
-    public SequenceLacune(Integer startYear, Integer startMonth, Integer startDay, Integer endYear, Integer endMonth, Integer endDay, String volume, String numero) {
-        super(startYear, startMonth, startDay, endYear, endMonth, endDay);
+    public SequenceLacune(Integer startYear, Integer endYear, String volume, String numero) {
+        super(startYear, endYear);
         setVolume(volume);
         setNumero(numero);
     }
 
-    public SequenceLacune(Integer startYear, Integer startMonth, Integer startDay, String volume, String numero) {
-        super(startYear, startMonth, startDay);
+    public SequenceLacune(Integer startYear, String volume, String numero) {
+        super(startYear, startYear);
         setVolume(volume);
         setNumero(numero);
     }
@@ -48,6 +48,6 @@ public class SequenceLacune extends Sequence {
 
     @Override
     public String toString() {
-        return "SequenceLacune {" + "startDate=" + startDate.getTime() + ", endDate=" + endDate.getTime() + ", volume=" + volume + ", numero=" + numero + "}";
+        return "SequenceLacune {" + "startDate=" + startDate + ", endDate=" + endDate + ", volume=" + volume + ", numero=" + numero + "}";
     }
 }

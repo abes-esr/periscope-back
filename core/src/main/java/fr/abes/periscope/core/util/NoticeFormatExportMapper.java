@@ -352,10 +352,10 @@ public class NoticeFormatExportMapper {
             // La date de début a été trouvé
             //on ajout la séquence uniquement si elle a une date de début pour gérer le cas ou la 955 n'a que des sous zones de note
             try {
-                SequenceContinue sequence = new SequenceContinue(startYear, startMonth, startDay, startVolume, startNumero, ouvert);
+                SequenceContinue sequence = new SequenceContinue(startYear, startVolume, startNumero, ouvert);
                 if (iCount >= 2) {
                     // La date de fin a été trouvé
-                    sequence.setEndDate(endYear, endMonth, endtDay);
+                    sequence.setEndDate(endYear);
                     sequence.setEndNumero(endNumero);
                     sequence.setEndVolume(endVolume);
                 }
@@ -387,8 +387,6 @@ public class NoticeFormatExportMapper {
 
         // Prorpiété d'une séquence continue
         Integer startYear = null;
-        Integer startMonth = null;
-        Integer startDay = null;
         String volume = null;
         String numero = null;
 
@@ -408,7 +406,7 @@ public class NoticeFormatExportMapper {
                         if (subField.getCode().equals("0")) {
                             //si on arrive sur une $0, on crée un nouveau bloc
                             if (!error) {
-                                SequenceLacune sequence = new SequenceLacune(startYear, startMonth, startDay, volume, numero);
+                                SequenceLacune sequence = new SequenceLacune(startYear, volume, numero);
                                 holding.addSequence(sequence);
                             }
                         }
@@ -417,12 +415,6 @@ public class NoticeFormatExportMapper {
                         }
                         if (subField.getCode().equalsIgnoreCase("e")) {
                             numero = subField.getValue();
-                        }
-                        if (subField.getCode().equalsIgnoreCase("c")) {
-                            startMonth = getMoisFromEnum(subField.getValue());
-                        }
-                        if (subField.getCode().equalsIgnoreCase("b")) {
-                            startDay = Integer.parseInt(subField.getValue());
                         }
                         if (subField.getCode().equalsIgnoreCase("a")) {
                             startYear = Integer.parseInt(subField.getValue());
@@ -438,12 +430,12 @@ public class NoticeFormatExportMapper {
 
         if (error) {
             if (startYear != null) {
-                SequenceError sequenceError = new SequenceError(startYear, startMonth, startDay, errorMessage);
+                SequenceError sequenceError = new SequenceError(startYear, errorMessage);
                 holding.addSequence(sequenceError);
             }
         } else {
             //ajout du dernier bloc qui n'est pas ajouté en début de boucle
-            Sequence sequence = new SequenceLacune(startYear, startMonth, startDay, volume, numero);
+            Sequence sequence = new SequenceLacune(startYear, volume, numero);
             holding.addSequence(sequence);
         }
     }

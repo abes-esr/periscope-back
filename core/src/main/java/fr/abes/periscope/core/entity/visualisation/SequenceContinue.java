@@ -12,13 +12,13 @@ public class SequenceContinue extends Sequence {
     protected String endVolume;
     protected String endNumero;
 
-    public SequenceContinue(Integer startYear, Integer startMonth, Integer startDay, String startVolume, String startNumero, boolean ouvert) {
-        super(startYear, startMonth, startDay);
+    public SequenceContinue(Integer startYear, String startVolume, String startNumero, boolean ouvert) {
+        super(startYear);
         if (ouvert) {
             Calendar now = Calendar.getInstance();
-            setEndDate(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
+            setEndDate(now.get(Calendar.YEAR));
         } else {
-            setEndDate(startYear, startMonth, startDay);
+            setEndDate(startYear);
         }
 
         setStartVolume(startVolume);
@@ -27,16 +27,16 @@ public class SequenceContinue extends Sequence {
         setEndNumero(startNumero);
     }
 
-    public SequenceContinue(Integer startYear, Integer startMonth, Integer startDay, String startVolume, String startNumero, Integer endYear, Integer endMonth, Integer endDay, String endVolume, String endNumero) {
-        super(startYear, startMonth, startDay, endYear, endMonth, endDay);
+    public SequenceContinue(Integer startDate, String startVolume, String startNumero, Integer endYear, String endVolume, String endNumero) {
+        super(startDate, endYear);
         setStartVolume(startVolume);
         setStartNumero(startNumero);
         setEndVolume(endVolume);
         setEndNumero(endNumero);
     }
 
-    public void setStartDate(Integer startYear, Integer startMonth, Integer startDay, String volume, String numero) {
-        this.setStartDate(startYear, startMonth, startDay);
+    public void setStartDate(Integer startYear, String volume, String numero) {
+        this.setStartDate(startYear);
         setStartVolume(volume);
         setStartNumero(numero);
     }
@@ -80,7 +80,7 @@ public class SequenceContinue extends Sequence {
 
     @Override
     public String toString() {
-        return "SequenceContinue {" + "startDate=" + startDate.getTime() + ", endDate=" + endDate.getTime() + ", startVolume=" + startVolume + ", endVolume=" + endVolume + "}";
+        return "SequenceContinue {" + "startDate=" + startDate + ", endDate=" + endDate + ", startVolume=" + startVolume + ", endVolume=" + endVolume + "}";
     }
 
 }

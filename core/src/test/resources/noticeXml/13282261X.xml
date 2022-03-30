@@ -203,10 +203,7 @@
         <subfield code="0"/>
         <subfield code="e">2697</subfield>
         <subfield code="a">2001</subfield>
-        <subfield code="r">no.101 (1949 ) ; no.1620 (1979) ; no.1937 (1985) ; no.2331 (1993) ; no.2697 (2001) ; no.2678
-            (2000) ; no.2738 (2001) ; no.2900 (2006) ; no.2930 (2007) ; no.3048 (2012) ; no.3065 (2013) ; no.31105
-            (2015)
-        </subfield>
+        <subfield code="r">no.101 (1949 ) ; no.1620 (1979) ; no.1937 (1985) ; no.2331 (1993) ; no.2697 (2001)</subfield>
     </datafield>
     <datafield tag="940" ind1=" " ind2=" ">
         <subfield code="5">751052304:363392556</subfield>

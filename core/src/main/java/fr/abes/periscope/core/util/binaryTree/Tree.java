@@ -48,9 +48,9 @@ public class Tree {
     public Node search(Node node, Sequence sequence) {
         if (node == null) return null;
         //Si la date de début du node courant est avant la date de début de la séquence et la date de fin du node courant est après la date de début de la séquence
-        if (node.getElement().getStartDate().compareTo(sequence.getStartDate()) <= 0 && node.getElement().getEndDate().compareTo(sequence.getStartDate()) > 0) return node;
+        if (node.getElement().getStartDate() <= sequence.getStartDate() && node.getElement().getEndDate() >= sequence.getStartDate()) return node;
         //Si la date de début du node courant est après la date de début de la séquence on cherche dans le sous arbre de gauche
-        if (node.getElement().getStartDate().compareTo(sequence.getStartDate()) > 0) return search(node.getGauche(), sequence);
+        if (node.getElement().getStartDate() > sequence.getStartDate()) return search(node.getGauche(), sequence);
         //sinon on cherche dans le sous arbre de droite
         return search(node.getDroit(), sequence);
     }

@@ -23,17 +23,16 @@ import java.text.SimpleDateFormat;
 import java.time.Period;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
+import java.util.Optional;
 
 @SpringBootTest(classes = { NoticeMapper.class, NoticeFormatExportMapper.class})
 @ComponentScan(excludeFilters = @ComponentScan.Filter(BaseXMLConfiguration.class))
-public class NoticeFormatExportMapperTest {
+class NoticeFormatExportMapperTest {
     @Autowired
     private NoticeFormatExportMapper noticeFormatExportmodelMapper;
 
     @Autowired
     private NoticeMapper mapper;
-
-    private final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
     @Value("classpath:noticeXml/etatColl1.xml")
     private Resource xmlFileEtatColl1;
@@ -82,15 +81,11 @@ public class NoticeFormatExportMapperTest {
         noticeFormatExportmodelMapper.processEtatCollection(hold, notice.getDataFields().get(0));
 
         Assertions.assertEquals(1, hold.getSequences().size());
-        Assertions.assertEquals(2000, hold.getSequences().get(0).getStartDate().get(Calendar.YEAR));
-        Assertions.assertEquals(Calendar.JANUARY, hold.getSequences().get(0).getStartDate().get(Calendar.MONTH));
-        Assertions.assertEquals(28, hold.getSequences().get(0).getStartDate().get(Calendar.DAY_OF_MONTH));
+        Assertions.assertEquals(2000, Optional.of(hold.getSequences().get(0).getStartDate()).get().intValue());
         Assertions.assertEquals("23", ((SequenceContinue)hold.getSequences().get(0)).getStartVolume());
         Assertions.assertEquals("38", ((SequenceContinue)hold.getSequences().get(0)).getStartNumero());
         //cas d'un intervalle avec date de début sans date de fin mais fermé
-        Assertions.assertEquals(2000, hold.getSequences().get(0).getEndDate().get(Calendar.YEAR));
-        Assertions.assertEquals(Calendar.JANUARY, hold.getSequences().get(0).getEndDate().get(Calendar.MONTH));
-        Assertions.assertEquals(28, hold.getSequences().get(0).getEndDate().get(Calendar.DAY_OF_MONTH));
+        Assertions.assertEquals(2000, Optional.of(hold.getSequences().get(0).getEndDate()).get().intValue());
     }
 
     @Test
@@ -108,10 +103,8 @@ public class NoticeFormatExportMapperTest {
 
         Assertions.assertEquals(1, hold.getSequences().size());
 
-        Calendar calendar = new GregorianCalendar(2000, Calendar.JANUARY, 28);
-        Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(hold.getSequences().get(0).getStartDate().getTime()));
-        calendar = new GregorianCalendar(2017, Calendar.FEBRUARY, 28);
-        Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(hold.getSequences().get(0).getEndDate().getTime()));
+        Assertions.assertEquals(2000, hold.getSequences().get(0).getStartDate().intValue());
+        Assertions.assertEquals(2017, hold.getSequences().get(0).getEndDate().intValue());
 
         Assertions.assertEquals("23", ((SequenceContinue)hold.getSequences().get(0)).getStartVolume());
         Assertions.assertEquals("38", ((SequenceContinue)hold.getSequences().get(0)).getStartNumero());
@@ -134,10 +127,8 @@ public class NoticeFormatExportMapperTest {
 
         Assertions.assertEquals(1, hold.getSequences().size());
 
-        Calendar calendar = new GregorianCalendar(2000, Calendar.JANUARY, 28);
-        Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(hold.getSequences().get(0).getStartDate().getTime()));
-        calendar = new GregorianCalendar(2017, Calendar.MARCH, 31);
-        Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(hold.getSequences().get(0).getEndDate().getTime()));
+        Assertions.assertEquals(2000, hold.getSequences().get(0).getStartDate().intValue());
+        Assertions.assertEquals(2017, hold.getSequences().get(0).getEndDate().intValue());
 
         Assertions.assertEquals("23", ((SequenceContinue)hold.getSequences().get(0)).getStartVolume());
         Assertions.assertEquals("38", ((SequenceContinue)hold.getSequences().get(0)).getStartNumero());
@@ -161,11 +152,9 @@ public class NoticeFormatExportMapperTest {
 
         Assertions.assertEquals(1, hold.getSequences().size());
 
-        Calendar calendar = new GregorianCalendar(2000, Calendar.JANUARY, 1);
-        Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(hold.getSequences().get(0).getStartDate().getTime()));
         //cas d'un intervalle ouvert, la date de fin doit être égale à la date du jour
         Calendar calendar1 = new GregorianCalendar();
-        Assertions.assertEquals(sdf.format(calendar1.getTime()), sdf.format(hold.getSequences().get(0).getEndDate().getTime()));
+        Assertions.assertEquals(calendar1.get(Calendar.YEAR), hold.getSequences().get(0).getEndDate().intValue());
     }
 
     @Test
@@ -230,21 +219,19 @@ public class NoticeFormatExportMapperTest {
         XmlMapper xmlMapper = new XmlMapper(module);
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
         Holding hold = new Holding("41133793901");
-        SequenceContinue sequence = new SequenceContinue(1948, 0, 1,"","", 2017, Calendar.DECEMBER, 31,"","");
+        SequenceContinue sequence = new SequenceContinue(1948, "","", 2017, "","");
         hold.addSequence(sequence);
 
         noticeFormatExportmodelMapper.processLacunes(hold, notice.getDataFields().get(0));
 
-        Assertions.assertEquals(23, hold.getSequences().size());
+        Assertions.assertEquals(19, hold.getSequences().size());
 
         Assertions.assertTrue(hold.getTextLacune().contains("no.101 (1949 )  ; no.1620 (1979)  ; no.1937 (1985)  ; no.2331 (1993)"));
-        Assertions.assertEquals(11,hold.getLacuneSequences().size());
-        Calendar calendar = new GregorianCalendar(1949, Calendar.JANUARY, 1);
-        Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(hold.getLacuneSequences().get(0).getStartDate().getTime()));
+        Assertions.assertEquals(10, hold.getLacuneSequences().size());
+        Assertions.assertEquals(1949, hold.getLacuneSequences().get(0).getStartDate().intValue());
         Assertions.assertEquals("101", hold.getLacuneSequences().get(0).getNumero());
-        calendar = new GregorianCalendar(2015, Calendar.JANUARY, 1);
-        Assertions.assertEquals(sdf.format(calendar.getTime()), sdf.format(hold.getLacuneSequences().get(10).getStartDate().getTime()));
-        Assertions.assertEquals("31105",  hold.getLacuneSequences().get(10).getNumero());
+        Assertions.assertEquals(2015, hold.getLacuneSequences().get(9).getStartDate().intValue());
+        Assertions.assertEquals("31105",  hold.getLacuneSequences().get(9).getNumero());
     }
 
     @Test
@@ -310,6 +297,8 @@ public class NoticeFormatExportMapperTest {
         NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
 
         NoticeVisu noticeVisu = mapper.map(notice, NoticeVisu.class);
+
+        Assertions.assertEquals("039226859", noticeVisu.getPpn());
     }
 
 
