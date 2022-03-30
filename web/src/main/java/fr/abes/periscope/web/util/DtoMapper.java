@@ -234,6 +234,8 @@ public class DtoMapper {
                 return NoticeV2SolrField.END_YEAR;
             case "nb_loc":
                 return NoticeV2SolrField.NB_LOC;
+            case "pcp_list":
+                return NoticeV2SolrField.NB_PCP;
             default:
                 throw new IllegalSortException(s.getSort() + " : Critère de tri inconnu");
         }
