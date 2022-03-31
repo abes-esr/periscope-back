@@ -66,7 +66,7 @@ class HoldingTest {
         Holding holding = new Holding("41133793901");
         Sequence sequenceToAdd1 = new SequenceContinue(2000, "", "", 2001, "", "");
 
-        Sequence sequenceToAdd2 = new SequenceContinue(1990, "", "", 2000, "", "");
+        Sequence sequenceToAdd2 = new SequenceContinue(1990, "", "", 1999, "", "");
 
         holding.addSequence(sequenceToAdd1);
         holding.addSequence(sequenceToAdd2);

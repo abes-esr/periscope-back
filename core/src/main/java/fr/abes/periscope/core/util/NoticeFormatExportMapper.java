@@ -243,14 +243,10 @@ public class NoticeFormatExportMapper {
 
         // Prorpiété d'une séquence continue
         Integer startYear = null;
-        Integer startMonth = null;
-        Integer startDay = null;
         String startVolume = null;
         String startNumero = null;
 
         Integer endYear = null;
-        Integer endMonth = null;
-        Integer endtDay = null;
         String endNumero = null;
         String endVolume = null;
 
@@ -309,26 +305,7 @@ public class NoticeFormatExportMapper {
                             }
                             bCount++;
                         }
-                        //mois
-                        if (subField.getCode().equalsIgnoreCase("j")) {
-                            try {
-                                if (iCount == 0) { //Première fois qu'on rencontre la balise
-                                    startMonth = getMoisFromEnum(subField.getValue().trim());
-                                } else if (iCount == 1) {
-                                    endMonth = getMoisFromEnum(subField.getValue().trim());
-                                }
-                            } catch (IllegalDateException ex) {
-                                erreur = true;
-                            }
-                        }
-                        //jour
-                        if (subField.getCode().equalsIgnoreCase("k")) {
-                            if (iCount == 0) { //Première fois qu'on rencontre la balise
-                                startDay = Integer.parseInt(subField.getValue().trim());
-                            } else if (iCount == 1) {
-                                endtDay = Integer.parseInt(subField.getValue().trim());
-                            }
-                        }
+
                         //annee
                         if (subField.getCode().equalsIgnoreCase("i")) {
                             if (iCount == 0) { //Première fois qu'on rencontre la balise
@@ -440,36 +417,6 @@ public class NoticeFormatExportMapper {
         }
     }
 
-    private Integer getMoisFromEnum(String value) throws IllegalDateException {
-        switch (value) {
-            case "jan":
-                return Calendar.JANUARY;
-            case "fev":
-                return Calendar.FEBRUARY;
-            case "mar":
-                return Calendar.MARCH;
-            case "avr":
-                return Calendar.APRIL;
-            case "mai":
-                return Calendar.MAY;
-            case "jun":
-                return Calendar.JUNE;
-            case "jul":
-                return Calendar.JULY;
-            case "aou":
-                return Calendar.AUGUST;
-            case "sep":
-                return Calendar.SEPTEMBER;
-            case "oct":
-                return Calendar.OCTOBER;
-            case "nov":
-                return Calendar.NOVEMBER;
-            case "dec":
-                return Calendar.DECEMBER;
-            default:
-                throw new IllegalDateException("Erreur dans la sous zone 'mois' " + value);
-        }
-    }
 
     /**
      * Extrait l'année de début de publication

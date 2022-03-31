@@ -164,22 +164,22 @@ public class Holding extends Item {
         //récupération de la séquence à l'index fourni
         Sequence nearestSequence = this.sequences.get(nearestIndex);
         //si la séquence la plus proche a une date de fin égale à la date de début de la séquence à insérer, on ajoute directement la séquence à insérer après la séquence la plus proche
-        if (nearestSequence.getEndDate().equals(sequence.getStartDate() - 1)) {
+        if (sequence.getStartDate() <= (nearestSequence.getEndDate() + 1) || sequence.getStartDate().equals(nearestSequence.getStartDate())) {
             this.sequences.add(Math.min(this.sequences.size(), nearestIndex + 1), sequence);
         } else {
-            if (!(sequence instanceof SequenceError)) {
-                //on crée une séquence vide avec une date de début = date de fin de la séquence la plus proche + 1 et date de fin = date de début de la séquence à insérer - 1
-                SequenceEmpty empty = new SequenceEmpty(nearestSequence.getEndDate() + 1, sequence.getStartDate() - 1);
-                //on ajoute la séquence vide crée après la séquence la plus proche
-                this.sequences.add(Math.min(this.sequences.size(), nearestIndex + 1), empty);
-            }
+
+            //on crée une séquence vide avec une date de début = date de fin de la séquence la plus proche + 1 et date de fin = date de début de la séquence à insérer - 1
+            SequenceEmpty empty = new SequenceEmpty(nearestSequence.getEndDate() + 1, sequence.getStartDate() - 1);
+            //on ajoute la séquence vide crée après la séquence la plus proche
+            this.sequences.add(Math.min(this.sequences.size(), nearestIndex + 1), empty);
             //on ajoute la séquence après la séquence vide
-            this.sequences.add(Math.max(this.sequences.size(), nearestIndex + 1), sequence);
+            this.sequences.add(Math.max(this.sequences.size(), nearestIndex + 2), sequence);
         }
     }
 
     /**
      * Méthode permettant d'insérer une séquence avant un index de la liste donné
+     * Si une séquence est située plus d'une année après la séquence à insérer on ajoute une séquence vide entre les deux
      *
      * @param sequence     séquence à insérer
      * @param nearestIndex index dans la liste des séquences où placer la séquence à insérer
@@ -189,9 +189,9 @@ public class Holding extends Item {
         Sequence nearestSequence = this.sequences.get(nearestIndex);
 
         //si la séquence la plus proche a une date de début égale à la date de début de la séquence à insérer ou une date de début égale à la date de fin de la séquence à insérer
-        if (nearestSequence.getStartDate().equals(sequence.getStartDate()) || nearestSequence.getStartDate().equals(sequence.getEndDate())) {
+        if (sequence.getStartDate().equals(nearestSequence.getStartDate()) || sequence.getEndDate() >= (nearestSequence.getStartDate() - 1)) {
             //on ajoute la séquence juste avant la séquence la plus proche
-            this.sequences.add(Math.max(0, nearestIndex - 1), sequence);
+            this.sequences.add(Math.max(0, nearestIndex), sequence);
         } else {
             //on crée une séquence vide avec une date de début = date de fin de la séquence à insérer + 1 et une date de fin = date de début de la séquence la plus proche - 1
             SequenceEmpty empty = new SequenceEmpty(sequence.getEndDate() + 1, nearestSequence.getStartDate() - 1);

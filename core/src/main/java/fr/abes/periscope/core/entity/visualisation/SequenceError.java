@@ -10,7 +10,7 @@ public class SequenceError extends Sequence {
     }
 
     public SequenceError(Integer startYear, String message) {
-        super(startYear);
+        super(startYear, startYear);
         this.message = message;
     }
 
