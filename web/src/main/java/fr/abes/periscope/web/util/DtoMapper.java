@@ -545,7 +545,7 @@ public class DtoMapper {
                     holding.setEtatCollectionTextuel(etatCollection.toString());
                     holding.addErreurs(h.getErreurs());
                     h.getAllNonEmptySequences().forEach(s -> {
-                        SequenceWebDto sequenceWebDto = new SequenceWebDto(s.getStartDate().get(Calendar.YEAR), s.getEndDate().get(Calendar.YEAR), h.getRcr());
+                        SequenceWebDto sequenceWebDto = new SequenceWebDto(s.getStartDate(), s.getEndDate(), h.getRcr());
                         if (s instanceof SequenceContinue) sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.CONTINUE);
                         else if (s instanceof SequenceError) {
                             sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.ERREUR);
