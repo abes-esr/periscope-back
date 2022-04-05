@@ -244,14 +244,10 @@ public class NoticeFormatExportMapper {
 
         // Prorpiété d'une séquence continue
         Integer startYear = null;
-        Integer startMonth = null;
-        Integer startDay = null;
         String startVolume = null;
         String startNumero = null;
 
         Integer endYear = null;
-        Integer endMonth = null;
-        Integer endtDay = null;
         String endNumero = null;
         String endVolume = null;
 
@@ -310,26 +306,7 @@ public class NoticeFormatExportMapper {
                             }
                             bCount++;
                         }
-                        //mois
-                        if (subField.getCode().equalsIgnoreCase("j")) {
-                            try {
-                                if (iCount == 0) { //Première fois qu'on rencontre la balise
-                                    startMonth = getMoisFromEnum(subField.getValue().trim());
-                                } else if (iCount == 1) {
-                                    endMonth = getMoisFromEnum(subField.getValue().trim());
-                                }
-                            } catch (IllegalDateException ex) {
-                                erreur = true;
-                            }
-                        }
-                        //jour
-                        if (subField.getCode().equalsIgnoreCase("k")) {
-                            if (iCount == 0) { //Première fois qu'on rencontre la balise
-                                startDay = Integer.parseInt(subField.getValue().trim());
-                            } else if (iCount == 1) {
-                                endtDay = Integer.parseInt(subField.getValue().trim());
-                            }
-                        }
+
                         //annee
                         if (subField.getCode().equalsIgnoreCase("i")) {
                             if (iCount == 0) { //Première fois qu'on rencontre la balise
@@ -353,10 +330,10 @@ public class NoticeFormatExportMapper {
             // La date de début a été trouvé
             //on ajout la séquence uniquement si elle a une date de début pour gérer le cas ou la 955 n'a que des sous zones de note
             try {
-                SequenceContinue sequence = new SequenceContinue(startYear, startMonth, startDay, startVolume, startNumero, ouvert);
+                SequenceContinue sequence = new SequenceContinue(startYear, startVolume, startNumero, ouvert);
                 if (iCount >= 2) {
                     // La date de fin a été trouvé
-                    sequence.setEndDate(endYear, endMonth, endtDay);
+                    sequence.setEndDate(endYear);
                     sequence.setEndNumero(endNumero);
                     sequence.setEndVolume(endVolume);
                 }
@@ -388,8 +365,6 @@ public class NoticeFormatExportMapper {
 
         // Prorpiété d'une séquence continue
         Integer startYear = null;
-        Integer startMonth = null;
-        Integer startDay = null;
         String volume = null;
         String numero = null;
 
@@ -409,7 +384,7 @@ public class NoticeFormatExportMapper {
                         if (subField.getCode().equals("0")) {
                             //si on arrive sur une $0, on crée un nouveau bloc
                             if (!error) {
-                                SequenceLacune sequence = new SequenceLacune(startYear, startMonth, startDay, volume, numero);
+                                SequenceLacune sequence = new SequenceLacune(startYear, volume, numero);
                                 holding.addSequence(sequence);
                             }
                         }
@@ -418,12 +393,6 @@ public class NoticeFormatExportMapper {
                         }
                         if (subField.getCode().equalsIgnoreCase("e")) {
                             numero = subField.getValue();
-                        }
-                        if (subField.getCode().equalsIgnoreCase("c")) {
-                            startMonth = getMoisFromEnum(subField.getValue());
-                        }
-                        if (subField.getCode().equalsIgnoreCase("b")) {
-                            startDay = Integer.parseInt(subField.getValue());
                         }
                         if (subField.getCode().equalsIgnoreCase("a")) {
                             startYear = Integer.parseInt(subField.getValue());
@@ -439,46 +408,16 @@ public class NoticeFormatExportMapper {
 
         if (error) {
             if (startYear != null) {
-                SequenceError sequenceError = new SequenceError(startYear, startMonth, startDay, errorMessage);
+                SequenceError sequenceError = new SequenceError(startYear, errorMessage);
                 holding.addSequence(sequenceError);
             }
         } else {
             //ajout du dernier bloc qui n'est pas ajouté en début de boucle
-            Sequence sequence = new SequenceLacune(startYear, startMonth, startDay, volume, numero);
+            Sequence sequence = new SequenceLacune(startYear, volume, numero);
             holding.addSequence(sequence);
         }
     }
 
-    private Integer getMoisFromEnum(String value) throws IllegalDateException {
-        switch (value) {
-            case "jan":
-                return Calendar.JANUARY;
-            case "fev":
-                return Calendar.FEBRUARY;
-            case "mar":
-                return Calendar.MARCH;
-            case "avr":
-                return Calendar.APRIL;
-            case "mai":
-                return Calendar.MAY;
-            case "jun":
-                return Calendar.JUNE;
-            case "jul":
-                return Calendar.JULY;
-            case "aou":
-                return Calendar.AUGUST;
-            case "sep":
-                return Calendar.SEPTEMBER;
-            case "oct":
-                return Calendar.OCTOBER;
-            case "nov":
-                return Calendar.NOVEMBER;
-            case "dec":
-                return Calendar.DECEMBER;
-            default:
-                throw new IllegalDateException("Erreur dans la sous zone 'mois' " + value);
-        }
-    }
 
     /**
      * Extrait l'année de début de publication

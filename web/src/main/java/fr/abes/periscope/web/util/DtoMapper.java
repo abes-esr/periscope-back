@@ -102,16 +102,16 @@ public class DtoMapper {
                 noticeWeb.setTitreCleQualifie(notice.getKeyTitleQualifer());
                 noticeWeb.setTitreCleCourt(notice.getKeyShortedTitle());
                 noticeWeb.setTypeRessourceContinue(notice.getContinuousType());
-                noticeWeb.setTypeSupport(notice.getSupportType());
-                noticeWeb.setLangue(notice.getLanguage());
-                noticeWeb.setPays(notice.getCountry());
                 noticeWeb.setStartYear(notice.getStartYear());
                 noticeWeb.setEndYear(notice.getEndYear());
                 noticeWeb.setNbLocation(notice.getNbLocation());
+                noticeWeb.setPcpList(notice.getPcpList());
 
                 if (notice.getNbLocation() != 0)
                     noticeWeb.setSudocURL(SUDOC_URL + notice.getPpn());
-                notice.getPcpList().forEach(p -> noticeWeb.addPcp(p));
+
+                notice.getItems().forEach(i -> noticeWeb.addRcr(i.getRcr()));
+                Collections.sort(noticeWeb.getRcrList());
                 return noticeWeb;
             }
         };
@@ -523,7 +523,7 @@ public class DtoMapper {
                     holding.setEtatCollectionTextuel(etatCollection.toString());
                     holding.addErreurs(h.getErreurs());
                     h.getAllNonEmptySequences().forEach(s -> {
-                        SequenceWebDto sequenceWebDto = new SequenceWebDto(s.getStartDate().get(Calendar.YEAR), s.getEndDate().get(Calendar.YEAR), h.getRcr());
+                        SequenceWebDto sequenceWebDto = new SequenceWebDto(s.getStartDate(), s.getEndDate(), h.getRcr());
                         if (s instanceof SequenceContinue) sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.CONTINUE);
                         else if (s instanceof SequenceError) {
                             sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.ERREUR);

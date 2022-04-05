@@ -1,83 +1,37 @@
 package fr.abes.periscope.core.entity.visualisation;
 
-import fr.abes.periscope.core.exception.IllegalDateException;
 import lombok.Getter;
+import lombok.Setter;
 
-import java.time.Period;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-
+@Getter
+@Setter
 public abstract class Sequence implements Cloneable {
-    protected Calendar startDate;
-    protected Calendar endDate;
+    protected Integer startDate;
+    protected Integer endDate;
     private boolean closedInterval = false;
-    protected String note;
-    private boolean updateToFrequency = false;
 
-    public Sequence(Integer startYear, Integer startMonth, Integer startDay) {
-        this.setStartDate(startYear, startMonth, startDay);
-        this.setEndDate(startDate.get(Calendar.YEAR), startDate.get(Calendar.MONTH), startDate.get(Calendar.DAY_OF_MONTH));
+    public Sequence(Integer startDate) {
+        this.startDate = startDate;
+        this.closedInterval = false;
     }
 
-    public Sequence(Integer startYear, Integer startMonth, Integer startDay, Integer endYear, Integer endMonth, Integer endDay) {
-        this.setStartDate(startYear, startMonth, startDay);
-        this.setEndDate(endYear, endMonth, endDay);
+    public Sequence(Integer startDate, Integer endDate) {
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.closedInterval = true;
     }
 
-    protected void setStartDate(Integer startYear, Integer startMonth, Integer startDay) {
-        if (startYear != null && startMonth != null && startDay != null) {
-            this.startDate = new GregorianCalendar(startYear, startMonth, startDay);
-        } else if (startYear != null && startMonth != null && startDay == null) {
-            //si le mois est renseigné sans le jour, on renseigne le premier jour du mois
-            //peut arriver sur des revues non quotidiennes
-            this.startDate = new GregorianCalendar(startYear, startMonth, 1);
-        } else if (startYear != null && startMonth == null && startDay != null) {
-            this.startDate = new GregorianCalendar(startYear, Calendar.JANUARY, startDay);
-        } else if (startYear != null && startMonth == null && startDay == null) {
-            this.startDate = new GregorianCalendar(startYear, Calendar.JANUARY, 1);
-        } else {
-            throw new IllegalDateException("Start date of the sequence is not valid.");
-        }
 
-        this.checkDate();
-    }
-
-    public boolean isUpdateToFrequency() {
-        return updateToFrequency;
-    }
-
-    public Calendar getStartDate() {
-        return this.startDate;
-    }
-
-    public void setEndDate(Integer endYear, Integer endMonth, Integer endDay) {
-        if (endYear == null && endMonth == null && endDay == null) {
+    public void setEndDate(Integer endDate) {
+        if (endDate == null) {
             //pas de date de fin
             return;
         }
 
-        if (endYear != null && endMonth != null && endDay != null) {
-            this.endDate = new GregorianCalendar(endYear, endMonth, endDay);
-        } else if (endYear != null && endMonth != null && endDay == null) {
-            //si le mois est renseigné sans le jour, on renseigne le dernier jour du mois dans la date de fin
-            //peut arriver sur des revues non quotidiennes
-            this.endDate = new GregorianCalendar(endYear, endMonth, 1);
-            this.endDate.set(Calendar.DAY_OF_MONTH, endDate.getActualMaximum(Calendar.DAY_OF_MONTH));
-        } else if (endYear != null && endMonth == null && endDay != null) {
-            this.endDate = new GregorianCalendar(endYear, Calendar.DECEMBER, endDay);
-        } else if (endYear != null && endMonth == null && endDay == null) {
-            this.endDate = new GregorianCalendar(endYear, Calendar.DECEMBER, 31);
-        } else {
-            throw new IllegalDateException("Unable to decode the end date");
-        }
-
+        this.endDate = endDate;
         this.closedInterval = true;
 
         this.checkDate();
-    }
-
-    public Calendar getEndDate() {
-        return this.endDate;
     }
 
     public boolean isClosedInterval() {
@@ -89,9 +43,9 @@ public abstract class Sequence implements Cloneable {
      */
     private void checkDate() {
         if (startDate != null && endDate != null) {
-            if (startDate.after(endDate)) {
+            if (startDate > endDate) {
                 // On échange les dates
-                Calendar temp = endDate;
+                Integer temp = endDate;
                 endDate = startDate;
                 startDate = temp;
             }
@@ -118,9 +72,9 @@ public abstract class Sequence implements Cloneable {
     @Override
     public String toString() {
         if (isClosedInterval()) {
-            return "Sequence {" + "startDate=" + startDate.getTime() + ", endDate=" + endDate.getTime() + "}";
+            return "Sequence {" + "startDate=" + startDate + ", endDate=" + endDate + "}";
         } else {
-            return "Sequence {" + "startDate=" + startDate.getTime() + ", endDate=undefined }";
+            return "Sequence {" + "startDate=" + startDate + ", endDate=undefined }";
         }
     }
 

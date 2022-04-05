@@ -1,5 +1,6 @@
 package fr.abes.periscope.web.util;
 
+import fr.abes.periscope.core.entity.solr.Item;
 import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
 import fr.abes.periscope.core.entity.solr.PublicationYear;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
@@ -58,6 +59,20 @@ public class DtoMapperTest {
         notice1.setEndYear(new PublicationYear("2020", 0));
         notice1.setNbLocation(1);
 
+        Item item = new Item();
+        item.setPpn("111111111");
+        item.setEpn("999999999");
+        item.setRcr("341725201");
+
+        notice1.addItem(item);
+
+        Item item2 = new Item();
+        item2.setPpn("111111111");
+        item2.setEpn("888888888");
+        item2.setRcr("111111111");
+
+        notice1.addItem(item2);
+
         notice2 = new NoticeV2();
         notice2.setPpn("222222222");
         notice2.setIssn("2222-2222");
@@ -90,8 +105,6 @@ public class DtoMapperTest {
         Assertions.assertEquals("111111111", noticeWebV2Dto.getPpn());
         Assertions.assertEquals("1111-1111", noticeWebV2Dto.getIssn());
         Assertions.assertEquals("test éditeur", noticeWebV2Dto.getEditeur());
-        Assertions.assertEquals("fre", noticeWebV2Dto.getLangue());
-        Assertions.assertEquals("FR", noticeWebV2Dto.getPays());
         Assertions.assertEquals("https://www-test.sudoc.fr/111111111", noticeWebV2Dto.getSudocURL());
         Assertions.assertEquals("test title from different author", noticeWebV2Dto.getTitreAuteurDifferent());
         Assertions.assertEquals("test keyTitle", noticeWebV2Dto.getTitreCle());
@@ -103,7 +116,9 @@ public class DtoMapperTest {
         Assertions.assertEquals("test section title", noticeWebV2Dto.getTitreSection());
         Assertions.assertEquals(Integer.valueOf(1), noticeWebV2Dto.getNbLocation());
         Assertions.assertEquals(1, noticeWebV2Dto.getPcpList().size());
-        Assertions.assertEquals("PCMed", noticeWebV2Dto.getPcpList().get(0));
+        Assertions.assertEquals("PCMed", noticeWebV2Dto.getPcpList().stream().findFirst().get());
+        Assertions.assertEquals(2, noticeWebV2Dto.getRcrList().size());
+        Assertions.assertEquals("111111111", noticeWebV2Dto.getRcrList().stream().findFirst().get());
 
         notice1.setNbLocation(0);
         noticeWebV2Dto = mapper.map(notice1, NoticeWebV2Dto.class);

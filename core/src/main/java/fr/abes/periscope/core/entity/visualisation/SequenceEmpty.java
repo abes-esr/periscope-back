@@ -2,8 +2,8 @@ package fr.abes.periscope.core.entity.visualisation;
 
 public class SequenceEmpty extends Sequence {
 
-    public SequenceEmpty(Integer startYear, Integer startMonth, Integer startDay, Integer endYear, Integer endMonth, Integer endDay) {
-        super(startYear,startMonth,startDay,endYear,endMonth,endDay);
+    public SequenceEmpty(Integer startYear, Integer endYear) {
+        super(startYear,endYear);
     }
 
     @Override
@@ -13,6 +13,6 @@ public class SequenceEmpty extends Sequence {
 
     @Override
     public String toString() {
-        return "SequenceEmpty {"+ "startDate="+ startDate.getTime() +", endDate=" + endDate.getTime() +"}";
+        return "SequenceEmpty {"+ "startDate="+ startDate +", endDate=" + endDate +"}";
     }
 }

@@ -139,12 +139,15 @@ public class NoticeSolRMapper {
                     target.setPcpList(source.getPcpList());
 
                     source.getItems().forEach(itemSolr -> {
-                        Item item = new Item(itemSolr.getEpn());
-                        item.setPpn(itemSolr.getPpn());
-                        item.setRcr(itemSolr.getRcr());
-                        item.setPcp(itemSolr.getPcp());
+                        //NB : la 930 $b est obligatoire, mais certains cas ont remonté une absence de rcr
+                        if (itemSolr.getRcr() != null) {
+                            Item item = new Item(itemSolr.getEpn());
+                            item.setPpn(itemSolr.getPpn());
+                            item.setRcr(itemSolr.getRcr());
+                            item.setPcp(itemSolr.getPcp());
 
-                        target.addItem(item);
+                            target.addItem(item);
+                        }
                     });
 
                     return target;
