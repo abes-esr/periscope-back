@@ -18,7 +18,7 @@ public class RequestParameters {
     public static final String CRITERIA_PROPERTY = "criteres";
     public static final String SORT_PROPERTY = "tri";
     public static final String FACET_PROPERTY = "facettes";
-    public static final String FACET_FILTER_PROPERTY = "filtresFacettes";
+        public static final String FACET_FILTER_PROPERTY = "filtresFacettes";
 
     @JsonProperty(value = CRITERIA_PROPERTY)
     @NotNull(message = "Json property "+CRITERIA_PROPERTY+" doesn't exists")

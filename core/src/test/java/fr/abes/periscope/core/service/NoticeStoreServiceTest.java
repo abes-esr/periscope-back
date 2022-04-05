@@ -9,8 +9,7 @@ import fr.abes.periscope.core.entity.solr.v1.NoticeV1;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
-import fr.abes.periscope.core.service.NoticeStoreService;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +68,7 @@ public class NoticeStoreServiceTest {
 
         Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
 
-        Assert.assertEquals(expectedType,candidate.getContinuousType());
+        Assertions.assertEquals(expectedType,candidate.getContinuousType());
 
     }
 
@@ -89,7 +88,7 @@ public class NoticeStoreServiceTest {
 
         Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
 
-        Assert.assertEquals(expectedType,candidate.getMirabelURL());
+        Assertions.assertEquals(expectedType,candidate.getMirabelURL());
     }
 
     /**
@@ -108,7 +107,7 @@ public class NoticeStoreServiceTest {
 
         Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
 
-        Assert.assertEquals(expectedType,candidate.getMirabelURL());
+        Assertions.assertEquals(expectedType,candidate.getMirabelURL());
     }
 
     /**
@@ -127,7 +126,7 @@ public class NoticeStoreServiceTest {
 
         Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
 
-        Assert.assertEquals(expected,candidate.getNbLocation());
+        Assertions.assertEquals(expected,candidate.getNbLocation());
     }
 
     @Test
@@ -156,7 +155,7 @@ public class NoticeStoreServiceTest {
         criteria.add(criterion);
 
         NoticeV1 candidatev1 = (NoticeV1) noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
-        String expected = candidatev1.getKeyTitleQualifer();
+        String expected = candidatev1.getKeyTitle();
 
         List<Criterion> criteria1 = new LinkedList<>();
         List<String> ppnParent = Arrays.asList("000000191");
@@ -164,7 +163,7 @@ public class NoticeStoreServiceTest {
         criteria1.add(criterionPpnParent);
 
         NoticeV2 candidatev2 = (NoticeV2) noticeService.findNoticesByCriteria("v2",criteria1,  new LinkedList<>(),0,5).get(0);
-        Assert.assertEquals(expected,candidatev2.getKeyTitleQualifer());
+        Assertions.assertEquals(expected,candidatev2.getKeyTitle());
 
     }
 

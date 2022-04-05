@@ -3,8 +3,8 @@ package fr.abes.periscope.web.util;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.solr.PublicationYear;
 import fr.abes.periscope.core.entity.solr.v1.NoticeV1SolrField;
-import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
 import fr.abes.periscope.core.entity.solr.v2.ItemSolrField;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
 import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
@@ -12,12 +12,12 @@ import fr.abes.periscope.core.entity.visualisation.SequenceContinue;
 import fr.abes.periscope.core.entity.visualisation.SequenceError;
 import fr.abes.periscope.core.entity.visualisation.SequenceLacune;
 import fr.abes.periscope.core.exception.*;
+import fr.abes.periscope.core.util.UtilsMapper;
 import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.dto.criterion.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Converter;
-import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,7 +26,6 @@ import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Utilitaire de mapping de objets Entité (core) et des objets DTO (API)
@@ -37,33 +36,10 @@ public class DtoMapper {
     @Value("${url.sudoc}")
     private String SUDOC_URL;
 
+    private UtilsMapper utilsMapper;
+
     @Autowired
-    private ModelMapper modelMapper;
-
-    /**
-     * Fonction de mapping générique pour un objet
-     *
-     * @param source      Objet source
-     * @param targetClass Classe de l'objet cible
-     * @return Objet cible
-     */
-    public <S, T> T map(S source, Class<T> targetClass) {
-        return modelMapper.map(source, targetClass);
-    }
-
-    /**
-     * Fonction de mapping générique pour des listes
-     *
-     * @param source      Liste source
-     * @param targetClass Classe des objets cibles
-     * @return Liste des objets cibles
-     */
-    public <S, T> List<T> mapList(List<S> source, Class<T> targetClass) {
-        return source
-                .stream()
-                .map(element -> modelMapper.map(element, targetClass))
-                .collect(Collectors.toList());
-    }
+    public DtoMapper(UtilsMapper utilsMapper) { this.utilsMapper = utilsMapper; }
 
     @Bean
     public void converterResultWebDto() {
@@ -74,7 +50,7 @@ public class DtoMapper {
                 ResultWebDto resultWebDto = new ResultWebDto();
                 resultWebDto.setNbPages(resultSolr.getNbPages());
                 resultWebDto.setNbNotices(resultSolr.getNbNotices());
-                resultWebDto.setNotices(mapList(resultSolr.getNotices(), NoticeWebV2Dto.class));
+                resultWebDto.setNotices(utilsMapper.mapList(resultSolr.getNotices(), NoticeWebV2Dto.class));
                 resultSolr.getFacettes().forEach(f -> {
                     FacetteWebDto facetteWebDto = new FacetteWebDto();
                     Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
@@ -104,7 +80,7 @@ public class DtoMapper {
                 return resultWebDto;
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     @Bean
@@ -139,7 +115,7 @@ public class DtoMapper {
                 return noticeWeb;
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -169,7 +145,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -248,7 +224,7 @@ public class DtoMapper {
                 return s.getZone();
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -284,7 +260,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -318,7 +294,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -349,7 +325,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -384,7 +360,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -417,7 +393,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -452,7 +428,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -487,7 +463,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -521,7 +497,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
 
@@ -561,6 +537,6 @@ public class DtoMapper {
                 return noticeVisuWebDto;
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 }

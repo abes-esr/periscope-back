@@ -103,20 +103,23 @@ public class Holding extends Item {
                         insertAfterSequence(sequence, nearestIndex);
                     }
                 } else {
+                    //on cherche la séquence la plus proche
                     Sequence nearestSeq = this.findNearestSequence(sequence);
 
+                    //si aucune séquence trouvée on ajoute la séquence en début de liste
                     if (nearestSeq == null) {
                         this.sequences.add(0, sequence);
                     } else {
-
                         int nearestIndex = this.sequences.indexOf(nearestSeq);
                         if (sequence.getStartDate() > nearestSeq.getStartDate()) {
                             if (sequence.getEndDate() <= nearestSeq.getEndDate()) {
                                 insertInTheMiddleOfSequence(sequence, nearestSeq, nearestIndex);
                             } else {
+                                //on insère la séquence après
                                 insertAfterSequence(sequence, nearestIndex);
                             }
                         } else {
+                            //on insère la séquence avant la séquence la plus proche
                             insertBeforeSequence(sequence, nearestIndex);
                         }
                     }

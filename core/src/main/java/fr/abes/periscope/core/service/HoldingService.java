@@ -3,28 +3,25 @@ package fr.abes.periscope.core.service;
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
-import fr.abes.periscope.core.entity.visualisation.Sequence;
 import fr.abes.periscope.core.entity.xml.NoticeXml;
 import fr.abes.periscope.core.entity.xml.NoticesBibio;
 import fr.abes.periscope.core.exception.IllegalPpnException;
 import fr.abes.periscope.core.repository.baseXml.NoticesBibioRepository;
-import fr.abes.periscope.core.util.NoticeFormatExportMapper;
-import fr.abes.periscope.core.util.NoticeMapper;
+import fr.abes.periscope.core.util.UtilsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.Optional;
 
 @Service
 public class HoldingService {
-    private NoticeMapper noticeFormatExportmodelMapper;
+    private UtilsMapper noticeFormatExportmodelMapper;
     private NoticesBibioRepository repository;
 
     @Autowired
-    public HoldingService(NoticeMapper mapper, NoticesBibioRepository repository) {
+    public HoldingService(UtilsMapper mapper, NoticesBibioRepository repository) {
         this.noticeFormatExportmodelMapper = mapper;
         this.repository = repository;
     }

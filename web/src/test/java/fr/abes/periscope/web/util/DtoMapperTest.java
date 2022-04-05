@@ -7,6 +7,7 @@ import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
 import fr.abes.periscope.core.entity.solr.v2.FacetteSolr;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
+import fr.abes.periscope.core.util.UtilsMapper;
 import fr.abes.periscope.web.dto.NoticeWebV2Dto;
 import fr.abes.periscope.web.dto.ResultWebDto;
 import org.junit.jupiter.api.Assertions;
@@ -25,10 +26,10 @@ import java.util.Map;
 import java.util.Set;
 
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(classes = {ModelMapper.class, DtoMapper.class})
+@SpringBootTest(classes = {ModelMapper.class, DtoMapper.class, UtilsMapper.class})
 public class DtoMapperTest {
     @Autowired
-    private DtoMapper mapper;
+    private UtilsMapper mapper;
 
     private NoticeV2 notice1;
     private NoticeV2 notice2;

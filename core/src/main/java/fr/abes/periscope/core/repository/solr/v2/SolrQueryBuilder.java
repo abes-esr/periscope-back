@@ -565,7 +565,7 @@ public class SolrQueryBuilder {
                 Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
                     String f = facette.getZone().toLowerCase(Locale.ROOT);
                     if (field.getName().toLowerCase(Locale.ROOT).equals(f)) {
-                        query.addFilterQuery(new SimpleFilterQuery(new Criteria(f).is(facette.getValeur())));
+                        query.addFilterQuery(new SimpleFilterQuery(new Criteria(f).is(facette.getValeurs())));
                     }
                 });
 

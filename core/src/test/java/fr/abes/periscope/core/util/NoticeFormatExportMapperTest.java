@@ -24,14 +24,14 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Optional;
 
-@SpringBootTest(classes = { NoticeMapper.class, NoticeFormatExportMapper.class})
+@SpringBootTest(classes = { UtilsMapper.class, NoticeFormatExportMapper.class})
 @ComponentScan(excludeFilters = @ComponentScan.Filter(BaseXMLConfiguration.class))
 class NoticeFormatExportMapperTest {
     @Autowired
     private NoticeFormatExportMapper noticeFormatExportmodelMapper;
 
     @Autowired
-    private NoticeMapper mapper;
+    private UtilsMapper mapper;
 
     @Value("classpath:noticeXml/etatColl1.xml")
     private Resource xmlFileEtatColl1;

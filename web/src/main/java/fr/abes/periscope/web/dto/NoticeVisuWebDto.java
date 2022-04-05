@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.abes.periscope.web.util.TYPE_SEQUENCE;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
@@ -11,6 +12,7 @@ import java.util.*;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class NoticeVisuWebDto {
     @JsonIgnore
     private int anneeDebut;
@@ -30,6 +32,7 @@ public class NoticeVisuWebDto {
 
     /**
      * Méthode permettant de créer le premier holding de la notice correspondant à l'agrégation de tous les exemplaires affichés
+     * les séquences contenues dans les différents holdings doivent être contigues et sans chevauchement
      */
     public void addHoldingAgregee() {
         HoldingWebDto holding = new HoldingWebDto();
@@ -50,7 +53,7 @@ public class NoticeVisuWebDto {
 
         StringBuilder textEtatCollection = new StringBuilder();
         Iterator<SequenceWebDto> it = sequences.listIterator();
-        if (sequences.size() > 0) {
+        if (it.hasNext()) {
             SequenceWebDto s = it.next();
             int previousStart = s.getAnneeDebut();
             int previousEnd = s.getAnneeFin();

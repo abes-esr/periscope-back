@@ -7,6 +7,7 @@ import fr.abes.periscope.core.entity.solr.Notice;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
 import fr.abes.periscope.core.service.NoticeStoreService;
+import fr.abes.periscope.core.util.UtilsMapper;
 import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.dto.criterion.CriterionFacetteWebDto;
 import fr.abes.periscope.web.dto.criterion.CriterionSortWebDto;
@@ -37,7 +38,7 @@ public class NoticeV2Controller extends NoticeAbstractController {
      * @param mapper Mapper Entité - DTO
      */
     @Autowired
-    public NoticeV2Controller(NoticeStoreService service, DtoMapper mapper) {
+    public NoticeV2Controller(NoticeStoreService service, UtilsMapper mapper) {
         super(service,mapper);
     }
 
@@ -54,7 +55,7 @@ public class NoticeV2Controller extends NoticeAbstractController {
         List<Criterion> criteria = handleCriteria(requestParameters);
         List<CriterionSort> sortCriteria = handleSortCriteria(requestParameters);
         List<Notice> candidate = noticeStoreService.findNoticesByCriteria("v2", criteria,sortCriteria,page,size);
-        return dtoMapper.mapList(candidate, NoticeWebV2Dto.class);
+        return mapper.mapList(candidate, NoticeWebV2Dto.class);
     }
 
     /**
@@ -72,7 +73,7 @@ public class NoticeV2Controller extends NoticeAbstractController {
         List<String> facettes = handleFacettes(requestParameters);
         List<CriterionFacette> facettesFilter = handleFacettesFilters(requestParameters);
         ResultSolr result = noticeStoreService.findNoticesWithFacets(criteria, facettes, facettesFilter, sortCriteria, page, size);
-        return dtoMapper.map(result, ResultWebDto.class);
+        return mapper.map(result, ResultWebDto.class);
     }
 
     private List<Criterion> handleCriteria(RequestParameters requestParameters) {
@@ -88,7 +89,7 @@ public class NoticeV2Controller extends NoticeAbstractController {
             while (userSortCriteriaIterator.hasNext()) {
                 CriterionSortWebDto sortCriterion = userSortCriteriaIterator.next();
                 sortCriterion.setVersion("v2"); /* Hack pour gérer les Notices V1 et V2 dans le NoticeMapper */
-                sortCriteria.add(dtoMapper.map(sortCriterion, CriterionSort.class));
+                sortCriteria.add(mapper.map(sortCriterion, CriterionSort.class));
             }
         } else {
             sortCriteria.add(new CriterionSort(NoticeV2SolrField.PPN, Sort.Direction.ASC));
@@ -109,7 +110,7 @@ public class NoticeV2Controller extends NoticeAbstractController {
         List<CriterionFacette> facettesFilters = new LinkedList<>();
         LinkedList<FacetteFilterWebDto> facetteFilterCriteria = requestParameters.getFacetFilterCriteria();
         if (facetteFilterCriteria != null && !facetteFilterCriteria.isEmpty()) {
-            facetteFilterCriteria.stream().forEach(f -> facettesFilters.add(new CriterionFacette(f.getZone(), f.getValeur())));
+            facetteFilterCriteria.stream().forEach(f -> facettesFilters.add(new CriterionFacette(f.getZone(), f.getValeurs())));
         }
         return facettesFilters;
     }

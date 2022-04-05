@@ -30,9 +30,10 @@ import java.util.*;
 @Component
 @Slf4j
 public class NoticeFormatExportMapper {
+    private UtilsMapper utilsMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public NoticeFormatExportMapper(UtilsMapper utilsMapper) { this.utilsMapper = utilsMapper; }
 
     /**
      * Convertisseur pour les notices XML vers les notices de visualisation
@@ -226,7 +227,7 @@ public class NoticeFormatExportMapper {
 
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -593,10 +594,9 @@ public class NoticeFormatExportMapper {
                 // Hebdomadaire
                 return Period.ofDays(7);
             case "D":
-                // Toutes les deux semaines
-                return Period.ofWeeks(2);
             case "E":
                 // Bimensuelle
+                // Toutes les deux semaines
                 return Period.ofWeeks(2);
             case "F":
                 // Mensuelle
@@ -608,30 +608,10 @@ public class NoticeFormatExportMapper {
                 // Trimestrielle
                 return Period.ofMonths(3);
             case "I":
-                // Trois fois par an
-                return Period.ofMonths(4);
             case "J":
                 // Semestrielle
+                // Trois fois par an
                 return Period.ofMonths(4);
-            case "K":
-                return Period.ZERO;
-            case "L":
-                return Period.ZERO;
-            case "M":
-                return Period.ZERO;
-            case "N":
-                return Period.ZERO;
-            case "O":
-                return Period.ZERO;
-            case "P":
-                return Period.ZERO;
-            case "U":
-                return Period.ZERO;
-            case "Y":
-                return Period.ZERO;
-            case "Z":
-                // Autre
-                return Period.ZERO;
             default:
                 return Period.ZERO;
         }

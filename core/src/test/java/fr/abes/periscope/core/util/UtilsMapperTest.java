@@ -21,10 +21,10 @@ import java.util.Set;
 /**
  * Test l'extraction des dates de publication de la zone 100$a d'une NoticeSolr.
  */
-@SpringBootTest(classes = {NoticeMapper.class, NoticeSolRMapper.class})
-class NoticeMapperTest {
+@SpringBootTest(classes = {UtilsMapper.class, NoticeSolRMapper.class})
+class UtilsMapperTest {
     @Autowired
-    private NoticeMapper mapper;
+    private UtilsMapper mapper;
     @Autowired
     private NoticeSolRMapper noticeMapper;
 
