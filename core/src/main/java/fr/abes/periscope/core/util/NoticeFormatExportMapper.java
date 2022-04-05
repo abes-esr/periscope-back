@@ -1,6 +1,8 @@
 package fr.abes.periscope.core.util;
 
-import fr.abes.periscope.core.entity.*;
+import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
+import fr.abes.periscope.core.entity.solr.PublicationYear;
+import fr.abes.periscope.core.entity.solr.SupportType;
 import fr.abes.periscope.core.entity.visualisation.*;
 import fr.abes.periscope.core.entity.xml.DataField;
 import fr.abes.periscope.core.entity.xml.NoticeXml;
@@ -10,8 +12,6 @@ import fr.abes.periscope.core.exception.IllegalHoldingException;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import fr.abes.periscope.core.exception.MissingFieldException;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.saxon.Err;
-import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Converter;
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
@@ -30,9 +30,10 @@ import java.util.*;
 @Component
 @Slf4j
 public class NoticeFormatExportMapper {
+    private UtilsMapper utilsMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public NoticeFormatExportMapper(UtilsMapper utilsMapper) { this.utilsMapper = utilsMapper; }
 
     /**
      * Convertisseur pour les notices XML vers les notices de visualisation
@@ -145,8 +146,8 @@ public class NoticeFormatExportMapper {
                             if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("210")) {
                                 for (SubField subField : dataField.getSubFields()) {
                                     // zone 210-c
-                                    if (subField.getCode().equalsIgnoreCase("c") && (target.getEditor() == null)) {
-                                        target.setEditor(subField.getValue());
+                                    if (subField.getCode().equalsIgnoreCase("c") && (target.getPublisher() == null)) {
+                                        target.setPublisher(subField.getValue());
                                     }
                                 }
                             }
@@ -226,14 +227,15 @@ public class NoticeFormatExportMapper {
 
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
-     * Méthode permettant de générer une séquence d'un état de collection contenu dans une 955 du format d'export
+     * Méthode permettant de générer les séquences d'un état de collection contenu dans une 955 du format d'export
      *
+     * @param holding : l'objet représentant les états de collection de la notice qui sera alimenté avec les séquences de la 955 parsée
      * @param dataField : la zone 955 à parser
-     * @return : la sequence générée
+     *
      * @throws IllegalHoldingException si une erreur est détectée dans la 955
      */
     protected void processEtatCollection(Holding holding, DataField dataField) throws IllegalHoldingException {
@@ -256,8 +258,11 @@ public class NoticeFormatExportMapper {
         boolean ouvert = false;
 
         // Compteurs d'occurence des balises
+        //compteur de volumes
         int aCount = 0;
+        //compteur de numéro
         int bCount = 0;
+        //compteur de date de début / date de fin
         int iCount = 0;
 
         boolean erreur = false;
@@ -351,7 +356,9 @@ public class NoticeFormatExportMapper {
                 SequenceContinue sequence = new SequenceContinue(startYear, startMonth, startDay, startVolume, startNumero, ouvert);
                 if (iCount >= 2) {
                     // La date de fin a été trouvé
-                    sequence.setEndDate(endYear, endMonth, endtDay, endVolume, endNumero);
+                    sequence.setEndDate(endYear, endMonth, endtDay);
+                    sequence.setEndNumero(endNumero);
+                    sequence.setEndVolume(endVolume);
                 }
                 if (erreur) {
                     SequenceError sequenceError = new SequenceError(sequence, "Erreur dans la saisie du mois");
@@ -370,6 +377,12 @@ public class NoticeFormatExportMapper {
         }
     }
 
+    /**
+     * Méthode permettant de générer générer les séquences lacunaires d'une 959
+     * @param holding : objet réprésentant les états de collection de la notice dans lequel seront ajoutées les séquences lacunaires
+     * @param dataField : la zone parsée pour extraire les séquences lacunaires
+     * @throws IllegalHoldingException
+     */
     void processLacunes(Holding holding, DataField dataField) throws IllegalHoldingException {
         Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
 
@@ -642,10 +655,9 @@ public class NoticeFormatExportMapper {
                 // Hebdomadaire
                 return Period.ofDays(7);
             case "D":
-                // Toutes les deux semaines
-                return Period.ofWeeks(2);
             case "E":
                 // Bimensuelle
+                // Toutes les deux semaines
                 return Period.ofWeeks(2);
             case "F":
                 // Mensuelle
@@ -657,30 +669,10 @@ public class NoticeFormatExportMapper {
                 // Trimestrielle
                 return Period.ofMonths(3);
             case "I":
-                // Trois fois par an
-                return Period.ofMonths(4);
             case "J":
                 // Semestrielle
+                // Trois fois par an
                 return Period.ofMonths(4);
-            case "K":
-                return Period.ZERO;
-            case "L":
-                return Period.ZERO;
-            case "M":
-                return Period.ZERO;
-            case "N":
-                return Period.ZERO;
-            case "O":
-                return Period.ZERO;
-            case "P":
-                return Period.ZERO;
-            case "U":
-                return Period.ZERO;
-            case "Y":
-                return Period.ZERO;
-            case "Z":
-                // Autre
-                return Period.ZERO;
             default:
                 return Period.ZERO;
         }

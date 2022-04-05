@@ -1,23 +1,15 @@
 package fr.abes.periscope.core.util;
 
-import fr.abes.periscope.core.entity.*;
-import fr.abes.periscope.core.entity.v1.NoticeV1;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
-import fr.abes.periscope.core.entity.v2.NoticeV2;
-import fr.abes.periscope.core.entity.v2.solr.ItemSolr;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
-import fr.abes.periscope.core.entity.visualisation.Holding;
-import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
-import fr.abes.periscope.core.entity.visualisation.SequenceContinue;
-import fr.abes.periscope.core.entity.visualisation.SequenceLacune;
-import fr.abes.periscope.core.entity.xml.DataField;
-import fr.abes.periscope.core.entity.xml.NoticeXml;
-import fr.abes.periscope.core.entity.xml.SubField;
-import fr.abes.periscope.core.exception.IllegalHoldingException;
+import fr.abes.periscope.core.entity.solr.Item;
+import fr.abes.periscope.core.entity.solr.Notice;
+import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
+import fr.abes.periscope.core.entity.solr.PublicationYear;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1Solr;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2Solr;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
-import fr.abes.periscope.core.exception.MissingFieldException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Converter;
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
@@ -35,9 +27,10 @@ import java.util.*;
 @Component
 @Slf4j
 public class NoticeSolRMapper {
+    private UtilsMapper utilsMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public NoticeSolRMapper(UtilsMapper utilsMapper) { this.utilsMapper = utilsMapper; }
 
     /**
      * Convertisseur pour les notices SolR V1 vers les notices PERISCOPE
@@ -98,7 +91,7 @@ public class NoticeSolRMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -161,7 +154,7 @@ public class NoticeSolRMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**

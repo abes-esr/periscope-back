@@ -1,4 +1,4 @@
-package fr.abes.periscope.core.entity.v1.solr;
+package fr.abes.periscope.core.entity.solr.v1;
 
 /**
  * Représente les champs SolR pour une Notice SolR

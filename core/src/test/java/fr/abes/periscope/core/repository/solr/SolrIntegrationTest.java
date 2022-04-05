@@ -2,11 +2,11 @@ package fr.abes.periscope.core.repository.solr;
 
 import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.EnableOnIntegrationTest;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
 import fr.abes.periscope.core.criterion.*;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1Solr;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1SolrField;
 import fr.abes.periscope.core.repository.solr.v1.impl.AdvancedNoticeSolrV1RepositoryImpl;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,11 +19,9 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 @EnableOnIntegrationTest
 @SpringBootTest(classes = {CoreTestConfiguration.class})
-public class SolrIntegrationTest {
+class SolrIntegrationTest {
 
     @Autowired
     private AdvancedNoticeSolrV1RepositoryImpl noticeRepository;
@@ -49,7 +47,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
 
     }
 
@@ -73,7 +71,7 @@ public class SolrIntegrationTest {
         criteria.add(criterionPcp);
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -102,7 +100,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -131,7 +129,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -159,7 +157,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -183,7 +181,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -207,7 +205,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -231,7 +229,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -260,7 +258,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -289,7 +287,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -318,7 +316,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     @Test
@@ -343,7 +341,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
 
     }
 
@@ -369,7 +367,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     @Test
@@ -393,7 +391,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -422,7 +420,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -451,7 +449,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -480,7 +478,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -509,7 +507,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -538,7 +536,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        Assert.assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /*
@@ -567,7 +565,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -596,7 +594,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -625,7 +623,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -654,7 +652,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -684,7 +682,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -717,7 +715,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -747,7 +745,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     /**
@@ -775,7 +773,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        assertEquals(originalCandidates,newCandidates);
+        Assertions.assertEquals(originalCandidates,newCandidates);
     }
 
     @Test
@@ -793,7 +791,7 @@ public class SolrIntegrationTest {
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
 
-        assertEquals(originalCandidates, newCandidates);
+        Assertions.assertEquals(originalCandidates, newCandidates);
     }
 
     @Test
@@ -817,7 +815,7 @@ public class SolrIntegrationTest {
         criteria.add(criterionRcr);
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
-        assertEquals(originalCandidates, newCandidates);
+        Assertions.assertEquals(originalCandidates, newCandidates);
 
     }
 
@@ -844,7 +842,7 @@ public class SolrIntegrationTest {
 
 
         List<NoticeV1Solr> newCandidates = noticeRepository.findNoticesByCriteria(criteria, sort, PageRequest.of(0,25));
-        assertEquals(originalCandidates, newCandidates);
+        Assertions.assertEquals(originalCandidates, newCandidates);
 
     }
 }

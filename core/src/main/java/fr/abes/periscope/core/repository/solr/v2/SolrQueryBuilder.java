@@ -1,10 +1,9 @@
 package fr.abes.periscope.core.repository.solr.v2;
 
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.solr.v2.ItemSolrField;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.query.*;
 
@@ -145,7 +144,7 @@ public class SolrQueryBuilder {
                     myCriteria = myCriteria.or(NoticeV2SolrField.PCP_LIST).is(pcpCode);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.and(NoticeV2SolrField.PCP_LIST).is(pcpCode).not();
+                    myCriteria = myCriteria.or(NoticeV2SolrField.PCP_LIST).is(pcpCode).not();
                     break;
             }
         }
@@ -192,7 +191,7 @@ public class SolrQueryBuilder {
                     myCriteria = myCriteria.or(NoticeV2SolrField.RCR_LIST).is(rcrCode);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.and(NoticeV2SolrField.RCR_LIST).is(rcrCode).not();
+                    myCriteria = myCriteria.or(NoticeV2SolrField.RCR_LIST).is(rcrCode).not();
                     break;
             }
         }
@@ -263,7 +262,7 @@ public class SolrQueryBuilder {
                             or(NoticeV2SolrField.SECTION_TITLE).is(value);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.KEY_TITLE).is(value).not().
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.KEY_TITLE).is(value).not().
                             or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).not().
                             or(NoticeV2SolrField.PROPER_TITLE).is(value).not().
                             or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).not().
@@ -316,7 +315,7 @@ public class SolrQueryBuilder {
                     myCriteria = myCriteria.connect().or(NoticeV2SolrField.COUNTRY).is(value).and(NoticeV2SolrField.KEY_TITLE);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.COUNTRY).is(value).not().and(NoticeV2SolrField.KEY_TITLE);
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.COUNTRY).is(value).not().and(NoticeV2SolrField.KEY_TITLE);
                     break;
             }
         }
@@ -388,7 +387,7 @@ public class SolrQueryBuilder {
                     myCriteria = myCriteria.connect().or(NoticeV2SolrField.LANGUAGE).is(langueCode);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.LANGUAGE).is(langueCode).not();
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.LANGUAGE).is(langueCode).not();
                     break;
             }
         }
@@ -436,7 +435,7 @@ public class SolrQueryBuilder {
                     myCriteria = myCriteria.connect().or(NoticeV2SolrField.EDITOR).is(editor);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.EDITOR).is(editor).not();
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.EDITOR).is(editor).not();
                     break;
             }
         }
@@ -492,9 +491,7 @@ public class SolrQueryBuilder {
      */
     public FacetQuery addFacetsNotices(FacetQuery query, List<String> facets) {
         FacetOptions options = new FacetOptions();
-        Iterator<String> itFacet = facets.iterator();
-        while (itFacet.hasNext()) {
-            String f = itFacet.next();
+        facets.forEach(f -> {
             //cas ou la facette est une zone de la notice bibliographique
             Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
                 if (field.getName().toLowerCase(Locale.ROOT).equals(f.toLowerCase(Locale.ROOT))) {
@@ -508,7 +505,7 @@ public class SolrQueryBuilder {
             if (options.hasFields()) {
                 query.setFacetOptions(options);
             }
-        }
+        });
         return query;
     }
 
@@ -568,7 +565,7 @@ public class SolrQueryBuilder {
                 Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
                     String f = facette.getZone().toLowerCase(Locale.ROOT);
                     if (field.getName().toLowerCase(Locale.ROOT).equals(f)) {
-                        query.addFilterQuery(new SimpleFilterQuery(new Criteria(f).is(facette.getValeur())));
+                        query.addFilterQuery(new SimpleFilterQuery(new Criteria(f).is(facette.getValeurs())));
                     }
                 });
 

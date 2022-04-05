@@ -4,28 +4,26 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import fr.abes.periscope.web.util.TYPE_SEQUENCE;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.SneakyThrows;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.List;
 
 @Getter
 @Setter
+@NoArgsConstructor
 public class NoticeVisuWebDto {
     @JsonIgnore
-    private String dateDebut;
+    private int anneeDebut;
     @JsonIgnore
-    private String dateFin;
+    private int anneeFin;
     @JsonProperty("holdings")
     private List<HoldingWebDto> holdingWebDtoList = new ArrayList<>();
 
-    public NoticeVisuWebDto(String dateDebut, String dateFin) {
-        this.dateDebut = dateDebut;
-        this.dateFin = dateFin;
+    public NoticeVisuWebDto(int anneeDebut, int anneeFin) {
+        this.anneeDebut = anneeDebut;
+        this.anneeFin = anneeFin;
     }
 
     public void addHolding(HoldingWebDto holding) {
@@ -34,9 +32,9 @@ public class NoticeVisuWebDto {
 
     /**
      * Méthode permettant de créer le premier holding de la notice correspondant à l'agrégation de tous les exemplaires affichés
+     * les séquences contenues dans les différents holdings doivent être contigues et sans chevauchement
      */
-    public void addHoldingAgregee() throws ParseException {
-        DateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+    public void addHoldingAgregee() {
         HoldingWebDto holding = new HoldingWebDto();
         List<SequenceWebDto> sequences = new ArrayList<>();
         List<SequenceWebDto> resultSequences = new ArrayList<>();
@@ -47,43 +45,43 @@ public class NoticeVisuWebDto {
             @SneakyThrows
             @Override
             public int compare(SequenceWebDto o1, SequenceWebDto o2) {
-                Date date1 = format.parse(o1.getDateDebut());
-                Date date2 = format.parse(o2.getDateDebut());
-                return date1.compareTo(date2);
+                if (o1.getAnneeDebut() == o2.getAnneeDebut()) return 0;
+                if (o1.getAnneeDebut() < o2.getAnneeDebut()) return -1;
+                return 1;
             }
         });
 
         StringBuilder textEtatCollection = new StringBuilder();
         Iterator<SequenceWebDto> it = sequences.listIterator();
-        if (sequences.size() > 0) {
+        if (it.hasNext()) {
             SequenceWebDto s = it.next();
-            Date previousStart = format.parse(s.getDateDebut());
-            Date previousEnd = format.parse(s.getDateFin());
+            int previousStart = s.getAnneeDebut();
+            int previousEnd = s.getAnneeFin();
 
             while (it.hasNext()) {
                 s = it.next();
-                Date currentStart = format.parse(s.getDateDebut());
-                Date currentEnd = format.parse(s.getDateFin());
-                if (currentStart.before(previousEnd) || currentStart.equals(previousEnd)) {
-                    previousEnd = (currentEnd.after(previousEnd)) ? currentEnd : previousEnd;
+                int currentStart = s.getAnneeDebut();
+                int currentEnd = s.getAnneeFin();
+                if (currentStart < previousEnd || currentStart == previousEnd) {
+                    previousEnd = (currentEnd > previousEnd) ? currentEnd : previousEnd;
                 } else {
-                    resultSequences.add(new SequenceWebDto(format.format(previousStart.getTime()), format.format(previousEnd.getTime()), TYPE_SEQUENCE.CONTINUE, "1"));
-                    textEtatCollection.append("\nCollection disponible de ").append(format.format(previousStart.getTime())).append(" à ").append(format.format(previousEnd.getTime()));
-                    resultSequences.add(new SequenceWebDto(format.format(previousEnd.getTime()), format.format(currentStart.getTime()), TYPE_SEQUENCE.LACUNE, "1"));
-                    textEtatCollection.append("\nCollection incomplète de ").append(format.format(previousEnd.getTime())).append(" à ").append(format.format(currentStart.getTime()));
+                    resultSequences.add(new SequenceWebDto(previousStart, previousEnd, TYPE_SEQUENCE.CONTINUE, "1"));
+                    textEtatCollection.append("\nCollection disponible de ").append(previousStart).append(" à ").append(previousEnd);
+                    resultSequences.add(new SequenceWebDto(previousEnd, currentStart, TYPE_SEQUENCE.LACUNE, "1"));
+                    textEtatCollection.append("\nCollection incomplète de ").append(previousEnd).append(" à ").append(currentStart);
                     previousStart = currentStart;
                     previousEnd = currentEnd;
                 }
             }
-            resultSequences.add(new SequenceWebDto(format.format(previousStart.getTime()), format.format(previousEnd.getTime()), TYPE_SEQUENCE.CONTINUE, "1"));
-            textEtatCollection.append("\nCollection disponible de ").append(format.format(previousStart.getTime())).append(" à ").append(format.format(previousEnd.getTime()));
+            resultSequences.add(new SequenceWebDto(previousStart, previousEnd, TYPE_SEQUENCE.CONTINUE, "1"));
+            textEtatCollection.append("\nCollection disponible de ").append(previousStart).append(" à ").append(previousEnd);
             holding.addSequences(resultSequences);
             holding.setEtatCollectionTextuel(textEtatCollection.toString());
 
         }
         else {
-            holding.addSequence(new SequenceWebDto(this.getDateDebut(), this.getDateFin(), TYPE_SEQUENCE.LACUNE, "1"));
-            holding.setEtatCollectionTextuel("\nCollection incomplète de " + format.format(this.getDateDebut()) + " à " + format.format(this.getDateFin()));
+            holding.addSequence(new SequenceWebDto(this.getAnneeDebut(), this.getAnneeFin(), TYPE_SEQUENCE.LACUNE, "1"));
+            holding.setEtatCollectionTextuel("\nCollection incomplète de " + this.getAnneeDebut() + " à " + this.getAnneeFin());
         }
         holdingWebDtoList.add(0, holding);
     }

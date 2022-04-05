@@ -1,11 +1,11 @@
 package fr.abes.periscope.core.util;
 
-import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.OnGoingResourceType;
-import fr.abes.periscope.core.entity.PublicationYear;
-import fr.abes.periscope.core.entity.v2.NoticeV2;
-import fr.abes.periscope.core.entity.v2.solr.ItemSolr;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
+import fr.abes.periscope.core.entity.solr.Notice;
+import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
+import fr.abes.periscope.core.entity.solr.PublicationYear;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
+import fr.abes.periscope.core.entity.solr.v2.ItemSolr;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2Solr;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import org.assertj.core.util.Lists;
 import org.assertj.core.util.Sets;
@@ -21,10 +21,10 @@ import java.util.Set;
 /**
  * Test l'extraction des dates de publication de la zone 100$a d'une NoticeSolr.
  */
-@SpringBootTest(classes = {NoticeMapper.class, NoticeSolRMapper.class})
-class NoticeMapperTest {
+@SpringBootTest(classes = {UtilsMapper.class, NoticeSolRMapper.class})
+class UtilsMapperTest {
     @Autowired
-    private NoticeMapper mapper;
+    private UtilsMapper mapper;
     @Autowired
     private NoticeSolRMapper noticeMapper;
 

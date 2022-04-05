@@ -1,4 +1,4 @@
-package fr.abes.periscope.core.entity;
+package fr.abes.periscope.core.entity.solr;
 
 /**
  * Représente la correspondance entre les caractères UNIMARC et

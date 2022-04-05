@@ -1,8 +1,8 @@
 package fr.abes.periscope.core.repository.solr.v1.impl;
 
 import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1Solr;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1SolrField;
 import fr.abes.periscope.core.repository.solr.v1.AdvancedNoticeSolrV1Repository;
 import fr.abes.periscope.core.repository.solr.v1.SolrQueryBuilder;
 import lombok.Data;

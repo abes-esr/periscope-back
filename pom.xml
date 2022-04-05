@@ -20,7 +20,7 @@
     <artifactId>periscope-backoffice</artifactId>
     <version>1.0.0-SNAPSHOT</version>
     <name>Periscope Back</name>
-    <description>Preuve de concept</description>
+    <description>Back office du projet Periscope (v2)</description>
 
     <!-- ===================================================== -->
     <!--     Proprietes du projet                              -->
@@ -86,7 +86,6 @@
         </dependency>
 
         <!-- === Mapping === -->
-        <!-- === Mapping === -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
@@ -114,6 +113,37 @@
             <artifactId>aspectjweaver</artifactId>
             <version>1.9.6</version>
             <scope>runtime</scope>
+        </dependency>
+
+        <!-- === Tests === -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>junit</groupId>
+                    <artifactId>junit</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <version>5.5.2</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>2.23.4</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <version>3.9.0</version>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

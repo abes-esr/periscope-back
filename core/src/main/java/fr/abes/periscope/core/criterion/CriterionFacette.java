@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
@@ -11,5 +13,5 @@ public class CriterionFacette {
     /** Nom de la zone sur laquelle la facette porte */
     private String zone;
     /** Valeur à rechercher dans la facette */
-    private String valeur;
+    private List<String> valeurs;
 }

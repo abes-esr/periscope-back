@@ -20,11 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Test la construction de requête SolR à partir des critères de recherche.
  */
 @SpringBootTest(classes = {CoreTestConfiguration.class})
-public class SolrQueryBuilderV1Test {
+class SolrQueryBuilderV1Test {
 
     private SolrQueryBuilder builderQuery;
 
-    public SolrQueryBuilderV1Test(@Qualifier("SolrQueryV1Builder") SolrQueryBuilder builder) {
+    SolrQueryBuilderV1Test(@Qualifier("SolrQueryV1Builder") SolrQueryBuilder builder) {
         builderQuery = builder;
     }
 
@@ -33,7 +33,7 @@ public class SolrQueryBuilderV1Test {
      */
     @Test
     @DisplayName("historiette #id 12")
-    public void testId12() {
+    void testId12() {
 
         List<Criterion> criteria = new LinkedList<>();
 

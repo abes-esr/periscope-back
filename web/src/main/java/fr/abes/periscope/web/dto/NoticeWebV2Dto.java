@@ -3,15 +3,12 @@ package fr.abes.periscope.web.dto;
 import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import fr.abes.periscope.core.entity.PublicationYear;
-import fr.abes.periscope.core.entity.v2.solr.ItemSolr;
+import fr.abes.periscope.core.entity.solr.PublicationYear;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.HashSet;
-import java.util.Iterator;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Représente un Notice V2 au format JSON de l'API
@@ -141,8 +138,6 @@ public class NoticeWebV2Dto {
         }
     }
 
-    @JsonProperty("lien_mirabel")
-    private String mirabelURL;
 
     @JsonProperty("nb_location")
     private Integer nbLocation;
@@ -150,29 +145,12 @@ public class NoticeWebV2Dto {
     @JsonProperty("lien_sudoc")
     private String sudocURL;
 
-    @JsonProperty("exemplaires")
-    private Set<ItemWebDto> items = new HashSet<>();
+    @JsonProperty("pcpList")
+    private List<String> pcpList = new ArrayList<>();
 
-    // Support avec la V1
-    @JsonGetter("pcpList")
-    protected HashSet<String> getPcpList() {
-        HashSet<String> set = new HashSet<>();
-        this.getItems().forEach(item -> {
-            if (item.getPcp() != null)
-                set.addAll(item.getPcp());
-        });
-        return set;
+    public void addPcp(String pcp) {
+        this.pcpList.add(pcp);
     }
 
-    @JsonGetter("rcrList")
-    protected HashSet<String> getRcrList() {
-        HashSet<String> list = new HashSet<>();
-        this.getItems().forEach(item -> list.add(item.getRcr()));
-        return list;
-    }
-
-    public void addItem(ItemWebDto item) {
-        this.items.add(item);
-    }
 
 }

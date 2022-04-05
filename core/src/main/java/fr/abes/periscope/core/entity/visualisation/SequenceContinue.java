@@ -18,7 +18,7 @@ public class SequenceContinue extends Sequence {
             Calendar now = Calendar.getInstance();
             setEndDate(now.get(Calendar.YEAR), now.get(Calendar.MONTH), now.get(Calendar.DAY_OF_MONTH));
         } else {
-            setEndDate(startYear, startMonth, startDay, "", "");
+            setEndDate(startYear, startMonth, startDay);
         }
 
         setStartVolume(startVolume);
@@ -39,12 +39,6 @@ public class SequenceContinue extends Sequence {
         this.setStartDate(startYear, startMonth, startDay);
         setStartVolume(volume);
         setStartNumero(numero);
-    }
-
-    public void setEndDate(Integer endYear, Integer endMonth, Integer endDay, String volume, String numero) {
-        this.setEndDate(endYear, endMonth, endDay);
-        setEndVolume(volume);
-        setEndNumero(numero);
     }
 
     public void setStartVolume(String value) {
