@@ -41,8 +41,8 @@ class UtilsMapperTest {
         String expectedEndYear = "2004";
         Integer expectedEndYearConfidenceIndex = 0;
 
-        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
-        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+        PublicationYear startYear = mapper.buildStartPublicationYear(input);
+        PublicationYear endYear = mapper.buildEndPublicationYear(input);
 
         Assertions.assertEquals(expectedStartYear, startYear.getYear());
         Assertions.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
@@ -63,8 +63,8 @@ class UtilsMapperTest {
         String expectedEndYear = "2004";
         Integer expectedEndYearConfidenceIndex = 0;
 
-        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
-        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+        PublicationYear startYear = mapper.buildStartPublicationYear(input);
+        PublicationYear endYear = mapper.buildEndPublicationYear(input);
 
         Assertions.assertEquals(expectedStartYear, startYear.getYear());
         Assertions.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
@@ -85,8 +85,8 @@ class UtilsMapperTest {
         String expectedEndYear = "2004";
         Integer expectedEndYearConfidenceIndex = 0;
 
-        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
-        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+        PublicationYear startYear = mapper.buildStartPublicationYear(input);
+        PublicationYear endYear = mapper.buildEndPublicationYear(input);
 
         Assertions.assertEquals(expectedStartYear, startYear.getYear());
         Assertions.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
@@ -107,8 +107,8 @@ class UtilsMapperTest {
         String expectedEndYear = "200X";
         Integer expectedEndYearConfidenceIndex = 10;
 
-        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
-        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+        PublicationYear startYear = mapper.buildStartPublicationYear(input);
+        PublicationYear endYear = mapper.buildEndPublicationYear(input);
 
         Assertions.assertEquals(expectedStartYear, startYear.getYear());
         Assertions.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
@@ -129,8 +129,8 @@ class UtilsMapperTest {
         String expectedEndYear = "20XX";
         Integer expectedEndYearConfidenceIndex = 100;
 
-        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
-        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+        PublicationYear startYear = mapper.buildStartPublicationYear(input);
+        PublicationYear endYear = mapper.buildEndPublicationYear(input);
 
         Assertions.assertEquals(expectedStartYear, startYear.getYear());
         Assertions.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
@@ -149,8 +149,8 @@ class UtilsMapperTest {
         String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
 
-        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
-        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+        PublicationYear startYear = mapper.buildStartPublicationYear(input);
+        PublicationYear endYear = mapper.buildEndPublicationYear(input);
 
         Assertions.assertEquals(expectedStartYear, startYear.getYear());
         Assertions.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
@@ -165,7 +165,7 @@ class UtilsMapperTest {
     @Test
     void testOngoingResourceWithException() {
         String input = "19970418a19972000k y0frey50 ba";
-        Assertions.assertThrows(IllegalPublicationYearException.class, () -> noticeMapper.buildEndPublicationYear(input));
+        Assertions.assertThrows(IllegalPublicationYearException.class, () -> mapper.buildEndPublicationYear(input));
     }
 
     /**
@@ -178,8 +178,8 @@ class UtilsMapperTest {
         String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
 
-        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
-        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+        PublicationYear startYear = mapper.buildStartPublicationYear(input);
+        PublicationYear endYear = mapper.buildEndPublicationYear(input);
 
         Assertions.assertEquals(expectedStartYear, startYear.getYear());
         Assertions.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
@@ -194,7 +194,7 @@ class UtilsMapperTest {
     @Test
     void testOnGoingResourceWithUnknownSituationWithException() {
         String input = "19970418c19972000k y0frey50 ba";
-        Assertions.assertThrows(IllegalPublicationYearException.class, () -> noticeMapper.buildEndPublicationYear(input));
+        Assertions.assertThrows(IllegalPublicationYearException.class, () -> mapper.buildEndPublicationYear(input));
     }
 
     /**
@@ -207,8 +207,8 @@ class UtilsMapperTest {
         String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
 
-        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
-        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+        PublicationYear startYear = mapper.buildStartPublicationYear(input);
+        PublicationYear endYear = mapper.buildEndPublicationYear(input);
 
         Assertions.assertEquals(expectedStartYear, startYear.getYear());
         Assertions.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
@@ -227,8 +227,8 @@ class UtilsMapperTest {
         String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 3;
 
-        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
-        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+        PublicationYear startYear = mapper.buildStartPublicationYear(input);
+        PublicationYear endYear = mapper.buildEndPublicationYear(input);
 
         Assertions.assertEquals(expectedStartYear, startYear.getYear());
         Assertions.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
@@ -246,8 +246,8 @@ class UtilsMapperTest {
         String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
 
-        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
-        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+        PublicationYear startYear = mapper.buildStartPublicationYear(input);
+        PublicationYear endYear = mapper.buildEndPublicationYear(input);
 
         Assertions.assertEquals(expectedStartYear, startYear.getYear());
         Assertions.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
@@ -265,8 +265,8 @@ class UtilsMapperTest {
         String expectedStartYear = "1997";
         Integer expectedStartYearConfidenceIndex = 0;
 
-        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
-        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+        PublicationYear startYear = mapper.buildStartPublicationYear(input);
+        PublicationYear endYear = mapper.buildEndPublicationYear(input);
 
         Assertions.assertEquals(expectedStartYear, startYear.getYear());
         Assertions.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
@@ -286,8 +286,8 @@ class UtilsMapperTest {
         String expectedEndYear = "1998";
         Integer expectedEndYearConfidenceIndex = 0;
 
-        PublicationYear startYear = noticeMapper.buildStartPublicationYear(input);
-        PublicationYear endYear = noticeMapper.buildEndPublicationYear(input);
+        PublicationYear startYear = mapper.buildStartPublicationYear(input);
+        PublicationYear endYear = mapper.buildEndPublicationYear(input);
 
         Assertions.assertEquals(expectedStartYear, startYear.getYear());
         Assertions.assertEquals(expectedStartYearConfidenceIndex, startYear.getConfidenceIndex());
