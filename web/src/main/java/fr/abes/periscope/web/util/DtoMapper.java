@@ -539,4 +539,27 @@ public class DtoMapper {
         };
         utilsMapper.addConverter(myConverter);
     }
+
+    @Bean
+    public void converterNoticeInfoWebDto() {
+        Converter<NoticeVisu, NoticeInfoWebDto> myConverter = new Converter<NoticeVisu, NoticeInfoWebDto>() {
+            @SneakyThrows
+            @Override
+            public NoticeInfoWebDto convert(MappingContext<NoticeVisu, NoticeInfoWebDto> context) {
+                NoticeVisu notice = context.getSource();
+                NoticeInfoWebDto noticeInfoWebDto = new NoticeInfoWebDto();
+                noticeInfoWebDto.setPpn(notice.getPpn());
+                noticeInfoWebDto.setIssn(notice.getIssn());
+                noticeInfoWebDto.setEditeur(notice.getPublisher());
+                noticeInfoWebDto.setTitre(notice.getTitleComplement()); // todo: ajouter le getTitle au propre
+                noticeInfoWebDto.setDate_de_debut(notice.getStartYear().getYear());
+                noticeInfoWebDto.setDate_de_fin(notice.getEndYear().getYear());
+                noticeInfoWebDto.setFrenquence_periodique(notice.getFrequency().toString());
+                noticeInfoWebDto.setVille("Test");
+
+                return noticeInfoWebDto;
+            }
+        };
+        utilsMapper.addConverter(myConverter);
+    }
 }

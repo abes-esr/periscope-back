@@ -64,10 +64,11 @@ public class HoldingsController {
     }
 
     @GetMapping("/holdings/notice/{ppn}")
-    public NoticeInfoWebDto getNoticeInfo(@PathVariable String ppn){
+    public NoticeInfoWebDto getNoticeInfo(@PathVariable String ppn) throws SQLException, IOException {
         //NoticeWebV2Dto trop info titre, changer et faire une classe fille?
 
+        NoticeInfoWebDto notice = mapper.map(service.getNoticeWithHoldings(ppn), NoticeInfoWebDto.class);
         // service.getNotice() objectif avoir juste les infos notice
-        return null;
+        return notice;
     }
 }
