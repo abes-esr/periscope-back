@@ -555,7 +555,7 @@ public class DtoMapper {
                 noticeInfoWebDto.setDate_de_debut(notice.getStartYear().getYear());
                 noticeInfoWebDto.setDate_de_fin(notice.getEndYear().getYear());
                 noticeInfoWebDto.setFrenquence_periodique(notice.getFrequency().toString());
-                noticeInfoWebDto.setVille("Test");
+                noticeInfoWebDto.setVille("notice ville");
 
                 return noticeInfoWebDto;
             }

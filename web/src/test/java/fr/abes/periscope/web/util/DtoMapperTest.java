@@ -7,7 +7,9 @@ import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
 import fr.abes.periscope.core.entity.solr.v2.FacetteSolr;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
+import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
 import fr.abes.periscope.core.util.UtilsMapper;
+import fr.abes.periscope.web.dto.NoticeInfoWebDto;
 import fr.abes.periscope.web.dto.NoticeWebV2Dto;
 import fr.abes.periscope.web.dto.ResultWebDto;
 import org.junit.jupiter.api.Assertions;
@@ -20,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.time.Period;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -157,6 +160,27 @@ public class DtoMapperTest {
         Assertions.assertEquals(2, result.getNbNotices());
         Assertions.assertEquals(2, result.getNbNotices());
 
+    }
+
+    @Test
+    @DisplayName("test convert notice web info dot")
+    void converterNoticeInfoWebDto() {
+        NoticeVisu noticeVisu = new NoticeVisu();
+        noticeVisu.setFrequency(Period.ofDays(2));
+        noticeVisu.setPpn("111111111");
+        noticeVisu.setIssn("1111-1111");
+        noticeVisu.setStartYear(new PublicationYear("2020",1));
+        noticeVisu.setEndYear(new PublicationYear("2022",1));
+        NoticeInfoWebDto result = mapper.map(noticeVisu, NoticeInfoWebDto.class);
+
+        Assertions.assertEquals("111111111", result.getPpn());
+        Assertions.assertEquals("1111-1111", result.getIssn());
+        Assertions.assertEquals("2020", result.getDate_de_debut());
+        Assertions.assertEquals("2022", result.getDate_de_fin());
+        Assertions.assertEquals("P2D", result.getFrenquence_periodique());
+        Assertions.assertEquals(null, result.getTitre());
+        Assertions.assertEquals("notice ville", result.getVille());
+        Assertions.assertEquals(null, result.getEditeur());
     }
 
 }
