@@ -110,6 +110,7 @@ public abstract class NoticeV2SolrField {
     public static final String ZONE_200_G = "zone_200$g";
     public static final String SECTION_TITLE_Z = "zone_200$i_z";
     public static final String SECTION_TITLE = "zone_200$i_t";
+    public static final String TRI_TITRE = "triTitre";
     //--------------------------------
 
     //--------------------------------
