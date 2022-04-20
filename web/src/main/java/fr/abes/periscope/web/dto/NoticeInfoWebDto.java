@@ -29,14 +29,17 @@ public class NoticeInfoWebDto {
     @JsonProperty("titre")
     private String titre;
 
-    @JsonProperty("dateDePublication")
-    private String dateDePublication;
+    @JsonProperty("datePublication")
+    private String datePublication;
 
     @JsonProperty("editeur")
     private String editeur;
 
     @JsonProperty("ville")
     private String ville;
+
+    @JsonProperty("typeSupport")
+    private String typeSupport;
 
     @JsonProperty("periodicite")
     private String periodicite;

@@ -544,12 +544,12 @@ public class DtoMapper {
                 noticeInfoWebDto.setPpn(notice.getPpn());
                 noticeInfoWebDto.setIssn(notice.getIssn());
                 noticeInfoWebDto.setEditeur(notice.getPublisher());
-
+                noticeInfoWebDto.setTypeSupport(notice.getSupportType());
                 noticeInfoWebDto.setTitre(utilsMapper.getTitre(notice.getKeyTitle(), notice.getKeyTitleQualifer(), notice.getKeyShortedTitle(), notice.getProperTitle(), notice.getTitleFromDifferentAuthor(), notice.getParallelTitle(), notice.getTitleComplement()));
                 if(notice.getEndYear().getYear() != null) {
-                    noticeInfoWebDto.setDateDePublication("(" + notice.getStartYear().getYear() + ")-(" + notice.getEndYear().getYear() + ")");
+                    noticeInfoWebDto.setDatePublication("(" + notice.getStartYear().getYear() + ")-(" + notice.getEndYear().getYear() + ")");
                 }else{
-                    noticeInfoWebDto.setDateDePublication("(" + notice.getStartYear().getYear() + ")-...");
+                    noticeInfoWebDto.setDatePublication("(" + notice.getStartYear().getYear() + ")-...");
                 }
                 noticeInfoWebDto.setPeriodicite(notice.getFrequency());
                 noticeInfoWebDto.setVille(notice.getCity());

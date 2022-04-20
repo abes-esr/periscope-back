@@ -3,6 +3,7 @@ package fr.abes.periscope.web.util;
 import fr.abes.periscope.core.entity.solr.Item;
 import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
 import fr.abes.periscope.core.entity.solr.PublicationYear;
+import fr.abes.periscope.core.entity.solr.SupportType;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
 import fr.abes.periscope.core.entity.solr.v2.FacetteSolr;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
@@ -23,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.Period;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -168,19 +168,20 @@ public class DtoMapperTest {
         noticeVisu.setPublisher("TestEditor");
         noticeVisu.setKeyTitle("titre clé");
         noticeVisu.setCity("Paris");
+        noticeVisu.setSupportType(SupportType.X);
         NoticeInfoWebDto result = mapper.map(noticeVisu, NoticeInfoWebDto.class);
 
         Assertions.assertEquals("111111111", result.getPpn());
         Assertions.assertEquals("1111-1111", result.getIssn());
-        Assertions.assertEquals("(2020)-(2022)", result.getDateDePublication());
+        Assertions.assertEquals("(2020)-(2022)", result.getDatePublication());
         Assertions.assertEquals(Frequency.B, result.getPeriodicite());
         Assertions.assertEquals("titre clé", result.getTitre());
         Assertions.assertEquals("Paris", result.getVille());
         Assertions.assertEquals("TestEditor", result.getEditeur());
-
+        Assertions.assertEquals(SupportType.X, result.getTypeSupport());
         noticeVisu.setEndYear(new PublicationYear(null,0));
         result = mapper.map(noticeVisu, NoticeInfoWebDto.class);
-        Assertions.assertEquals("(2020)-...", result.getDateDePublication());
+        Assertions.assertEquals("(2020)-...", result.getDatePublication());
     }
 
 }
