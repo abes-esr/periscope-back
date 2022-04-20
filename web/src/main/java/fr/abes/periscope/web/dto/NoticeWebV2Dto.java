@@ -28,64 +28,8 @@ public class NoticeWebV2Dto {
     @JsonProperty("editeur")
     private String editeur;
 
-    @JsonIgnore
-    private String titrePropre;
-
-    @JsonIgnore
-    private String titreAuteurDifferent;
-
-    @JsonIgnore
-    private String titreParallele;
-
-    @JsonIgnore
-    private String titreComplement;
-
-    @JsonIgnore
-    private String titreSection;
-
-    @JsonIgnore
-    private String titreCle;
-
-    @JsonIgnore
-    private String titreCleQualifie;
-
-    @JsonIgnore
-    private String titreCleCourt;
-
-    @JsonGetter("titre")
-    protected String getTitre() {
-        String titre = this.titreCle;
-        if (titre != null && !titre.isEmpty() && this.titreCleQualifie != null) {
-            titre += " " + this.titreCleQualifie;
-            return titre;
-        }
-        if (titre == null || titre.isEmpty()) {
-            if (this.titreCleCourt != null && !this.titreCleCourt.isEmpty()) {
-                return this.titreCleCourt;
-            }
-
-            if (this.titrePropre != null && !this.titrePropre.isEmpty()) {
-                return this.titrePropre;
-            }
-
-            if (this.titreAuteurDifferent != null && !this.titreAuteurDifferent.isEmpty()) {
-                return this.titreAuteurDifferent;
-            }
-
-            if (this.titreParallele != null && !this.titreParallele.isEmpty()) {
-                return this.titreParallele;
-            }
-
-            if (this.titreComplement != null && !this.titreComplement.isEmpty()) {
-                return this.titreComplement;
-            }
-        }
-        if (titre != null) {
-            //suppression des caractères entourant les mots vides pour l'affichage
-            return titre.replace("\u0098", "").replace("\u009c", "");
-        }
-        return null;
-    }
+    @JsonProperty("titre")
+    private String titre;
 
     @JsonProperty("typeDocument")
     private String typeRessourceContinue;

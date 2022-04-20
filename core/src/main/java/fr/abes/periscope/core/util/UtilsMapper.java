@@ -174,4 +174,38 @@ public class UtilsMapper extends ModelMapper {
         return year;
     }
 
+
+    public String getTitre(String titreCle, String titreCleQualifie, String titreCleCourt, String titrePropre, String titreAuteurDifferent, String titreParallele, String titreComplement) {
+        String titre = titreCle;
+        if (titre != null && !titre.isEmpty() && titreCleQualifie != null) {
+            titre += " " + titreCleQualifie;
+            return titre;
+        }
+        if (titre == null || titre.isEmpty()) {
+            if (titreCleCourt != null && !titreCleCourt.isEmpty()) {
+                return titreCleCourt;
+            }
+
+            if (titrePropre != null && !titrePropre.isEmpty()) {
+                return titrePropre;
+            }
+
+            if (titreAuteurDifferent != null && !titreAuteurDifferent.isEmpty()) {
+                return titreAuteurDifferent;
+            }
+
+            if (titreParallele != null && !titreParallele.isEmpty()) {
+                return titreParallele;
+            }
+
+            if (titreComplement != null && !titreComplement.isEmpty()) {
+                return titreComplement;
+            }
+        }
+        if (titre != null) {
+            //suppression des caractères entourant les mots vides pour l'affichage
+            return titre.replace("\u0098", "").replace("\u009c", "");
+        }
+        return null;
+    }
 }

@@ -26,21 +26,18 @@ public class NoticeInfoWebDto {
     @JsonProperty("issn")
     private String issn;
 
-    @JsonProperty("editeur")
-    private String editeur;
-
     @JsonProperty("titre")
     private String titre;
 
-    @JsonProperty("date_de_debut")
-    private String date_de_debut;
+    @JsonProperty("dateDePublication")
+    private String dateDePublication;
 
-    @JsonProperty("date_de_fin")
-    private String date_de_fin;
+    @JsonProperty("editeur")
+    private String editeur;
 
     @JsonProperty("ville")
     private String ville;
 
-    @JsonProperty("frenquence_periodique")
-    private String frenquence_periodique;
+    @JsonProperty("periodicite")
+    private String periodicite;
 }

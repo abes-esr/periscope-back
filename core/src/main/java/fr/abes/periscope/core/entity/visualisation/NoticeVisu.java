@@ -25,7 +25,9 @@ public class NoticeVisu extends Notice {
 
     private String keyTitleQualifer;
 
-    private Period frequency;
+    private String frequency;
+
+    private String city;
 
     protected Set<Holding> holdings = new HashSet<>();
 

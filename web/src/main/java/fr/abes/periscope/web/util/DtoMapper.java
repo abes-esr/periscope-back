@@ -93,14 +93,7 @@ public class DtoMapper {
                 noticeWeb.setPpn(notice.getPpn());
                 noticeWeb.setIssn(notice.getIssn());
                 noticeWeb.setEditeur(notice.getPublisher());
-                noticeWeb.setTitrePropre(notice.getProperTitle());
-                noticeWeb.setTitreAuteurDifferent(notice.getTitleFromDifferentAuthor());
-                noticeWeb.setTitreParallele(notice.getParallelTitle());
-                noticeWeb.setTitreComplement(notice.getTitleComplement());
-                noticeWeb.setTitreSection(notice.getSectionTitle());
-                noticeWeb.setTitreCle(notice.getKeyTitle());
-                noticeWeb.setTitreCleQualifie(notice.getKeyTitleQualifer());
-                noticeWeb.setTitreCleCourt(notice.getKeyShortedTitle());
+                noticeWeb.setTitre(utilsMapper.getTitre(notice.getKeyTitle(), notice.getKeyTitleQualifer(), notice.getKeyShortedTitle(), notice.getProperTitle(), notice.getTitleFromDifferentAuthor(), notice.getParallelTitle(), notice.getTitleComplement()));
                 noticeWeb.setTypeRessourceContinue(notice.getContinuousType());
                 noticeWeb.setStartYear(notice.getStartYear());
                 noticeWeb.setEndYear(notice.getEndYear());
@@ -551,11 +544,15 @@ public class DtoMapper {
                 noticeInfoWebDto.setPpn(notice.getPpn());
                 noticeInfoWebDto.setIssn(notice.getIssn());
                 noticeInfoWebDto.setEditeur(notice.getPublisher());
-                noticeInfoWebDto.setTitre(notice.getTitleComplement()); // todo: ajouter le getTitle au propre
-                noticeInfoWebDto.setDate_de_debut(notice.getStartYear().getYear());
-                noticeInfoWebDto.setDate_de_fin(notice.getEndYear().getYear());
-                noticeInfoWebDto.setFrenquence_periodique(notice.getFrequency().toString());
-                noticeInfoWebDto.setVille("notice ville");
+
+                noticeInfoWebDto.setTitre(utilsMapper.getTitre(notice.getKeyTitle(), notice.getKeyTitleQualifer(), notice.getKeyShortedTitle(), notice.getProperTitle(), notice.getTitleFromDifferentAuthor(), notice.getParallelTitle(), notice.getTitleComplement()));
+                if(notice.getEndYear().getYear() != null) {
+                    noticeInfoWebDto.setDateDePublication("(" + notice.getStartYear().getYear() + ")-(" + notice.getEndYear().getYear() + ")");
+                }else{
+                    noticeInfoWebDto.setDateDePublication("(" + notice.getStartYear().getYear() + ")-...");
+                }
+                noticeInfoWebDto.setPeriodicite(notice.getFrequency());
+                noticeInfoWebDto.setVille(notice.getCity());
 
                 return noticeInfoWebDto;
             }
