@@ -194,7 +194,7 @@ public class DtoMapper {
             case "editor":
                 return NoticeV2SolrField.EDITOR_Z;
             case "title":
-                return NoticeV2SolrField.KEY_TITLE;
+                return NoticeV2SolrField.TRI_TITRE;
             case "start_year":
                 return NoticeV2SolrField.START_YEAR;
             case "end_year":
