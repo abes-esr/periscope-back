@@ -18,6 +18,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.HashSet;
 import java.util.Set;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 /**
  * Test l'extraction des dates de publication de la zone 100$a d'une NoticeSolr.
  */
@@ -406,4 +408,16 @@ class UtilsMapperTest {
         Assertions.assertEquals(2, noticeV2.getItems().size());
     }
 
+    @Test
+    @DisplayName("test construction titre notice")
+    void testGetTitre() {
+
+        assertEquals("titre clé",mapper.getTitre("titre clé",null,"",null,"","",""));
+        assertEquals("titre clé titre clé qualifié",mapper.getTitre("titre clé","titre clé qualifié","",null,"","",""));
+        assertEquals("titre clé court",mapper.getTitre(null,null,"titre clé court",null,"","",""));
+        assertEquals("titre propre",mapper.getTitre(null,null,null,"titre propre","","",""));
+        assertEquals("titre auteur different",mapper.getTitre(null,null,null,null,"titre auteur different","",""));
+        assertEquals("titre parallele",mapper.getTitre(null,null,null,null,null,"titre parallele",""));
+        assertEquals("titre complement",mapper.getTitre(null,null,null,null,null,null,"titre complement"));
+    }
 }

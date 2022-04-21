@@ -3,9 +3,9 @@ package fr.abes.periscope.web.controller;
 import fr.abes.periscope.core.exception.IllegalPpnException;
 import fr.abes.periscope.core.service.HoldingService;
 import fr.abes.periscope.core.util.UtilsMapper;
+import fr.abes.periscope.web.dto.NoticeInfoWebDto;
 import fr.abes.periscope.web.dto.NoticeVisuWebDto;
 import fr.abes.periscope.web.dto.SequenceWebDto;
-import fr.abes.periscope.web.util.DtoMapper;
 import fr.abes.periscope.web.util.TYPE_SEQUENCE;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -60,6 +60,15 @@ public class HoldingsController {
             });
         }
         notice.getHoldingWebDtoList().removeAll(notice.getHoldingWebDtoList().stream().filter(h -> h.getSequencesList().size()==0).collect(Collectors.toList()));
+        return notice;
+    }
+
+    @GetMapping("/holdings/notice/{ppn}")
+    public NoticeInfoWebDto getNoticeInfo(@PathVariable String ppn) throws SQLException, IOException {
+        //NoticeWebV2Dto trop info titre, changer et faire une classe fille?
+
+        NoticeInfoWebDto notice = mapper.map(service.getNoticeWithHoldings(ppn), NoticeInfoWebDto.class);
+        // service.getNotice() objectif avoir juste les infos notice
         return notice;
     }
 }

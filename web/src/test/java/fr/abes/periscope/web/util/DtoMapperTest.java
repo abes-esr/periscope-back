@@ -3,11 +3,15 @@ package fr.abes.periscope.web.util;
 import fr.abes.periscope.core.entity.solr.Item;
 import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
 import fr.abes.periscope.core.entity.solr.PublicationYear;
+import fr.abes.periscope.core.entity.solr.SupportType;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
 import fr.abes.periscope.core.entity.solr.v2.FacetteSolr;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
 import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
+import fr.abes.periscope.core.entity.visualisation.Frequency;
+import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
 import fr.abes.periscope.core.util.UtilsMapper;
+import fr.abes.periscope.web.dto.NoticeInfoWebDto;
 import fr.abes.periscope.web.dto.NoticeWebV2Dto;
 import fr.abes.periscope.web.dto.ResultWebDto;
 import org.junit.jupiter.api.Assertions;
@@ -106,14 +110,7 @@ public class DtoMapperTest {
         Assertions.assertEquals("1111-1111", noticeWebV2Dto.getIssn());
         Assertions.assertEquals("test éditeur", noticeWebV2Dto.getEditeur());
         Assertions.assertEquals("https://www-test.sudoc.fr/111111111", noticeWebV2Dto.getSudocURL());
-        Assertions.assertEquals("test title from different author", noticeWebV2Dto.getTitreAuteurDifferent());
-        Assertions.assertEquals("test keyTitle", noticeWebV2Dto.getTitreCle());
-        Assertions.assertEquals("test keyShortedTitle", noticeWebV2Dto.getTitreCleCourt());
-        Assertions.assertEquals("test keyTitleQualifier", noticeWebV2Dto.getTitreCleQualifie());
-        Assertions.assertEquals("test title complement", noticeWebV2Dto.getTitreComplement());
-        Assertions.assertEquals("test parallel title", noticeWebV2Dto.getTitreParallele());
-        Assertions.assertEquals("test proper title", noticeWebV2Dto.getTitrePropre());
-        Assertions.assertEquals("test section title", noticeWebV2Dto.getTitreSection());
+        Assertions.assertEquals("test keyTitle test keyTitleQualifier", noticeWebV2Dto.getTitre());
         Assertions.assertEquals(Integer.valueOf(1), noticeWebV2Dto.getNbLocation());
         Assertions.assertEquals(1, noticeWebV2Dto.getPcpList().size());
         Assertions.assertEquals("PCMed", noticeWebV2Dto.getPcpList().stream().findFirst().get());
@@ -157,6 +154,34 @@ public class DtoMapperTest {
         Assertions.assertEquals(2, result.getNbNotices());
         Assertions.assertEquals(2, result.getNbNotices());
 
+    }
+
+    @Test
+    @DisplayName("test convert notice web info dot")
+    void converterNoticeInfoWebDto() {
+        NoticeVisu noticeVisu = new NoticeVisu();
+        noticeVisu.setFrequency(Frequency.B);
+        noticeVisu.setPpn("111111111");
+        noticeVisu.setIssn("1111-1111");
+        noticeVisu.setStartYear(new PublicationYear("2020",1));
+        noticeVisu.setEndYear(new PublicationYear("2022",1));
+        noticeVisu.setPublisher("TestEditor");
+        noticeVisu.setKeyTitle("titre clé");
+        noticeVisu.setCity("Paris");
+        noticeVisu.setSupportType(SupportType.X);
+        NoticeInfoWebDto result = mapper.map(noticeVisu, NoticeInfoWebDto.class);
+
+        Assertions.assertEquals("111111111", result.getPpn());
+        Assertions.assertEquals("1111-1111", result.getIssn());
+        Assertions.assertEquals("(2020)-(2022)", result.getDatePublication());
+        Assertions.assertEquals(Frequency.B, result.getPeriodicite());
+        Assertions.assertEquals("titre clé", result.getTitre());
+        Assertions.assertEquals("Paris", result.getVille());
+        Assertions.assertEquals("TestEditor", result.getEditeur());
+        Assertions.assertEquals(SupportType.X, result.getTypeSupport());
+        noticeVisu.setEndYear(new PublicationYear(null,0));
+        result = mapper.map(noticeVisu, NoticeInfoWebDto.class);
+        Assertions.assertEquals("(2020)-...", result.getDatePublication());
     }
 
 }

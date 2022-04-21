@@ -2,6 +2,7 @@ package fr.abes.periscope.core.util;
 
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
+import fr.abes.periscope.core.entity.visualisation.Frequency;
 import fr.abes.periscope.core.entity.visualisation.Holding;
 import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
 import fr.abes.periscope.core.entity.visualisation.SequenceContinue;
@@ -262,9 +263,9 @@ class NoticeFormatExportMapperTest {
     @DisplayName("test méthode récupération fréquence")
     void testExtractFrequency() {
         String frequency = "u";
-        Assertions.assertEquals(Period.ZERO, noticeFormatExportmodelMapper.extractFrequency(frequency));
+        Assertions.assertEquals(Frequency.U, noticeFormatExportmodelMapper.extractFrequency(frequency));
         frequency = "b";
-        Assertions.assertEquals(Period.ofDays(3), noticeFormatExportmodelMapper.extractFrequency(frequency));
+        Assertions.assertEquals(Frequency.B, noticeFormatExportmodelMapper.extractFrequency(frequency));
     }
 
     @Test

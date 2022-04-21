@@ -93,14 +93,7 @@ public class DtoMapper {
                 noticeWeb.setPpn(notice.getPpn());
                 noticeWeb.setIssn(notice.getIssn());
                 noticeWeb.setEditeur(notice.getPublisher());
-                noticeWeb.setTitrePropre(notice.getProperTitle());
-                noticeWeb.setTitreAuteurDifferent(notice.getTitleFromDifferentAuthor());
-                noticeWeb.setTitreParallele(notice.getParallelTitle());
-                noticeWeb.setTitreComplement(notice.getTitleComplement());
-                noticeWeb.setTitreSection(notice.getSectionTitle());
-                noticeWeb.setTitreCle(notice.getKeyTitle());
-                noticeWeb.setTitreCleQualifie(notice.getKeyTitleQualifer());
-                noticeWeb.setTitreCleCourt(notice.getKeyShortedTitle());
+                noticeWeb.setTitre(utilsMapper.getTitre(notice.getKeyTitle(), notice.getKeyTitleQualifer(), notice.getKeyShortedTitle(), notice.getProperTitle(), notice.getTitleFromDifferentAuthor(), notice.getParallelTitle(), notice.getTitleComplement()));
                 noticeWeb.setTypeRessourceContinue(notice.getContinuousType());
                 noticeWeb.setStartYear(notice.getStartYear());
                 noticeWeb.setEndYear(notice.getEndYear());
@@ -535,6 +528,33 @@ public class DtoMapper {
                 });
                 noticeVisuWebDto.addHoldingAgregee();
                 return noticeVisuWebDto;
+            }
+        };
+        utilsMapper.addConverter(myConverter);
+    }
+
+    @Bean
+    public void converterNoticeInfoWebDto() {
+        Converter<NoticeVisu, NoticeInfoWebDto> myConverter = new Converter<NoticeVisu, NoticeInfoWebDto>() {
+            @SneakyThrows
+            @Override
+            public NoticeInfoWebDto convert(MappingContext<NoticeVisu, NoticeInfoWebDto> context) {
+                NoticeVisu notice = context.getSource();
+                NoticeInfoWebDto noticeInfoWebDto = new NoticeInfoWebDto();
+                noticeInfoWebDto.setPpn(notice.getPpn());
+                noticeInfoWebDto.setIssn(notice.getIssn());
+                noticeInfoWebDto.setEditeur(notice.getPublisher());
+                noticeInfoWebDto.setTypeSupport(notice.getSupportType());
+                noticeInfoWebDto.setTitre(utilsMapper.getTitre(notice.getKeyTitle(), notice.getKeyTitleQualifer(), notice.getKeyShortedTitle(), notice.getProperTitle(), notice.getTitleFromDifferentAuthor(), notice.getParallelTitle(), notice.getTitleComplement()));
+                if(notice.getEndYear().getYear() != null) {
+                    noticeInfoWebDto.setDatePublication("(" + notice.getStartYear().getYear() + ")-(" + notice.getEndYear().getYear() + ")");
+                }else{
+                    noticeInfoWebDto.setDatePublication("(" + notice.getStartYear().getYear() + ")-...");
+                }
+                noticeInfoWebDto.setPeriodicite(notice.getFrequency());
+                noticeInfoWebDto.setVille(notice.getCity());
+
+                return noticeInfoWebDto;
             }
         };
         utilsMapper.addConverter(myConverter);

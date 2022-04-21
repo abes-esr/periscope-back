@@ -33,7 +33,9 @@ public class NoticeFormatExportMapper {
     private UtilsMapper utilsMapper;
 
     @Autowired
-    public NoticeFormatExportMapper(UtilsMapper utilsMapper) { this.utilsMapper = utilsMapper; }
+    public NoticeFormatExportMapper(UtilsMapper utilsMapper) {
+        this.utilsMapper = utilsMapper;
+    }
 
     /**
      * Convertisseur pour les notices XML vers les notices de visualisation
@@ -144,14 +146,13 @@ public class NoticeFormatExportMapper {
 
                             // Zone 210
                             if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("210")) {
-                                for (SubField subField : dataField.getSubFields()) {
-                                    // zone 210-c
-                                    if (subField.getCode().equalsIgnoreCase("c") && (target.getPublisher() == null)) {
-                                        target.setPublisher(subField.getValue());
-                                    }
-                                }
+                                extractPublisherAndCity(target, dataField);
                             }
 
+                            //Zone 214
+                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("214")) {
+                                extractPublisherAndCity(target, dataField);
+                            }
                             // Zone 530
                             if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("530")) {
 
@@ -231,9 +232,27 @@ public class NoticeFormatExportMapper {
     }
 
     /**
+     * extrait l'editeur et la ville de la zone 214 et 210 en prendant en priorité la 214.
+     * @param target
+     * @param dataField
+     */
+    private void extractPublisherAndCity(NoticeVisu target, DataField dataField) {
+        for (SubField subField : dataField.getSubFields()) {
+            // zone 210-c  & 214-c
+            if (subField.getCode().equalsIgnoreCase("c")) {
+                target.setPublisher(subField.getValue());
+            }
+            // zone 210-a & 214-a
+            if (subField.getCode().equalsIgnoreCase("a")) {
+                target.setCity(subField.getValue());
+            }
+        }
+    }
+
+    /**
      * Méthode permettant de générer les séquences d'un état de collection contenu dans une 955 du format d'export
      *
-     * @param holding : l'objet représentant les états de collection de la notice qui sera alimenté avec les séquences de la 955 parsée
+     * @param holding   : l'objet représentant les états de collection de la notice qui sera alimenté avec les séquences de la 955 parsée
      * @param dataField : la zone 955 à parser
      *
      * @throws IllegalHoldingException si une erreur est détectée dans la 955
@@ -356,7 +375,8 @@ public class NoticeFormatExportMapper {
 
     /**
      * Méthode permettant de générer générer les séquences lacunaires d'une 959
-     * @param holding : objet réprésentant les états de collection de la notice dans lequel seront ajoutées les séquences lacunaires
+     *
+     * @param holding   : objet réprésentant les états de collection de la notice dans lequel seront ajoutées les séquences lacunaires
      * @param dataField : la zone parsée pour extraire les séquences lacunaires
      * @throws IllegalHoldingException
      */
@@ -450,38 +470,48 @@ public class NoticeFormatExportMapper {
         }
     }
 
-    protected Period extractFrequency(String value) {
+    protected String extractFrequency(String value) {
+        if (value == null)
+            return Frequency.U;
         switch (value.toUpperCase()) {
             case "A":
-                // Quotidienne
-                return Period.ofDays(1);
+                return Frequency.A;
             case "B":
-                // Bihebdomadaire
-                return Period.ofDays(3);
+                return Frequency.B;
             case "C":
-                // Hebdomadaire
-                return Period.ofDays(7);
+                return Frequency.C;
             case "D":
+                return Frequency.D;
             case "E":
-                // Bimensuelle
-                // Toutes les deux semaines
-                return Period.ofWeeks(2);
+                return Frequency.E;
             case "F":
-                // Mensuelle
-                return Period.ofMonths(1);
+                return Frequency.F;
             case "G":
-                // Bimestrielle
-                return Period.ofMonths(2);
+                return Frequency.G;
             case "H":
-                // Trimestrielle
-                return Period.ofMonths(3);
+                return Frequency.H;
             case "I":
+                return Frequency.I;
             case "J":
-                // Semestrielle
-                // Trois fois par an
-                return Period.ofMonths(4);
+                return Frequency.J;
+            case "K":
+                return Frequency.K;
+            case "L":
+                return Frequency.L;
+            case "M":
+                return Frequency.M;
+            case "N":
+                return Frequency.N;
+            case "O":
+                return Frequency.O;
+            case "P":
+                return Frequency.P;
+            case "U":
+                return Frequency.U;
+            case "Y":
+                return Frequency.Y;
             default:
-                return Period.ZERO;
+                return Frequency.Z;
         }
     }
 
