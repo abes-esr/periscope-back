@@ -1,6 +1,7 @@
 package fr.abes.periscope.web.exception;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.exc.InvalidTypeIdException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalPpnException;
@@ -53,7 +54,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
 
         String error = "Malformed JSON request";
 
-        if (ex.getCause() instanceof MismatchedInputException) {
+        if (ex.getCause() instanceof MismatchedInputException && !(ex.getCause() instanceof InvalidTypeIdException)) {
             String targetType = ((MismatchedInputException) ex.getCause()).getTargetType().getSimpleName();
 
             List<JsonMappingException.Reference> errors = ((MismatchedInputException) ex.getCause()).getPath();

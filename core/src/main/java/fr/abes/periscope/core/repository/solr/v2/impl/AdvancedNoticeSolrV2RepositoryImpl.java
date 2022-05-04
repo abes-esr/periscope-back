@@ -37,8 +37,6 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
     @Value("${periscope.solr.v2.core}")
     private String core;
 
-    @Value("${periscope.solr.v2.nbexemplaires}")
-    private String nbExemplaires;
 
     public AdvancedNoticeSolrV2RepositoryImpl(@Qualifier("solrV2Template") SolrTemplate template, @Qualifier("SolrQueryV2Builder") SolrQueryBuilder builder) {
         solrTemplate = template;
@@ -142,12 +140,6 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.END_YEAR_CONFIDENCE_INDEX));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.RCR_LIST));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.PCP_LIST));
-        query.addProjectionOnField(new SimpleField(ItemSolrField.EPN));
-        query.addProjectionOnField(new SimpleField(ItemSolrField.PPN_PARENT));
-        query.addProjectionOnField(new SimpleField(ItemSolrField.RCR));
-        query.addProjectionOnField(new SimpleField(ItemSolrField.PCP));
-
-        query.addProjectionOnField(new SimpleField("[child limit=" + nbExemplaires + "]"));
     }
 
 
