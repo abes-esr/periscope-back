@@ -140,6 +140,10 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.END_YEAR_CONFIDENCE_INDEX));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.RCR_LIST));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.PCP_LIST));
+        query.addProjectionOnField(new SimpleField(ItemSolrField.EPN));
+        query.addProjectionOnField(new SimpleField(ItemSolrField.PPN_PARENT));
+        query.addProjectionOnField(new SimpleField(ItemSolrField.RCR));
+        query.addProjectionOnField(new SimpleField(ItemSolrField.PCP));
     }
 
 
