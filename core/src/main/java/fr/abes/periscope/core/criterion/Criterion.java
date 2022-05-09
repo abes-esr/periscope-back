@@ -3,6 +3,7 @@ package fr.abes.periscope.core.criterion;
 import fr.abes.periscope.core.exception.IllegalOperatorException;
 import fr.abes.periscope.core.util.TYPE_NOTICE;
 import lombok.Getter;
+import lombok.Setter;
 
 /**
  * Représente un bloc générique de recherche.
@@ -11,6 +12,7 @@ import lombok.Getter;
  * Cette classe représente un bloc générique de recherche avec son connecteur logique.
  */
 @Getter
+@Setter
 public abstract class Criterion {
 
     /** Vrai si le bloc est le premier bloc de la requête : Bloc0

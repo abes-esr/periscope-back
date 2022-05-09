@@ -18,7 +18,7 @@ public class CriterionPcp extends Criterion {
     /** Liste des codes PCP à rechercher. */
     private List<String> pcp = new ArrayList<>();
 
-    /** Liste des connecteurs logiques entre les codes RCR
+    /** Liste des connecteurs logiques entre les codes PCP
      * Exemple :
      * pcpOperators[0] pour connecter pcp[0]
      * pcpOperators[1] pour connecter pcp[0] et pcp[1] */

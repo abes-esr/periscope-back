@@ -3,10 +3,12 @@ package fr.abes.periscope.core.repository.solr.v2;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.solr.v2.ItemSolrField;
 import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
+import fr.abes.periscope.core.util.TYPE_NOTICE;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.query.*;
 
+import javax.crypto.Cipher;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -124,10 +126,10 @@ public class SolrQueryBuilder {
         // 1er critère
         switch (pcpOperator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = new Criteria(NoticeV2SolrField.PCP_LIST).is(pcpCode).not();
+                myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? new Criteria(NoticeV2SolrField.PCP_LIST).is(pcpCode).not() : new Criteria(NoticeV2SolrField.PCP).is(pcpCode).not());
                 break;
             default:
-                myCriteria = new Criteria(NoticeV2SolrField.PCP_LIST).is(pcpCode);
+                myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? new Criteria(NoticeV2SolrField.PCP_LIST).is(pcpCode) : new Criteria(NoticeV2SolrField.PCP).is(pcpCode));
                 break;
         }
 
@@ -138,13 +140,13 @@ public class SolrQueryBuilder {
 
             switch (pcpOperator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.and(NoticeV2SolrField.PCP_LIST).is(pcpCode);
+                    myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? myCriteria.and(NoticeV2SolrField.PCP_LIST).is(pcpCode) : myCriteria.and(NoticeV2SolrField.PCP).is(pcpCode));
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.or(NoticeV2SolrField.PCP_LIST).is(pcpCode);
+                    myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? myCriteria.or(NoticeV2SolrField.PCP_LIST).is(pcpCode) : myCriteria.or(NoticeV2SolrField.PCP).is(pcpCode));
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.or(NoticeV2SolrField.PCP_LIST).is(pcpCode).not();
+                    myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? myCriteria.or(NoticeV2SolrField.PCP_LIST).is(pcpCode).not() : myCriteria.or(NoticeV2SolrField.PCP).is(pcpCode).not());
                     break;
             }
         }
@@ -171,10 +173,10 @@ public class SolrQueryBuilder {
         // 1er critère
         switch (rcrOperator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = new Criteria(NoticeV2SolrField.RCR_LIST).is(rcrCode).not();
+                myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? new Criteria(NoticeV2SolrField.RCR_LIST).is(rcrCode).not() : new Criteria(NoticeV2SolrField.RCR).is(rcrCode).not());
                 break;
             default:
-                myCriteria = new Criteria(NoticeV2SolrField.RCR_LIST).is(rcrCode);
+                myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? new Criteria(NoticeV2SolrField.RCR_LIST).is(rcrCode) : new Criteria(NoticeV2SolrField.RCR).is(rcrCode));
                 break;
         }
 
@@ -185,13 +187,13 @@ public class SolrQueryBuilder {
 
             switch (rcrOperator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.and(NoticeV2SolrField.RCR_LIST).is(rcrCode);
+                    myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? myCriteria.and(NoticeV2SolrField.RCR_LIST).is(rcrCode) : myCriteria.and(NoticeV2SolrField.RCR).is(rcrCode));
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.or(NoticeV2SolrField.RCR_LIST).is(rcrCode);
+                    myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? myCriteria.or(NoticeV2SolrField.RCR_LIST).is(rcrCode) : myCriteria.or(NoticeV2SolrField.RCR));
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.or(NoticeV2SolrField.RCR_LIST).is(rcrCode).not();
+                    myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? myCriteria.or(NoticeV2SolrField.RCR_LIST).is(rcrCode).not() : myCriteria.or(NoticeV2SolrField.RCR).is(rcrCode).not());
                     break;
             }
         }

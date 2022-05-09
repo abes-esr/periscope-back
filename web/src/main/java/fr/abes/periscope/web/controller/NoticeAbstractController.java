@@ -3,6 +3,7 @@ package fr.abes.periscope.web.controller;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.service.NoticeStoreService;
+import fr.abes.periscope.core.util.TYPE_NOTICE;
 import fr.abes.periscope.core.util.UtilsMapper;
 import fr.abes.periscope.web.dto.RequestParameters;
 import fr.abes.periscope.web.dto.criterion.*;
@@ -101,6 +102,18 @@ public abstract class NoticeAbstractController {
 
         if (userCriterion instanceof CriterionIssnWebDto) {
             criteria.add(mapper.map(userCriterion, CriterionIssn.class));
+        }
+
+        if (userCriterion instanceof CriterionPcpRcrWebDto) {
+            CriterionPcpWebDto critWebPcp = new CriterionPcpWebDto(((CriterionPcpRcrWebDto) userCriterion).getPcp(), LogicalOperator.AND, userCriterion.getBlocOperator());
+            CriterionPcp critPcp = mapper.map(critWebPcp, CriterionPcp.class);
+            critPcp.setTypeNotice(TYPE_NOTICE.EXEMPLAIRE);
+            criteria.add(critPcp);
+
+            CriterionRcrWebDto critWebRcr = new CriterionRcrWebDto(((CriterionPcpRcrWebDto) userCriterion).getRcr(), LogicalOperator.AND, userCriterion.getBlocOperator());
+            CriterionRcr critRcr = mapper.map(critWebRcr, CriterionRcr.class);
+            critRcr.setTypeNotice(TYPE_NOTICE.EXEMPLAIRE);
+            criteria.add(critRcr);
         }
     }
 }
