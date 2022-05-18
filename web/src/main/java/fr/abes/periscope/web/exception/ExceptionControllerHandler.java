@@ -8,7 +8,6 @@ import fr.abes.periscope.core.exception.IllegalPpnException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.modelmapper.MappingException;
-import org.springframework.beans.TypeMismatchException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -26,7 +25,10 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolation;
+import javax.validation.ConstraintViolationException;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Gestionnaire des exceptions de l'API.
@@ -134,6 +136,19 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity handle(ConstraintViolationException ex) {
+        Set<ConstraintViolation<?>> violations = ex.getConstraintViolations();
+        String errorMessage;
+        if (!violations.isEmpty()) {
+            StringBuilder builder = new StringBuilder();
+            violations.forEach(violation -> builder.append(" " + violation.getMessage()));
+            errorMessage = builder.toString();
+        } else {
+            errorMessage = "ConstraintViolationException occured.";
+        }
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, errorMessage, ex));
+    }
     /**
      * Si la transformation DTO a échoué
      * @param ex MappingException

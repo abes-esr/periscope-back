@@ -494,11 +494,6 @@ public class DtoMapper {
         utilsMapper.addConverter(myConverter);
     }
 
-
-    private Integer getDiffEndYearStartYear(PublicationYear startYear, PublicationYear endYear) {
-        return Integer.parseInt(endYear.getYear()) - Integer.parseInt(startYear.getYear());
-    }
-
     @Bean
     public void converterNoticeVisuWebDto() {
         Converter<NoticeVisu, NoticeVisuWebDto> myConverter = new Converter<NoticeVisu, NoticeVisuWebDto>() {

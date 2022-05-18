@@ -33,9 +33,9 @@ import java.util.*;
 @Data
 public class NoticeStoreService {
 
-    private NoticeSolrV1Repository noticeV1Repository;
-    private NoticeSolrV2Repository noticeV2Repository;
-    private UtilsMapper utilsMapper;
+    private final NoticeSolrV1Repository noticeV1Repository;
+    private final NoticeSolrV2Repository noticeV2Repository;
+    private final UtilsMapper utilsMapper;
 
     private static final String DEFAULT_REPOSITORY = "v1";
 

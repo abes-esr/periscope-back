@@ -53,7 +53,7 @@ public class NoticeFormatExportMapper {
                     // Champ type de support
                     target.setSupportType(extractSupportType(source.getLeader().substring(6, 7)));
                     // Champs PPN
-                    target.setPpn(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().orElseThrow().getValue());
+                    target.setPpn(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().get().getValue());
 
                     for (int currentPass = 1; currentPass < maxPass + 1; currentPass++) {
 
