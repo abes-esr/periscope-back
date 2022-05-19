@@ -46,7 +46,6 @@ public class SolrQueryBuilderV2Test {
 
     @Test
     @DisplayName("Test construction requête à facettes avec une zone exemplaire")
-    @Disabled
     void testConsructRequeteFacetteWithZoneExemplaire() {
         List<Criterion> criteresExemp = new LinkedList<>();
 

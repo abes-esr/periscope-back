@@ -8,9 +8,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>fr.abes</groupId>
-        <artifactId>abes-spring</artifactId>
-        <version>1.0.7</version>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.4.13</version>
+        <relativePath /> <!-- lookup parent from repository -->
     </parent>
 
     <!-- ===================================================== -->
@@ -74,14 +75,30 @@
     </profiles>
 
     <!-- =========================================================== -->
+    <!--     Gestion des dependances                                 -->
+    <!-- =========================================================== -->
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-parent</artifactId>
+                <version>2.4.13</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <!-- =========================================================== -->
     <!--     Dependances heritees pour tous les modules.             -->
     <!-- =========================================================== -->
     <dependencies>
-
         <!--- === Annotations === -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
+            <version>1.18.18</version>
             <scope>provided</scope>
         </dependency>
 
@@ -89,6 +106,7 @@
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
+            <version>2.9.9</version>
         </dependency>
         <dependency>
             <groupId>org.modelmapper</groupId>
@@ -100,6 +118,7 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
+            <version>2.5.12</version>
         </dependency>
 
         <!-- === Timing === -->
@@ -150,7 +169,7 @@
     <distributionManagement>
         <site>
             <id>abes</id>
-            <url>${url.doc.abes}doc${doc.root.path}/${doc.root.path}-${project.version}</url>
+            <url>https://javadoc.abes.fr/docAbes/Abes-${project.version}</url>
         </site>
     </distributionManagement>
 
@@ -177,9 +196,18 @@
         <finalName>${finalName}</finalName>
         <plugins>
             <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>3.0.0-M5</version>
+                <configuration>
+                    <pushChanges>no</pushChanges>
+                    <scmReleaseCommitComment>@{prefix} Version @{releaseLabel}</scmReleaseCommitComment>
+                    <scmCommentPrefix>[maven-release-plugin] [no ci]</scmCommentPrefix>
+                </configuration>
             </plugin>
         </plugins>
     </build>
+    <scm>
+        <connection>scm:git:https://github.com/abes-esr/periscope-back.git</connection>
+        <tag>HEAD</tag>
+    </scm>
 </project>
