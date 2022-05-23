@@ -277,7 +277,7 @@ public class DtoMapper {
                         throw new IllegalArgumentException(CriterionTypeName.CRITERION_RCR + " - property '" + CriterionRcrWebDto.RCR_OPERATOR_PROPERTY + "' is missing");
                     }
 
-                    CriterionRcr d = new CriterionRcr(s.getBlocOperator(), s.getRcr(), s.getRcrOperator());
+                    CriterionRcr d = new CriterionRcr(s.getBlocOperator(), new ArrayList<>(s.getRcr()), s.getRcrOperator());
                     return d;
                 } catch (IllegalOperatorException ex) {
                     throw new IllegalOperatorException(CriterionTypeName.CRITERION_RCR + " : " + ex.getLocalizedMessage());

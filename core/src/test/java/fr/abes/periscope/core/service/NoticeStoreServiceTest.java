@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -133,7 +130,7 @@ public class NoticeStoreServiceTest {
     @DisplayName("Fix bug NumberFormatException: For input string: \"19  \"")
     void testFixBug1() {
         List<Criterion> criteria = new LinkedList<>();
-        List<String> rcr = Arrays.asList("661362104");
+        List<String> rcr = Collections.singletonList("661362104");
         List<String> rcr_operator = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr("SAUF",rcr,rcr_operator);
         criteria.add(criterionRcr);
@@ -177,7 +174,7 @@ public class NoticeStoreServiceTest {
         CriterionTitleWords titleWords = new CriterionTitleWords(titleWord, titleOperators);
         criteresNotices.add(titleWords);
 
-        List<String> rcr = Arrays.asList("341725201");
+        List<String> rcr = Collections.singletonList("341725201");
         List<String> rcrOperators = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr(rcr, rcrOperators);
         criteresNotices.add(criterionRcr);
