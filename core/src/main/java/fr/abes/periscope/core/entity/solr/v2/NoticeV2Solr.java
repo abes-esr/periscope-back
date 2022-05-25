@@ -158,6 +158,10 @@ public class NoticeV2Solr implements Serializable {
     @Indexed(name = NoticeV2SolrField.PCP_LIST)
     protected Set<String> pcpList = new HashSet<>();
 
+    @Field(NoticeV2SolrField.STATUT_LIST)
+    @Indexed(name = NoticeV2SolrField.STATUT_LIST)
+    protected Set<String> statutList = new HashSet<>();
+
     @ChildDocument
     private Set<ItemSolr> items = new HashSet<>();
 

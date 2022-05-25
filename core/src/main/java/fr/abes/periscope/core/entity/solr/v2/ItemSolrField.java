@@ -12,6 +12,7 @@ public abstract class ItemSolrField {
     // Zone 930
     public static final String PCP = "zone_930$z_t";
     public static final String RCR = "zone_930$b";
+    public static final String STATUT = "zone_930$p";
     //--------------------------------
 
     public static final String PPN_PARENT = "ppn_parent";

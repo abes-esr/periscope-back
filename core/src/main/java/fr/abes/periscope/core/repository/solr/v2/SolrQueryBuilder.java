@@ -84,6 +84,12 @@ public class SolrQueryBuilder {
                 Criteria issnQuery = buildIssnQuery((CriterionIssn) criterion);
                 filterQuery.addCriteria(issnQuery);
             }
+
+            //bloc de critère Statut de la bibliothèque
+            if (criterion instanceof CriterionStatutBib) {
+                Criteria statutBibQuery = buildStatutBibQuery((CriterionStatutBib) criterion);
+                filterQuery.addCriteria(statutBibQuery);
+            }
         });
 
         return filterQuery.getCriteria();
@@ -466,6 +472,18 @@ public class SolrQueryBuilder {
             myCriteria = myCriteria.or(NoticeV2SolrField.ISSN).is(value);
         }
 
+        return getBlocOperator(criterion, myCriteria);
+    }
+
+    /**
+     * Construit la requête SolR à partir d'un critère de recherche par Statut de bibliothèque
+     *
+     * @param criterion Le critère de recherche par statut de bibliothèque
+     * @return Criteria Requête SolR
+     */
+    private Criteria buildStatutBibQuery(CriterionStatutBib criterion) {
+        String statut = criterion.getStatutBibliotheque();
+        Criteria myCriteria = new Criteria(NoticeV2SolrField.STATUT_LIST).is(statut);
         return getBlocOperator(criterion, myCriteria);
     }
 
