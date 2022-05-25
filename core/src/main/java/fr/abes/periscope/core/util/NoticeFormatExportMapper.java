@@ -1,6 +1,8 @@
 package fr.abes.periscope.core.util;
 
-import fr.abes.periscope.core.entity.*;
+import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
+import fr.abes.periscope.core.entity.solr.PublicationYear;
+import fr.abes.periscope.core.entity.solr.SupportType;
 import fr.abes.periscope.core.entity.visualisation.*;
 import fr.abes.periscope.core.entity.xml.DataField;
 import fr.abes.periscope.core.entity.xml.NoticeXml;
@@ -10,8 +12,6 @@ import fr.abes.periscope.core.exception.IllegalHoldingException;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import fr.abes.periscope.core.exception.MissingFieldException;
 import lombok.extern.slf4j.Slf4j;
-import net.sf.saxon.Err;
-import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Converter;
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
@@ -30,9 +30,12 @@ import java.util.*;
 @Component
 @Slf4j
 public class NoticeFormatExportMapper {
+    private UtilsMapper utilsMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public NoticeFormatExportMapper(UtilsMapper utilsMapper) {
+        this.utilsMapper = utilsMapper;
+    }
 
     /**
      * Convertisseur pour les notices XML vers les notices de visualisation
@@ -50,7 +53,7 @@ public class NoticeFormatExportMapper {
                     // Champ type de support
                     target.setSupportType(extractSupportType(source.getLeader().substring(6, 7)));
                     // Champs PPN
-                    target.setPpn(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().orElseThrow().getValue());
+                    target.setPpn(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().get().getValue());
 
                     for (int currentPass = 1; currentPass < maxPass + 1; currentPass++) {
 
@@ -76,7 +79,7 @@ public class NoticeFormatExportMapper {
 
                                         // Extraction de la date de début
                                         try {
-                                            PublicationYear year = buildStartPublicationYear(value);
+                                            PublicationYear year = utilsMapper.buildStartPublicationYear(value);
                                             target.setStartYear(year);
                                         } catch (IllegalPublicationYearException e) {
                                             log.debug("Unable to parse start publication year :" + e.getLocalizedMessage());
@@ -85,7 +88,7 @@ public class NoticeFormatExportMapper {
 
                                         // Extraction de la date de fin
                                         try {
-                                            PublicationYear year = buildEndPublicationYear(value);
+                                            PublicationYear year = utilsMapper.buildEndPublicationYear(value);
                                             target.setEndYear(year);
                                         } catch (IllegalPublicationYearException e) {
                                             log.debug("Unable to parse end publication year :" + e.getLocalizedMessage());
@@ -143,14 +146,13 @@ public class NoticeFormatExportMapper {
 
                             // Zone 210
                             if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("210")) {
-                                for (SubField subField : dataField.getSubFields()) {
-                                    // zone 210-c
-                                    if (subField.getCode().equalsIgnoreCase("c") && (target.getEditor() == null)) {
-                                        target.setEditor(subField.getValue());
-                                    }
-                                }
+                                extractPublisherAndCity(target, dataField);
                             }
 
+                            //Zone 214
+                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("214")) {
+                                extractPublisherAndCity(target, dataField);
+                            }
                             // Zone 530
                             if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("530")) {
 
@@ -226,14 +228,33 @@ public class NoticeFormatExportMapper {
 
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
-     * Méthode permettant de générer une séquence d'un état de collection contenu dans une 955 du format d'export
+     * extrait l'editeur et la ville de la zone 214 et 210 en prendant en priorité la 214.
+     * @param target
+     * @param dataField
+     */
+    private void extractPublisherAndCity(NoticeVisu target, DataField dataField) {
+        for (SubField subField : dataField.getSubFields()) {
+            // zone 210-c  & 214-c
+            if (subField.getCode().equalsIgnoreCase("c")) {
+                target.setPublisher(subField.getValue());
+            }
+            // zone 210-a & 214-a
+            if (subField.getCode().equalsIgnoreCase("a")) {
+                target.setCity(subField.getValue());
+            }
+        }
+    }
+
+    /**
+     * Méthode permettant de générer les séquences d'un état de collection contenu dans une 955 du format d'export
      *
+     * @param holding   : l'objet représentant les états de collection de la notice qui sera alimenté avec les séquences de la 955 parsée
      * @param dataField : la zone 955 à parser
-     * @return : la sequence générée
+     *
      * @throws IllegalHoldingException si une erreur est détectée dans la 955
      */
     protected void processEtatCollection(Holding holding, DataField dataField) throws IllegalHoldingException {
@@ -242,22 +263,21 @@ public class NoticeFormatExportMapper {
 
         // Prorpiété d'une séquence continue
         Integer startYear = null;
-        Integer startMonth = null;
-        Integer startDay = null;
         String startVolume = null;
         String startNumero = null;
 
         Integer endYear = null;
-        Integer endMonth = null;
-        Integer endtDay = null;
         String endNumero = null;
         String endVolume = null;
 
         boolean ouvert = false;
 
         // Compteurs d'occurence des balises
+        //compteur de volumes
         int aCount = 0;
+        //compteur de numéro
         int bCount = 0;
+        //compteur de date de début / date de fin
         int iCount = 0;
 
         boolean erreur = false;
@@ -305,26 +325,7 @@ public class NoticeFormatExportMapper {
                             }
                             bCount++;
                         }
-                        //mois
-                        if (subField.getCode().equalsIgnoreCase("j")) {
-                            try {
-                                if (iCount == 0) { //Première fois qu'on rencontre la balise
-                                    startMonth = getMoisFromEnum(subField.getValue().trim());
-                                } else if (iCount == 1) {
-                                    endMonth = getMoisFromEnum(subField.getValue().trim());
-                                }
-                            } catch (IllegalDateException ex) {
-                                erreur = true;
-                            }
-                        }
-                        //jour
-                        if (subField.getCode().equalsIgnoreCase("k")) {
-                            if (iCount == 0) { //Première fois qu'on rencontre la balise
-                                startDay = Integer.parseInt(subField.getValue().trim());
-                            } else if (iCount == 1) {
-                                endtDay = Integer.parseInt(subField.getValue().trim());
-                            }
-                        }
+
                         //annee
                         if (subField.getCode().equalsIgnoreCase("i")) {
                             if (iCount == 0) { //Première fois qu'on rencontre la balise
@@ -348,10 +349,12 @@ public class NoticeFormatExportMapper {
             // La date de début a été trouvé
             //on ajout la séquence uniquement si elle a une date de début pour gérer le cas ou la 955 n'a que des sous zones de note
             try {
-                SequenceContinue sequence = new SequenceContinue(startYear, startMonth, startDay, startVolume, startNumero, ouvert);
+                SequenceContinue sequence = new SequenceContinue(startYear, startVolume, startNumero, ouvert);
                 if (iCount >= 2) {
                     // La date de fin a été trouvé
-                    sequence.setEndDate(endYear, endMonth, endtDay, endVolume, endNumero);
+                    sequence.setEndDate(endYear);
+                    sequence.setEndNumero(endNumero);
+                    sequence.setEndVolume(endVolume);
                 }
                 if (erreur) {
                     SequenceError sequenceError = new SequenceError(sequence, "Erreur dans la saisie du mois");
@@ -370,13 +373,18 @@ public class NoticeFormatExportMapper {
         }
     }
 
+    /**
+     * Méthode permettant de générer générer les séquences lacunaires d'une 959
+     *
+     * @param holding   : objet réprésentant les états de collection de la notice dans lequel seront ajoutées les séquences lacunaires
+     * @param dataField : la zone parsée pour extraire les séquences lacunaires
+     * @throws IllegalHoldingException
+     */
     void processLacunes(Holding holding, DataField dataField) throws IllegalHoldingException {
         Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
 
         // Prorpiété d'une séquence continue
         Integer startYear = null;
-        Integer startMonth = null;
-        Integer startDay = null;
         String volume = null;
         String numero = null;
 
@@ -396,7 +404,7 @@ public class NoticeFormatExportMapper {
                         if (subField.getCode().equals("0")) {
                             //si on arrive sur une $0, on crée un nouveau bloc
                             if (!error) {
-                                SequenceLacune sequence = new SequenceLacune(startYear, startMonth, startDay, volume, numero);
+                                SequenceLacune sequence = new SequenceLacune(startYear, volume, numero);
                                 holding.addSequence(sequence);
                             }
                         }
@@ -405,12 +413,6 @@ public class NoticeFormatExportMapper {
                         }
                         if (subField.getCode().equalsIgnoreCase("e")) {
                             numero = subField.getValue();
-                        }
-                        if (subField.getCode().equalsIgnoreCase("c")) {
-                            startMonth = getMoisFromEnum(subField.getValue());
-                        }
-                        if (subField.getCode().equalsIgnoreCase("b")) {
-                            startDay = Integer.parseInt(subField.getValue());
                         }
                         if (subField.getCode().equalsIgnoreCase("a")) {
                             startYear = Integer.parseInt(subField.getValue());
@@ -426,176 +428,14 @@ public class NoticeFormatExportMapper {
 
         if (error) {
             if (startYear != null) {
-                SequenceError sequenceError = new SequenceError(startYear, startMonth, startDay, errorMessage);
+                SequenceError sequenceError = new SequenceError(startYear, errorMessage);
                 holding.addSequence(sequenceError);
             }
         } else {
             //ajout du dernier bloc qui n'est pas ajouté en début de boucle
-            Sequence sequence = new SequenceLacune(startYear, startMonth, startDay, volume, numero);
+            Sequence sequence = new SequenceLacune(startYear, volume, numero);
             holding.addSequence(sequence);
         }
-    }
-
-    private Integer getMoisFromEnum(String value) throws IllegalDateException {
-        switch (value) {
-            case "jan":
-                return Calendar.JANUARY;
-            case "fev":
-                return Calendar.FEBRUARY;
-            case "mar":
-                return Calendar.MARCH;
-            case "avr":
-                return Calendar.APRIL;
-            case "mai":
-                return Calendar.MAY;
-            case "jun":
-                return Calendar.JUNE;
-            case "jul":
-                return Calendar.JULY;
-            case "aou":
-                return Calendar.AUGUST;
-            case "sep":
-                return Calendar.SEPTEMBER;
-            case "oct":
-                return Calendar.OCTOBER;
-            case "nov":
-                return Calendar.NOVEMBER;
-            case "dec":
-                return Calendar.DECEMBER;
-            default:
-                throw new IllegalDateException("Erreur dans la sous zone 'mois' " + value);
-        }
-    }
-
-    /**
-     * Extrait l'année de début de publication
-     *
-     * @param value zone
-     * @return PublicationYear Année de début de publication
-     * @throws IllegalPublicationYearException si l'année de publication ne peut pas être décodée
-     */
-    public PublicationYear buildStartPublicationYear(String value) throws IllegalPublicationYearException {
-        String yearCode = value.substring(8, 9);
-        String candidateYear;
-        switch (yearCode) {
-            case "b":
-            case "a":
-            case "c":
-            case "d":
-            case "e":
-            case "g":
-            case "h":
-            case "i":
-            case "j":
-                candidateYear = value.substring(9, 13);
-                return extractDate(candidateYear);
-            case "f":
-                String candidateOldestYear = value.substring(9, 13);
-                String candidateNewestYear = value.substring(13, 17);
-                return extractCaseF(candidateOldestYear, candidateNewestYear);
-            default:
-                throw new IllegalPublicationYearException("Unable to decode year code " + yearCode);
-        }
-
-    }
-
-    /**
-     * Extrait l'année de fin de publication
-     *
-     * @param value zone
-     * @return PublicationYear Année de fin de publication
-     * @throws IllegalPublicationYearException si l'année de publication ne peut pas être décodée
-     */
-    public PublicationYear buildEndPublicationYear(String value) throws IllegalPublicationYearException {
-        String yearCode = value.substring(8, 9);
-        String candidateYear;
-
-        switch (yearCode) {
-            case "b":
-                candidateYear = value.substring(13, 17);
-                return extractDate(candidateYear);
-            case "a":
-                candidateYear = value.substring(13, 17);
-                if (candidateYear.equals("9999")) {
-                    return new PublicationYear(); // Année nulle par défaut
-                } else
-                    throw new IllegalPublicationYearException("Unable to decode end year code " + yearCode);
-            case "c":
-            case "d":
-                candidateYear = value.substring(13, 17);
-                if (candidateYear.equals("    ")) {
-                    return new PublicationYear(); // Année nulle par défaut
-                } else
-                    throw new IllegalPublicationYearException("Unable to decode end year code " + yearCode);
-            case "e":
-            case "f":
-            case "h":
-            case "i":
-            case "j":
-                return new PublicationYear();
-            case "g":
-                candidateYear = value.substring(13, 17);
-                if (candidateYear.equals("9999")) {
-                    return new PublicationYear(); // Année nulle par défaut
-                } else {
-                    return extractDate(candidateYear);
-                }
-            default:
-                throw new IllegalPublicationYearException("Unable to decode year code " + yearCode);
-        }
-    }
-
-    /**
-     * Extrait la date de publication
-     *
-     * @param candidateYear
-     * @return
-     * @throws IllegalPublicationYearException
-     */
-    private PublicationYear extractDate(String candidateYear) throws IllegalPublicationYearException {
-        PublicationYear year = new PublicationYear();
-        if (candidateYear.equals("    ")) return year;
-        if (candidateYear.charAt(2) == ' ' && candidateYear.charAt(3) == ' ') {
-            year.setYear(candidateYear.substring(0, 2) + "XX");
-            year.setConfidenceIndex(100);
-        } else if (candidateYear.charAt(2) == ' ') {
-            new IllegalPublicationYearException("Unable to decode year format like" + candidateYear);
-
-        } else if (candidateYear.charAt(3) == ' ') {
-            year.setYear(candidateYear.substring(0, 3) + "X");
-            year.setConfidenceIndex(10);
-        } else {
-            year.setYear(candidateYear.substring(0, 4));
-            year.setConfidenceIndex(0);
-        }
-        return year;
-    }
-
-    /**
-     * Extrait le cas F
-     *
-     * @param candidateOldestYear
-     * @param candidateNewestYear
-     * @return
-     * @throws IllegalPublicationYearException
-     */
-    private PublicationYear extractCaseF(String candidateOldestYear, String candidateNewestYear) throws IllegalPublicationYearException {
-        int cdtOldestYear = (candidateOldestYear.equals("    ")) ? 0 : Integer.parseInt(candidateOldestYear.trim());
-        int cdtNewestYear = (candidateNewestYear.equals("    ")) ? 9999 : Integer.parseInt(candidateNewestYear.trim());
-        PublicationYear year = new PublicationYear();
-        if (cdtOldestYear > cdtNewestYear) {
-            throw new IllegalPublicationYearException("Oldest Year can't be superior to newest Year");
-        }
-        if (cdtOldestYear == 0) {
-            year.setYear(candidateNewestYear);
-        } else {
-            year.setYear(candidateOldestYear);
-        }
-        if (cdtNewestYear != 9999 && cdtOldestYear != 0)
-            year.setConfidenceIndex(cdtNewestYear - cdtOldestYear);
-        else
-            year.setConfidenceIndex(0);
-        return year;
     }
 
     /**
@@ -630,59 +470,48 @@ public class NoticeFormatExportMapper {
         }
     }
 
-    protected Period extractFrequency(String value) {
+    protected String extractFrequency(String value) {
+        if (value == null)
+            return Frequency.U;
         switch (value.toUpperCase()) {
             case "A":
-                // Quotidienne
-                return Period.ofDays(1);
+                return Frequency.A;
             case "B":
-                // Bihebdomadaire
-                return Period.ofDays(3);
+                return Frequency.B;
             case "C":
-                // Hebdomadaire
-                return Period.ofDays(7);
+                return Frequency.C;
             case "D":
-                // Toutes les deux semaines
-                return Period.ofWeeks(2);
+                return Frequency.D;
             case "E":
-                // Bimensuelle
-                return Period.ofWeeks(2);
+                return Frequency.E;
             case "F":
-                // Mensuelle
-                return Period.ofMonths(1);
+                return Frequency.F;
             case "G":
-                // Bimestrielle
-                return Period.ofMonths(2);
+                return Frequency.G;
             case "H":
-                // Trimestrielle
-                return Period.ofMonths(3);
+                return Frequency.H;
             case "I":
-                // Trois fois par an
-                return Period.ofMonths(4);
+                return Frequency.I;
             case "J":
-                // Semestrielle
-                return Period.ofMonths(4);
+                return Frequency.J;
             case "K":
-                return Period.ZERO;
+                return Frequency.K;
             case "L":
-                return Period.ZERO;
+                return Frequency.L;
             case "M":
-                return Period.ZERO;
+                return Frequency.M;
             case "N":
-                return Period.ZERO;
+                return Frequency.N;
             case "O":
-                return Period.ZERO;
+                return Frequency.O;
             case "P":
-                return Period.ZERO;
+                return Frequency.P;
             case "U":
-                return Period.ZERO;
+                return Frequency.U;
             case "Y":
-                return Period.ZERO;
-            case "Z":
-                // Autre
-                return Period.ZERO;
+                return Frequency.Y;
             default:
-                return Period.ZERO;
+                return Frequency.Z;
         }
     }
 

@@ -1,23 +1,15 @@
 package fr.abes.periscope.core.util;
 
-import fr.abes.periscope.core.entity.*;
-import fr.abes.periscope.core.entity.v1.NoticeV1;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
-import fr.abes.periscope.core.entity.v2.NoticeV2;
-import fr.abes.periscope.core.entity.v2.solr.ItemSolr;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
-import fr.abes.periscope.core.entity.visualisation.Holding;
-import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
-import fr.abes.periscope.core.entity.visualisation.SequenceContinue;
-import fr.abes.periscope.core.entity.visualisation.SequenceLacune;
-import fr.abes.periscope.core.entity.xml.DataField;
-import fr.abes.periscope.core.entity.xml.NoticeXml;
-import fr.abes.periscope.core.entity.xml.SubField;
-import fr.abes.periscope.core.exception.IllegalHoldingException;
+import fr.abes.periscope.core.entity.solr.Item;
+import fr.abes.periscope.core.entity.solr.Notice;
+import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
+import fr.abes.periscope.core.entity.solr.PublicationYear;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1Solr;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2Solr;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
-import fr.abes.periscope.core.exception.MissingFieldException;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.EnumUtils;
 import org.modelmapper.Converter;
 import org.modelmapper.MappingException;
 import org.modelmapper.ModelMapper;
@@ -35,9 +27,10 @@ import java.util.*;
 @Component
 @Slf4j
 public class NoticeSolRMapper {
+    private final UtilsMapper utilsMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
+    public NoticeSolRMapper(UtilsMapper utilsMapper) { this.utilsMapper = utilsMapper; }
 
     /**
      * Convertisseur pour les notices SolR V1 vers les notices PERISCOPE
@@ -55,7 +48,6 @@ public class NoticeSolRMapper {
 
                     target.setPpn(source.getPpn());
                     target.setIssn((source.getIssn()));
-                    target.setPcpList(source.getPcpList());
                     target.setRcrList(source.getRcrList());
                     target.setPublisher(source.getEditor());
                     target.setKeyTitle(source.getKeyTitle());
@@ -68,7 +60,7 @@ public class NoticeSolRMapper {
 
                     // Extraction de la date de début
                     try {
-                        PublicationYear year = buildStartPublicationYear(source.getProcessingGlobalData());
+                        PublicationYear year = utilsMapper.buildStartPublicationYear(source.getProcessingGlobalData());
                         target.setStartYear(year);
                     } catch (IllegalPublicationYearException e) {
                         log.debug("Unable to parse start publication year :" + e.getLocalizedMessage());
@@ -77,7 +69,7 @@ public class NoticeSolRMapper {
 
                     // Extraction de la date de fin
                     try {
-                        PublicationYear year = buildEndPublicationYear(source.getProcessingGlobalData());
+                        PublicationYear year = utilsMapper.buildEndPublicationYear(source.getProcessingGlobalData());
                         target.setEndYear(year);
                     } catch (IllegalPublicationYearException e) {
                         log.debug("Unable to parse end publication year :" + e.getLocalizedMessage());
@@ -99,7 +91,7 @@ public class NoticeSolRMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -120,6 +112,7 @@ public class NoticeSolRMapper {
                     target.setIssn((source.getIssn()));
                     target.setPublisher(source.getEditorForDisplay());
                     target.setKeyTitle(source.getKeyTitle());
+                    target.setKeyTitleQualifer(source.getKeyTitleQualifer());
                     target.setKeyShortedTitle(source.getKeyShortedTitleForDisplay());
                     target.setProperTitle(source.getProperTitleForDisplay());
                     target.setTitleFromDifferentAuthor(source.getTitleFromDifferentAuthorForDisplay());
@@ -142,18 +135,20 @@ public class NoticeSolRMapper {
                     target.setMirabelURL(extractMirabelURL(source.getExternalURLs()));
 
                     target.setNbLocation(source.getNbLocation());
+                    target.setNbPcp(source.getNbPcp());
+                    target.setPcpList(source.getPcpList());
 
-                    Iterator<ItemSolr> itemIterator = source.getItems().iterator();
-                    while(itemIterator.hasNext()) {
-                        ItemSolr itemSolR = itemIterator.next();
-                        Item item = new Item(itemSolR.getEpn());
+                    source.getItems().forEach(itemSolr -> {
+                        //NB : la 930 $b est obligatoire, mais certains cas ont remonté une absence de rcr
+                        if (itemSolr.getRcr() != null) {
+                            Item item = new Item(itemSolr.getEpn());
+                            item.setPpn(itemSolr.getPpn());
+                            item.setRcr(itemSolr.getRcr());
+                            item.setPcp(itemSolr.getPcp());
 
-                        item.setPpn(itemSolR.getPpn());
-                        item.setRcr(itemSolR.getRcr());
-                        item.setPcp(itemSolR.getPcp());
-
-                        target.addItem(item);
-                    }
+                            target.addItem(item);
+                        }
+                    });
 
                     return target;
 
@@ -162,135 +157,10 @@ public class NoticeSolRMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
-    /**
-     * Extrait l'année de début de publication
-     * @param value zone
-     * @return PublicationYear Année de début de publication
-     * @throws IllegalPublicationYearException si l'année de publication ne peut pas être décodée
-     */
-    public PublicationYear buildStartPublicationYear(String value) throws IllegalPublicationYearException {
-        String yearCode = value.substring(8, 9);
-        String candidateYear;
-        switch (yearCode) {
-            case "b":
-            case "a":
-            case "c":
-            case "d":
-            case "e":
-            case "g":
-            case "h":
-            case "i":
-            case "j":
-                candidateYear = value.substring(9, 13);
-                return extractDate(candidateYear);
-            case "f":
-                String candidateOldestYear = value.substring(9, 13);
-                String candidateNewestYear = value.substring(13, 17);
-                return extractCaseF(candidateOldestYear, candidateNewestYear);
-            default:
-                throw new IllegalPublicationYearException("Unable to decode year code " + yearCode);
-        }
 
-    }
-
-    /**
-     * Extrait l'année de fin de publication
-     * @param value zone
-     * @return PublicationYear Année de fin de publication
-     * @throws IllegalPublicationYearException si l'année de publication ne peut pas être décodée
-     */
-    public PublicationYear buildEndPublicationYear(String value) throws IllegalPublicationYearException {
-        String yearCode = value.substring(8, 9);
-        String candidateYear;
-
-        switch (yearCode) {
-            case "b":
-                candidateYear = value.substring(13, 17);
-                return extractDate(candidateYear);
-            case "a":
-                candidateYear = value.substring(13, 17);
-                if (candidateYear.equals("9999")) {
-                    return new PublicationYear(); // Année nulle par défaut
-                } else
-                    throw new IllegalPublicationYearException("Unable to decode end year code " + yearCode);
-            case "c":
-            case "d":
-                candidateYear = value.substring(13, 17);
-                if (candidateYear.equals("    ")) {
-                    return new PublicationYear(); // Année nulle par défaut
-                } else
-                    throw new IllegalPublicationYearException("Unable to decode end year code " + yearCode);
-            case "e":
-            case "f":
-            case "h":
-            case "i":
-            case "j":
-                return new PublicationYear();
-            case "g":
-                candidateYear = value.substring(13, 17);
-                if (candidateYear.equals("9999")) {
-                    return new PublicationYear(); // Année nulle par défaut
-                } else {
-                    return extractDate(candidateYear);
-                }
-            default:
-                throw new IllegalPublicationYearException("Unable to decode year code " + yearCode);
-        }
-    }
-
-    /**
-     * Extrait la date de publication
-     * @param candidateYear
-     * @return
-     * @throws IllegalPublicationYearException
-     */
-    private PublicationYear extractDate(String candidateYear) throws IllegalPublicationYearException {
-        PublicationYear year = new PublicationYear();
-        if (candidateYear.equals("    ")) return year;
-        if (candidateYear.charAt(2) == ' ' && candidateYear.charAt(3) == ' ') {
-            year.setYear(candidateYear.substring(0, 2) + "XX");
-            year.setConfidenceIndex(100);
-        } else if (candidateYear.charAt(2) == ' ') {
-            new IllegalPublicationYearException("Unable to decode year format like" + candidateYear);
-
-        } else if (candidateYear.charAt(3) == ' ') {
-            year.setYear(candidateYear.substring(0, 3) + "X");
-            year.setConfidenceIndex(10);
-        } else {
-            year.setYear(candidateYear.substring(0, 4));
-            year.setConfidenceIndex(0);
-        }
-        return year;
-    }
-
-    /**
-     * Extrait le cas F
-     * @param candidateOldestYear
-     * @param candidateNewestYear
-     * @return
-     * @throws IllegalPublicationYearException
-     */
-    private PublicationYear extractCaseF(String candidateOldestYear, String candidateNewestYear) throws IllegalPublicationYearException {
-        int cdtOldestYear = (candidateOldestYear.equals("    ")) ? 0 : Integer.parseInt(candidateOldestYear.trim());
-        int cdtNewestYear = (candidateNewestYear.equals("    ")) ? 9999 : Integer.parseInt(candidateNewestYear.trim());
-        PublicationYear year = new PublicationYear();
-        if (cdtOldestYear > cdtNewestYear) {
-            throw new IllegalPublicationYearException("Oldest Year can't be superior to newest Year");
-        }
-        if (cdtOldestYear == 0) {
-            year.setYear(candidateNewestYear);
-        } else {
-            year.setYear(candidateOldestYear);
-        }
-        if (cdtNewestYear != 9999 && cdtOldestYear != 0)
-            year.setConfidenceIndex(cdtNewestYear - cdtOldestYear);
-        else
-            year.setConfidenceIndex(0);
-        return year;
-    }
 
 
     /**

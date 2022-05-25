@@ -1,4 +1,4 @@
-package fr.abes.periscope.core.entity.v2.solr;
+package fr.abes.periscope.core.entity.solr.v2;
 
 /**
  * Représente les champs SolR pour un Exemplaire SolR
@@ -10,7 +10,7 @@ public abstract class ItemSolrField {
 
     //--------------------------------
     // Zone 930
-    public static final String PCP = "zone_930$z";
+    public static final String PCP = "zone_930$z_t";
     public static final String RCR = "zone_930$b";
     //--------------------------------
 

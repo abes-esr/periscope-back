@@ -1,17 +1,16 @@
 package fr.abes.periscope.core.service;
 
 import fr.abes.periscope.core.criterion.Criterion;
+import fr.abes.periscope.core.criterion.CriterionFacette;
 import fr.abes.periscope.core.criterion.CriterionSort;
-import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.v1.NoticeV1;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1Solr;
-import fr.abes.periscope.core.entity.v2.NoticeV2;
-import fr.abes.periscope.core.entity.v2.solr.FacetteSolr;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
-import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
+import fr.abes.periscope.core.entity.solr.Notice;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1Solr;
+import fr.abes.periscope.core.entity.solr.v2.FacetteSolr;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2Solr;
+import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
 import fr.abes.periscope.core.repository.solr.v1.NoticeSolrV1Repository;
 import fr.abes.periscope.core.repository.solr.v2.NoticeSolrV2Repository;
-import fr.abes.periscope.core.util.NoticeMapper;
+import fr.abes.periscope.core.util.UtilsMapper;
 import fr.abes.periscope.core.util.TYPE_NOTICE;
 import fr.abes.periscope.core.util.TrackExecutionTime;
 import lombok.Data;
@@ -34,17 +33,17 @@ import java.util.*;
 @Data
 public class NoticeStoreService {
 
-    private NoticeSolrV1Repository noticeV1Repository;
-    private NoticeSolrV2Repository noticeV2Repository;
-    private NoticeMapper noticeMapper;
+    private final NoticeSolrV1Repository noticeV1Repository;
+    private final NoticeSolrV2Repository noticeV2Repository;
+    private final UtilsMapper utilsMapper;
 
     private static final String DEFAULT_REPOSITORY = "v1";
 
     @Autowired
-    public NoticeStoreService(NoticeMapper mapper, NoticeSolrV1Repository noticeV1Repository, NoticeSolrV2Repository noticeV2Repository) {
+    public NoticeStoreService(UtilsMapper mapper, NoticeSolrV1Repository noticeV1Repository, NoticeSolrV2Repository noticeV2Repository) {
         this.noticeV1Repository = noticeV1Repository;
         this.noticeV2Repository = noticeV2Repository;
-        this.noticeMapper = mapper;
+        this.utilsMapper = mapper;
     }
 
     /**
@@ -67,10 +66,10 @@ public class NoticeStoreService {
         switch (repository) {
             case "v1":
                 List<NoticeV1Solr> noticesV1 = noticeV1Repository.findNoticesByCriteria(criteria, Sort.by(orders), PageRequest.of(page, size));
-                return noticeMapper.mapList(noticesV1, Notice.class);
+                return utilsMapper.mapList(noticesV1, Notice.class);
             case "v2":
                 List<NoticeV2Solr> noticesV2 = noticeV2Repository.findNoticesByCriteria(criteria, Sort.by(orders), PageRequest.of(page, size));
-                return noticeMapper.mapList(noticesV2, Notice.class);
+                return utilsMapper.mapList(noticesV2, Notice.class);
             default:
                 throw new IllegalArgumentException("Unable to decode repository :" + repository);
         }
@@ -97,12 +96,13 @@ public class NoticeStoreService {
      *
      * @param criteriaNotice les critères de recherche
      * @param facettes       liste des facettes (uniquement sur des zones de la notice bibliographique)
+     * @param facetteFilter liste des filtres à appliquer aux facettes sélectionnées
      * @param criterionSorts les critères de tri
      * @param page           numéro de page
      * @param size           nombre d'élément par page
      * @return list de résultat comprendre la liste des notices, la liste des facettes et le nombre de page total du jeu de résultat
      */
-    public ResultSolr findNoticesWithFacets(List<Criterion> criteriaNotice, List<String> facettes, List<CriterionSort> criterionSorts, int page, int size) {
+    public ResultSolr findNoticesWithFacets(List<Criterion> criteriaNotice, List<String> facettes, List<CriterionFacette> facetteFilter, List<CriterionSort> criterionSorts, int page, int size) {
         List<Criterion> criteresBiblio = new LinkedList<>();
         List<Criterion> criteresExemp = new LinkedList<>();
         List<Sort.Order> orders = new ArrayList<>();
@@ -116,7 +116,7 @@ public class NoticeStoreService {
                 criteresExemp.add(c);
             }
         });
-        FacetPage<NoticeV2Solr> noticesWithFacet = noticeV2Repository.findNoticesWithFacetQuery(criteresBiblio, criteresExemp, facettes, Sort.by(orders), PageRequest.of(page, size));
+        FacetPage<NoticeV2Solr> noticesWithFacet = noticeV2Repository.findNoticesWithFacetQuery(criteresBiblio, criteresExemp, facettes, facetteFilter, Sort.by(orders), PageRequest.of(page, size));
 
         return getResultFromQueryFacet(noticesWithFacet, size);
     }
@@ -129,7 +129,7 @@ public class NoticeStoreService {
      */
     private ResultSolr getResultFromQueryFacet(FacetPage<NoticeV2Solr> noticesWithFacet, Integer size) {
         ResultSolr result = new ResultSolr();
-        result.setNotices(noticeMapper.mapList(noticesWithFacet.getContent(), Notice.class));
+        result.setNotices(utilsMapper.mapList(noticesWithFacet.getContent(), Notice.class));
         result.setNbPages(size == 0 ? 1 : (int)Math.ceil((double)noticesWithFacet.getTotalElements() / (double)size));
         result.setNbNotices(noticesWithFacet.getTotalElements());
 

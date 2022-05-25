@@ -1,20 +1,16 @@
 package fr.abes.periscope.core.entity.visualisation;
 
-import fr.abes.periscope.core.entity.Notice;
+import fr.abes.periscope.core.entity.solr.Notice;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.Period;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Getter
 @Setter
 public class NoticeVisu extends Notice {
-
-    private String editor;
-
     private String keyShortedTitle;
 
     private String properTitle;
@@ -29,22 +25,13 @@ public class NoticeVisu extends Notice {
 
     private String keyTitleQualifer;
 
-    private String language;
+    private String frequency;
 
-    private String country;
-
-    private String keyTitle;
-
-    private Period frequency;
-
-    private String continuousType;
-
-    private String supportType;
+    private String city;
 
     protected Set<Holding> holdings = new HashSet<>();
 
     public void addHolding(Holding holding) {
-        holding.updateSequenceWithFrequency(frequency);
         this.holdings.add(holding);
     }
 

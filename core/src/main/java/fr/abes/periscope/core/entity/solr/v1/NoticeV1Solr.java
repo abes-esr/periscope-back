@@ -1,7 +1,6 @@
-package fr.abes.periscope.core.entity.v1.solr;
+package fr.abes.periscope.core.entity.solr.v1;
 
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.solr.core.mapping.Indexed;

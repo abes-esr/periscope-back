@@ -1,10 +1,7 @@
-package fr.abes.periscope.core.entity;
+package fr.abes.periscope.core.entity.solr;
 
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * Représente une Notice au format Periscope
@@ -19,8 +16,6 @@ public abstract class Notice {
     protected String publisher;
 
     protected String keyTitle;
-
-    protected Set<String> pcpList = new HashSet<>();
 
     protected String continuousType;
 

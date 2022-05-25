@@ -1,4 +1,4 @@
-package fr.abes.periscope.core.entity.v2.solr;
+package fr.abes.periscope.core.entity.solr.v2;
 
 import lombok.Data;
 

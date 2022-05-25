@@ -1,26 +1,22 @@
-package fr.abes.periscope.core.repository.solr;
+package fr.abes.periscope.core.service;
 
 import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.EnableOnIntegrationTest;
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.OnGoingResourceType;
-import fr.abes.periscope.core.entity.v1.NoticeV1;
-import fr.abes.periscope.core.entity.v2.NoticeV2;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
-import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
-import fr.abes.periscope.core.service.NoticeStoreService;
-import org.junit.Assert;
+import fr.abes.periscope.core.entity.solr.Notice;
+import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Sort;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -69,7 +65,7 @@ public class NoticeStoreServiceTest {
 
         Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
 
-        Assert.assertEquals(expectedType,candidate.getContinuousType());
+        Assertions.assertEquals(expectedType,candidate.getContinuousType());
 
     }
 
@@ -89,7 +85,7 @@ public class NoticeStoreServiceTest {
 
         Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
 
-        Assert.assertEquals(expectedType,candidate.getMirabelURL());
+        Assertions.assertEquals(expectedType,candidate.getMirabelURL());
     }
 
     /**
@@ -108,7 +104,7 @@ public class NoticeStoreServiceTest {
 
         Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
 
-        Assert.assertEquals(expectedType,candidate.getMirabelURL());
+        Assertions.assertEquals(expectedType,candidate.getMirabelURL());
     }
 
     /**
@@ -127,14 +123,14 @@ public class NoticeStoreServiceTest {
 
         Notice candidate = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
 
-        Assert.assertEquals(expected,candidate.getNbLocation());
+        Assertions.assertEquals(expected,candidate.getNbLocation());
     }
 
     @Test
     @DisplayName("Fix bug NumberFormatException: For input string: \"19  \"")
     void testFixBug1() {
         List<Criterion> criteria = new LinkedList<>();
-        List<String> rcr = Arrays.asList("661362104");
+        List<String> rcr = Collections.singletonList("661362104");
         List<String> rcr_operator = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr("SAUF",rcr,rcr_operator);
         criteria.add(criterionRcr);
@@ -156,7 +152,7 @@ public class NoticeStoreServiceTest {
         criteria.add(criterion);
 
         NoticeV1 candidatev1 = (NoticeV1) noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
-        String expected = candidatev1.getKeyTitleQualifer();
+        String expected = candidatev1.getKeyTitle();
 
         List<Criterion> criteria1 = new LinkedList<>();
         List<String> ppnParent = Arrays.asList("000000191");
@@ -164,7 +160,7 @@ public class NoticeStoreServiceTest {
         criteria1.add(criterionPpnParent);
 
         NoticeV2 candidatev2 = (NoticeV2) noticeService.findNoticesByCriteria("v2",criteria1,  new LinkedList<>(),0,5).get(0);
-        Assert.assertEquals(expected,candidatev2.getKeyTitleQualifer());
+        Assertions.assertEquals(expected,candidatev2.getKeyTitle());
 
     }
 
@@ -178,14 +174,14 @@ public class NoticeStoreServiceTest {
         CriterionTitleWords titleWords = new CriterionTitleWords(titleWord, titleOperators);
         criteresNotices.add(titleWords);
 
-        List<String> rcr = Arrays.asList("341725201");
+        List<String> rcr = Collections.singletonList("341725201");
         List<String> rcrOperators = Arrays.asList("ET");
         CriterionRcr criterionRcr = new CriterionRcr(rcr, rcrOperators);
         criteresNotices.add(criterionRcr);
 
         List<String> facette = Arrays.asList("DOCUMENT_TYPE", "NB_LOC");
 
-        ResultSolr candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(), 0, 10);
+        ResultSolr candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(), new LinkedList<>(), 0, 10);
 
         assertEquals(candidates.getFacettes().size(), 2);
         assertTrue(candidates.getNbPages() > 0);
@@ -196,13 +192,13 @@ public class NoticeStoreServiceTest {
         List<CriterionSort> listSort = new LinkedList<>();
         listSort.add(criterionSort);
 
-        candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, listSort, 0, 10);
+        candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(),  listSort, 0, 10);
         assertEquals(candidates.getFacettes().size(), 2);
         assertTrue(candidates.getNbPages() > 0);
 
         // test avec facettes vides
         facette = new ArrayList<>();
-        candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(), 0, 10);
+        candidates = noticeService.findNoticesWithFacets(criteresNotices, facette, new LinkedList<>(),  new LinkedList<>(), 0, 10);
         assertEquals(candidates.getFacettes().size(), 0);
         assertTrue(candidates.getNbPages() > 0);
     }

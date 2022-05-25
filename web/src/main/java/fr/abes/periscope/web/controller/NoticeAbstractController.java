@@ -3,9 +3,10 @@ package fr.abes.periscope.web.controller;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.service.NoticeStoreService;
+import fr.abes.periscope.core.util.TYPE_NOTICE;
+import fr.abes.periscope.core.util.UtilsMapper;
 import fr.abes.periscope.web.dto.RequestParameters;
 import fr.abes.periscope.web.dto.criterion.*;
-import fr.abes.periscope.web.util.DtoMapper;
 
 import java.lang.reflect.Field;
 import java.util.*;
@@ -18,16 +19,16 @@ public abstract class NoticeAbstractController {
     protected final NoticeStoreService noticeStoreService;
 
     /** Service pour le mapping Entité - DTO */
-    protected final DtoMapper dtoMapper;
+    protected final UtilsMapper mapper;
 
     /**
      * Constructeur d'un contrôlleur de Notice
      * @param service Service de Notice
      * @param mapper Mapper Entité - DTO
      */
-    public NoticeAbstractController(NoticeStoreService service, DtoMapper mapper) {
+    public NoticeAbstractController(NoticeStoreService service, UtilsMapper mapper) {
         this.noticeStoreService = service;
-        this.dtoMapper = mapper;
+        this.mapper = mapper;
     }
 
     /**
@@ -72,35 +73,47 @@ public abstract class NoticeAbstractController {
         }
 
         if (userCriterion instanceof CriterionPcpWebDto) {
-            criteria.add(dtoMapper.map(userCriterion, CriterionPcp.class));
+            criteria.add(mapper.map(userCriterion, CriterionPcp.class));
         }
 
         if (userCriterion instanceof CriterionRcrWebDto) {
-            criteria.add(dtoMapper.map(userCriterion, CriterionRcr.class));
+            criteria.add(mapper.map(userCriterion, CriterionRcr.class));
         }
 
         if (userCriterion instanceof CriterionPpnWebDto) {
-            criteria.add(dtoMapper.map(userCriterion, CriterionPpn.class));
+            criteria.add(mapper.map(userCriterion, CriterionPpn.class));
         }
 
         if (userCriterion instanceof CriterionTitleWordsWebDto) {
-            criteria.add(dtoMapper.map(userCriterion, CriterionTitleWords.class));
+            criteria.add(mapper.map(userCriterion, CriterionTitleWords.class));
         }
 
         if (userCriterion instanceof CriterionCountryWebDto) {
-            criteria.add(dtoMapper.map(userCriterion, CriterionCountry.class));
+            criteria.add(mapper.map(userCriterion, CriterionCountry.class));
         }
 
         if (userCriterion instanceof CriterionLanguageWebDto) {
-            criteria.add(dtoMapper.map(userCriterion, CriterionLanguage.class));
+            criteria.add(mapper.map(userCriterion, CriterionLanguage.class));
         }
 
         if (userCriterion instanceof CriterionEditorWebDto) {
-            criteria.add(dtoMapper.map(userCriterion, CriterionEditor.class));
+            criteria.add(mapper.map(userCriterion, CriterionEditor.class));
         }
 
         if (userCriterion instanceof CriterionIssnWebDto) {
-            criteria.add(dtoMapper.map(userCriterion, CriterionIssn.class));
+            criteria.add(mapper.map(userCriterion, CriterionIssn.class));
+        }
+
+        if (userCriterion instanceof CriterionPcpRcrWebDto) {
+            CriterionPcpWebDto critWebPcp = new CriterionPcpWebDto(((CriterionPcpRcrWebDto) userCriterion).getPcp(), LogicalOperator.AND, userCriterion.getBlocOperator());
+            CriterionPcp critPcp = mapper.map(critWebPcp, CriterionPcp.class);
+            critPcp.setTypeNotice(TYPE_NOTICE.EXEMPLAIRE);
+            criteria.add(critPcp);
+
+            CriterionRcrWebDto critWebRcr = new CriterionRcrWebDto(((CriterionPcpRcrWebDto) userCriterion).getRcr(), LogicalOperator.AND, userCriterion.getBlocOperator());
+            CriterionRcr critRcr = mapper.map(critWebRcr, CriterionRcr.class);
+            critRcr.setTypeNotice(TYPE_NOTICE.EXEMPLAIRE);
+            criteria.add(critRcr);
         }
     }
 }

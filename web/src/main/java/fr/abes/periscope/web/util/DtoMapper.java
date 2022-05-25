@@ -1,23 +1,23 @@
 package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.entity.PublicationYear;
-import fr.abes.periscope.core.entity.v2.NoticeV2;
-import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
-import fr.abes.periscope.core.entity.v2.solr.ResultSolr;
+import fr.abes.periscope.core.entity.solr.PublicationYear;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1SolrField;
+import fr.abes.periscope.core.entity.solr.v2.ItemSolrField;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
 import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
 import fr.abes.periscope.core.entity.visualisation.SequenceContinue;
 import fr.abes.periscope.core.entity.visualisation.SequenceError;
 import fr.abes.periscope.core.entity.visualisation.SequenceLacune;
 import fr.abes.periscope.core.exception.*;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
+import fr.abes.periscope.core.util.UtilsMapper;
 import fr.abes.periscope.web.dto.*;
 import fr.abes.periscope.web.dto.criterion.*;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Converter;
-import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,10 +25,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Field;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Utilitaire de mapping de objets Entité (core) et des objets DTO (API)
@@ -37,35 +34,12 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DtoMapper {
     @Value("${url.sudoc}")
-    private final String SUDOC_URL;
+    private String SUDOC_URL;
+
+    private UtilsMapper utilsMapper;
 
     @Autowired
-    private ModelMapper modelMapper;
-
-    /**
-     * Fonction de mapping générique pour un objet
-     *
-     * @param source      Objet source
-     * @param targetClass Classe de l'objet cible
-     * @return Objet cible
-     */
-    public <S, T> T map(S source, Class<T> targetClass) {
-        return modelMapper.map(source, targetClass);
-    }
-
-    /**
-     * Fonction de mapping générique pour des listes
-     *
-     * @param source      Liste source
-     * @param targetClass Classe des objets cibles
-     * @return Liste des objets cibles
-     */
-    public <S, T> List<T> mapList(List<S> source, Class<T> targetClass) {
-        return source
-                .stream()
-                .map(element -> modelMapper.map(element, targetClass))
-                .collect(Collectors.toList());
-    }
+    public DtoMapper(UtilsMapper utilsMapper) { this.utilsMapper = utilsMapper; }
 
     @Bean
     public void converterResultWebDto() {
@@ -76,7 +50,7 @@ public class DtoMapper {
                 ResultWebDto resultWebDto = new ResultWebDto();
                 resultWebDto.setNbPages(resultSolr.getNbPages());
                 resultWebDto.setNbNotices(resultSolr.getNbNotices());
-                resultWebDto.setNotices(mapList(resultSolr.getNotices(), NoticeWebV2Dto.class));
+                resultWebDto.setNotices(utilsMapper.mapList(resultSolr.getNotices(), NoticeWebV2Dto.class));
                 resultSolr.getFacettes().forEach(f -> {
                     FacetteWebDto facetteWebDto = new FacetteWebDto();
                     Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
@@ -106,7 +80,7 @@ public class DtoMapper {
                 return resultWebDto;
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     @Bean
@@ -119,35 +93,22 @@ public class DtoMapper {
                 noticeWeb.setPpn(notice.getPpn());
                 noticeWeb.setIssn(notice.getIssn());
                 noticeWeb.setEditeur(notice.getPublisher());
-                noticeWeb.setTitrePropre(notice.getProperTitle());
-                noticeWeb.setTitreAuteurDifferent(notice.getTitleFromDifferentAuthor());
-                noticeWeb.setTitreParallele(notice.getParallelTitle());
-                noticeWeb.setTitreComplement(notice.getTitleComplement());
-                noticeWeb.setTitreSection(notice.getSectionTitle());
-                noticeWeb.setTitreCle(notice.getKeyTitle());
-                noticeWeb.setTitreCleQualifie(notice.getKeyTitleQualifer());
-                noticeWeb.setTitreCleCourt(notice.getKeyShortedTitle());
+                noticeWeb.setTitre(utilsMapper.getTitre(notice.getKeyTitle(), notice.getKeyTitleQualifer(), notice.getKeyShortedTitle(), notice.getProperTitle(), notice.getTitleFromDifferentAuthor(), notice.getParallelTitle(), notice.getTitleComplement()));
                 noticeWeb.setTypeRessourceContinue(notice.getContinuousType());
-                noticeWeb.setTypeSupport(notice.getSupportType());
-                noticeWeb.setLangue(notice.getLanguage());
-                noticeWeb.setPays(notice.getCountry());
                 noticeWeb.setStartYear(notice.getStartYear());
                 noticeWeb.setEndYear(notice.getEndYear());
-                noticeWeb.setMirabelURL(notice.getMirabelURL());
                 noticeWeb.setNbLocation(notice.getNbLocation());
+                noticeWeb.setPcpList(notice.getPcpList());
+
                 if (notice.getNbLocation() != 0)
                     noticeWeb.setSudocURL(SUDOC_URL + notice.getPpn());
-                notice.getItems().forEach(i -> {
-                    ItemWebDto itemWebDto = new ItemWebDto();
-                    itemWebDto.setEpn(i.getEpn());
-                    itemWebDto.setPcp(i.getPcp());
-                    itemWebDto.setRcr(i.getRcr());
-                    noticeWeb.addItem(itemWebDto);
-                });
+
+                notice.getItems().forEach(i -> noticeWeb.addRcr(i.getRcr()));
+                Collections.sort(noticeWeb.getRcrList());
                 return noticeWeb;
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -177,7 +138,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -226,17 +187,20 @@ public class DtoMapper {
             case "editor":
                 return NoticeV2SolrField.EDITOR_Z;
             case "title":
-                return NoticeV2SolrField.KEY_TITLE;
+                return NoticeV2SolrField.TRI_TITRE;
             case "start_year":
                 return NoticeV2SolrField.START_YEAR;
             case "end_year":
                 return NoticeV2SolrField.END_YEAR;
             case "nb_loc":
                 return NoticeV2SolrField.NB_LOC;
+            case "pcp_list":
+                return NoticeV2SolrField.NB_PCP;
             default:
                 throw new IllegalSortException(s.getSort() + " : Critère de tri inconnu");
         }
     }
+
 
     /**
      * Convertisseur pour les facettes (DTO vers Objet Métier)
@@ -254,7 +218,7 @@ public class DtoMapper {
                 return s.getZone();
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -290,7 +254,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -313,7 +277,7 @@ public class DtoMapper {
                         throw new IllegalArgumentException(CriterionTypeName.CRITERION_RCR + " - property '" + CriterionRcrWebDto.RCR_OPERATOR_PROPERTY + "' is missing");
                     }
 
-                    CriterionRcr d = new CriterionRcr(s.getBlocOperator(), s.getRcr(), s.getRcrOperator());
+                    CriterionRcr d = new CriterionRcr(s.getBlocOperator(), new ArrayList<>(s.getRcr()), s.getRcrOperator());
                     return d;
                 } catch (IllegalOperatorException ex) {
                     throw new IllegalOperatorException(CriterionTypeName.CRITERION_RCR + " : " + ex.getLocalizedMessage());
@@ -324,7 +288,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -355,7 +319,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -390,7 +354,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -423,7 +387,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -458,7 +422,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -493,7 +457,7 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
     }
 
     /**
@@ -527,24 +491,18 @@ public class DtoMapper {
                 }
             }
         };
-        modelMapper.addConverter(myConverter);
-    }
-
-
-    private Integer getDiffEndYearStartYear(PublicationYear startYear, PublicationYear endYear) {
-        return Integer.parseInt(endYear.getYear()) - Integer.parseInt(startYear.getYear());
+        utilsMapper.addConverter(myConverter);
     }
 
     @Bean
     public void converterNoticeVisuWebDto() {
-        String datePattern = "yyyy-MM-dd";
-        DateFormat format = new SimpleDateFormat(datePattern);
         Converter<NoticeVisu, NoticeVisuWebDto> myConverter = new Converter<NoticeVisu, NoticeVisuWebDto>() {
             @SneakyThrows
             @Override
             public NoticeVisuWebDto convert(MappingContext<NoticeVisu, NoticeVisuWebDto> context) {
                 NoticeVisu notice = context.getSource();
-                NoticeVisuWebDto noticeVisuWebDto = new NoticeVisuWebDto(notice.getStartYear().getYear(), notice.getEndYear().getYear());
+                int endDate = (notice.getEndYear().getYear() == null) ? Calendar.getInstance().get(Calendar.YEAR) : Integer.parseInt(notice.getEndYear().getYear());
+                NoticeVisuWebDto noticeVisuWebDto = new NoticeVisuWebDto(Integer.parseInt(notice.getStartYear().getYear()), endDate);
                 notice.getHoldings().forEach(h -> {
                     HoldingWebDto holding = new HoldingWebDto();
                     StringBuilder etatCollection = new StringBuilder();
@@ -554,7 +512,7 @@ public class DtoMapper {
                     holding.setEtatCollectionTextuel(etatCollection.toString());
                     holding.addErreurs(h.getErreurs());
                     h.getAllNonEmptySequences().forEach(s -> {
-                        SequenceWebDto sequenceWebDto = new SequenceWebDto(format.format(s.getStartDate().getTime()), format.format(s.getEndDate().getTime()), h.getRcr());
+                        SequenceWebDto sequenceWebDto = new SequenceWebDto(s.getStartDate(), s.getEndDate(), h.getRcr());
                         if (s instanceof SequenceContinue) sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.CONTINUE);
                         else if (s instanceof SequenceError) {
                             sequenceWebDto.setTypeSequence(TYPE_SEQUENCE.ERREUR);
@@ -568,6 +526,33 @@ public class DtoMapper {
                 return noticeVisuWebDto;
             }
         };
-        modelMapper.addConverter(myConverter);
+        utilsMapper.addConverter(myConverter);
+    }
+
+    @Bean
+    public void converterNoticeInfoWebDto() {
+        Converter<NoticeVisu, NoticeInfoWebDto> myConverter = new Converter<NoticeVisu, NoticeInfoWebDto>() {
+            @SneakyThrows
+            @Override
+            public NoticeInfoWebDto convert(MappingContext<NoticeVisu, NoticeInfoWebDto> context) {
+                NoticeVisu notice = context.getSource();
+                NoticeInfoWebDto noticeInfoWebDto = new NoticeInfoWebDto();
+                noticeInfoWebDto.setPpn(notice.getPpn());
+                noticeInfoWebDto.setIssn(notice.getIssn());
+                noticeInfoWebDto.setEditeur(notice.getPublisher());
+                noticeInfoWebDto.setTypeSupport(notice.getSupportType());
+                noticeInfoWebDto.setTitre(utilsMapper.getTitre(notice.getKeyTitle(), notice.getKeyTitleQualifer(), notice.getKeyShortedTitle(), notice.getProperTitle(), notice.getTitleFromDifferentAuthor(), notice.getParallelTitle(), notice.getTitleComplement()));
+                if(notice.getEndYear().getYear() != null) {
+                    noticeInfoWebDto.setDatePublication("(" + notice.getStartYear().getYear() + ")-(" + notice.getEndYear().getYear() + ")");
+                }else{
+                    noticeInfoWebDto.setDatePublication("(" + notice.getStartYear().getYear() + ")-...");
+                }
+                noticeInfoWebDto.setPeriodicite(notice.getFrequency());
+                noticeInfoWebDto.setVille(notice.getCity());
+
+                return noticeInfoWebDto;
+            }
+        };
+        utilsMapper.addConverter(myConverter);
     }
 }

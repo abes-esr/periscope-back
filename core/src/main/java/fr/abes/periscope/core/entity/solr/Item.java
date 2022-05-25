@@ -1,10 +1,12 @@
-package fr.abes.periscope.core.entity;
+package fr.abes.periscope.core.entity.solr;
 
 import fr.abes.periscope.core.exception.IllegalValueException;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+
+import java.util.List;
 
 /**
  * Représente un exemplaire SUDOC
@@ -20,7 +22,7 @@ public class Item {
 
     protected String rcr;
 
-    protected String pcp;
+    protected List<String> pcp;
 
     public Item(String epn) {
         if (epn.matches("(\\d{1,9}X?)(\\d{2})?")) {
@@ -54,6 +56,6 @@ public class Item {
 
     @Override
     public String toString() {
-        return "Item {"+ "epn="+ epn+" }";
+        return "Item {"+ "epn="+ epn+" " + ((pcp!=null) ? " pcp="+pcp+" " : "") +"}";
     }
 }

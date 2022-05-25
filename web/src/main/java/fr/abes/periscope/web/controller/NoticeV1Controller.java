@@ -2,9 +2,10 @@ package fr.abes.periscope.web.controller;
 
 import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionSort;
-import fr.abes.periscope.core.entity.Notice;
-import fr.abes.periscope.core.entity.v1.solr.NoticeV1SolrField;
+import fr.abes.periscope.core.entity.solr.Notice;
+import fr.abes.periscope.core.entity.solr.v1.NoticeV1SolrField;
 import fr.abes.periscope.core.service.NoticeStoreService;
+import fr.abes.periscope.core.util.UtilsMapper;
 import fr.abes.periscope.web.dto.NoticeWebV1Dto;
 import fr.abes.periscope.web.dto.RequestParameters;
 import fr.abes.periscope.web.dto.criterion.CriterionSortWebDto;
@@ -35,7 +36,7 @@ public class NoticeV1Controller extends NoticeAbstractController {
      * @param mapper Mapper Entité - DTO
      */
     @Autowired
-    public NoticeV1Controller(NoticeStoreService service, DtoMapper mapper) {
+    public NoticeV1Controller(NoticeStoreService service, UtilsMapper mapper) {
        super(service,mapper);
     }
 
@@ -58,12 +59,12 @@ public class NoticeV1Controller extends NoticeAbstractController {
             Iterator<CriterionSortWebDto> userSortCriteriaIterator = userSortCriteria.iterator();
             while (userSortCriteriaIterator.hasNext()) {
                 CriterionSortWebDto sortCriterion = userSortCriteriaIterator.next();
-                sortCriteria.add(dtoMapper.map(sortCriterion, CriterionSort.class));
+                sortCriteria.add(mapper.map(sortCriterion, CriterionSort.class));
             }
         } else {
             sortCriteria.add(new CriterionSort(NoticeV1SolrField.PPN, Sort.Direction.ASC));
         }
         List<Notice> candidate = noticeStoreService.findNoticesByCriteria("v1", criteria,sortCriteria,page,size);
-        return dtoMapper.mapList(candidate, NoticeWebV1Dto.class);
+        return mapper.mapList(candidate, NoticeWebV1Dto.class);
     }
 }

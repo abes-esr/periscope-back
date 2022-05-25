@@ -1,9 +1,10 @@
 package fr.abes.periscope.core.repository.solr.v2.impl;
 
 import fr.abes.periscope.core.criterion.Criterion;
-import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2Solr;
+import fr.abes.periscope.core.criterion.CriterionFacette;
+import fr.abes.periscope.core.entity.solr.v2.ItemSolrField;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2Solr;
 import fr.abes.periscope.core.repository.solr.v2.AdvancedNoticeSolrV2Repository;
 import fr.abes.periscope.core.repository.solr.v2.SolrQueryBuilder;
 import lombok.Data;
@@ -91,8 +92,9 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
     }
 
     @Override
-    public FacetPage<NoticeV2Solr> findNoticesWithFacetQuery(List<Criterion> criteriaNotice, List<Criterion> criteriaExemp, List<String> facettes, Sort sort, Pageable page) {
+    public FacetPage<NoticeV2Solr> findNoticesWithFacetQuery(List<Criterion> criteriaNotice, List<Criterion> criteriaExemp, List<String> facettes, List<CriterionFacette> facetteFilter, Sort sort, Pageable page) {
         FacetQuery query = builderQuery.constructFacetQuery(criteriaNotice, criteriaExemp);
+        query = builderQuery.addFacetsFilters(query, facetteFilter);
 
         //request handler nécessaire pour les facettes au niveau exemplaire
         query.setRequestHandler("bjqfacet");
@@ -100,7 +102,9 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
 
         query.addSort(sort);
         query.setPageRequest(page);
+
         query = builderQuery.addFacetsNotices(query, facettes);
+        //query = builderQuery.addFacetsExemplaires(query, facettes);
         return solrTemplate.queryForFacetPage(core, query, NoticeV2Solr.class);
     }
 
@@ -129,18 +133,21 @@ public class AdvancedNoticeSolrV2RepositoryImpl implements AdvancedNoticeSolrV2R
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.SUPPORT_TYPE));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.EXTERNAL_URLS));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.NB_LOC));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.NB_PCP));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.LANGUAGE));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.COUNTRY));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.START_YEAR));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.START_YEAR_CONFIDENCE_INDEX));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.END_YEAR));
         query.addProjectionOnField(new SimpleField(NoticeV2SolrField.END_YEAR_CONFIDENCE_INDEX));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.RCR_LIST));
+        query.addProjectionOnField(new SimpleField(NoticeV2SolrField.PCP_LIST));
         query.addProjectionOnField(new SimpleField(ItemSolrField.EPN));
         query.addProjectionOnField(new SimpleField(ItemSolrField.PPN_PARENT));
         query.addProjectionOnField(new SimpleField(ItemSolrField.RCR));
         query.addProjectionOnField(new SimpleField(ItemSolrField.PCP));
 
-         query.addProjectionOnField(new SimpleField("[child limit=" + nbExemplaires + "]"));
+        query.addProjectionOnField(new SimpleField("[child limit=" + nbExemplaires + "]"));
     }
 
 

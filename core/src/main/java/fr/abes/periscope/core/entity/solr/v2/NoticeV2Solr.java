@@ -1,4 +1,4 @@
-package fr.abes.periscope.core.entity.v2.solr;
+package fr.abes.periscope.core.entity.solr.v2;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -122,6 +122,10 @@ public class NoticeV2Solr implements Serializable {
     @Indexed(name = NoticeV2SolrField.NB_LOC)
     protected Integer nbLocation;
 
+    @Field(NoticeV2SolrField.NB_PCP)
+    @Indexed(name = NoticeV2SolrField.NB_PCP)
+    protected Integer nbPcp;
+
     @Field(NoticeV2SolrField.LANGUAGE)
     @Indexed(name = NoticeV2SolrField.LANGUAGE)
     protected String language;
@@ -145,6 +149,14 @@ public class NoticeV2Solr implements Serializable {
     @Field(NoticeV2SolrField.END_YEAR_CONFIDENCE_INDEX)
     @Indexed(name = NoticeV2SolrField.END_YEAR_CONFIDENCE_INDEX)
     protected Integer endYearConfidenceIndex;
+
+    @Field(NoticeV2SolrField.RCR_LIST)
+    @Indexed(name = NoticeV2SolrField.RCR_LIST)
+    protected Set<String> rcrList = new HashSet<>();
+
+    @Field(NoticeV2SolrField.PCP_LIST)
+    @Indexed(name = NoticeV2SolrField.PCP_LIST)
+    protected Set<String> pcpList = new HashSet<>();
 
     @ChildDocument
     private Set<ItemSolr> items = new HashSet<>();

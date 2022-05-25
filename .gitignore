@@ -38,3 +38,9 @@ build/
 ### Logs ###
 /logs/
 
+## APPLICATION PROPERTIES -> JENKINS ##
+## Ce fichier en local ne doit jamais être poussé sur le dépot il contient les identifiants mdp, le demander en interne pour la configuration
+**/resources/application-localhost.properties
+
+## Fichier de propriétés de test contenant les identifiants / mdp
+**/test/resources/application.properties

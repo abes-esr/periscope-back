@@ -1,13 +1,14 @@
 package fr.abes.periscope.core.repository.solr.v2;
 
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.entity.v2.solr.ItemSolrField;
-import fr.abes.periscope.core.entity.v2.solr.NoticeV2SolrField;
+import fr.abes.periscope.core.entity.solr.v2.ItemSolrField;
+import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
+import fr.abes.periscope.core.util.TYPE_NOTICE;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.query.*;
 
+import javax.crypto.Cipher;
 import java.lang.reflect.Field;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -29,9 +30,7 @@ public class SolrQueryBuilder {
     public Criteria buildQuery(List<Criterion> criteria) {
         FilterQuery filterQuery = new SimpleFilterQuery();
 
-        Iterator<Criterion> criteriaIterator = criteria.iterator();
-        while (criteriaIterator.hasNext()) {
-            Criterion criterion = criteriaIterator.next();
+        criteria.stream().forEach(criterion -> {
 
             // Bloc de critère PCP
             if (criterion instanceof CriterionPcp) {
@@ -85,7 +84,7 @@ public class SolrQueryBuilder {
                 Criteria issnQuery = buildIssnQuery((CriterionIssn) criterion);
                 filterQuery.addCriteria(issnQuery);
             }
-        }
+        });
 
         return filterQuery.getCriteria();
     }
@@ -105,20 +104,7 @@ public class SolrQueryBuilder {
             myCriteria = myCriteria.or(ItemSolrField.PPN_PARENT).is(value);
         }
 
-        // pour le bloc entier
-        switch (criterion.getBlocOperator()) {
-            case LogicalOperator.AND:
-                myCriteria = myCriteria.connect();
-                break;
-            case LogicalOperator.OR:
-                myCriteria.setPartIsOr(true);
-                break;
-            case LogicalOperator.EXCEPT:
-                myCriteria = myCriteria.notOperator();
-                break;
-        }
-
-        return myCriteria;
+        return getBlocOperator(criterion, myCriteria);
     }
 
     /**
@@ -130,28 +116,42 @@ public class SolrQueryBuilder {
     private Criteria buildPcpQuery(CriterionPcp criterion) {
 
         Iterator<String> pcpIterator = criterion.getPcp().iterator();
+        Iterator<String> pcpOperatorIterator = criterion.getPcpOperators().iterator();
+
         String pcpCode = pcpIterator.next();
+        String pcpOperator = pcpOperatorIterator.next();
 
-        Criteria myCriteria = new Criteria(NoticeV2SolrField.PCP_LIST).is(pcpCode);
+        Criteria myCriteria;
 
-        while (pcpIterator.hasNext()) {
-            pcpCode = pcpIterator.next();
-            myCriteria = myCriteria.or(NoticeV2SolrField.PCP_LIST).is(pcpCode);
-        }
-
-        switch (criterion.getBlocOperator()) {
-            case LogicalOperator.AND:
-                // AND par défaut, on ne fait rien
-                break;
-            case LogicalOperator.OR:
-                myCriteria.setPartIsOr(true);
-                break;
+        // 1er critère
+        switch (pcpOperator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = myCriteria.notOperator();
+                myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? new Criteria(NoticeV2SolrField.PCP_LIST).is(pcpCode).not() : new Criteria(NoticeV2SolrField.PCP).is(pcpCode).not());
+                break;
+            default:
+                myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? new Criteria(NoticeV2SolrField.PCP_LIST).is(pcpCode) : new Criteria(NoticeV2SolrField.PCP).is(pcpCode));
                 break;
         }
 
-        return myCriteria.connect();
+        // les autres
+        while (pcpOperatorIterator.hasNext()) {
+            pcpCode = pcpIterator.next();
+            pcpOperator = pcpOperatorIterator.next();
+
+            switch (pcpOperator) {
+                case LogicalOperator.AND:
+                    myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? myCriteria.and(NoticeV2SolrField.PCP_LIST).is(pcpCode) : myCriteria.and(NoticeV2SolrField.PCP).is(pcpCode));
+                    break;
+                case LogicalOperator.OR:
+                    myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? myCriteria.or(NoticeV2SolrField.PCP_LIST).is(pcpCode) : myCriteria.or(NoticeV2SolrField.PCP).is(pcpCode));
+                    break;
+                case LogicalOperator.EXCEPT:
+                    myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? myCriteria.or(NoticeV2SolrField.PCP_LIST).is(pcpCode).not() : myCriteria.or(NoticeV2SolrField.PCP).is(pcpCode).not());
+                    break;
+            }
+        }
+
+        return getBlocOperator(criterion, myCriteria);
     }
 
     /**
@@ -165,7 +165,7 @@ public class SolrQueryBuilder {
         Iterator<String> rcrIterator = criterion.getRcr().iterator();
         Iterator<String> rcrOperatorIterator = criterion.getRcrOperators().iterator();
 
-        Criteria myCriteria = null;
+        Criteria myCriteria;
 
         String rcrCode = rcrIterator.next();
         String rcrOperator = rcrOperatorIterator.next();
@@ -173,10 +173,10 @@ public class SolrQueryBuilder {
         // 1er critère
         switch (rcrOperator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = new Criteria(NoticeV2SolrField.RCR_LIST).is(rcrCode).not();
+                myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? new Criteria(NoticeV2SolrField.RCR_LIST).is(rcrCode).not() : new Criteria(NoticeV2SolrField.RCR).is(rcrCode).not());
                 break;
             default:
-                myCriteria = new Criteria(NoticeV2SolrField.RCR_LIST).is(rcrCode);
+                myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? new Criteria(NoticeV2SolrField.RCR_LIST).is(rcrCode) : new Criteria(NoticeV2SolrField.RCR).is(rcrCode));
                 break;
         }
 
@@ -187,31 +187,18 @@ public class SolrQueryBuilder {
 
             switch (rcrOperator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.and(NoticeV2SolrField.RCR_LIST).is(rcrCode);
+                    myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? myCriteria.and(NoticeV2SolrField.RCR_LIST).is(rcrCode) : myCriteria.and(NoticeV2SolrField.RCR).is(rcrCode));
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.or(NoticeV2SolrField.RCR_LIST).is(rcrCode);
+                    myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? myCriteria.or(NoticeV2SolrField.RCR_LIST).is(rcrCode) : myCriteria.or(NoticeV2SolrField.RCR));
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.and(NoticeV2SolrField.RCR_LIST).is(rcrCode).not();
+                    myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? myCriteria.or(NoticeV2SolrField.RCR_LIST).is(rcrCode).not() : myCriteria.or(NoticeV2SolrField.RCR).is(rcrCode).not());
                     break;
             }
         }
 
-        // pour le bloc entier
-        switch (criterion.getBlocOperator()) {
-            case LogicalOperator.AND:
-                myCriteria = myCriteria.connect();
-                break;
-            case LogicalOperator.OR:
-                myCriteria.setPartIsOr(true);
-                break;
-            case LogicalOperator.EXCEPT:
-                myCriteria = myCriteria.notOperator();
-                break;
-        }
-
-        return myCriteria;
+        return getBlocOperator(criterion, myCriteria);
     }
 
     /**
@@ -277,7 +264,7 @@ public class SolrQueryBuilder {
                             or(NoticeV2SolrField.SECTION_TITLE).is(value);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.KEY_TITLE).is(value).not().
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.KEY_TITLE).is(value).not().
                             or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).not().
                             or(NoticeV2SolrField.PROPER_TITLE).is(value).not().
                             or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).not().
@@ -288,19 +275,7 @@ public class SolrQueryBuilder {
             }
         }
 
-        // pour le bloc entier
-        switch (criterion.getBlocOperator()) {
-            case LogicalOperator.AND:
-                break;
-            case LogicalOperator.OR:
-                myCriteria.setPartIsOr(true);
-                break;
-            case LogicalOperator.EXCEPT:
-                myCriteria = myCriteria.notOperator();
-                break;
-        }
-
-        return myCriteria;
+        return getBlocOperator(criterion, myCriteria);
     }
 
     /**
@@ -314,7 +289,7 @@ public class SolrQueryBuilder {
         Iterator<String> valueIterator = criterion.getCountries().iterator();
         Iterator<String> operatorIterator = criterion.getCountryOperators().iterator();
 
-        Criteria myCriteria = null;
+        Criteria myCriteria;
 
         String value = valueIterator.next();
         String operator = operatorIterator.next();
@@ -342,24 +317,12 @@ public class SolrQueryBuilder {
                     myCriteria = myCriteria.connect().or(NoticeV2SolrField.COUNTRY).is(value).and(NoticeV2SolrField.KEY_TITLE);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.COUNTRY).is(value).not().and(NoticeV2SolrField.KEY_TITLE);
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.COUNTRY).is(value).not().and(NoticeV2SolrField.KEY_TITLE);
                     break;
             }
         }
 
-        // pour le bloc entier
-        switch (criterion.getBlocOperator()) {
-            case LogicalOperator.AND:
-                break;
-            case LogicalOperator.OR:
-                myCriteria.setPartIsOr(true);
-                break;
-            case LogicalOperator.EXCEPT:
-                myCriteria = myCriteria.notOperator();
-                break;
-        }
-
-        return myCriteria;
+        return getBlocOperator(criterion, myCriteria);
     }
 
     /**
@@ -384,20 +347,7 @@ public class SolrQueryBuilder {
             myCriteria = myCriteria.or(NoticeV2SolrField.PPN).is(value);
         }
 
-        // pour le bloc entier
-        switch (criterion.getBlocOperator()) {
-            case LogicalOperator.AND:
-                myCriteria = myCriteria.connect();
-                break;
-            case LogicalOperator.OR:
-                myCriteria.setPartIsOr(true);
-                break;
-            case LogicalOperator.EXCEPT:
-                myCriteria = myCriteria.notOperator();
-                break;
-        }
-
-        return myCriteria;
+        return getBlocOperator(criterion, myCriteria);
     }
 
     /**
@@ -411,7 +361,7 @@ public class SolrQueryBuilder {
         Iterator<String> langueIterator = criterion.getLanguages().iterator();
         Iterator<String> langueOperatorIterator = criterion.getLanguageOperators().iterator();
 
-        Criteria myCriteria = null;
+        Criteria myCriteria;
 
         String langueCode = langueIterator.next();
         String langueOperator = langueOperatorIterator.next();
@@ -439,25 +389,13 @@ public class SolrQueryBuilder {
                     myCriteria = myCriteria.connect().or(NoticeV2SolrField.LANGUAGE).is(langueCode);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.LANGUAGE).is(langueCode).not();
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.LANGUAGE).is(langueCode).not();
                     break;
             }
         }
         myCriteria = myCriteria.and(NoticeV2SolrField.KEY_TITLE);
 
-        // pour le bloc entier
-        switch (criterion.getBlocOperator()) {
-            case LogicalOperator.AND:
-                break;
-            case LogicalOperator.OR:
-                myCriteria.setPartIsOr(true);
-                break;
-            case LogicalOperator.EXCEPT:
-                myCriteria = myCriteria.notOperator();
-                break;
-        }
-
-        return myCriteria;
+        return getBlocOperator(criterion, myCriteria);
     }
 
     /**
@@ -471,7 +409,7 @@ public class SolrQueryBuilder {
         Iterator<String> editorIteror = criterion.getEditors().iterator();
         Iterator<String> editorOperatorIterator = criterion.getEditorOperators().iterator();
 
-        Criteria myCriteria = null;
+        Criteria myCriteria;
 
         String editor = editorIteror.next();
         String editorOperator = editorOperatorIterator.next();
@@ -499,24 +437,12 @@ public class SolrQueryBuilder {
                     myCriteria = myCriteria.connect().or(NoticeV2SolrField.EDITOR).is(editor);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.EDITOR).is(editor).not();
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.EDITOR).is(editor).not();
                     break;
             }
         }
 
-        // pour le bloc entier
-        switch (criterion.getBlocOperator()) {
-            case LogicalOperator.AND:
-                break;
-            case LogicalOperator.OR:
-                myCriteria.setPartIsOr(true);
-                break;
-            case LogicalOperator.EXCEPT:
-                myCriteria = myCriteria.notOperator();
-                break;
-        }
-
-        return myCriteria;
+        return getBlocOperator(criterion, myCriteria);
     }
 
     /**
@@ -540,10 +466,12 @@ public class SolrQueryBuilder {
             myCriteria = myCriteria.or(NoticeV2SolrField.ISSN).is(value);
         }
 
-        // pour le bloc entier
+        return getBlocOperator(criterion, myCriteria);
+    }
+
+    private Criteria getBlocOperator(Criterion criterion, Criteria myCriteria) {
         switch (criterion.getBlocOperator()) {
             case LogicalOperator.AND:
-                myCriteria = myCriteria.connect();
                 break;
             case LogicalOperator.OR:
                 myCriteria.setPartIsOr(true);
@@ -565,9 +493,7 @@ public class SolrQueryBuilder {
      */
     public FacetQuery addFacetsNotices(FacetQuery query, List<String> facets) {
         FacetOptions options = new FacetOptions();
-        Iterator<String> itFacet = facets.iterator();
-        while (itFacet.hasNext()) {
-            String f = itFacet.next();
+        facets.forEach(f -> {
             //cas ou la facette est une zone de la notice bibliographique
             Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
                 if (field.getName().toLowerCase(Locale.ROOT).equals(f.toLowerCase(Locale.ROOT))) {
@@ -581,12 +507,13 @@ public class SolrQueryBuilder {
             if (options.hasFields()) {
                 query.setFacetOptions(options);
             }
-        }
+        });
         return query;
     }
 
     /**
      * Méthode permettant de générer une chaine à concaténer à une requête correspondant aux facettes d'exemplaires
+     *
      * @param facets liste générale des zones de facettes (biblio + exemplaire)
      * @return la chaine à concaténer à la requête
      */
@@ -602,7 +529,7 @@ public class SolrQueryBuilder {
                 Field solrField = it.next();
                 if (solrField.getName().equals(f)) {
                     try {
-                        queryFacet +=  "&child.facet.field=" + solrField.get(null);
+                        queryFacet += "&child.facet.field=" + solrField.get(null);
                     } catch (IllegalAccessException e) {
                         log.error("Impossible d'accéder à la facette " + solrField.getName());
                     }
@@ -628,6 +555,23 @@ public class SolrQueryBuilder {
             }
         } else {
             query.addCriteria(buildQuery(criteriaNotice));
+        }
+        return query;
+    }
+
+    public FacetQuery addFacetsFilters(FacetQuery query, List<CriterionFacette> facetteFilter) {
+        if (!facetteFilter.isEmpty()) {
+            Iterator<CriterionFacette> fqIt = facetteFilter.iterator();
+            while (fqIt.hasNext()) {
+                CriterionFacette facette = fqIt.next();
+                Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
+                    String f = facette.getZone().toLowerCase(Locale.ROOT);
+                    if (field.getName().toLowerCase(Locale.ROOT).equals(f)) {
+                        query.addFilterQuery(new SimpleFilterQuery(new Criteria(f).is(facette.getValeurs())));
+                    }
+                });
+
+            }
         }
         return query;
     }

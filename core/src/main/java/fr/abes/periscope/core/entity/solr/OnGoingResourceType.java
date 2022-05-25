@@ -1,4 +1,4 @@
-package fr.abes.periscope.core.entity;
+package fr.abes.periscope.core.entity.solr;
 
 /**
  * Représente la correspondance entre les caractères UNIMARC et
@@ -6,7 +6,7 @@ package fr.abes.periscope.core.entity;
  */
 public abstract class OnGoingResourceType {
     public static final String A = "Periodique";
-    public static final String B = "Monographie";
+    public static final String B = "Collection";
     public static final String C = "Journal";
     public static final String E = "Publication à feuillets mobiles";
     public static final String F = "Base de données";

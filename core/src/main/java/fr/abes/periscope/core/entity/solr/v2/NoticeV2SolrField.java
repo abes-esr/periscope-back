@@ -1,4 +1,4 @@
-package fr.abes.periscope.core.entity.v2.solr;
+package fr.abes.periscope.core.entity.solr.v2;
 
 public abstract class NoticeV2SolrField {
 
@@ -110,6 +110,7 @@ public abstract class NoticeV2SolrField {
     public static final String ZONE_200_G = "zone_200$g";
     public static final String SECTION_TITLE_Z = "zone_200$i_z";
     public static final String SECTION_TITLE = "zone_200$i_t";
+    public static final String TRI_TITRE = "triTitre";
     //--------------------------------
 
     //--------------------------------
@@ -138,10 +139,11 @@ public abstract class NoticeV2SolrField {
 
     //--------------------------------
     // Zone 930
-    @Deprecated
-    public static final String PCP_LIST = "zone_930$z";
-    @Deprecated
-    public static final String RCR_LIST = "zone_930$b";
+    public static final String PCP_LIST = "pcpList";
+    public static final String RCR_LIST = "rcrList";
+
+    public static final String PCP = "zone_930$z_t";
+    public static final String RCR = "zone_930$b";
     //--------------------------------
 
     //--------------------------------
@@ -155,7 +157,7 @@ public abstract class NoticeV2SolrField {
     @Deprecated
     public static final String DATE_INDEX_TYPE = "pdate";
     public static final String NB_LOC = "NbLocs";
-    public static final String PCP_RCR = "pcprcr";
+    public static final String NB_PCP = "NbPcps";
 
     public static final String START_YEAR = "start_year";
     public static final String START_YEAR_CONFIDENCE_INDEX = "start_year_confidence_index";

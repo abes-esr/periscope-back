@@ -1,13 +1,11 @@
 package fr.abes.periscope.core.entity.visualisation;
 
-import fr.abes.periscope.core.entity.Item;
+import fr.abes.periscope.core.entity.solr.Item;
 import fr.abes.periscope.core.util.binaryTree.Node;
 import fr.abes.periscope.core.util.binaryTree.Tree;
 import lombok.Getter;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.time.Period;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -85,59 +83,48 @@ public class Holding extends Item {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Permet d'ajouter une séquence à un état de collection
+     *
+     * @param sequence la séquence à ajouter à l'état de collection
+     */
     public void addSequence(Sequence sequence) {
         if (sequence instanceof SequenceLacune) {
             this.addLacuneSequence((SequenceLacune) sequence);
         } else {
+            //si la séquence n'est pas déjà présente dans l'état de collection
             if (!this.getContinueSequences().stream().anyMatch(s -> (s.getStartDate().equals(sequence.getStartDate()) && s.getEndDate().equals(sequence.getEndDate())))) {
                 Sequence intraSequence = this.findIntraSequence(sequence);
                 if (intraSequence != null) {
                     int nearestIndex = this.sequences.indexOf(intraSequence);
-                    if (sequence.getStartDate().after(intraSequence.getStartDate())) {
+                    if (sequence.getStartDate() > intraSequence.getStartDate() && sequence.getStartDate() < intraSequence.getEndDate()) {
                         insertInTheMiddleOfSequence(sequence, intraSequence, nearestIndex);
-                    } else if (sequence.getStartDate().equals(intraSequence.getStartDate())) {
+                    } else if (sequence.getStartDate().equals(intraSequence.getStartDate()) || sequence.getStartDate() > intraSequence.getEndDate()) {
                         insertAfterSequence(sequence, nearestIndex);
                     }
                 } else {
+                    //on cherche la séquence la plus proche
                     Sequence nearestSeq = this.findNearestSequence(sequence);
 
+                    //si aucune séquence trouvée on ajoute la séquence en début de liste
                     if (nearestSeq == null) {
                         this.sequences.add(0, sequence);
                     } else {
-
                         int nearestIndex = this.sequences.indexOf(nearestSeq);
-                        if (sequence.getStartDate().after(nearestSeq.getStartDate())) {
-                            if (sequence.getEndDate().before(nearestSeq.getEndDate()) || sequence.getEndDate().equals(nearestSeq.getEndDate())) {
+                        if (sequence.getStartDate() > nearestSeq.getStartDate()) {
+                            if (sequence.getEndDate() <= nearestSeq.getEndDate()) {
                                 insertInTheMiddleOfSequence(sequence, nearestSeq, nearestIndex);
                             } else {
+                                //on insère la séquence après
                                 insertAfterSequence(sequence, nearestIndex);
                             }
                         } else {
+                            //on insère la séquence avant la séquence la plus proche
                             insertBeforeSequence(sequence, nearestIndex);
                         }
                     }
                 }
             }
-        }
-    }
-
-    public void updateSequenceWithFrequency(Period frequency) {
-        if (this.getSequences().size() > 0) {
-            this.getSequences().forEach(sequence -> {
-                int index = this.sequences.indexOf(sequence);
-                if (sequence.updateToFrequency(frequency)) {
-                    if (index < this.getSequences().size() - 1) {
-                        // Ce n'est pas le dernier de la liste, on met à jour la date de début de la séquence suivante
-                        this.getSequences().get(index + 1).setStartDate(sequence.getEndDate().get(Calendar.YEAR), sequence.getEndDate().get(Calendar.MONTH), sequence.getEndDate().get(Calendar.DAY_OF_MONTH));
-                        if (this.getSequences().get(index + 1).getStartDate().compareTo(this.getSequences().get(index + 1).getEndDate()) > 0) {
-                            //si la séquence qu'on vient de modifier se retrouve avec une date de début supérieure à sa date de fin, on la supprime et on met à jour la date de début de la séquence suivante
-                            this.sequences.remove(index + 1);
-                            if (index < this.getSequences().size() - 2)
-                                this.sequences.get(index + 2).setStartDate(sequence.getEndDate().get(Calendar.YEAR), sequence.getEndDate().get(Calendar.MONTH), sequence.getEndDate().get(Calendar.DAY_OF_MONTH));
-                        }
-                    }
-                }
-            });
         }
     }
 
@@ -150,68 +137,101 @@ public class Holding extends Item {
                 this.addSequence(sequenceError);
             } else {
                 if (closerSequence == null) {
-                    SequenceError sequenceError = new SequenceError(sequence, "Lacune en dehors de l'état de collection : " + ((!sequence.getNumero().equals("Non renseigné")) ? "no." + sequence.getNumero() : "") + ((!sequence.getVolume().equals("Non renseigné")) ? " vol." + sequence.getVolume() : "") + " (" + sequence.getStartDate().get(Calendar.YEAR) + ")");
+                    SequenceError sequenceError = new SequenceError(sequence, "Lacune en dehors de l'état de collection : " + ((!sequence.getNumero().equals("Non renseigné")) ? "no." + sequence.getNumero() : "") + ((!sequence.getVolume().equals("Non renseigné")) ? " vol." + sequence.getVolume() : "") + " (" + sequence.getStartDate() + ")");
                     this.addSequence(sequenceError);
                 } else {
                     int nearestIndex = this.sequences.indexOf(closerSequence);
 
-                    log.debug(this.getEpn() + "current=" + sequence.getStartDate().getTime() + " plus proche =" + closerSequence.getStartDate().getTime() + " index =" + nearestIndex);
-
-                    if (sequence.getStartDate().after(closerSequence.getStartDate())) {
-                        insertInTheMiddleOfSequence(sequence, closerSequence, nearestIndex);
-                    } else if (sequence.getStartDate().equals(closerSequence.getStartDate())) {
-                        insertAfterSequence(sequence, nearestIndex);
+                    log.debug(this.getEpn() + "current=" + sequence.getStartDate() + " plus proche =" + closerSequence.getStartDate() + " index =" + nearestIndex);
+                    if (sequence.getStartDate() <= closerSequence.getStartDate())
+                        insertBeforeSequence(sequence, nearestIndex);
+                    else {
+                        if (sequence.getStartDate() > closerSequence.getStartDate() && sequence.getStartDate() < closerSequence.getEndDate()) {
+                            insertInTheMiddleOfSequence(sequence, closerSequence, nearestIndex);
+                        } else if (sequence.getStartDate().equals(closerSequence.getStartDate())) {
+                            insertAfterSequence(sequence, nearestIndex);
+                        }
                     }
                 }
             }
         }
     }
 
+    /**
+     * Méthode permettant d'insérer une séquence après un index de la liste donné
+     *
+     * @param sequence     séquence à insérer
+     * @param nearestIndex index dans la liste des séquences où placer la séquence à insérer
+     */
     private void insertAfterSequence(Sequence sequence, int nearestIndex) {
+        //récupération de la séquence à l'index fourni
         Sequence nearestSequence = this.sequences.get(nearestIndex);
-
-        if (nearestSequence.getEndDate().equals(sequence.getStartDate())) {
+        //si la séquence la plus proche a une date de fin égale à la date de début de la séquence à insérer, on ajoute directement la séquence à insérer après la séquence la plus proche
+        if (sequence.getStartDate() <= (nearestSequence.getEndDate() + 1) || sequence.getStartDate().equals(nearestSequence.getStartDate())) {
             this.sequences.add(Math.min(this.sequences.size(), nearestIndex + 1), sequence);
         } else {
-            SequenceEmpty empty = new SequenceEmpty(nearestSequence.getEndDate().get(Calendar.YEAR), nearestSequence.getEndDate().get(Calendar.MONTH), nearestSequence.getEndDate().get(Calendar.DAY_OF_MONTH),
-                    sequence.getStartDate().get(Calendar.YEAR), sequence.getStartDate().get(Calendar.MONTH), sequence.getStartDate().get(Calendar.DAY_OF_MONTH));
 
-            if (!(sequence instanceof SequenceError)) {
-                this.sequences.add(Math.min(this.sequences.size(), nearestIndex + 1), empty);
-            }
-
-            this.sequences.add(Math.max(this.sequences.size(), nearestIndex + 1), sequence);
+            //on crée une séquence vide avec une date de début = date de fin de la séquence la plus proche + 1 et date de fin = date de début de la séquence à insérer - 1
+            SequenceEmpty empty = new SequenceEmpty(nearestSequence.getEndDate() + 1, sequence.getStartDate() - 1);
+            //on ajoute la séquence vide crée après la séquence la plus proche
+            this.sequences.add(Math.min(this.sequences.size(), nearestIndex + 1), empty);
+            //on ajoute la séquence après la séquence vide
+            this.sequences.add(Math.max(this.sequences.size(), nearestIndex + 2), sequence);
         }
     }
 
+    /**
+     * Méthode permettant d'insérer une séquence avant un index de la liste donné
+     * Si une séquence est située plus d'une année après la séquence à insérer on ajoute une séquence vide entre les deux
+     *
+     * @param sequence     séquence à insérer
+     * @param nearestIndex index dans la liste des séquences où placer la séquence à insérer
+     */
     private void insertBeforeSequence(Sequence sequence, int nearestIndex) {
+        //récupération de la séquence à l'index fourni
         Sequence nearestSequence = this.sequences.get(nearestIndex);
 
-        if (nearestSequence.getStartDate().equals(sequence.getStartDate()) || nearestSequence.getStartDate().equals(sequence.getEndDate())) {
-            this.sequences.add(Math.max(0, nearestIndex - 1), sequence);
+        //si la séquence la plus proche a une date de début égale à la date de début de la séquence à insérer ou une date de début égale à la date de fin de la séquence à insérer
+        if (sequence.getStartDate().equals(nearestSequence.getStartDate()) || sequence.getEndDate() >= (nearestSequence.getStartDate() - 1)) {
+            //on ajoute la séquence juste avant la séquence la plus proche
+            this.sequences.add(Math.max(0, nearestIndex), sequence);
         } else {
-            SequenceEmpty empty = new SequenceEmpty(sequence.getEndDate().get(Calendar.YEAR), sequence.getEndDate().get(Calendar.MONTH), sequence.getEndDate().get(Calendar.DAY_OF_MONTH),
-                    nearestSequence.getStartDate().get(Calendar.YEAR), nearestSequence.getStartDate().get(Calendar.MONTH), nearestSequence.getStartDate().get(Calendar.DAY_OF_MONTH));
+            //on crée une séquence vide avec une date de début = date de fin de la séquence à insérer + 1 et une date de fin = date de début de la séquence la plus proche - 1
+            SequenceEmpty empty = new SequenceEmpty(sequence.getEndDate() + 1, nearestSequence.getStartDate() - 1);
+            //on ajoute la séquence vide avant la séquence la plus proche
             this.sequences.add(Math.max(0, nearestIndex), empty);
+            //on ajoute la séquence à insérer après la séquence vide
             this.sequences.add(Math.max(0, nearestIndex), sequence);
         }
     }
 
-    private void insertInTheMiddleOfSequence(Sequence sequenceAIntercaler, Sequence nearestSequence, int nearestIndex) {
-        //on copie la séquence trouvée, et on lui change sa date de début à la date de fin de la séquence de lacune
-        Sequence sequenceAfter = (Sequence) nearestSequence.clone();
+    /**
+     * Permet l'insertion d'une séquence dans une séquence qui la "couvre"
+     *
+     * @param sequenceAIntercaler séquence à insérer
+     * @param initSequence        séquence à découper
+     * @param initSequenceIndex   index de la séquence à découper
+     */
+    private void insertInTheMiddleOfSequence(Sequence sequenceAIntercaler, Sequence initSequence, int initSequenceIndex) {
+        //on copie la séquence à découper, qui sera placée à la fin
+        Sequence sequenceAfter = (Sequence) initSequence.clone();
 
-        sequenceAfter.setStartDate(sequenceAIntercaler.getEndDate().get(Calendar.YEAR), sequenceAIntercaler.getEndDate().get(Calendar.MONTH), sequenceAIntercaler.getEndDate().get(Calendar.DAY_OF_MONTH));
-        //on change la date de fin de la séquence la plus proche à la date de début de la séquence de lacune
-        nearestSequence.setEndDate(sequenceAIntercaler.getStartDate().get(Calendar.YEAR), sequenceAIntercaler.getStartDate().get(Calendar.MONTH), sequenceAIntercaler.getStartDate().get(Calendar.DAY_OF_MONTH));
-        //on ajoute à la liste la séquence copiée et la séquence de lacune
-        this.sequences.add(Math.min(this.sequences.size(), nearestIndex + 1), sequenceAIntercaler);
-
-        if (!sequenceAfter.getStartDate().equals(sequenceAfter.getEndDate())) {
-            this.sequences.add(Math.min(this.sequences.size(), nearestIndex + 2), sequenceAfter);
-        }
+        //on change l'année de début de la date copiée à l'année de fin de la séquence à intercaler + 1
+        sequenceAfter.setStartDate(sequenceAIntercaler.getEndDate() + 1);
+        //on change l'année de fin de la séquence initiale à l'année de début de la séquence à insérer - 1
+        initSequence.setEndDate(sequenceAIntercaler.getStartDate() - 1);
+        //on ajoute à la liste la séquence copiée et la séquence à insérer
+        this.sequences.add(Math.min(this.sequences.size(), initSequenceIndex + 1), sequenceAIntercaler);
+        //on ajout à la fin de la liste la séquence copiée
+        this.sequences.add(Math.min(this.sequences.size(), initSequenceIndex + 2), sequenceAfter);
     }
 
+    /**
+     * Méthode permettant de trouver une séquence dans un arbre binaire composé des séquences existante de l'état de collection
+     *
+     * @param sequence séquence à chercher
+     * @return une séquence qui "couvre" la séquence à chercher
+     */
     public Sequence findIntraSequence(Sequence sequence) {
         if (this.sequences.size() == 0) {
             return null;
@@ -223,33 +243,21 @@ public class Holding extends Item {
         }
     }
 
+    /**
+     * Permet de trouver la séquence la plus proche de la séquence à chercher
+     *
+     * @param sequence séquence à chercher dans les séquences déjà existantes
+     * @return la séquence la plus proche (le calcul se fait sur les dates de début)
+     */
     public Sequence findNearestSequence(Sequence sequence) {
         if (this.sequences.size() == 0) {
             return null;
         }
         return Collections.min(this.sequences, (d1, d2) -> {
-            long diff1 = Math.abs(d1.getStartDate().getTime().getTime() - sequence.getStartDate().getTime().getTime());
-            long diff2 = Math.abs(d2.getStartDate().getTime().getTime() - sequence.getStartDate().getTime().getTime());
+            long diff1 = Math.abs(d1.getStartDate() - sequence.getStartDate());
+            long diff2 = Math.abs(d2.getStartDate() - sequence.getStartDate());
             return Long.compare(diff1, diff2);
         });
-    }
-
-    public Sequence findNearestSequenceContinue(Sequence sequence) {
-        if (this.sequences.stream()
-                .filter(p -> p instanceof SequenceContinue)
-                .map(p -> (SequenceContinue) p)
-                .collect(Collectors.toList()).size() == 0) {
-            return null;
-        } else {
-            return Collections.min(this.sequences.stream()
-                    .filter(p -> p instanceof SequenceContinue)
-                    .map(p -> (SequenceContinue) p)
-                    .collect(Collectors.toList()), (d1, d2) -> {
-                long diff1 = Math.abs(d1.getStartDate().getTime().getTime() - sequence.getStartDate().getTime().getTime());
-                long diff2 = Math.abs(d2.getStartDate().getTime().getTime() - sequence.getStartDate().getTime().getTime());
-                return Long.compare(diff1, diff2);
-            });
-        }
     }
 
     @Override

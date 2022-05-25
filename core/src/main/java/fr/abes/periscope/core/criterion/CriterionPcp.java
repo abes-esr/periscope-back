@@ -18,7 +18,7 @@ public class CriterionPcp extends Criterion {
     /** Liste des codes PCP à rechercher. */
     private List<String> pcp = new ArrayList<>();
 
-    /** Liste des connecteurs logiques entre les codes RCR
+    /** Liste des connecteurs logiques entre les codes PCP
      * Exemple :
      * pcpOperators[0] pour connecter pcp[0]
      * pcpOperators[1] pour connecter pcp[0] et pcp[1] */
@@ -34,7 +34,7 @@ public class CriterionPcp extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionPcp(String blocOperator, List<String> candidatesPcp, List<String> candidatesOperator) {
-        super(blocOperator, TYPE_NOTICE.EXEMPLAIRE);
+        super(blocOperator, TYPE_NOTICE.BIBLIO);
 
         if (candidatesPcp.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");
@@ -66,7 +66,7 @@ public class CriterionPcp extends Criterion {
      * @exception IllegalCriterionException Si la liste des critères est vide
      */
     public CriterionPcp(List<String> candidatesPcp, List<String> candidatesOperator) {
-        super(TYPE_NOTICE.EXEMPLAIRE);
+        super(TYPE_NOTICE.BIBLIO);
 
         if (candidatesPcp.isEmpty()) {
             throw new IllegalCriterionException("Criteria list is empty");
