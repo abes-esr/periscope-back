@@ -494,6 +494,40 @@ public class DtoMapper {
         utilsMapper.addConverter(myConverter);
     }
 
+    /**
+     * Convertisseur pour les critères statut de bibliothèque (DTO vers objet métier)
+     */
+    @Bean
+    public void converterStatutBib() {
+        Converter<CriterionStatutBibWebDto, CriterionStatutBib> myConverter = new Converter<CriterionStatutBibWebDto, CriterionStatutBib>() {
+            public CriterionStatutBib convert(MappingContext<CriterionStatutBibWebDto, CriterionStatutBib> context) {
+                CriterionStatutBibWebDto s = context.getSource();
+                try {
+
+                    if (s.getBlocOperator() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_STATUT_BIB + " - property '" + CriterionWebDto.OPERATOR_PROPERTY + "' is missing");
+                    }
+                    if (s.getStatut() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_STATUT_BIB + " - property '" + CriterionStatutBibWebDto.STATUT_PROPERTY + "' is missing");
+                    }
+                    if (s.getStatutsOperators() == null) {
+                        throw new IllegalArgumentException(CriterionTypeName.CRITERION_STATUT_BIB + " - property '" + CriterionStatutBibWebDto.STATUT_OPERATOR_PROPERTY + "' is missing");
+                    }
+
+                    CriterionStatutBib d = new CriterionStatutBib(s.getBlocOperator(), s.getStatut(), s.getStatutsOperators());
+                    return d;
+                } catch (IllegalOperatorException ex) {
+                    throw new IllegalOperatorException(CriterionTypeName.CRITERION_STATUT_BIB + " : " + ex.getLocalizedMessage());
+                } catch (CriterionOperatorMismatchException ex) {
+                    throw new CriterionOperatorMismatchException(CriterionTypeName.CRITERION_STATUT_BIB + " - '" + CriterionStatutBibWebDto.STATUT_PROPERTY + "' dismatch size of '" + CriterionStatutBibWebDto.STATUT_OPERATOR_PROPERTY + "' : " + ex.getLocalizedMessage());
+                } catch (IllegalCriterionException ex) {
+                    throw new IllegalCriterionException(CriterionTypeName.CRITERION_STATUT_BIB + " : " + ex.getLocalizedMessage());
+                }
+            }
+        };
+        utilsMapper.addConverter(myConverter);
+    }
+
     @Bean
     public void converterNoticeVisuWebDto() {
         Converter<NoticeVisu, NoticeVisuWebDto> myConverter = new Converter<NoticeVisu, NoticeVisuWebDto>() {

@@ -104,6 +104,10 @@ public abstract class NoticeAbstractController {
             criteria.add(mapper.map(userCriterion, CriterionIssn.class));
         }
 
+        if (userCriterion instanceof CriterionStatutBibWebDto) {
+            criteria.add(mapper.map(userCriterion, CriterionStatutBib.class));
+        }
+
         if (userCriterion instanceof CriterionPcpRcrWebDto) {
             CriterionPcpWebDto critWebPcp = new CriterionPcpWebDto(((CriterionPcpRcrWebDto) userCriterion).getPcp(), LogicalOperator.AND, userCriterion.getBlocOperator());
             CriterionPcp critPcp = mapper.map(critWebPcp, CriterionPcp.class);

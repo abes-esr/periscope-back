@@ -370,6 +370,7 @@ class UtilsMapperTest {
         source.setEndYearConfidenceIndex(1);
         source.setRcrList(Sets.newLinkedHashSet("341725201", "751050001"));
         source.setPcpList(Sets.newLinkedHashSet("PCMed"));
+        source.setStatutList(Sets.newLinkedHashSet("PC"));
         ItemSolr item1 = new ItemSolr("111111111", "999999999");
         item1.setPcp(Lists.newArrayList("PCMed"));
         item1.setRcr("341725201");

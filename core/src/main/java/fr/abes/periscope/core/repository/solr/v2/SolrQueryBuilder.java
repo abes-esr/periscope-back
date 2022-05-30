@@ -84,6 +84,12 @@ public class SolrQueryBuilder {
                 Criteria issnQuery = buildIssnQuery((CriterionIssn) criterion);
                 filterQuery.addCriteria(issnQuery);
             }
+
+            //bloc de critère Statut de la bibliothèque
+            if (criterion instanceof CriterionStatutBib) {
+                Criteria statutBibQuery = buildStatutBibQuery((CriterionStatutBib) criterion);
+                filterQuery.addCriteria(statutBibQuery);
+            }
         });
 
         return filterQuery.getCriteria();
@@ -466,6 +472,51 @@ public class SolrQueryBuilder {
             myCriteria = myCriteria.or(NoticeV2SolrField.ISSN).is(value);
         }
 
+        return getBlocOperator(criterion, myCriteria);
+    }
+
+    /**
+     * Construit la requête SolR à partir d'un critère de recherche par Statut de bibliothèque
+     *
+     * @param criterion Le critère de recherche par statut de bibliothèque
+     * @return Criteria Requête SolR
+     */
+    private Criteria buildStatutBibQuery(CriterionStatutBib criterion) {
+        Iterator<String> statutIterator = criterion.getStatutBibliotheque().iterator();
+        Iterator<String> statutOperatorIterator = criterion.getStatutOperators().iterator();
+
+        Criteria myCriteria;
+
+        String statut = statutIterator.next();
+        String statutOperator = statutOperatorIterator.next();
+
+        // 1er critère
+        switch (statutOperator) {
+            case LogicalOperator.EXCEPT:
+                myCriteria = new Criteria(NoticeV2SolrField.STATUT_LIST).is(statut).not().connect();
+                break;
+            default:
+                myCriteria = new Criteria(NoticeV2SolrField.STATUT_LIST).is(statut).connect();
+                break;
+        }
+
+        // les autres
+        while (statutIterator.hasNext()) {
+            statut = statutIterator.next();
+            statutOperator = statutOperatorIterator.next();
+
+            switch (statutOperator) {
+                case LogicalOperator.AND:
+                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.STATUT_LIST).is(statut);
+                    break;
+                case LogicalOperator.OR:
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.STATUT_LIST).is(statut);
+                    break;
+                case LogicalOperator.EXCEPT:
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.STATUT_LIST).is(statut).not();
+                    break;
+            }
+        }
         return getBlocOperator(criterion, myCriteria);
     }
 
