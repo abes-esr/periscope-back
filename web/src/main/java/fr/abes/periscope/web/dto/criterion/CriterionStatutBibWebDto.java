@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.validation.constraints.NotNull;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -18,13 +19,14 @@ import java.util.Set;
 @JsonTypeName(CriterionTypeName.CRITERION_STATUT_BIB)
 public class CriterionStatutBibWebDto extends CriterionWebDto {
     public static final String STATUT_PROPERTY = "statut";
+    public static final String STATUT_OPERATOR_PROPERTY = "statut_operator";
 
     @JsonProperty(value= STATUT_PROPERTY)
     @NotNull(message = "Le statut de la bibliothèque ne doit pas être null")
-    private String statut;
+    private List<String> statut;
 
-    public CriterionStatutBibWebDto(String blocOperator, String statut) {
-        super(blocOperator);
-        this.statut = statut;
-    }
+    @JsonProperty(value= STATUT_OPERATOR_PROPERTY)
+    @NotNull(message = "La liste des connecteurs logiques ne doit pas être nulle")
+    private List<String> statutsOperators;
+
 }
