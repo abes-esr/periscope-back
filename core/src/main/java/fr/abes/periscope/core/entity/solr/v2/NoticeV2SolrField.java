@@ -141,6 +141,7 @@ public abstract class NoticeV2SolrField {
     // Zone 930
     public static final String PCP_LIST = "pcpList";
     public static final String RCR_LIST = "rcrList";
+    public static final String STATUT_LIST = "statutList";
 
     public static final String PCP = "zone_930$z_t";
     public static final String RCR = "zone_930$b";

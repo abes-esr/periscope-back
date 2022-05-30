@@ -42,6 +42,10 @@ public class ItemSolr implements Serializable {
     @Indexed(name = ItemSolrField.PCP)
     private List<String> pcp;
 
+    @Field(ItemSolrField.STATUT)
+    @Indexed(ItemSolrField.STATUT)
+    private String statutBibliotheque;
+
     public ItemSolr(String ppn, String epn) {
         this.id = epn;
         this.epn = epn;
