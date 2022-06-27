@@ -1,13 +1,6 @@
 package fr.abes.periscope.web.util;
 
-import fr.abes.periscope.core.entity.solr.Item;
-import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
-import fr.abes.periscope.core.entity.solr.PublicationYear;
-import fr.abes.periscope.core.entity.solr.SupportType;
-import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
-import fr.abes.periscope.core.entity.solr.v2.FacetteSolr;
-import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
-import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
+import fr.abes.periscope.core.entity.solr.*;
 import fr.abes.periscope.core.entity.visualisation.Frequency;
 import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
 import fr.abes.periscope.core.util.UtilsMapper;
@@ -35,12 +28,12 @@ public class DtoMapperTest {
     @Autowired
     private UtilsMapper mapper;
 
-    private NoticeV2 notice1;
-    private NoticeV2 notice2;
+    private Notice notice1;
+    private Notice notice2;
 
     @BeforeEach
     void init() {
-        notice1 = new NoticeV2();
+        notice1 = new Notice();
         notice1.setPpn("111111111");
         notice1.setIssn("1111-1111");
         notice1.setPublisher("test éditeur");
@@ -77,7 +70,7 @@ public class DtoMapperTest {
 
         notice1.addItem(item2);
 
-        notice2 = new NoticeV2();
+        notice2 = new Notice();
         notice2.setPpn("222222222");
         notice2.setIssn("2222-2222");
         notice2.setPublisher("test éditeur 2");
@@ -128,11 +121,11 @@ public class DtoMapperTest {
     @DisplayName("test converterResultWebDto")
     void converterResultWebDtoTest() {
 
-        FacetteSolr facette1 = new FacetteSolr(NoticeV2SolrField.DOCUMENT_TYPE);
+        FacetteSolr facette1 = new FacetteSolr(NoticeSolrField.DOCUMENT_TYPE);
         Map<String, Integer> mapFacette = new HashMap<>();
         mapFacette.put("Collection", 10);
         facette1.addValeurs(mapFacette);
-        FacetteSolr facette2 = new FacetteSolr(NoticeV2SolrField.LANGUAGE);
+        FacetteSolr facette2 = new FacetteSolr(NoticeSolrField.LANGUAGE);
         mapFacette = new HashMap<>();
         mapFacette.put("FR", 12);
         facette1.addValeurs(mapFacette);

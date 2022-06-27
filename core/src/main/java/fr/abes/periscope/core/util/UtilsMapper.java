@@ -1,6 +1,7 @@
 package fr.abes.periscope.core.util;
 
 import fr.abes.periscope.core.entity.solr.PublicationYear;
+import fr.abes.periscope.core.entity.solr.SupportType;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
@@ -155,7 +156,7 @@ public class UtilsMapper extends ModelMapper {
      * @return
      * @throws IllegalPublicationYearException
      */
-    private PublicationYear extractCaseF(String candidateOldestYear, String candidateNewestYear) throws IllegalPublicationYearException {
+    protected PublicationYear extractCaseF(String candidateOldestYear, String candidateNewestYear) throws IllegalPublicationYearException {
         int cdtOldestYear = (candidateOldestYear.equals("    ")) ? 0 : Integer.parseInt(candidateOldestYear.trim());
         int cdtNewestYear = (candidateNewestYear.equals("    ")) ? 9999 : Integer.parseInt(candidateNewestYear.trim());
         PublicationYear year = new PublicationYear();
@@ -207,5 +208,39 @@ public class UtilsMapper extends ModelMapper {
             return titre.replace("\u0098", "").replace("\u009c", "");
         }
         return null;
+    }
+
+    public String extractSupportType(String typeSupport) {
+        if (typeSupport == null) {
+            return SupportType.X;
+        }
+        switch (typeSupport) {
+            case "a":
+                return SupportType.A;
+            case "b":
+                return SupportType.B;
+            case "c":
+                return SupportType.C;
+            case "d":
+                return SupportType.D;
+            case "e":
+                return SupportType.E;
+            case "f":
+                return SupportType.F;
+            case "g":
+                return SupportType.G;
+            case "i":
+                return SupportType.I;
+            case "j":
+                return SupportType.J;
+            case "l":
+                return SupportType.L;
+            case "m":
+                return SupportType.M;
+            case "r":
+                return SupportType.R;
+            default:
+                return SupportType.X;
+        }
     }
 }
