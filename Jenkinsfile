@@ -285,6 +285,7 @@ node {
                             newconfig = newconfig.replaceAll("basexml.datasource.url=*", "basexml.datasource.url=${bdURL}")
                             newconfig = newconfig.replaceAll("basexml.datasource.username=*", "basexml.datasource.username=${username}")
                             newconfig = newconfig.replaceAll("basexml.datasource.password=*", "basexml.datasource.password=${pass}")
+                        }
                     }
                     // **** FIN DE ZONE A EDITER n°2 ****
 
