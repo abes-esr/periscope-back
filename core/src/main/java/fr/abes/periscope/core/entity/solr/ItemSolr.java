@@ -15,7 +15,7 @@ import java.util.List;
  * Représente un exemplaire
  */
 @Getter @Setter
-@SolrDocument
+@SolrDocument(collection = "periscope-v2")
 public class ItemSolr implements Serializable {
 
     @Id

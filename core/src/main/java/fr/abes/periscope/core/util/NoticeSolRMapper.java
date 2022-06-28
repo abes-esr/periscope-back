@@ -61,7 +61,7 @@ public class NoticeSolRMapper {
                     target.setParallelTitle(source.getParallelTitleForDisplay());
                     target.setTitleComplement(source.getTitleComplementForDisplay());
                     target.setSectionTitle(source.getSectionTitleForDisplay());
-                    target.setContinuousType(source.getContinuousType());
+                    target.setContinuousType((source.getContinuousType() == null ? "Non renseigné" : source.getContinuousType()));
                     target.setSupportType(source.getSupportType());
                     target.setLanguage(source.getLanguage());
                     target.setCountry(source.getCountry());

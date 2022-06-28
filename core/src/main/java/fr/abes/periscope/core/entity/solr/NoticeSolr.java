@@ -18,7 +18,7 @@ import java.util.Set;
  * Représente une notice au format SolR selon le SolR V2 de PERISCOPE
  */
 @Getter @Setter
-@SolrDocument
+@SolrDocument(collection = "periscope-v2")
 public class NoticeSolr implements Serializable {
 
     @Id

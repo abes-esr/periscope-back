@@ -148,7 +148,7 @@ public class BatchConfiguration {
         NoticeQueryProvider provider = new NoticeQueryProvider();
         provider.setSelectClause("id, XMLSERIALIZE (CONTENT data_xml as CLOB) as data_xml");
         provider.setFromClause("autorites.noticesbibio");
-        provider.setWhereClause("id >= :minValue and id < :maxValue");
+        provider.setWhereClause("id >= :minValue and id <= :maxValue");
         Map<String, Order> sortKeys = new HashMap<>();
         sortKeys.put("id", Order.ASCENDING);
         provider.setSortKeys(sortKeys);

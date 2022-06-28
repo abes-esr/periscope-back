@@ -22,7 +22,7 @@ import org.springframework.data.solr.repository.config.EnableSolrRepositories;
 @Slf4j
 public class SolrConfig {
 
-    @Value("${periscope.solr.v2.url}")
+    @Value("${solr.baseurl}")
     private String baseURL;
 
     @Bean

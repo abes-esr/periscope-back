@@ -23,12 +23,15 @@ node {
     def gitCredentials = 'Github'
     def slackChannel = "#notif-periscope"
     def artifactoryBuildName = "periscope-api"
-    def modulesNames = ["web"]
+    def modulesNames = ["web", "batch"]
 
     // Definition du module web
     def backApplicationFileName = "periscope"
     def backTargetDir = "/usr/local/tomcat9-periscope/webapps/"
     def backServiceName = "tomcat9-periscope.service"
+
+    // Definition du module batch
+    def batchTargetDir = "/home/batch/periscope/"
 
     // **** FIN DE ZONE A EDITER n°1 ****
 
@@ -259,20 +262,30 @@ node {
                     if ("${candidateModules[moduleIndex]}" == 'web') {
                         withCredentials([
                                 // on charge le credential "periscope.solr-dev" dans la variable 'url'
-                                string(credentialsId: "periscope.solr.v1-${mavenProfil}", variable: 'urlV1'),
                                 string(credentialsId: "periscope.solr.v2-${mavenProfil}", variable: 'urlV2'),
                                 string(credentialsId: "basexml.datasource.url-${mavenProfil}", variable: 'urlbaseXml'),
                                 string(credentialsId: "basexml.datasource.username-${mavenProfil}", variable: 'usernameBaseXml'),
                                 string(credentialsId: "basexml.datasource.password-${mavenProfil}", variable: 'passwordBaseXml')
                         ]) {
-                            newconfig = newconfig.replaceAll("periscope.solr.v1.url=*", "periscope.solr.v1.url=${urlV1}")
-                            newconfig = newconfig.replaceAll("periscope.solr.v2.url=*", "periscope.solr.v2.url=${urlV2}")
+                            newconfig = newconfig.replaceAll("solr.baseurl=*", "solr.baseurl=${urlV2}")
                             newconfig = newconfig.replaceAll("basexml.datasource.url=*", "basexml.datasource.url=${urlbaseXml}")
                             newconfig = newconfig.replaceAll("basexml.datasource.username=*", "basexml.datasource.username=${usernameBaseXml}")
                             newconfig = newconfig.replaceAll("basexml.datasource.password=*", "basexml.datasource.password=${passwordBaseXml}")
                         }
                     }
 
+                    // Module batch
+                    if ("${candidateModules[moduleIndex]}" == 'batch') {
+                        withCredentials([
+                                string(credentialsId: "periscope.solr-${mavenProfil}", variable: 'solrURL'),
+                                string(credentialsId: "periscope.basexml-${mavenProfil}", variable: 'bdURL'),
+                                usernamePassword(credentialsId: 'lectureuser', passwordVariable: 'pass', usernameVariable: 'username')
+                        ]) {
+                            newconfig = newconfig.replaceAll("solr.baseurl=*", "solr.baseurl=${solrURL}")
+                            newconfig = newconfig.replaceAll("basexml.datasource.url=*", "basexml.datasource.url=${bdURL}")
+                            newconfig = newconfig.replaceAll("basexml.datasource.username=*", "basexml.datasource.username=${username}")
+                            newconfig = newconfig.replaceAll("basexml.datasource.password=*", "basexml.datasource.password=${pass}")
+                    }
                     // **** FIN DE ZONE A EDITER n°2 ****
 
                     writeFile file: "${candidateModules[moduleIndex]}/src/main/resources/application-${mavenProfil}.properties", text: "${newconfig}"
