@@ -455,7 +455,7 @@ node {
                             echo "--------------------------"
 
                             try {
-                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${backApplicationFileName} ${backTargetDir}${backApplicationFileName}.war\""
+                                sh "ssh -vvv -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${backApplicationFileName} ${backTargetDir}${backApplicationFileName}.war\""
                                 sh "scp ${candidateModules[moduleIndex]}/target/${backApplicationFileName}.war ${username}@${hostname}:${backTargetDir}"
 
                             } catch (e) {
@@ -469,10 +469,10 @@ node {
 
                             try {
                                 echo 'start service'
-                                sh "ssh -tt ${username}@${hostname} \"${start} ${backServiceName}\""
+                                sh "ssh -vvv -tt ${username}@${hostname} \"${start} ${backServiceName}\""
 
                                 echo 'get service status'
-                                sh "ssh -tt ${username}@${hostname} \"${status} ${backServiceName}\""
+                                sh "ssh -vvv -tt ${username}@${hostname} \"${status} ${backServiceName}\""
 
                             } catch (e) {
                                 currentBuild.result = hudson.model.Result.FAILURE.toString()
