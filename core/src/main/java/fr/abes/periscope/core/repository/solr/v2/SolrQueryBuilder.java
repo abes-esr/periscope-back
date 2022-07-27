@@ -250,33 +250,41 @@ public class SolrQueryBuilder {
             value = valueIterator.next();
             operator = operatorIterator.next();
 
+            Criteria criteria = null;
+
             switch (operator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.KEY_TITLE).is(value).
+                    criteria = new Criteria(NoticeV2SolrField.KEY_TITLE).is(value).
                             or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).
                             or(NoticeV2SolrField.PROPER_TITLE).is(value).
                             or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
                             or(NoticeV2SolrField.PARALLEL_TITLE).is(value).
                             or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).
-                            or(NoticeV2SolrField.SECTION_TITLE).is(value);
+                            or(NoticeV2SolrField.SECTION_TITLE).is(value).connect();
+
+                    myCriteria.and(criteria).connect();
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.KEY_TITLE).is(value).
+                    criteria = new Criteria(NoticeV2SolrField.KEY_TITLE).is(value).
                             or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).
                             or(NoticeV2SolrField.PROPER_TITLE).is(value).
                             or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
                             or(NoticeV2SolrField.PARALLEL_TITLE).is(value).
                             or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).
                             or(NoticeV2SolrField.SECTION_TITLE).is(value);
+
+                    myCriteria.or(criteria).connect();
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.KEY_TITLE).is(value).not().
+                    criteria = new Criteria(NoticeV2SolrField.KEY_TITLE).is(value).not().
                             or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).not().
                             or(NoticeV2SolrField.PROPER_TITLE).is(value).not().
                             or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).not().
                             or(NoticeV2SolrField.PARALLEL_TITLE).is(value).not().
                             or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).not().
                             or(NoticeV2SolrField.SECTION_TITLE).is(value).not();
+
+                    myCriteria.or(criteria).not().connect();
                     break;
             }
         }
