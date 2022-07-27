@@ -262,7 +262,7 @@ public class SolrQueryBuilder {
                             or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).
                             or(NoticeV2SolrField.SECTION_TITLE).is(value).connect();
 
-                    myCriteria.and(criteria).connect();
+                    myCriteria.and(criteria);
                     break;
                 case LogicalOperator.OR:
                     criteria = new Criteria(NoticeV2SolrField.KEY_TITLE).is(value).
@@ -271,9 +271,9 @@ public class SolrQueryBuilder {
                             or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
                             or(NoticeV2SolrField.PARALLEL_TITLE).is(value).
                             or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).
-                            or(NoticeV2SolrField.SECTION_TITLE).is(value);
+                            or(NoticeV2SolrField.SECTION_TITLE).is(value).connect();
 
-                    myCriteria.or(criteria).connect();
+                    myCriteria.or(criteria);
                     break;
                 case LogicalOperator.EXCEPT:
                     criteria = new Criteria(NoticeV2SolrField.KEY_TITLE).is(value).not().
@@ -282,9 +282,9 @@ public class SolrQueryBuilder {
                             or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).not().
                             or(NoticeV2SolrField.PARALLEL_TITLE).is(value).not().
                             or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).not().
-                            or(NoticeV2SolrField.SECTION_TITLE).is(value).not();
+                            or(NoticeV2SolrField.SECTION_TITLE).is(value).not().connect();
 
-                    myCriteria.or(criteria).not().connect();
+                    myCriteria.or(criteria).not();
                     break;
             }
         }
