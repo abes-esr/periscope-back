@@ -311,10 +311,10 @@ public class SolrQueryBuilder {
         // 1er critère
         switch (operator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = new Criteria(NoticeV2SolrField.COUNTRY).is(value).not().connect().and(NoticeV2SolrField.KEY_TITLE);
+                myCriteria = new Criteria(NoticeV2SolrField.COUNTRY).is(value).not().connect();
                 break;
             default:
-                myCriteria = new Criteria(NoticeV2SolrField.COUNTRY).is(value).connect().and(NoticeV2SolrField.KEY_TITLE);
+                myCriteria = new Criteria(NoticeV2SolrField.COUNTRY).is(value).connect();
                 break;
         }
 
@@ -325,16 +325,18 @@ public class SolrQueryBuilder {
 
             switch (operator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.COUNTRY).is(value).and(NoticeV2SolrField.KEY_TITLE);
+                    myCriteria = myCriteria.connect().and(NoticeV2SolrField.COUNTRY).is(value);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.COUNTRY).is(value).and(NoticeV2SolrField.KEY_TITLE);
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.COUNTRY).is(value);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.COUNTRY).is(value).not().and(NoticeV2SolrField.KEY_TITLE);
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.COUNTRY).is(value).not();
                     break;
             }
         }
+
+        myCriteria.and(NoticeV2SolrField.KEY_TITLE).connect();
 
         return getBlocOperator(criterion, myCriteria);
     }
@@ -407,7 +409,7 @@ public class SolrQueryBuilder {
                     break;
             }
         }
-        myCriteria = myCriteria.and(NoticeV2SolrField.KEY_TITLE);
+        myCriteria = myCriteria.and(NoticeV2SolrField.KEY_TITLE).connect();
 
         return getBlocOperator(criterion, myCriteria);
     }
