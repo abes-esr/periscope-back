@@ -484,8 +484,34 @@ node {
                     }//Pour chaque serveur
                 }
             }
+            //-------------------------------
+            // Etape 4.2 : Serveur Batch
+            //-------------------------------
+            if ("${candidateModules[moduleIndex]}" == 'batch') {
+
+                stage("Deploy to batch servers") {
+                    for (int i = 0; i < batchTargetHostnames.size(); i++) { //Pour chaque serveur
+                        withCredentials([
+                            usernamePassword(credentialsId: 'batchuserpass', passwordVariable: 'pass', usernameVariable: 'username'),
+                            string(credentialsId: "${batchTargetHostnames[i]}", variable: 'hostname')
+                        ]) {
+                            try {
+                                echo "Deploy to ${batchTargetHostnames[i]}"
+                                echo "--------------------------"
+                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${batchTargetDir}${backApplicationFileName}.jar\""
+                                sh "scp ${candidateModules[moduleIndex]}/target/*.jar ${username}@${hostname}:${batchTargetDir}"
+                            } catch (e) {
+                                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                                notifySlack(slackChannel, "Failed to deploy batch on ${batchTargetHostnames[i]} :" + e.getLocalizedMessage())
+                                throw e
+                            }
+                        }
+                    }
+                }
+            }
         }
     } //Pour chaque module du projet
+
 
     currentBuild.result = hudson.model.Result.SUCCESS.toString()
     notifySlack(slackChannel,"Congratulation !")
