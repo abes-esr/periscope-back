@@ -249,33 +249,41 @@ public class SolrQueryBuilder {
             value = valueIterator.next();
             operator = operatorIterator.next();
 
+            Criteria criteria = null;
+
             switch (operator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect().and(NoticeSolrField.KEY_TITLE).is(value).
-                            or(NoticeSolrField.KEY_SHORTED_TITLE).is(value).
-                            or(NoticeSolrField.PROPER_TITLE).is(value).
-                            or(NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
-                            or(NoticeSolrField.PARALLEL_TITLE).is(value).
-                            or(NoticeSolrField.TITLE_COMPLEMENT).is(value).
-                            or(NoticeSolrField.SECTION_TITLE).is(value);
+                    criteria = new Criteria(NoticeV2SolrField.KEY_TITLE).is(value).
+                            or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).
+                            or(NoticeV2SolrField.PROPER_TITLE).is(value).
+                            or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
+                            or(NoticeV2SolrField.PARALLEL_TITLE).is(value).
+                            or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).
+                            or(NoticeV2SolrField.SECTION_TITLE).is(value).connect();
+
+                    myCriteria.and(criteria);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.connect().or(NoticeSolrField.KEY_TITLE).is(value).
-                            or(NoticeSolrField.KEY_SHORTED_TITLE).is(value).
-                            or(NoticeSolrField.PROPER_TITLE).is(value).
-                            or(NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
-                            or(NoticeSolrField.PARALLEL_TITLE).is(value).
-                            or(NoticeSolrField.TITLE_COMPLEMENT).is(value).
-                            or(NoticeSolrField.SECTION_TITLE).is(value);
+                    criteria = new Criteria(NoticeV2SolrField.KEY_TITLE).is(value).
+                            or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).
+                            or(NoticeV2SolrField.PROPER_TITLE).is(value).
+                            or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
+                            or(NoticeV2SolrField.PARALLEL_TITLE).is(value).
+                            or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).
+                            or(NoticeV2SolrField.SECTION_TITLE).is(value).connect();
+
+                    myCriteria.or(criteria);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().or(NoticeSolrField.KEY_TITLE).is(value).not().
-                            or(NoticeSolrField.KEY_SHORTED_TITLE).is(value).not().
-                            or(NoticeSolrField.PROPER_TITLE).is(value).not().
-                            or(NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).not().
-                            or(NoticeSolrField.PARALLEL_TITLE).is(value).not().
-                            or(NoticeSolrField.TITLE_COMPLEMENT).is(value).not().
-                            or(NoticeSolrField.SECTION_TITLE).is(value).not();
+                    criteria = new Criteria(NoticeV2SolrField.KEY_TITLE).is(value).not().
+                            or(NoticeV2SolrField.KEY_SHORTED_TITLE).is(value).not().
+                            or(NoticeV2SolrField.PROPER_TITLE).is(value).not().
+                            or(NoticeV2SolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).not().
+                            or(NoticeV2SolrField.PARALLEL_TITLE).is(value).not().
+                            or(NoticeV2SolrField.TITLE_COMPLEMENT).is(value).not().
+                            or(NoticeV2SolrField.SECTION_TITLE).is(value).not().connect();
+
+                    myCriteria.or(criteria).not();
                     break;
             }
         }
@@ -326,6 +334,8 @@ public class SolrQueryBuilder {
                     break;
             }
         }
+
+        myCriteria.and(NoticeV2SolrField.KEY_TITLE).connect();
 
         return getBlocOperator(criterion, myCriteria);
     }
@@ -398,6 +408,7 @@ public class SolrQueryBuilder {
                     break;
             }
         }
+        myCriteria = myCriteria.and(NoticeV2SolrField.KEY_TITLE).connect();
 
         return getBlocOperator(criterion, myCriteria);
     }
@@ -508,7 +519,7 @@ public class SolrQueryBuilder {
                     myCriteria = myCriteria.connect().and(NoticeSolrField.STATUT_LIST).is(statut);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.connect().or(NoticeSolrField.STATUT_LIST).is(statut);
+                    myCriteria = myCriteria.connect().or(NoticeV2SolrField.STATUT_LIST).is(statut);
                     break;
                 case LogicalOperator.EXCEPT:
                     myCriteria = myCriteria.connect().or(NoticeSolrField.STATUT_LIST).is(statut).not();
