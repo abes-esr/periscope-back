@@ -1,0 +1,187 @@
+<record>
+    <leader> cas0 22 450 </leader>
+    <controlfield tag="001">037982176</controlfield>
+    <controlfield tag="002">91</controlfield>
+    <controlfield tag="003">http://www.sudoc.fr/037982176</controlfield>
+    <controlfield tag="004">19980902</controlfield>
+    <controlfield tag="005">20190723124559.000</controlfield>
+    <controlfield tag="006">9999</controlfield>
+    <controlfield tag="007">751062103</controlfield>
+    <controlfield tag="008">Abx3</controlfield>
+    <datafield tag="011" ind1=" " ind2=" ">
+        <subfield code="a">1019-8814</subfield>
+        <subfield code="f">1019-8814</subfield>
+    </datafield>
+    <datafield tag="035" ind1=" " ind2=" ">
+        <subfield code="a">(OCoLC)610730381</subfield>
+    </datafield>
+    <datafield tag="035" ind1=" " ind2=" ">
+        <subfield code="a">ccn1019-8814</subfield>
+    </datafield>
+    <datafield tag="035" ind1=" " ind2=" ">
+        <subfield code="z">ccn7127/037X</subfield>
+    </datafield>
+    <datafield tag="035" ind1=" " ind2=" ">
+        <subfield code="a">issn1019-8814</subfield>
+    </datafield>
+    <datafield tag="102" ind1=" " ind2=" ">
+        <subfield code="a">CH</subfield>
+    </datafield>
+    <datafield tag="105" ind1=" " ind2=" ">
+        <subfield code="a">y |||||||||</subfield>
+    </datafield>
+    <datafield tag="106" ind1=" " ind2=" ">
+        <subfield code="a">r</subfield>
+    </datafield>
+    <datafield tag="181" ind1=" " ind2=" ">
+        <subfield code="6">z01</subfield>
+        <subfield code="c">txt</subfield>
+        <subfield code="2">rdacontent</subfield>
+    </datafield>
+    <datafield tag="181" ind1=" " ind2="1">
+        <subfield code="6">z01</subfield>
+        <subfield code="a">i#</subfield>
+        <subfield code="b">xxxe##</subfield>
+    </datafield>
+    <datafield tag="182" ind1=" " ind2=" ">
+        <subfield code="6">z01</subfield>
+        <subfield code="c">n</subfield>
+        <subfield code="2">rdamedia</subfield>
+    </datafield>
+    <datafield tag="182" ind1=" " ind2="1">
+        <subfield code="6">z01</subfield>
+        <subfield code="a">n</subfield>
+    </datafield>
+    <datafield tag="200" ind1="1" ind2=" ">
+        <subfield code="a">Dental-Journal</subfield>
+        <subfield code="e">Organ der Schweizer. Zahntechnischen Gesellschaft</subfield>
+        <subfield code="d">= Journal dental</subfield>
+        <subfield code="e">organe de la Société suisse des mécaniciens dentistes</subfield>
+    </datafield>
+    <datafield tag="326" ind1=" " ind2=" ">
+        <subfield code="a">Mensuel</subfield>
+    </datafield>
+    <datafield tag="530" ind1="1" ind2=" ">
+        <subfield code="a">Dental-Journal</subfield>
+        <subfield code="b">(Weinfelden)</subfield>
+    </datafield>
+    <datafield tag="801" ind1=" " ind2="3">
+        <subfield code="a">FR</subfield>
+        <subfield code="b">Abes</subfield>
+        <subfield code="c">20190723</subfield>
+        <subfield code="g">AFNOR</subfield>
+    </datafield>
+    <datafield tag="801" ind1=" " ind2="3">
+        <subfield code="a">FR</subfield>
+        <subfield code="b">ISSN</subfield>
+        <subfield code="c">20161001</subfield>
+    </datafield>
+    <datafield tag="802" ind1=" " ind2=" ">
+        <subfield code="a">40</subfield>
+    </datafield>
+    <datafield tag="915" ind1=" " ind2=" ">
+        <subfield code="5">751062103:119351676</subfield>
+        <subfield code="a">PE 188/A</subfield>
+    </datafield>
+    <datafield tag="930" ind1=" " ind2=" ">
+        <subfield code="5">751062103:119351676</subfield>
+        <subfield code="b">751062103</subfield>
+        <subfield code="z">PCMed</subfield>
+        <subfield code="p">Pôle de conservation</subfield>
+        <subfield code="a">PE 188/A</subfield>
+        <subfield code="j">f</subfield>
+    </datafield>
+    <datafield tag="955" ind1="4" ind2="1">
+        <subfield code="5">751062103:119351676</subfield>
+        <subfield code="c">9ème année</subfield>
+        <subfield code="b">7</subfield>
+        <subfield code="i">1921</subfield>
+        <subfield code="c">16ème année</subfield>
+        <subfield code="b">5</subfield>
+        <subfield code="i">1928</subfield>
+    </datafield>
+    <datafield tag="955" ind1=" " ind2=" ">
+        <subfield code="5">751062103:119351676</subfield>
+        <subfield code="c">18ème année</subfield>
+        <subfield code="b">7</subfield>
+        <subfield code="i">1930</subfield>
+        <subfield code="c">18ème année</subfield>
+        <subfield code="b">8</subfield>
+        <subfield code="i">1930</subfield>
+    </datafield>
+    <datafield tag="955" ind1=" " ind2=" ">
+        <subfield code="5">751062103:119351676</subfield>
+        <subfield code="c">20ème année</subfield>
+        <subfield code="b">1</subfield>
+        <subfield code="i">1932</subfield>
+        <subfield code="c">27ème année</subfield>
+        <subfield code="b">29</subfield>
+        <subfield code="i">1939</subfield>
+        <subfield code="z">EN MAGASIN</subfield>
+        <subfield code="w">Lacunes</subfield>
+        <subfield code="r">9ème année no. 7 (1921) - 16ème année no. 5 (1928) ; 18ème année no. 7 (1930) - 18ème année no. 8 (1930) ; 20ème année no. 1 (1932) - 27ème année no. 29 (1939) [EN MAGASIN] [Lacunes]</subfield>
+    </datafield>
+    <datafield tag="959" ind1=" " ind2=" ">
+        <subfield code="5">751062103:119351676</subfield>
+        <subfield code="d">9</subfield>
+        <subfield code="e">8,9,10,11,12</subfield>
+        <subfield code="a">1921</subfield>
+        <subfield code="0"/>
+        <subfield code="d">10</subfield>
+        <subfield code="e">1,2,3,4,5,6,7,8,10,11,12</subfield>
+        <subfield code="a">1922</subfield>
+        <subfield code="0"/>
+        <subfield code="d">11</subfield>
+        <subfield code="e">1,2,6,8,10</subfield>
+        <subfield code="a">1923</subfield>
+        <subfield code="0"/>
+        <subfield code="d">12</subfield>
+        <subfield code="e">7</subfield>
+        <subfield code="a">1924</subfield>
+        <subfield code="0"/>
+        <subfield code="d">13</subfield>
+        <subfield code="e">7,9,12</subfield>
+        <subfield code="a">1925</subfield>
+        <subfield code="0"/>
+        <subfield code="d">14</subfield>
+        <subfield code="e">4,8</subfield>
+        <subfield code="a">1926</subfield>
+        <subfield code="0"/>
+        <subfield code="d">15</subfield>
+        <subfield code="e">9</subfield>
+        <subfield code="a">1927</subfield>
+        <subfield code="0"/>
+        <subfield code="d">16</subfield>
+        <subfield code="e">4</subfield>
+        <subfield code="a">1928</subfield>
+        <subfield code="0"/>
+        <subfield code="d">20</subfield>
+        <subfield code="e">2,3,7</subfield>
+        <subfield code="a">1932</subfield>
+        <subfield code="0"/>
+        <subfield code="d">22</subfield>
+        <subfield code="e">1</subfield>
+        <subfield code="a">1934</subfield>
+        <subfield code="0"/>
+        <subfield code="d">23</subfield>
+        <subfield code="e">11</subfield>
+        <subfield code="a">1935</subfield>
+        <subfield code="r">vol. 9 no.8-12 (1921) ; vol. 10 no.1-8,10-12 (1922) ; vol. 11 no.1-2,6,8,10 (1923) ; vol. 12 no.7 (1924) ; vol. 13 no.7,9,12 (1925) ; vol. 14 no.4,8 (1926) ; vol. 15 no.9 (1927) ; vol. 16 no.4 (1928) ; vol. 20 no.2-3,7 (1932) ; vol. 22 no.1 (1934) ; vol. 23 no.11 (1935) </subfield>
+    </datafield>
+    <datafield tag="940" ind1=" " ind2=" ">
+        <subfield code="5">751062103:119351676</subfield>
+        <subfield code="a">20190723</subfield>
+        <subfield code="b">xF</subfield>
+    </datafield>
+    <datafield tag="941" ind1=" " ind2=" ">
+        <subfield code="5">751062103:119351676</subfield>
+        <subfield code="a">20190725</subfield>
+        <subfield code="b">14:52:02.000</subfield>
+    </datafield>
+    <datafield tag="999" ind1=" " ind2=" ">
+        <subfield code="5">751062103:119351676</subfield>
+        <subfield code="a">1MAG</subfield>
+        <subfield code="b">1PERM</subfield>
+        <subfield code="z">MED-MSP</subfield>
+    </datafield>
+</record>

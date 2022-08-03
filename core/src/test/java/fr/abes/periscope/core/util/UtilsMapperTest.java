@@ -1,20 +1,28 @@
 package fr.abes.periscope.core.util;
 
+import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fr.abes.periscope.core.entity.solr.Notice;
 import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
 import fr.abes.periscope.core.entity.solr.PublicationYear;
-import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
-import fr.abes.periscope.core.entity.solr.v2.ItemSolr;
-import fr.abes.periscope.core.entity.solr.v2.NoticeV2Solr;
+import fr.abes.periscope.core.entity.solr.ItemSolr;
+import fr.abes.periscope.core.entity.solr.NoticeSolr;
+import fr.abes.periscope.core.entity.xml.NoticeXml;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
+import org.apache.commons.io.IOUtils;
 import org.assertj.core.util.Lists;
 import org.assertj.core.util.Sets;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.io.Resource;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -29,6 +37,18 @@ class UtilsMapperTest {
     private UtilsMapper mapper;
     @Autowired
     private NoticeSolRMapper noticeMapper;
+
+    @Value("classpath:noticeXml/037596225.xml")
+    private Resource xmlFileOrphan;
+
+    @Value("classpath:noticeXml/037982176.xml")
+    private Resource xmlFilePC;
+
+    @Value("classpath:noticeXml/13282261X.xml")
+    private Resource xmlFile;
+
+    @Value("classpath:noticeXml/129542059.xml")
+    private Resource xmlFile2;
 
     /**
      * Test titre mort
@@ -326,7 +346,7 @@ class UtilsMapperTest {
     @Test
     @DisplayName("Test conversion noticeV2Solr vers Notice")
     void testConverterNoticeV2SolrNotice() {
-        NoticeV2Solr source = new NoticeV2Solr();
+        NoticeSolr source = new NoticeSolr();
         source.setId("111111111");
         source.setTitleType("notice");
         source.setPpn("111111111");
@@ -362,8 +382,12 @@ class UtilsMapperTest {
         source.setExternalURLs(Lists.newArrayList("https://mirabel.com/"));
         source.setNbLocation(2);
         source.setNbPcp(1);
-        source.setCountry("FR");
-        source.setLanguage("fre");
+        String country = "FR";
+        source.setCountryForDisplay(country);
+        source.addCountry(country);
+        String language = "fre";
+        source.setLanguageForDisplay(language);
+        source.addLanguage(language);
         source.setStartYear("2020");
         source.setStartYearConfidenceIndex(0);
         source.setEndYear("202");
@@ -383,30 +407,29 @@ class UtilsMapperTest {
         source.setItems(items);
 
         Notice target = mapper.map(source, Notice.class);
-        NoticeV2 noticeV2 = (NoticeV2) target;
-        Assertions.assertEquals("111111111", noticeV2.getPpn());
-        Assertions.assertEquals("1111-1111", noticeV2.getIssn());
-        Assertions.assertEquals(editor, noticeV2.getPublisher());
-        Assertions.assertEquals(keyTitle, noticeV2.getKeyTitle());
-        Assertions.assertEquals("Collection", noticeV2.getContinuousType());
-        Assertions.assertEquals("Imprime", noticeV2.getSupportType());
-        Assertions.assertEquals("2020", noticeV2.getStartYear().getYear());
-        Assertions.assertEquals("202", noticeV2.getEndYear().getYear());
-        Assertions.assertEquals("https://mirabel.com/", noticeV2.getMirabelURL());
-        Assertions.assertEquals(Integer.valueOf(2), noticeV2.getNbLocation());
-        Assertions.assertEquals(keyShortedTitle, noticeV2.getKeyShortedTitle());
-        Assertions.assertEquals(properTitle, noticeV2.getProperTitle());
-        Assertions.assertEquals(titleFromDifferentAuthor, noticeV2.getTitleFromDifferentAuthor());
-        Assertions.assertEquals(parallelTitle, noticeV2.getParallelTitle());
-        Assertions.assertEquals(titleComplement, noticeV2.getTitleComplement());
-        Assertions.assertEquals(sectionTitle, noticeV2.getSectionTitle());
-        Assertions.assertEquals(keyTitleQualifier, noticeV2.getKeyTitleQualifer());
-        Assertions.assertEquals("fre", noticeV2.getLanguage());
-        Assertions.assertEquals("FR", noticeV2.getCountry());
-        Assertions.assertEquals(Integer.valueOf(1), noticeV2.getNbPcp());
-        Assertions.assertEquals(1, noticeV2.getPcpList().size());
-        Assertions.assertEquals("PCMed", noticeV2.getPcpList().stream().findFirst().orElse(null));
-        Assertions.assertEquals(2, noticeV2.getItems().size());
+        Assertions.assertEquals("111111111", target.getPpn());
+        Assertions.assertEquals("1111-1111", target.getIssn());
+        Assertions.assertEquals(editor, target.getPublisher());
+        Assertions.assertEquals(keyTitle, target.getKeyTitle());
+        Assertions.assertEquals("Collection", target.getContinuousType());
+        Assertions.assertEquals("Imprime", target.getSupportType());
+        Assertions.assertEquals("2020", target.getStartYear().getYear());
+        Assertions.assertEquals("202", target.getEndYear().getYear());
+        Assertions.assertEquals("https://mirabel.com/", target.getMirabelURL());
+        Assertions.assertEquals(Integer.valueOf(2), target.getNbLocation());
+        Assertions.assertEquals(keyShortedTitle, target.getKeyShortedTitle());
+        Assertions.assertEquals(properTitle, target.getProperTitle());
+        Assertions.assertEquals(titleFromDifferentAuthor, target.getTitleFromDifferentAuthor());
+        Assertions.assertEquals(parallelTitle, target.getParallelTitle());
+        Assertions.assertEquals(titleComplement, target.getTitleComplement());
+        Assertions.assertEquals(sectionTitle, target.getSectionTitle());
+        Assertions.assertEquals(keyTitleQualifier, target.getKeyTitleQualifer());
+        Assertions.assertEquals("fre", target.getLanguage());
+        Assertions.assertEquals("FR", target.getCountry());
+        Assertions.assertEquals(Integer.valueOf(1), target.getNbPcp());
+        Assertions.assertEquals(1, target.getPcpList().size());
+        Assertions.assertEquals("PCMed", target.getPcpList().stream().findFirst().orElse(null));
+        Assertions.assertEquals(2, target.getItems().size());
     }
 
     @Test
@@ -420,5 +443,86 @@ class UtilsMapperTest {
         assertEquals("titre auteur different",mapper.getTitre(null,null,null,null,"titre auteur different","",""));
         assertEquals("titre parallele",mapper.getTitre(null,null,null,null,null,"titre parallele",""));
         assertEquals("titre complement",mapper.getTitre(null,null,null,null,null,null,"titre complement"));
+    }
+
+    @Test
+    @DisplayName("Test génération statut bibliothèque orphelin")
+    void testStatutBibliothequeOrphelin() throws IOException {
+        String xml = IOUtils.toString(new FileInputStream(xmlFileOrphan.getFile()), StandardCharsets.UTF_8);
+
+        JacksonXmlModule module = new JacksonXmlModule();
+        module.setDefaultUseWrapper(false);
+        XmlMapper xmlMapper = new XmlMapper(module);
+        NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
+
+        NoticeSolr noticeSolr = mapper.map(notice, NoticeSolr.class);
+        Assertions.assertEquals(1, noticeSolr.getStatutList().size());
+        Assertions.assertEquals("Orphelin", noticeSolr.getStatutList().stream().findFirst().get());
+    }
+
+    @Test
+    @DisplayName("Test génération statut bibliothèque PC")
+    void testStatutBibliothequePC() throws IOException {
+        String xml = IOUtils.toString(new FileInputStream(xmlFilePC.getFile()), StandardCharsets.UTF_8);
+
+        JacksonXmlModule module = new JacksonXmlModule();
+        module.setDefaultUseWrapper(false);
+        XmlMapper xmlMapper = new XmlMapper(module);
+        NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
+
+        NoticeSolr noticeSolr = mapper.map(notice, NoticeSolr.class);
+        Assertions.assertEquals(1, noticeSolr.getStatutList().size());
+        Assertions.assertEquals("PC", noticeSolr.getStatutList().stream().findFirst().get());
+    }
+
+    @Test
+    @DisplayName("test construction date de début et date de fin")
+    public void buildStartPublicationYearTest() {
+        String value = "        f    1975";
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getYear(), "1975");
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
+        value = "        f19941995";
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getYear(), "1994");
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(1));
+        value = "        f17801789";
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getYear(), "1780");
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(9));
+        value = "        b20002010";
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getYear(), "2000");
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
+        Assertions.assertEquals(mapper.buildEndPublicationYear(value).getYear(), "2010");
+        Assertions.assertEquals(mapper.buildEndPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
+        value = "        b200     ";
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getYear(), "200X");
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(10));
+        Assertions.assertEquals(mapper.buildEndPublicationYear(value).getYear(), null);
+        Assertions.assertEquals(mapper.buildEndPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
+        value = "        a200 9999";
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getYear(), "200X");
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(10));
+        Assertions.assertEquals(mapper.buildEndPublicationYear(value).getYear(), null);
+        Assertions.assertEquals(mapper.buildEndPublicationYear(value).getConfidenceIndex(), Integer.valueOf(0));
+        value = "        a200 1234";
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getYear(), "200X");
+        Assertions.assertEquals(mapper.buildStartPublicationYear(value).getConfidenceIndex(), Integer.valueOf(10));
+        String finalValue = value;
+        Assertions.assertThrows(IllegalPublicationYearException.class, () -> {mapper.buildEndPublicationYear(finalValue).getYear();});
+
+    }
+
+    @Test
+    void testErreurNbLocs() throws IOException {
+        String xml = IOUtils.toString(new FileInputStream(xmlFile2.getFile()), StandardCharsets.UTF_8);
+
+        JacksonXmlModule module = new JacksonXmlModule();
+        module.setDefaultUseWrapper(false);
+        XmlMapper xmlMapper = new XmlMapper(module);
+        NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
+
+        NoticeSolr noticeSolr = mapper.map(notice, NoticeSolr.class);
+
+        Assertions.assertEquals(1, noticeSolr.getNbLocation().intValue());
+
+
     }
 }

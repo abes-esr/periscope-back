@@ -1,0 +1,120 @@
+<record>
+    <leader>     cas0 22        450 </leader>
+    <controlfield tag="001">129542059</controlfield>
+    <controlfield tag="002">91</controlfield>
+    <controlfield tag="003">http://www.sudoc.fr/129542059</controlfield>
+    <controlfield tag="004">20081202</controlfield>
+    <controlfield tag="005">20140617123019.000</controlfield>
+    <controlfield tag="006">751062103</controlfield>
+    <controlfield tag="007">751062103</controlfield>
+    <datafield tag="011" ind1="0" ind2=" ">
+        <subfield code="a">1662-4246</subfield>
+        <subfield code="f">1662-4246</subfield>
+    </datafield>
+    <datafield tag="035" ind1=" " ind2=" ">
+        <subfield code="a">(OCoLC)261400341</subfield>
+    </datafield>
+    <datafield tag="035" ind1=" " ind2=" ">
+        <subfield code="a">issn16624246</subfield>
+    </datafield>
+    <datafield tag="100" ind1=" " ind2=" ">
+        <subfield code="a">20081202a20099999uuuy0frey50      ba</subfield>
+    </datafield>
+    <datafield tag="101" ind1="0" ind2=" ">
+        <subfield code="a">eng</subfield>
+    </datafield>
+    <datafield tag="102" ind1=" " ind2=" ">
+        <subfield code="a">CH</subfield>
+    </datafield>
+    <datafield tag="105" ind1=" " ind2=" ">
+        <subfield code="a">y   |||||||||</subfield>
+    </datafield>
+    <datafield tag="110" ind1=" " ind2=" ">
+        <subfield code="a">aga||||0uu|</subfield>
+    </datafield>
+    <datafield tag="200" ind1="1" ind2=" ">
+        <subfield code="a">Public health genomics</subfield>
+        <subfield code="b">Texte imprimé</subfield>
+    </datafield>
+    <datafield tag="207" ind1=" " ind2="0">
+        <subfield code="a">Vol. 12, no. 1 (2009)-</subfield>
+    </datafield>
+    <datafield tag="210" ind1=" " ind2=" ">
+        <subfield code="a">Basel</subfield>
+        <subfield code="c">S. Karger</subfield>
+        <subfield code="d">2009-</subfield>
+    </datafield>
+    <datafield tag="430" ind1=" " ind2="|">
+        <subfield code="0">037091700</subfield>
+        <subfield code="t">Community genetics (Print)</subfield>
+        <subfield code="x">1422-2795</subfield>
+    </datafield>
+    <datafield tag="452" ind1=" " ind2="|">
+        <subfield code="0">136372236</subfield>
+        <subfield code="t">Public health genomics (Online)</subfield>
+        <subfield code="x">1662-8063</subfield>
+    </datafield>
+    <datafield tag="530" ind1="1" ind2=" ">
+        <subfield code="a">Public health genomics</subfield>
+        <subfield code="b">(Print)</subfield>
+    </datafield>
+    <datafield tag="531" ind1=" " ind2=" ">
+        <subfield code="a">Public health genomics</subfield>
+        <subfield code="b">(Print)</subfield>
+    </datafield>
+    <datafield tag="675" ind1=" " ind2=" ">
+        <subfield code="a">575</subfield>
+    </datafield>
+    <datafield tag="801" ind1=" " ind2="3">
+        <subfield code="a">FR</subfield>
+        <subfield code="b">Abes</subfield>
+        <subfield code="c">20140617</subfield>
+        <subfield code="g">AFNOR</subfield>
+    </datafield>
+    <datafield tag="801" ind1=" " ind2="3">
+        <subfield code="a">FR</subfield>
+        <subfield code="b">ISSN</subfield>
+        <subfield code="c">20090225</subfield>
+    </datafield>
+    <datafield tag="802" ind1=" " ind2=" ">
+        <subfield code="a">40</subfield>
+    </datafield>
+    <datafield tag="915" ind1=" " ind2=" ">
+        <subfield code="5">751062103:353058300</subfield>
+        <subfield code="a">116895</subfield>
+    </datafield>
+    <datafield tag="930" ind1=" " ind2=" ">
+        <subfield code="5">751062103:353058300</subfield>
+        <subfield code="b">751062103</subfield>
+        <subfield code="c">MAGASIN</subfield>
+        <subfield code="z">PCMed</subfield>
+        <subfield code="p">Pôle de conservation</subfield>
+        <subfield code="a">116895</subfield>
+        <subfield code="j">f</subfield>
+    </datafield>
+    <datafield tag="955" ind1="4" ind2="1">
+        <subfield code="5">751062103:353058300</subfield>
+        <subfield code="a">12</subfield>
+        <subfield code="i">2009</subfield>
+        <subfield code="a">16</subfield>
+        <subfield code="i">2013</subfield>
+        <subfield code="z">EN MAGASIN</subfield>
+        <subfield code="r">vol. 12 (2009) - vol. 16  (2013) [EN MAGASIN]</subfield>
+    </datafield>
+    <datafield tag="940" ind1=" " ind2=" ">
+        <subfield code="5">751062103:353058300</subfield>
+        <subfield code="a">20081202</subfield>
+        <subfield code="b">xF</subfield>
+    </datafield>
+    <datafield tag="941" ind1=" " ind2=" ">
+        <subfield code="5">751062103:353058300</subfield>
+        <subfield code="a">20170712</subfield>
+        <subfield code="b">13:44:58.000</subfield>
+    </datafield>
+    <datafield tag="999" ind1=" " ind2=" ">
+        <subfield code="5">751062103:353058300</subfield>
+        <subfield code="a">1MAG</subfield>
+        <subfield code="b">1PERM</subfield>
+        <subfield code="z">MED-PBE</subfield>
+    </datafield>
+</record>
