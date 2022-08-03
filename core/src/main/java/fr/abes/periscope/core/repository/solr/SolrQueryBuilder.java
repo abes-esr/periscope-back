@@ -217,7 +217,7 @@ public class SolrQueryBuilder {
         Iterator<String> valueIterator = criterion.getTitleWords().iterator();
         Iterator<String> operatorIterator = criterion.getTitleWordOperators().iterator();
 
-        Criteria myCriteria = null;
+        Criteria myCriteria;
 
         String value = valueIterator.next();
         String operator = operatorIterator.next();
@@ -291,38 +291,38 @@ public class SolrQueryBuilder {
      */
     private Criteria buildCountryQuery(CriterionCountry criterion) {
 
-        Iterator<String> valueIterator = criterion.getCountries().iterator();
+        Iterator<String> countryIterator = criterion.getCountries().iterator();
         Iterator<String> operatorIterator = criterion.getCountryOperators().iterator();
 
         Criteria myCriteria;
 
-        String value = valueIterator.next();
+        String countryCode = countryIterator.next();
         String operator = operatorIterator.next();
 
         // 1er critère
         switch (operator) {
             case LogicalOperator.EXCEPT:
-                myCriteria = new Criteria(NoticeSolrField.COUNTRY).is(value).not().connect().and(NoticeSolrField.KEY_TITLE);
+                myCriteria = new Criteria(NoticeSolrField.COUNTRY).is(countryCode).not().connect();
                 break;
             default:
-                myCriteria = new Criteria(NoticeSolrField.COUNTRY).is(value).connect().and(NoticeSolrField.KEY_TITLE);
+                myCriteria = new Criteria(NoticeSolrField.COUNTRY).is(countryCode).connect();
                 break;
         }
 
         // les autres
-        while (valueIterator.hasNext()) {
-            value = valueIterator.next();
+        while (countryIterator.hasNext()) {
+            countryCode = countryIterator.next();
             operator = operatorIterator.next();
 
             switch (operator) {
                 case LogicalOperator.AND:
-                    myCriteria = myCriteria.connect().and(NoticeSolrField.COUNTRY).is(value).and(NoticeSolrField.KEY_TITLE);
+                    myCriteria = myCriteria.connect().and(NoticeSolrField.COUNTRY).is(countryCode);
                     break;
                 case LogicalOperator.OR:
-                    myCriteria = myCriteria.connect().or(NoticeSolrField.COUNTRY).is(value).and(NoticeSolrField.KEY_TITLE);
+                    myCriteria = myCriteria.connect().or(NoticeSolrField.COUNTRY).is(countryCode);
                     break;
                 case LogicalOperator.EXCEPT:
-                    myCriteria = myCriteria.connect().or(NoticeSolrField.COUNTRY).is(value).not().and(NoticeSolrField.KEY_TITLE);
+                    myCriteria = myCriteria.connect().or(NoticeSolrField.COUNTRY).is(countryCode).not();
                     break;
             }
         }
@@ -398,7 +398,6 @@ public class SolrQueryBuilder {
                     break;
             }
         }
-        myCriteria = myCriteria.and(NoticeSolrField.KEY_TITLE);
 
         return getBlocOperator(criterion, myCriteria);
     }

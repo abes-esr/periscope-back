@@ -130,13 +130,21 @@ public class NoticeSolr implements Serializable {
     @Indexed(name = NoticeSolrField.NB_PCP)
     protected Integer nbPcp;
 
+    @Field(NoticeSolrField.LANGUAGE_Z)
+    @Indexed(name = NoticeSolrField.LANGUAGE_Z)
+    protected String languageForDisplay;
+
     @Field(NoticeSolrField.LANGUAGE)
     @Indexed(name = NoticeSolrField.LANGUAGE)
-    protected String language;
+    protected List<String> language = new ArrayList<>();
+
+    @Field(NoticeSolrField.COUNTRY_Z)
+    @Indexed(name = NoticeSolrField.COUNTRY_Z)
+    protected String countryForDisplay;
 
     @Field(NoticeSolrField.COUNTRY)
     @Indexed(name = NoticeSolrField.COUNTRY)
-    protected String country;
+    protected List<String> country = new ArrayList<>();
 
     @Field(NoticeSolrField.START_YEAR)
     @Indexed(name = NoticeSolrField.START_YEAR)
@@ -238,6 +246,10 @@ public class NoticeSolr implements Serializable {
     public void addSectionTitle(String sectionTitle) {
         this.sectionTitle.add(sectionTitle);
     }
+
+    public void addLanguage(String language) { this.language.add(language); }
+
+    public void addCountry(String country) { this.country.add(country); }
 
     public void addRcr(String rcr) { this.rcrList.add(rcr);}
 

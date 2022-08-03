@@ -63,8 +63,8 @@ public class NoticeSolRMapper {
                     target.setSectionTitle(source.getSectionTitleForDisplay());
                     target.setContinuousType((source.getContinuousType() == null ? "Non renseigné" : source.getContinuousType()));
                     target.setSupportType(source.getSupportType());
-                    target.setLanguage(source.getLanguage());
-                    target.setCountry(source.getCountry());
+                    target.setLanguage(source.getLanguageForDisplay());
+                    target.setCountry(source.getCountryForDisplay());
 
                     if(source.getStartYear() != null ) {
                         target.setStartYear(new PublicationYear(source.getStartYear(), source.getStartYearConfidenceIndex()));
@@ -243,7 +243,10 @@ public class NoticeSolRMapper {
 
                                 // zone 101-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
-                                    target.setLanguage(subField.getValue());
+                                    if (target.getLanguageForDisplay() == null) {
+                                        target.setLanguageForDisplay(subField.getValue());
+                                    }
+                                    target.addLanguage(subField.getValue());
                                 }
                             }
                         }
@@ -256,7 +259,10 @@ public class NoticeSolRMapper {
 
                                 // zone 102-a
                                 if (subField.getCode().equalsIgnoreCase("a")) {
-                                    target.setCountry(subField.getValue());
+                                    if (target.getCountryForDisplay() == null) {
+                                        target.setCountryForDisplay(subField.getValue());
+                                    }
+                                    target.addCountry(subField.getValue());
                                 }
                             }
                         }

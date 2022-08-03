@@ -5,8 +5,6 @@ import fr.abes.periscope.core.entity.solr.SupportType;
 import fr.abes.periscope.core.exception.IllegalPublicationYearException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 import java.util.List;

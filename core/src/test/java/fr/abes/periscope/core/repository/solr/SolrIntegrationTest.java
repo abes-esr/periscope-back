@@ -96,8 +96,8 @@ class SolrIntegrationTest {
         assertThat(noticesolrOut.getSectionTitleForDisplay()).isEqualTo("Titre de section");
         assertThat(noticesolrOut.getKeyTitleQualifer()).isEqualTo("Key title qualifier");
         assertThat(noticesolrOut.getNbLocation()).isEqualTo(5);
-        assertThat(noticesolrOut.getLanguage()).isEqualTo("fre");
-        assertThat(noticesolrOut.getCountry()).isEqualTo("FR");
+        assertThat(noticesolrOut.getLanguageForDisplay()).isEqualTo("fre");
+        assertThat(noticesolrOut.getCountryForDisplay()).isEqualTo("FR");
         assertThat(noticesolrOut.getEndYear()).isEqualTo("201X");
         assertThat(noticesolrOut.getEndYearConfidenceIndex()).isEqualTo(10);
         assertThat(noticesolrOut.getStartYear()).isEqualTo("2009");

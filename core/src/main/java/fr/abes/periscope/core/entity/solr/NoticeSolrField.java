@@ -53,12 +53,14 @@ public abstract class NoticeSolrField {
 
     //--------------------------------
     // Zone 101
-    public static final String LANGUAGE = "zone_101$a";
+    public static final String LANGUAGE = "zone_101$a_t";
+    public static final String LANGUAGE_Z = "zone_101$a_z";
     //--------------------------------
 
     //--------------------------------
     // Zone 102
-    public static final String COUNTRY = "zone_102$a";
+    public static final String COUNTRY = "zone_102$a_t";
+    public static final String COUNTRY_Z = "zone_102$a_z";
     //--------------------------------
 
     //--------------------------------

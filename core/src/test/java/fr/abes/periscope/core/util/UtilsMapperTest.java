@@ -382,8 +382,12 @@ class UtilsMapperTest {
         source.setExternalURLs(Lists.newArrayList("https://mirabel.com/"));
         source.setNbLocation(2);
         source.setNbPcp(1);
-        source.setCountry("FR");
-        source.setLanguage("fre");
+        String country = "FR";
+        source.setCountryForDisplay(country);
+        source.addCountry(country);
+        String language = "fre";
+        source.setLanguageForDisplay(language);
+        source.addLanguage(language);
         source.setStartYear("2020");
         source.setStartYearConfidenceIndex(0);
         source.setEndYear("202");
