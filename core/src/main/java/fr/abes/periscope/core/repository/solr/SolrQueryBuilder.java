@@ -335,8 +335,6 @@ public class SolrQueryBuilder {
             }
         }
 
-        myCriteria.and(NoticeSolrField.KEY_TITLE).connect();
-
         return getBlocOperator(criterion, myCriteria);
     }
 
@@ -408,7 +406,6 @@ public class SolrQueryBuilder {
                     break;
             }
         }
-        myCriteria = myCriteria.and(NoticeSolrField.KEY_TITLE).connect();
 
         return getBlocOperator(criterion, myCriteria);
     }
