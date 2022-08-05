@@ -23,12 +23,15 @@ node {
     def gitCredentials = 'Github'
     def slackChannel = "#notif-periscope"
     def artifactoryBuildName = "periscope-api"
-    def modulesNames = ["web"]
+    def modulesNames = ["web", "batch"]
 
     // Definition du module web
     def backApplicationFileName = "periscope"
     def backTargetDir = "/usr/local/tomcat9-periscope/webapps/"
     def backServiceName = "tomcat9-periscope.service"
+
+    // Definition du module batch
+    def batchTargetDir = "/home/batch/periscope/"
 
     // **** FIN DE ZONE A EDITER n°1 ****
 
@@ -259,20 +262,32 @@ node {
                     if ("${candidateModules[moduleIndex]}" == 'web') {
                         withCredentials([
                                 // on charge le credential "periscope.solr-dev" dans la variable 'url'
-                                string(credentialsId: "periscope.solr.v1-${mavenProfil}", variable: 'urlV1'),
                                 string(credentialsId: "periscope.solr.v2-${mavenProfil}", variable: 'urlV2'),
                                 string(credentialsId: "basexml.datasource.url-${mavenProfil}", variable: 'urlbaseXml'),
                                 string(credentialsId: "basexml.datasource.username-${mavenProfil}", variable: 'usernameBaseXml'),
                                 string(credentialsId: "basexml.datasource.password-${mavenProfil}", variable: 'passwordBaseXml')
                         ]) {
-                            newconfig = newconfig.replaceAll("periscope.solr.v1.url=*", "periscope.solr.v1.url=${urlV1}")
-                            newconfig = newconfig.replaceAll("periscope.solr.v2.url=*", "periscope.solr.v2.url=${urlV2}")
+                            newconfig = newconfig.replaceAll("solr.baseurl=*", "solr.baseurl=${urlV2}")
                             newconfig = newconfig.replaceAll("basexml.datasource.url=*", "basexml.datasource.url=${urlbaseXml}")
                             newconfig = newconfig.replaceAll("basexml.datasource.username=*", "basexml.datasource.username=${usernameBaseXml}")
                             newconfig = newconfig.replaceAll("basexml.datasource.password=*", "basexml.datasource.password=${passwordBaseXml}")
                         }
                     }
 
+                    // Module batch
+                    if ("${candidateModules[moduleIndex]}" == 'batch') {
+                        withCredentials([
+                                string(credentialsId: "periscope.solr.v2-${mavenProfil}", variable: 'urlV2'),
+                                string(credentialsId: "basexml.datasource.url-${mavenProfil}", variable: 'urlbaseXml'),
+                                string(credentialsId: "basexml.datasource.username-${mavenProfil}", variable: 'usernameBaseXml'),
+                                string(credentialsId: "basexml.datasource.password-${mavenProfil}", variable: 'passwordBaseXml')
+                        ]) {
+                            newconfig = newconfig.replaceAll("solr.baseurl=*", "solr.baseurl=${urlV2}")
+                            newconfig = newconfig.replaceAll("basexml.datasource.url=*", "basexml.datasource.url=${urlbaseXml}")
+                            newconfig = newconfig.replaceAll("basexml.datasource.username=*", "basexml.datasource.username=${usernameBaseXml}")
+                            newconfig = newconfig.replaceAll("basexml.datasource.password=*", "basexml.datasource.password=${passwordBaseXml}")
+                        }
+                    }
                     // **** FIN DE ZONE A EDITER n°2 ****
 
                     writeFile file: "${candidateModules[moduleIndex]}/src/main/resources/application-${mavenProfil}.properties", text: "${newconfig}"
@@ -440,7 +455,7 @@ node {
                             echo "--------------------------"
 
                             try {
-                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${backApplicationFileName} ${backTargetDir}${backApplicationFileName}.war\""
+                                sh "ssh -vvv -tt ${username}@${hostname} \"rm -rf ${backTargetDir}${backApplicationFileName} ${backTargetDir}${backApplicationFileName}.war\""
                                 sh "scp ${candidateModules[moduleIndex]}/target/${backApplicationFileName}.war ${username}@${hostname}:${backTargetDir}"
 
                             } catch (e) {
@@ -454,10 +469,10 @@ node {
 
                             try {
                                 echo 'start service'
-                                sh "ssh -tt ${username}@${hostname} \"${start} ${backServiceName}\""
+                                sh "ssh -vvv -tt ${username}@${hostname} \"${start} ${backServiceName}\""
 
                                 echo 'get service status'
-                                sh "ssh -tt ${username}@${hostname} \"${status} ${backServiceName}\""
+                                sh "ssh -vvv -tt ${username}@${hostname} \"${status} ${backServiceName}\""
 
                             } catch (e) {
                                 currentBuild.result = hudson.model.Result.FAILURE.toString()
@@ -469,8 +484,34 @@ node {
                     }//Pour chaque serveur
                 }
             }
+            //-------------------------------
+            // Etape 4.2 : Serveur Batch
+            //-------------------------------
+            if ("${candidateModules[moduleIndex]}" == 'batch') {
+
+                stage("Deploy to batch servers") {
+                    for (int i = 0; i < batchTargetHostnames.size(); i++) { //Pour chaque serveur
+                        withCredentials([
+                            usernamePassword(credentialsId: 'batchuserpass', passwordVariable: 'pass', usernameVariable: 'username'),
+                            string(credentialsId: "${batchTargetHostnames[i]}", variable: 'hostname')
+                        ]) {
+                            try {
+                                echo "Deploy to ${batchTargetHostnames[i]}"
+                                echo "--------------------------"
+                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${batchTargetDir}${backApplicationFileName}.jar\""
+                                sh "scp ${candidateModules[moduleIndex]}/target/*.jar ${username}@${hostname}:${batchTargetDir}"
+                            } catch (e) {
+                                currentBuild.result = hudson.model.Result.FAILURE.toString()
+                                notifySlack(slackChannel, "Failed to deploy batch on ${batchTargetHostnames[i]} :" + e.getLocalizedMessage())
+                                throw e
+                            }
+                        }
+                    }
+                }
+            }
         }
     } //Pour chaque module du projet
+
 
     currentBuild.result = hudson.model.Result.SUCCESS.toString()
     notifySlack(slackChannel,"Congratulation !")

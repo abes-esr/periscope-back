@@ -4,18 +4,17 @@ import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionFacette;
 import fr.abes.periscope.core.criterion.CriterionSort;
 import fr.abes.periscope.core.entity.solr.Notice;
-import fr.abes.periscope.core.entity.solr.v1.NoticeV1Solr;
-import fr.abes.periscope.core.entity.solr.v2.FacetteSolr;
-import fr.abes.periscope.core.entity.solr.v2.NoticeV2Solr;
-import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
-import fr.abes.periscope.core.repository.solr.v1.NoticeSolrV1Repository;
-import fr.abes.periscope.core.repository.solr.v2.NoticeSolrV2Repository;
-import fr.abes.periscope.core.util.UtilsMapper;
+import fr.abes.periscope.core.entity.solr.FacetteSolr;
+import fr.abes.periscope.core.entity.solr.NoticeSolr;
+import fr.abes.periscope.core.entity.solr.ResultSolr;
+import fr.abes.periscope.core.repository.solr.NoticeSolrRepository;
 import fr.abes.periscope.core.util.TYPE_NOTICE;
 import fr.abes.periscope.core.util.TrackExecutionTime;
+import fr.abes.periscope.core.util.UtilsMapper;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessResourceFailureException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -33,16 +32,12 @@ import java.util.*;
 @Data
 public class NoticeStoreService {
 
-    private final NoticeSolrV1Repository noticeV1Repository;
-    private final NoticeSolrV2Repository noticeV2Repository;
+    private final NoticeSolrRepository noticeSolrRepository;
     private final UtilsMapper utilsMapper;
 
-    private static final String DEFAULT_REPOSITORY = "v1";
-
     @Autowired
-    public NoticeStoreService(UtilsMapper mapper, NoticeSolrV1Repository noticeV1Repository, NoticeSolrV2Repository noticeV2Repository) {
-        this.noticeV1Repository = noticeV1Repository;
-        this.noticeV2Repository = noticeV2Repository;
+    public NoticeStoreService(UtilsMapper mapper, NoticeSolrRepository noticeSolrRepository) {
+        this.noticeSolrRepository = noticeSolrRepository;
         this.utilsMapper = mapper;
     }
 
@@ -50,7 +45,6 @@ public class NoticeStoreService {
      * Retourne une liste de Notice en fonction des critères de recherche,
      * du critère de tri et du numéro de page     *
      *
-     * @param repository   Repository à utiliser
      * @param criteria     Les critères de recherche
      * @param criteriaSort Les critères de tri
      * @param page         Numéro de page
@@ -59,35 +53,13 @@ public class NoticeStoreService {
      * @throws IllegalArgumentException Si le repository ne peut pas être décodé
      */
     @TrackExecutionTime
-    public List<Notice> findNoticesByCriteria(String repository, List<Criterion> criteria, List<CriterionSort> criteriaSort, int page, int size) throws IllegalArgumentException {
+    public List<Notice> findNoticesByCriteria(List<Criterion> criteria, List<CriterionSort> criteriaSort, int page, int size) throws IllegalArgumentException {
         List<Sort.Order> orders = new ArrayList<>();
         criteriaSort.forEach(c -> orders.add(new Sort.Order(c.getOrder(), c.getSort())));
 
-        switch (repository) {
-            case "v1":
-                List<NoticeV1Solr> noticesV1 = noticeV1Repository.findNoticesByCriteria(criteria, Sort.by(orders), PageRequest.of(page, size));
-                return utilsMapper.mapList(noticesV1, Notice.class);
-            case "v2":
-                List<NoticeV2Solr> noticesV2 = noticeV2Repository.findNoticesByCriteria(criteria, Sort.by(orders), PageRequest.of(page, size));
-                return utilsMapper.mapList(noticesV2, Notice.class);
-            default:
-                throw new IllegalArgumentException("Unable to decode repository :" + repository);
-        }
-    }
+        List<NoticeSolr> notices = noticeSolrRepository.findNoticesByCriteria(criteria, Sort.by(orders), PageRequest.of(page, size));
+        return utilsMapper.mapList(notices, Notice.class);
 
-    /**
-     * Retourne une liste de Notice en fonction des critères de recherche,
-     * du critère de tri et du numéro de page avec le repository par défaut     *
-     *
-     * @param criteria     Les critères de recherche
-     * @param criteriaSort Les critères de tri
-     * @param page         Numéro de page
-     * @param size         Nombre d'élément
-     * @return List<Notice> Liste de Notice répondant aux critères de recherche
-     */
-    @TrackExecutionTime
-    public List<Notice> findNoticesByCriteria(List<Criterion> criteria, List<CriterionSort> criteriaSort, int page, int size) {
-        return findNoticesByCriteria(DEFAULT_REPOSITORY, criteria, criteriaSort, page, size);
     }
 
     /**
@@ -96,7 +68,7 @@ public class NoticeStoreService {
      *
      * @param criteriaNotice les critères de recherche
      * @param facettes       liste des facettes (uniquement sur des zones de la notice bibliographique)
-     * @param facetteFilter liste des filtres à appliquer aux facettes sélectionnées
+     * @param facetteFilter  liste des filtres à appliquer aux facettes sélectionnées
      * @param criterionSorts les critères de tri
      * @param page           numéro de page
      * @param size           nombre d'élément par page
@@ -116,7 +88,7 @@ public class NoticeStoreService {
                 criteresExemp.add(c);
             }
         });
-        FacetPage<NoticeV2Solr> noticesWithFacet = noticeV2Repository.findNoticesWithFacetQuery(criteresBiblio, criteresExemp, facettes, facetteFilter, Sort.by(orders), PageRequest.of(page, size));
+        FacetPage<NoticeSolr> noticesWithFacet = noticeSolrRepository.findNoticesWithFacetQuery(criteresBiblio, criteresExemp, facettes, facetteFilter, Sort.by(orders), PageRequest.of(page, size));
 
         return getResultFromQueryFacet(noticesWithFacet, size);
     }
@@ -127,10 +99,10 @@ public class NoticeStoreService {
      * @param noticesWithFacet Listes des notices et des facettes
      * @return le résultat mappé
      */
-    private ResultSolr getResultFromQueryFacet(FacetPage<NoticeV2Solr> noticesWithFacet, Integer size) {
+    private ResultSolr getResultFromQueryFacet(FacetPage<NoticeSolr> noticesWithFacet, Integer size) {
         ResultSolr result = new ResultSolr();
         result.setNotices(utilsMapper.mapList(noticesWithFacet.getContent(), Notice.class));
-        result.setNbPages(size == 0 ? 1 : (int)Math.ceil((double)noticesWithFacet.getTotalElements() / (double)size));
+        result.setNbPages(size == 0 ? 1 : (int) Math.ceil((double) noticesWithFacet.getTotalElements() / (double) size));
         result.setNbNotices(noticesWithFacet.getTotalElements());
 
         List<Page<FacetFieldEntry>> resultFacettes = new ArrayList<>(noticesWithFacet.getFacetResultPages());
@@ -146,5 +118,46 @@ public class NoticeStoreService {
             }
         });
         return result;
+    }
+
+    public void saveOrDelete(List<NoticeSolr> notice) {
+        List noticeToDelete = new ArrayList();
+        List noticeToUpdate = new ArrayList();
+        notice.forEach(n -> {
+            if (n.isToDelete()) {
+                noticeToDelete.add(n);
+            } else {
+                noticeToUpdate.add(n);
+            }
+        });
+        saveList(noticeToUpdate);
+        deleteList(noticeToDelete);
+    }
+
+    public Iterable<NoticeSolr> saveList(List<NoticeSolr> notice) {
+        try {
+            if (notice.size() > 0)
+                return noticeSolrRepository.saveAll(notice);
+        } catch (DataAccessResourceFailureException ex) {
+            log.error("Erreur d'indexation notice : " + ex.getMessage());
+        }
+        return null;
+    }
+
+    public void delete(NoticeSolr notice) {
+        noticeSolrRepository.delete(notice);
+    }
+
+    public void deleteList(List<NoticeSolr> notice) {
+        if (notice.size() > 0)
+            noticeSolrRepository.deleteAll(notice);
+    }
+
+    public NoticeSolr save(NoticeSolr notice) {
+        return noticeSolrRepository.save(notice);
+    }
+
+    public NoticeSolr findByPpn(String ppn) {
+        return noticeSolrRepository.findByPpn(ppn);
     }
 }

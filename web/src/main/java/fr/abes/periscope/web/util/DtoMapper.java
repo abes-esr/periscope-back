@@ -1,12 +1,7 @@
 package fr.abes.periscope.web.util;
 
 import fr.abes.periscope.core.criterion.*;
-import fr.abes.periscope.core.entity.solr.PublicationYear;
-import fr.abes.periscope.core.entity.solr.v1.NoticeV1SolrField;
-import fr.abes.periscope.core.entity.solr.v2.ItemSolrField;
-import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
-import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
-import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
+import fr.abes.periscope.core.entity.solr.*;
 import fr.abes.periscope.core.entity.visualisation.NoticeVisu;
 import fr.abes.periscope.core.entity.visualisation.SequenceContinue;
 import fr.abes.periscope.core.entity.visualisation.SequenceError;
@@ -24,7 +19,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Field;
 import java.util.*;
 
 /**
@@ -53,7 +47,7 @@ public class DtoMapper {
                 resultWebDto.setNotices(utilsMapper.mapList(resultSolr.getNotices(), NoticeWebV2Dto.class));
                 resultSolr.getFacettes().forEach(f -> {
                     FacetteWebDto facetteWebDto = new FacetteWebDto();
-                    Arrays.stream(NoticeV2SolrField.class.getFields()).forEach(field -> {
+                    Arrays.stream(NoticeSolrField.class.getFields()).forEach(field -> {
                         try {
                             if (field.get(null).equals(f.getZone())) {
                                 facetteWebDto.setZone(field.getName());
@@ -85,10 +79,10 @@ public class DtoMapper {
 
     @Bean
     public void converterNotice() {
-        Converter<NoticeV2, NoticeWebV2Dto> myConverter = new Converter<NoticeV2, NoticeWebV2Dto>() {
+        Converter<Notice, NoticeWebV2Dto> myConverter = new Converter<Notice, NoticeWebV2Dto>() {
             @Override
-            public NoticeWebV2Dto convert(MappingContext<NoticeV2, NoticeWebV2Dto> mappingContext) {
-                NoticeV2 notice = mappingContext.getSource();
+            public NoticeWebV2Dto convert(MappingContext<Notice, NoticeWebV2Dto> mappingContext) {
+                Notice notice = mappingContext.getSource();
                 NoticeWebV2Dto noticeWeb = new NoticeWebV2Dto();
                 noticeWeb.setPpn(notice.getPpn());
                 noticeWeb.setIssn(notice.getIssn());
@@ -123,11 +117,7 @@ public class DtoMapper {
                 CriterionSortWebDto s = mappingContext.getSource();
                 final String[] field = {""};
                 try {
-                    if (s.getVersion().equalsIgnoreCase("v2")) {
-                        field[0] = getSortFieldForV2(s);
-                    } else {
-                        field[0] = getSortFieldForV1(s);
-                    }
+                    field[0] = getSortField(s);
                     if (field[0].isEmpty()) {
                         throw new IllegalSortException(s.getSort() + " : Critère de tri inconnu");
                     }
@@ -141,26 +131,6 @@ public class DtoMapper {
         utilsMapper.addConverter(myConverter);
     }
 
-    /**
-     * Méthode de récupération d'un critère de tri pour la v1 de périscope
-     *
-     * @param s critère de tri
-     * @return valeur dans NoticeV1SolrField correspondant au critère saisi
-     */
-    private String getSortFieldForV1(CriterionSortWebDto s) {
-        Iterator<Field> it = Arrays.stream(NoticeV1SolrField.class.getDeclaredFields()).iterator();
-        while (it.hasNext()) {
-            Field n = it.next();
-            if (n.getName().equalsIgnoreCase(s.getSort())) {
-                try {
-                    return String.valueOf(n.get(s.getSort()));
-                } catch (IllegalAccessException e) {
-                    throw new IllegalSortException(s.getSort() + " : Critère de tri inconnu");
-                }
-            }
-        }
-        return "";
-    }
 
     /**
      * Méthode de récupération d'un critère de tri pour la v2 de périscope
@@ -168,34 +138,34 @@ public class DtoMapper {
      * @param s critère de tri
      * @return valeur dans NoticeV2SolrField correspondant au critère saisi
      */
-    private String getSortFieldForV2(CriterionSortWebDto s) {
+    private String getSortField(CriterionSortWebDto s) {
         switch (s.getSort().toLowerCase(Locale.ROOT)) {
             case "title_type":
-                return NoticeV2SolrField.TITLE_TYPE;
+                return NoticeSolrField.TITLE_TYPE;
             case "ppn":
-                return NoticeV2SolrField.PPN;
+                return NoticeSolrField.PPN;
             case "issn":
-                return NoticeV2SolrField.ISSN;
+                return NoticeSolrField.ISSN;
             case "language":
-                return NoticeV2SolrField.LANGUAGE;
+                return NoticeSolrField.LANGUAGE;
             case "country":
-                return NoticeV2SolrField.COUNTRY;
+                return NoticeSolrField.COUNTRY;
             case "document_type":
-                return NoticeV2SolrField.DOCUMENT_TYPE;
+                return NoticeSolrField.DOCUMENT_TYPE;
             case "support_type":
-                return NoticeV2SolrField.SUPPORT_TYPE;
+                return NoticeSolrField.SUPPORT_TYPE;
             case "editor":
-                return NoticeV2SolrField.EDITOR_Z;
+                return NoticeSolrField.EDITOR_Z;
             case "title":
-                return NoticeV2SolrField.TRI_TITRE;
+                return NoticeSolrField.TRI_TITRE;
             case "start_year":
-                return NoticeV2SolrField.START_YEAR;
+                return NoticeSolrField.START_YEAR;
             case "end_year":
-                return NoticeV2SolrField.END_YEAR;
+                return NoticeSolrField.END_YEAR;
             case "nb_loc":
-                return NoticeV2SolrField.NB_LOC;
+                return NoticeSolrField.NB_LOC;
             case "pcp_list":
-                return NoticeV2SolrField.NB_PCP;
+                return NoticeSolrField.NB_PCP;
             default:
                 throw new IllegalSortException(s.getSort() + " : Critère de tri inconnu");
         }
@@ -211,7 +181,7 @@ public class DtoMapper {
             @Override
             public String convert(MappingContext<CriterionFacetteWebDto, String> context) {
                 CriterionFacetteWebDto s = context.getSource();
-                if (!Arrays.stream(NoticeV2SolrField.class.getDeclaredFields()).anyMatch(f -> f.getName().toLowerCase(Locale.ROOT).equals(s.getZone().toLowerCase(Locale.ROOT)))
+                if (!Arrays.stream(NoticeSolrField.class.getDeclaredFields()).anyMatch(f -> f.getName().toLowerCase(Locale.ROOT).equals(s.getZone().toLowerCase(Locale.ROOT)))
                         && (!Arrays.stream(ItemSolrField.class.getDeclaredFields()).anyMatch(f -> f.getName().toLowerCase(Locale.ROOT).equals(s.getZone().toLowerCase(Locale.ROOT))))) {
                     throw new IllegalFacetteException("Facette : " + s.getZone() + " non disponible dans le schéma d'indexation");
                 }

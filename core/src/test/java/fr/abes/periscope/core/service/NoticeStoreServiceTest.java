@@ -5,10 +5,8 @@ import fr.abes.periscope.core.EnableOnIntegrationTest;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.solr.Notice;
 import fr.abes.periscope.core.entity.solr.OnGoingResourceType;
-import fr.abes.periscope.core.entity.solr.v1.NoticeV1;
-import fr.abes.periscope.core.entity.solr.v2.NoticeV2;
-import fr.abes.periscope.core.entity.solr.v2.NoticeV2SolrField;
-import fr.abes.periscope.core.entity.solr.v2.ResultSolr;
+import fr.abes.periscope.core.entity.solr.NoticeSolrField;
+import fr.abes.periscope.core.entity.solr.ResultSolr;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -113,7 +111,7 @@ public class NoticeStoreServiceTest {
     @Test
     @DisplayName("Notice nombre de localisation")
     void testNoticeNbLoc() {
-        Integer expected = 3;
+        Integer expected = 2;
 
         List<Criterion> criteria = new LinkedList<>();
 
@@ -136,31 +134,6 @@ public class NoticeStoreServiceTest {
         criteria.add(criterionRcr);
 
         List<Notice> newCandidates = noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,25);
-
-    }
-
-    /**
-     * Test Journal Le Monde
-     */
-    @Test
-    @DisplayName("Test entre le SolR V1 et V2")
-    void testSolRV1V2() {
-        List<Criterion> criteria = new LinkedList<>();
-
-        List<String> ppn = Arrays.asList("000000191");
-        CriterionPpn criterion = new CriterionPpn("ET",ppn);
-        criteria.add(criterion);
-
-        NoticeV1 candidatev1 = (NoticeV1) noticeService.findNoticesByCriteria(criteria,  new LinkedList<>(),0,5).get(0);
-        String expected = candidatev1.getKeyTitle();
-
-        List<Criterion> criteria1 = new LinkedList<>();
-        List<String> ppnParent = Arrays.asList("000000191");
-        CriterionPpnParent criterionPpnParent = new CriterionPpnParent("ET", ppnParent);
-        criteria1.add(criterionPpnParent);
-
-        NoticeV2 candidatev2 = (NoticeV2) noticeService.findNoticesByCriteria("v2",criteria1,  new LinkedList<>(),0,5).get(0);
-        Assertions.assertEquals(expected,candidatev2.getKeyTitle());
 
     }
 
@@ -187,7 +160,7 @@ public class NoticeStoreServiceTest {
         assertTrue(candidates.getNbPages() > 0);
 
         // test avec critère de tri
-        String sort = NoticeV2SolrField.EDITOR_Z;
+        String sort = NoticeSolrField.EDITOR_Z;
         CriterionSort criterionSort = new CriterionSort(sort, Sort.Direction.ASC);
         List<CriterionSort> listSort = new LinkedList<>();
         listSort.add(criterionSort);

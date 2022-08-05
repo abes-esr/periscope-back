@@ -28,8 +28,10 @@
     <!-- ===================================================== -->
     <properties>
         <finalName>periscope-${project.artifactId}-${project.version}</finalName>
+        <name>periscope</name>
         <warName>periscope-api</warName>
         <webBaseDir>./target/</webBaseDir>
+        <batchBaseDir>./target</batchBaseDir>
     </properties>
 
     <!-- =========================================================== -->
@@ -38,6 +40,7 @@
     <modules>
         <module>core</module>
         <module>web</module>
+        <module>batch</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -143,6 +146,10 @@
                 <exclusion>
                     <groupId>junit</groupId>
                     <artifactId>junit</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
