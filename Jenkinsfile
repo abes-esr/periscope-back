@@ -291,6 +291,7 @@ node {
                     // **** FIN DE ZONE A EDITER n°2 ****
 
                     writeFile file: "${candidateModules[moduleIndex]}/src/main/resources/application-${mavenProfil}.properties", text: "${newconfig}"
+                    writeFile file: "${candidateModules[moduleIndex]}/src/main/resources/application.properties"
 
                 } catch (e) {
                     currentBuild.result = hudson.model.Result.FAILURE.toString()
