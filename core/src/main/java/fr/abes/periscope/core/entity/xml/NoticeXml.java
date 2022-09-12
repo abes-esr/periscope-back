@@ -1,5 +1,6 @@
 package fr.abes.periscope.core.entity.xml;
 
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlRootElement;
 import lombok.Getter;
@@ -16,14 +17,15 @@ import java.util.List;
 @Setter
 @JacksonXmlRootElement(localName = "record")
 public class NoticeXml {
-
     @JacksonXmlProperty(localName = "leader")
     private String leader;
 
     @JacksonXmlProperty(localName = "controlfield")
+    @JacksonXmlElementWrapper(useWrapping = false)
     private List<ControlField> controlFields;
 
     @JacksonXmlProperty(localName = "datafield")
+    @JacksonXmlElementWrapper(useWrapping = false)
     private List<DataField> dataFields;
 
     public boolean isRessourceContinue() {

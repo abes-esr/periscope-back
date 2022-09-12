@@ -4,8 +4,10 @@ import fr.abes.periscope.core.criterion.Criterion;
 import fr.abes.periscope.core.criterion.CriterionFacette;
 import fr.abes.periscope.core.criterion.CriterionSort;
 import fr.abes.periscope.core.entity.solr.Notice;
+import fr.abes.periscope.core.entity.solr.NoticeSolr;
 import fr.abes.periscope.core.entity.solr.NoticeSolrField;
 import fr.abes.periscope.core.entity.solr.ResultSolr;
+import fr.abes.periscope.core.entity.xml.NoticeXml;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import fr.abes.periscope.core.util.UtilsMapper;
 import fr.abes.periscope.web.dto.*;
@@ -15,6 +17,8 @@ import fr.abes.periscope.web.dto.criterion.CriterionWebDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -114,5 +118,14 @@ public class NoticeController extends NoticeAbstractController {
             facetteFilterCriteria.stream().forEach(f -> facettesFilters.add(new CriterionFacette(f.getZone(), f.getValeurs())));
         }
         return facettesFilters;
+    }
+
+    @PostMapping(value = "/notice/index", consumes = {MediaType.APPLICATION_XML_VALUE})
+    public void indexerNotice(@RequestBody NoticeXml notice) {
+        if (notice.isRessourceContinue()) {
+            noticeStoreService.saveOrDeleteSingle(mapper.map(notice, NoticeSolr.class));
+        } else {
+            throw new IllegalArgumentException("La notice n'est pas une notice de ressource continue");
+        }
     }
 }

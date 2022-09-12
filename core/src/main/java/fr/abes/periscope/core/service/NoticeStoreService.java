@@ -120,7 +120,15 @@ public class NoticeStoreService {
         return result;
     }
 
-    public void saveOrDelete(List<NoticeSolr> notice) {
+    public void saveOrDeleteSingle(NoticeSolr notice) {
+        if (notice.isToDelete()) {
+            delete(notice);
+        } else {
+            save(notice);
+        }
+    }
+
+    public void saveOrDeleteList(List<NoticeSolr> notice) {
         List noticeToDelete = new ArrayList();
         List noticeToUpdate = new ArrayList();
         notice.forEach(n -> {
