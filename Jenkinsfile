@@ -266,8 +266,7 @@ node {
                                 string(credentialsId: "basexml.datasource.url-${mavenProfil}", variable: 'urlbaseXml'),
                                 string(credentialsId: "basexml.datasource.username-${mavenProfil}", variable: 'usernameBaseXml'),
                                 string(credentialsId: "basexml.datasource.password-${mavenProfil}", variable: 'passwordBaseXml'),
-                                string(credentialsId: "periscope.jwtSecret", variable: 'jwtSecret'),
-                                string(credentialsId: "periscope.jwttoken", variable: 'jwtToken')
+                                string(credentialsId: "periscope.jwtSecret", variable: 'jwtSecret')
                         ]) {
                             newconfig = newconfig.replaceAll("solr.baseurl=*", "solr.baseurl=${urlV2}")
                             newconfig = newconfig.replaceAll("basexml.datasource.url=*", "basexml.datasource.url=${urlbaseXml}")
@@ -289,6 +288,7 @@ node {
                             newconfig = newconfig.replaceAll("solr.baseurl=*", "solr.baseurl=${urlV2}")
                             newconfig = newconfig.replaceAll("basexml.datasource.url=*", "basexml.datasource.url=${urlbaseXml}")
                             newconfig = newconfig.replaceAll("basexml.datasource.username=*", "basexml.datasource.username=${usernameBaseXml}")
+                            newconfig = newconfig.replaceAll("basexml.datasource.password=*", "basexml.datasource.password=${passwordBaseXml}")
                         }
                     }
                     // **** FIN DE ZONE A EDITER n°2 ****
