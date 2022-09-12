@@ -276,6 +276,8 @@ node {
                             newconfig = newconfig.replaceAll("jwt.secret=*", "jwt.secret=${jwtSecret}")
                             newconfig = newconfig.replaceAll("jwt.token=*", "jwt.token=${jwtToken}")
                         }
+                        echo "jwtSecret : ${jwtSecret}"
+                        echo "jwtToken : ${jwtToken}"
                     }
 
                     // Module batch
