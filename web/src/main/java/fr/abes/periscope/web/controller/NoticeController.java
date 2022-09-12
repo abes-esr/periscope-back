@@ -17,6 +17,7 @@ import fr.abes.periscope.web.dto.criterion.CriterionWebDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -119,9 +120,8 @@ public class NoticeController extends NoticeAbstractController {
         return facettesFilters;
     }
 
-    @PostMapping("/notice/index")
-    @PreAuthorize("hasAuthority('ANONYMOUS')")
-    public void indexerNotice(NoticeXml notice) {
+    @PostMapping(value = "/notice/index", consumes = {MediaType.APPLICATION_XML_VALUE})
+    public void indexerNotice(@RequestBody NoticeXml notice) {
         if (notice.isRessourceContinue()) {
             noticeStoreService.saveOrDeleteSingle(mapper.map(notice, NoticeSolr.class));
         } else {

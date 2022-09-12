@@ -9,15 +9,28 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 @Component
 @Slf4j
 public class JwtTokenProvider {
     @Value("${jwt.secret}")
     private String secret;
+    @Value("${jwt.anonymousUser}")
+    private String anonymousUser;
 
     public String generateToken() {
-        return "eyJhbGciOiJIUzI1NiJ9.eyJVc2VybmFtZSI6IlBlcmlzY29wZUtleSIsImV4cCI6NDA5MjY0Mzk0OH0.-ENxl1qIUyB9ZsT7CCgIX-YvrKR0R9FGFa5izzH46TI";
+        Calendar now = new GregorianCalendar(2099, 12, 31);
+        Date expiryDate = now.getTime();
+
+        return Jwts.builder()
+                .setSubject(anonymousUser) //user anonyme périscope
+                .setExpiration(expiryDate)
+                .claim("role", "ANONYMOUS")
+                .signWith(SignatureAlgorithm.HS512, secret)
+                .compact();
     }
 
     public boolean validateToken(String authToken) {

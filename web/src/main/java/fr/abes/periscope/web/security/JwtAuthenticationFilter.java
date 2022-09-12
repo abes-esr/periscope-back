@@ -25,12 +25,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.debug("Entering auth filtering");
-
-        String jwt = tokenProvider.getJwtFromRequest(request);
-        if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
-            UserDetails user = new AnonymousUserDetails(tokenProvider.getUsernameFromJwtToken(jwt));
-            Authentication authentication = new AnonymousAuthenticationToken(jwt, user, user.getAuthorities());
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        try {
+            String jwt = tokenProvider.getJwtFromRequest(request);
+            if (StringUtils.hasText(jwt) && tokenProvider.validateToken(jwt)) {
+                UserDetails user = new AnonymousUserDetails(tokenProvider.getUsernameFromJwtToken(jwt));
+                Authentication authentication = new AnonymousAuthenticationToken(jwt, user, user.getAuthorities());
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
+        } catch(Exception ex) {
+            log.error(ex.getLocalizedMessage());
         }
 
         filterChain.doFilter(request, response);
