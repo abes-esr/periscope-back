@@ -274,9 +274,6 @@ node {
                             newconfig = newconfig.replaceAll("basexml.datasource.username=*", "basexml.datasource.username=${usernameBaseXml}")
                             newconfig = newconfig.replaceAll("basexml.datasource.password=*", "basexml.datasource.password=${passwordBaseXml}")
                             newconfig = newconfig.replaceAll("jwt.secret=*", "jwt.secret=${jwtSecret}")
-                            newconfig = newconfig.replaceAll("jwt.token=*", "jwt.token=${jwtToken}")
-                            echo "jwtSecret : ${jwtSecret}"
-                            echo "jwtToken : ${jwtToken}"
                         }
 
                     }
@@ -292,7 +289,6 @@ node {
                             newconfig = newconfig.replaceAll("solr.baseurl=*", "solr.baseurl=${urlV2}")
                             newconfig = newconfig.replaceAll("basexml.datasource.url=*", "basexml.datasource.url=${urlbaseXml}")
                             newconfig = newconfig.replaceAll("basexml.datasource.username=*", "basexml.datasource.username=${usernameBaseXml}")
-                            newconfig = newconfig.replaceAll("basexml.datasource.password=*", "basexml.datasource.password=${passwordBaseXml}")
                         }
                     }
                     // **** FIN DE ZONE A EDITER n°2 ****
