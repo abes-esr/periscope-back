@@ -275,9 +275,10 @@ node {
                             newconfig = newconfig.replaceAll("basexml.datasource.password=*", "basexml.datasource.password=${passwordBaseXml}")
                             newconfig = newconfig.replaceAll("jwt.secret=*", "jwt.secret=${jwtSecret}")
                             newconfig = newconfig.replaceAll("jwt.token=*", "jwt.token=${jwtToken}")
+                            echo "jwtSecret : ${jwtSecret}"
+                            echo "jwtToken : ${jwtToken}"
                         }
-                        echo "jwtSecret : ${jwtSecret}"
-                        echo "jwtToken : ${jwtToken}"
+
                     }
 
                     // Module batch
