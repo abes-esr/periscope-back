@@ -272,9 +272,7 @@ node {
                             newconfig = newconfig.replaceAll("basexml.datasource.username=*", "basexml.datasource.username=${usernameBaseXml}")
                             newconfig = newconfig.replaceAll("basexml.datasource.password=*", "basexml.datasource.password=${passwordBaseXml}")
                         }
-
                     }
-
                     // Module batch
                     if ("${candidateModules[moduleIndex]}" == 'batch') {
                         withCredentials([
