@@ -14,13 +14,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
  * La classe {@code SecurityConfigurer} permet de configurer la sécurité du service web.
  * Cette classe est basée sur le framework Spring avec le module Spring Security.
  */
-@Configuration
-@EnableWebSecurity
-@EnableGlobalMethodSecurity(
+//@Configuration
+//@EnableWebSecurity
+/*@EnableGlobalMethodSecurity(
         securedEnabled = true,
         jsr250Enabled = true,
         prePostEnabled = true
-)
+)*/
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     @Bean
     public JwtAuthenticationFilter jwtAuthenticationFilter() {
