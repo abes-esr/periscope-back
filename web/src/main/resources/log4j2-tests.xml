@@ -15,17 +15,11 @@
         <Property name="keepMostRecentSize">100 MB</Property>
     </Properties>
     <Appenders>
-
-        <!-- CONSOLE -->
-        <Console name="Console">
-            <PatternLayout
-                    pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{dark,yellow}: %msg%n%throwable" />
-        </Console>
-
         <!-- LOG FILE -->
         <RollingFile name="LogFile"
                      fileName="${logBaseDir}/${logFileName}.log"
                      filePattern="${logBaseDir}/$${date:yyyy-MM}/${logFileName}_%d{dd-MM-yyyy}_%i.log.gz">
+            <LevelRangeFilter minLevel="ERROR" maxLevel="INFO" onMatch="ACCEPT" onMismatch="DENY"/>
             <PatternLayout>
                 <pattern>%5p %d{ISO8601} [%t][%x] %c - %m%n</pattern>
             </PatternLayout>
@@ -121,13 +115,15 @@
 
     </Appenders>
 
-    <Loggers>
-        <Root level="all">
-            <AppenderRef ref="Console" />
-            <AppenderRef ref="DebugFile" />
-            <AppenderRef ref="LogFile" />
-            <AppenderRef ref="ErrorFile" />
-        </Root>
-    </Loggers>
+    <Logger name="fr.abes" additivity="false" level="info">
+        <AppenderRef ref="DebugFile/"/>
+        <AppenderRef ref="LogFile"/>
+        <AppenderRef ref="ErrorFile"/>
+    </Logger>
+    <Root level="info">
+        <AppenderRef ref="DebugFile"/>
+        <AppenderRef ref="LogFile"/>
+        <AppenderRef ref="ErrorFile"/>
+    </Root>
 
 </Configuration>
