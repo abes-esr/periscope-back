@@ -19,7 +19,7 @@
         <!-- CONSOLE -->
         <Console name="Console">
             <PatternLayout
-                    pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{dark,yellow}: %msg%n%throwable" />
+                    pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{dark,yellow}: %msg%n%throwable"/>
         </Console>
 
         <!-- LOG FILE -->
@@ -35,19 +35,19 @@
                 - Au démarrage de l'application
                 - Si l'un des fichiers atteint ${sizeTriggerPolicy}
                 - Si la date du filePattern nécessite un nouveau fichier -->
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="${sizeTriggerPolicy}" />
-                <TimeBasedTriggeringPolicy />
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="${sizeTriggerPolicy}"/>
+                <TimeBasedTriggeringPolicy/>
             </Policies>
             <DefaultRolloverStrategy>
                 <Delete basePath="${logBaseDir}" maxDepth="2">
                     <IfFileName glob="*/${logFileName}_*.log.gz">
                         <!-- On supprime les fichiers de plus de ${deleteAgeFile}
                          mais on garde les ${keepMostRecentFile} fichiers plus récent ou les ${keepMostRecentSize} plus récent-->
-                        <IfLastModified age="${deleteAgeFile}" />
+                        <IfLastModified age="${deleteAgeFile}"/>
                         <IfAny>
-                            <IfAccumulatedFileCount exceeds="${keepMostRecentFile}" />
-                            <IfAccumulatedFileSize exceeds="${keepMostRecentSize}" />
+                            <IfAccumulatedFileCount exceeds="${keepMostRecentFile}"/>
+                            <IfAccumulatedFileSize exceeds="${keepMostRecentSize}"/>
                         </IfAny>
                     </IfFileName>
                 </Delete>
@@ -68,19 +68,19 @@
                 - Au démarrage de l'application
                 - Si l'un des fichiers atteint ${sizeTriggerPolicy}
                 - Si la date du filePattern nécessite un nouveau fichier -->
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="${sizeTriggerPolicy}" />
-                <TimeBasedTriggeringPolicy />
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="${sizeTriggerPolicy}"/>
+                <TimeBasedTriggeringPolicy/>
             </Policies>
             <DefaultRolloverStrategy>
                 <Delete basePath="${logBaseDir}/" maxDepth="2">
                     <IfFileName glob="*/${errorFileName}_*.log.gz">
                         <!-- On supprime les fichiers de plus de ${deleteAgeFile}
                           mais on garde les ${keepMostRecentFile} fichier plus récent ou les ${keepMostRecentSize} plus récent-->
-                        <IfLastModified age="${deleteAgeFile}" />
+                        <IfLastModified age="${deleteAgeFile}"/>
                         <IfAny>
-                            <IfAccumulatedFileCount exceeds="${keepMostRecentFile}" />
-                            <IfAccumulatedFileSize exceeds="${keepMostRecentSize}" />
+                            <IfAccumulatedFileCount exceeds="${keepMostRecentFile}"/>
+                            <IfAccumulatedFileSize exceeds="${keepMostRecentSize}"/>
                         </IfAny>
                     </IfFileName>
                 </Delete>
@@ -101,19 +101,19 @@
                 - Au démarrage de l'application
                 - Si l'un des fichiers atteint ${sizeTriggerPolicy}
                 - Si la date du filePattern nécessite un nouveau fichier -->
-                <OnStartupTriggeringPolicy />
-                <SizeBasedTriggeringPolicy size="${sizeTriggerPolicy}" />
-                <TimeBasedTriggeringPolicy />
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="${sizeTriggerPolicy}"/>
+                <TimeBasedTriggeringPolicy/>
             </Policies>
             <DefaultRolloverStrategy>
                 <Delete basePath="${logBaseDir}/" maxDepth="2">
                     <IfFileName glob="*/${debugFileName}_*.log.gz">
                         <!-- On supprime les fichiers de plus de ${deleteAgeFile}
                          mais on garde les ${keepMostRecentFile} fichiers plus récent ou les ${keepMostRecentSize} plus récent-->
-                        <IfLastModified age="${deleteAgeFile}" />
+                        <IfLastModified age="${deleteAgeFile}"/>
                         <IfAny>
-                            <IfAccumulatedFileCount exceeds="${keepMostRecentFile}" />
-                            <IfAccumulatedFileSize exceeds="${keepMostRecentSize}" />
+                            <IfAccumulatedFileCount exceeds="${keepMostRecentFile}"/>
+                            <IfAccumulatedFileSize exceeds="${keepMostRecentSize}"/>
                         </IfAny>
                     </IfFileName>
                 </Delete>
@@ -122,15 +122,17 @@
 
     </Appenders>
 
-    <Logger name="fr.abes" additivity="false" level="warn">
-        <AppenderRef ref="DebugFile/"/>
-        <AppenderRef ref="LogFile"/>
-        <AppenderRef ref="ErrorFile"/>
-    </Logger>
-    <Root level="warn">
-        <AppenderRef ref="DebugFile"/>
-        <AppenderRef ref="LogFile"/>
-        <AppenderRef ref="ErrorFile"/>
-    </Root>
+    <Loggers>
+        <Logger name="fr.abes" additivity="false" level="warn">
+            <AppenderRef ref="DebugFile/"/>
+            <AppenderRef ref="LogFile"/>
+            <AppenderRef ref="ErrorFile"/>
+        </Logger>
+        <Root level="warn">
+            <AppenderRef ref="DebugFile"/>
+            <AppenderRef ref="LogFile"/>
+            <AppenderRef ref="ErrorFile"/>
+        </Root>
+    </Loggers>
 
 </Configuration>
