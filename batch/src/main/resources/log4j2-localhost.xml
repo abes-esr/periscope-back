@@ -3,7 +3,7 @@
 <Configuration>
     <Properties>
         <!-- Les proprietes suivantes correspondent a des cles dans les fichiers application-localhost.properties -->
-        <Property name="logBaseDir">${bundle:application:application.basedir}/logs</Property>
+        <Property name="logBaseDir">./target/logs</Property>
         <Property name="logFileName">${bundle:application:application.name}</Property>
         <Property name="errorFileName">${bundle:application:application.name}_error</Property>
         <Property name="debugFileName">${bundle:application:application.name}_debug</Property>
