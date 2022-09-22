@@ -77,6 +77,7 @@ public class NoticeController extends NoticeAbstractController {
         List<CriterionSort> sortCriteria = handleSortCriteria(requestParameters);
         List<String> facettes = handleFacettes(requestParameters);
         List<CriterionFacette> facettesFilter = handleFacettesFilters(requestParameters);
+        log.error("test");
         ResultSolr result = noticeStoreService.findNoticesWithFacets(criteria, facettes, facettesFilter, sortCriteria, page, size);
         return mapper.map(result, ResultWebDto.class);
     }
