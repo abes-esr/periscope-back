@@ -3,10 +3,10 @@
 <Configuration>
     <Properties>
         <!-- Les proprietes suivantes correspondent a des cles dans les fichiers application.properties -->
-        <Property name="logBaseDir">logs</Property>
-        <Property name="logFileName">${bundle:application:application.name}</Property>
-        <Property name="errorFileName">${bundle:application:application.name}_error</Property>
-        <Property name="debugFileName">${bundle:application:application.name}_debug</Property>
+        <Property name="logBaseDir">../../logs</Property>
+        <Property name="logFileName">periscope</Property>
+        <Property name="errorFileName">periscope_error</Property>
+        <Property name="debugFileName">periscope_debug</Property>
 
         <!-- Politique de gestion des fichiers -->
         <Property name="sizeTriggerPolicy">100 MB</Property>
