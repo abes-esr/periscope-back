@@ -121,7 +121,7 @@ public class NoticeController extends NoticeAbstractController {
         return facettesFilters;
     }
 
-    @PostMapping(value = "/notice/index", consumes = {MediaType.APPLICATION_XML_VALUE})
+    @PostMapping(value = "/notice/index", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_XML_VALUE})
     public void indexerNotice(@RequestBody NoticeXml notice) {
         if (notice.isRessourceContinue()) {
             noticeStoreService.saveOrDeleteSingle(mapper.map(notice, NoticeSolr.class));
