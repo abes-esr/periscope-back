@@ -123,6 +123,7 @@ public class NoticeController extends NoticeAbstractController {
 
     @PostMapping(value = "/notice/index", consumes = {MediaType.APPLICATION_XML_VALUE, MediaType.TEXT_XML_VALUE})
     public void indexerNotice(@RequestBody NoticeXml notice) {
+        log.info(notice.toString());
         if (notice.isRessourceContinue()) {
             noticeStoreService.saveOrDeleteSingle(mapper.map(notice, NoticeSolr.class));
         } else {
