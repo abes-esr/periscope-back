@@ -1,0 +1,26 @@
+package fr.abes.periscope.core.entity.xml;
+
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlElementWrapper;
+import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.util.List;
+
+@Getter
+@Setter
+public class DataField {
+
+    @JacksonXmlProperty(isAttribute = true)
+    private String tag;
+
+    @JacksonXmlProperty(isAttribute = true)
+    private String ind1;
+
+    @JacksonXmlProperty(isAttribute = true)
+    private String ind2;
+
+    @JacksonXmlProperty(localName = "subfield")
+    @JacksonXmlElementWrapper(useWrapping = false)
+    private List<SubField> subFields;
+}

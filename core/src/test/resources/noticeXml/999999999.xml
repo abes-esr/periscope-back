@@ -1,0 +1,1668 @@
+<record>
+  <leader> cas0 22 450 </leader>
+  <controlfield tag="001">999999999</controlfield>
+  <controlfield tag="002">4,12,18,21,22,24,27,32,38,46,49,50,51,56,57,58,60,63,67,71,75,83,84,91,96,98,137,140,159,180,212,218,219,222,227,232,421</controlfield>
+  <controlfield tag="003">http://www.sudoc.fr/038717204</controlfield>
+  <controlfield tag="004">19971215</controlfield>
+  <controlfield tag="005">20210412121223.000</controlfield>
+  <controlfield tag="006">9999</controlfield>
+  <controlfield tag="007">692662101</controlfield>
+  <controlfield tag="008">Abx3</controlfield>
+  <datafield tag="011" ind1=" " ind2=" ">
+    <subfield code="a">0018-019X</subfield>
+    <subfield code="f">0018-019X</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">(OCoLC)320122199</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">ccn0018-019X</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="a">issn0018019X</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="1">21</subfield>
+    <subfield code="a">157203</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="1">71</subfield>
+    <subfield code="a">45943</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="1">84</subfield>
+    <subfield code="a">ALP000246925</subfield>
+  </datafield>
+  <datafield tag="035" ind1=" " ind2=" ">
+    <subfield code="1">140</subfield>
+    <subfield code="a">ALP47</subfield>
+  </datafield>
+  <datafield tag="102" ind1=" " ind2=" ">
+    <subfield code="a">CH</subfield>
+  </datafield>
+  <datafield tag="105" ind1=" " ind2=" ">
+    <subfield code="a">y |||||||||</subfield>
+  </datafield>
+  <datafield tag="106" ind1=" " ind2=" ">
+    <subfield code="a">r</subfield>
+  </datafield>
+  <datafield tag="181" ind1=" " ind2=" ">
+    <subfield code="6">z01</subfield>
+    <subfield code="c">txt</subfield>
+    <subfield code="2">rdacontent</subfield>
+  </datafield>
+  <datafield tag="181" ind1=" " ind2="1">
+    <subfield code="6">z01</subfield>
+    <subfield code="a">i#</subfield>
+    <subfield code="b">xxxe##</subfield>
+  </datafield>
+  <datafield tag="182" ind1=" " ind2=" ">
+    <subfield code="6">z01</subfield>
+    <subfield code="c">n</subfield>
+    <subfield code="2">rdamedia</subfield>
+  </datafield>
+  <datafield tag="182" ind1=" " ind2="1">
+    <subfield code="6">z01</subfield>
+    <subfield code="a">n</subfield>
+  </datafield>
+  <datafield tag="183" ind1=" " ind2=" ">
+    <subfield code="6">z01</subfield>
+    <subfield code="a">nga</subfield>
+    <subfield code="2">rdamedia</subfield>
+  </datafield>
+  <datafield tag="200" ind1="1" ind2=" ">
+    <subfield code="a">Helvetica chimica acta</subfield>
+  </datafield>
+  <datafield tag="316" ind1=" " ind2=" ">
+    <subfield code="5">674822138:121133818</subfield>
+    <subfield code="a">Collection BNU en dépôt à l'Unistra</subfield>
+  </datafield>
+  <datafield tag="530" ind1="0" ind2=" ">
+    <subfield code="a">Helvetica chimica acta</subfield>
+  </datafield>
+  <datafield tag="606" ind1=" " ind2=" ">
+    <subfield code="3">027222985</subfield>
+    <subfield code="a">Chimie analytique</subfield>
+    <subfield code="2">rameau</subfield>
+  </datafield>
+  <datafield tag="606" ind1=" " ind2=" ">
+    <subfield code="3">027285782</subfield>
+    <subfield code="a">Chimie organique</subfield>
+    <subfield code="2">Rameau</subfield>
+  </datafield>
+  <datafield tag="606" ind1=" " ind2=" ">
+    <subfield code="3">02782912X</subfield>
+    <subfield code="a">Chimie inorganique</subfield>
+    <subfield code="2">Rameau</subfield>
+  </datafield>
+  <datafield tag="608" ind1=" " ind2=" ">
+    <subfield code="3">02724640X</subfield>
+    <subfield code="a">Périodiques</subfield>
+    <subfield code="2">rameau</subfield>
+  </datafield>
+  <datafield tag="710" ind1="0" ind2="2">
+    <subfield code="3">034159703</subfield>
+    <subfield code="a">Société suisse de chimie</subfield>
+    <subfield code="4">475</subfield>
+  </datafield>
+  <datafield tag="801" ind1=" " ind2="3">
+    <subfield code="a">FR</subfield>
+    <subfield code="b">Abes</subfield>
+    <subfield code="c">20210412</subfield>
+    <subfield code="g">AFNOR</subfield>
+  </datafield>
+  <datafield tag="801" ind1=" " ind2="3">
+    <subfield code="a">FR</subfield>
+    <subfield code="b">ISSN</subfield>
+    <subfield code="c">20170628</subfield>
+  </datafield>
+  <datafield tag="802" ind1=" " ind2=" ">
+    <subfield code="a">40</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">130552102:121134431</subfield>
+    <subfield code="b">130552102</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="p">Membre du plan de conservation</subfield>
+    <subfield code="a">CP 14</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">130552102:121134431</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">95</subfield>
+    <subfield code="i">2012</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 95 (2012)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">130552102:121134431</subfield>
+    <subfield code="a">19960101</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">130552102:121134431</subfield>
+    <subfield code="a">20181023</subfield>
+    <subfield code="b">18:41:39.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">130552105:121134458</subfield>
+    <subfield code="b">130552105</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="p">Membre du plan de conservation</subfield>
+    <subfield code="a">PP161</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">130552105:121134458</subfield>
+    <subfield code="a">33</subfield>
+    <subfield code="i">1950</subfield>
+    <subfield code="a">78</subfield>
+    <subfield code="i">1995</subfield>
+    <subfield code="r">vol. 33 (1950) - vol. 78 (1995)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">130552105:121134458</subfield>
+    <subfield code="a">19960101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">130552105:121134458</subfield>
+    <subfield code="a">20181023</subfield>
+    <subfield code="b">18:41:39.000</subfield>
+  </datafield>
+  <datafield tag="999" ind1=" " ind2=" ">
+    <subfield code="5">130552105:121134458</subfield>
+    <subfield code="a">33,1950-78,1995</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">130552106:121134423</subfield>
+    <subfield code="b">130552106</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="p">Membre du plan de conservation</subfield>
+    <subfield code="a">P845</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">130552106:121134423</subfield>
+    <subfield code="a">40</subfield>
+    <subfield code="i">1957</subfield>
+    <subfield code="a">42</subfield>
+    <subfield code="i">1959</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">130552106:121134423</subfield>
+    <subfield code="a">44</subfield>
+    <subfield code="i">1962</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">130552106:121134423</subfield>
+    <subfield code="a">48</subfield>
+    <subfield code="i">1965</subfield>
+    <subfield code="a">94</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">2011</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">130552106:121134423</subfield>
+    <subfield code="a">95</subfield>
+    <subfield code="i">2012</subfield>
+    <subfield code="a">97</subfield>
+    <subfield code="i">2014</subfield>
+    <subfield code="r">vol. 40 (1957) - vol. 42 (1959) ; vol. 44 (1962) ; vol. 48 (1965) - vol. 94 no. 1 (2011) ; vol. 95 (2012) - vol. 97 (2014)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">130552106:121134423</subfield>
+    <subfield code="a">19870101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">130552106:121134423</subfield>
+    <subfield code="a">20181030</subfield>
+    <subfield code="b">11:15:03.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">250562103:12113394X</subfield>
+    <subfield code="b">250562103</subfield>
+    <subfield code="a">PER.458</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">250562103:12113394X</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">87</subfield>
+    <subfield code="b">12</subfield>
+    <subfield code="i">2004</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 87 no. 12 (2004)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">250562103:12113394X</subfield>
+    <subfield code="a">19870101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">250562103:12113394X</subfield>
+    <subfield code="a">20050323</subfield>
+    <subfield code="b">10:35:54.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">141182103:138138230</subfield>
+    <subfield code="b">141182103</subfield>
+    <subfield code="d">BUSC2</subfield>
+    <subfield code="l">SCMAG</subfield>
+    <subfield code="a">P3482</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">141182103:138138230</subfield>
+    <subfield code="a">29</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1946</subfield>
+    <subfield code="a">61</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1978</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">141182103:138138230</subfield>
+    <subfield code="a">66</subfield>
+    <subfield code="b">5</subfield>
+    <subfield code="i">1983</subfield>
+    <subfield code="a">79</subfield>
+    <subfield code="b">8</subfield>
+    <subfield code="i">1996</subfield>
+    <subfield code="r">vol. 29 no. 1 (1946) - vol. 61 no. 1 (1978) ; vol. 66 no. 5 (1983) - vol. 79 no. 8 (1996)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">141182103:138138230</subfield>
+    <subfield code="a">19940101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">141182103:138138230</subfield>
+    <subfield code="a">20140519</subfield>
+    <subfield code="b">17:53:44.000</subfield>
+  </datafield>
+  <datafield tag="990" ind1=" " ind2=" ">
+    <subfield code="5">141182103:138138230</subfield>
+    <subfield code="a">Etat de collection à jour le 19/05/2014</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">630142101:121133869</subfield>
+    <subfield code="b">630142101</subfield>
+    <subfield code="a">CP 181268</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">630142101:121133869</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">96</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">2013</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 96 no. 1 (2013)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">630142101:121133869</subfield>
+    <subfield code="a">19820101</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">630142101:121133869</subfield>
+    <subfield code="a">20200429</subfield>
+    <subfield code="b">11:20:06.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">601592101:121134393</subfield>
+    <subfield code="b">601592101</subfield>
+    <subfield code="a">ROY magasins/QD1 HEL</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">601592101:121134393</subfield>
+    <subfield code="i">1968</subfield>
+    <subfield code="i">1978</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">601592101:121134393</subfield>
+    <subfield code="i">1981</subfield>
+    <subfield code="i">1982</subfield>
+    <subfield code="w">lac(1978)</subfield>
+    <subfield code="r">(1968) - (1978) ; (1981) - (1982) [lac(1978)]</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">601592101:121134393</subfield>
+    <subfield code="a">19910101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">601592101:121134393</subfield>
+    <subfield code="a">20151210</subfield>
+    <subfield code="b">12:20:09.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">212312103:121133877</subfield>
+    <subfield code="b">212312103</subfield>
+    <subfield code="a">4266</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">212312103:121133877</subfield>
+    <subfield code="a">95</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">2012</subfield>
+    <subfield code="a">98</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">2015</subfield>
+    <subfield code="w">Lacunes</subfield>
+    <subfield code="r">vol. 95 no. 1 (2012) - vol. 98 no. 1 (2015) [Lacunes]</subfield>
+  </datafield>
+  <datafield tag="959" ind1=" " ind2=" ">
+    <subfield code="5">212312103:121133877</subfield>
+    <subfield code="d">96</subfield>
+    <subfield code="e">11,12</subfield>
+    <subfield code="a">2013</subfield>
+    <subfield code="r">vol. 96 no.11-12 (2013) </subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">212312103:121133877</subfield>
+    <subfield code="a">19860101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">212312103:121133877</subfield>
+    <subfield code="a">20170911</subfield>
+    <subfield code="b">16:41:25.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">384212103:121134474</subfield>
+    <subfield code="b">384212103</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="z">PCAq</subfield>
+    <subfield code="p">Membre du plan de conservation</subfield>
+    <subfield code="a">CBP125</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">384212103:121134474</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">68</subfield>
+    <subfield code="b">2</subfield>
+    <subfield code="i">1985</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">384212103:121134474</subfield>
+    <subfield code="a">83</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">2000</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">384212103:121134474</subfield>
+    <subfield code="a">84</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">2001</subfield>
+    <subfield code="w">Lacunes</subfield>
+    <subfield code="r">vol. 1 no. 1 (1918) - vol. 68 no. 2 (1985) ; vol. 83 no. 1 (2000) ; vol. 84 no. 1 (2001) [Lacunes]</subfield>
+  </datafield>
+  <datafield tag="959" ind1=" " ind2=" ">
+    <subfield code="5">384212103:121134474</subfield>
+    <subfield code="d">64</subfield>
+    <subfield code="e">3</subfield>
+    <subfield code="a">1981</subfield>
+    <subfield code="r">vol. 64 no.3 (1981) </subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">384212103:121134474</subfield>
+    <subfield code="a">19830101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">384212103:121134474</subfield>
+    <subfield code="a">20200607</subfield>
+    <subfield code="b">14:01:16.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">721812109:11097218X</subfield>
+    <subfield code="b">721812109</subfield>
+    <subfield code="a">CP 956</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">721812109:11097218X</subfield>
+    <subfield code="a">30</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1947</subfield>
+    <subfield code="a">53</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1970</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">721812109:11097218X</subfield>
+    <subfield code="a">54</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1971</subfield>
+    <subfield code="a">55</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1972</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">721812109:11097218X</subfield>
+    <subfield code="a">56</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1973</subfield>
+    <subfield code="a">66</subfield>
+    <subfield code="b">8</subfield>
+    <subfield code="i">1983</subfield>
+    <subfield code="r">vol. 30 no. 1 (1947) - vol. 53 no. 1 (1970) ; vol. 54 no. 1 (1971) - vol. 55 no. 1 (1972) ; vol. 56 no. 1 (1973) - vol. 66 no. 8 (1983)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">721812109:11097218X</subfield>
+    <subfield code="a">19900101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">721812109:11097218X</subfield>
+    <subfield code="a">20190517</subfield>
+    <subfield code="b">16:00:22.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">692662101:121134482</subfield>
+    <subfield code="b">692662101</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="p">Pôle de conservation</subfield>
+    <subfield code="a">CP1/50</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">692662101:121134482</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="i">2016</subfield>
+    <subfield code="r">(1918) - (2016)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">692662101:121134482</subfield>
+    <subfield code="a">19850101</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">692662101:121134482</subfield>
+    <subfield code="a">20210318</subfield>
+    <subfield code="b">16:11:02.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">682242104:14489825X</subfield>
+    <subfield code="b">682242104</subfield>
+    <subfield code="a">Silo</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">682242104:14489825X</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="i"/>
+    <subfield code="j"/>
+    <subfield code="k"/>
+    <subfield code="a"/>
+    <subfield code="b"/>
+    <subfield code="c"/>
+    <subfield code="r">vol. 1 (1918)-....</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">682242104:14489825X</subfield>
+    <subfield code="a">20100628</subfield>
+    <subfield code="b">rO</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">682242104:14489825X</subfield>
+    <subfield code="a">20191031</subfield>
+    <subfield code="b">14:19:14.000</subfield>
+  </datafield>
+  <datafield tag="991" ind1=" " ind2=" ">
+    <subfield code="5">682242104:14489825X</subfield>
+    <subfield code="a">Exemplaire modifié automatiquement le 31-10-2019 14:19</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">441092104:121134350</subfield>
+    <subfield code="b">441092104</subfield>
+    <subfield code="l">137109</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">441092104:121134350</subfield>
+    <subfield code="a">29</subfield>
+    <subfield code="b">2</subfield>
+    <subfield code="i">1946</subfield>
+    <subfield code="i">1949</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">441092104:121134350</subfield>
+    <subfield code="i">1951</subfield>
+    <subfield code="i">2015</subfield>
+    <subfield code="w">Lac.vol.92 no.12 (2012), vol.96 nos.11-12 (2013), vol.97 no.1 (2014)</subfield>
+    <subfield code="r">vol. 29 no. 2 (1946) - (1949) ; (1951) - (2015) [Lac.vol.92 no.12 (2012), vol.96 nos.11-12 (2013), vol.97 no.1 (2014)]</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">441092104:121134350</subfield>
+    <subfield code="a">19910101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">441092104:121134350</subfield>
+    <subfield code="a">20170207</subfield>
+    <subfield code="b">21:06:44.000</subfield>
+  </datafield>
+  <datafield tag="917" ind1=" " ind2=" ">
+    <subfield code="5">060882101:110972198</subfield>
+    <subfield code="a">abac</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">060882101:110972198</subfield>
+    <subfield code="b">060882101</subfield>
+    <subfield code="c">SCIEN</subfield>
+    <subfield code="d">PSMG2</subfield>
+    <subfield code="a">CP 15</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">060882101:110972198</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">82</subfield>
+    <subfield code="b">12</subfield>
+    <subfield code="i">1999</subfield>
+    <subfield code="w">Mq. vol.22, part. 1 (1939)</subfield>
+    <subfield code="r">vol. 1 no. 1 (1918) - vol. 82 no. 12 (1999) [Mq. vol.22, part. 1 (1939)]</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">060882101:110972198</subfield>
+    <subfield code="a">19850101</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">060882101:110972198</subfield>
+    <subfield code="a">20130417</subfield>
+    <subfield code="b">13:30:06.000</subfield>
+  </datafield>
+  <datafield tag="917" ind1=" " ind2=" ">
+    <subfield code="5">060882101:477566952</subfield>
+    <subfield code="a">abac</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">060882101:477566952</subfield>
+    <subfield code="b">060882101</subfield>
+    <subfield code="c">SCIEN</subfield>
+    <subfield code="d">PSNI2</subfield>
+    <subfield code="a">CP 15</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">060882101:477566952</subfield>
+    <subfield code="a">83</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">2000</subfield>
+    <subfield code="a">95</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">2012</subfield>
+    <subfield code="r">vol. 83 no. 1 (2000) - vol. 95 no. 1 (2012)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">060882101:477566952</subfield>
+    <subfield code="a">20130417</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">060882101:477566952</subfield>
+    <subfield code="a">20130417</subfield>
+    <subfield code="b">13:30:51.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">452342104:121133907</subfield>
+    <subfield code="b">452342104</subfield>
+    <subfield code="a">CP 05</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">452342104:121133907</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="j">jan</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">93</subfield>
+    <subfield code="b">12</subfield>
+    <subfield code="j">dec</subfield>
+    <subfield code="i">2010</subfield>
+    <subfield code="r">vol. 1 no. 1 (jan-1918) - vol. 93 no. 12 (dec-2010)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">452342104:121133907</subfield>
+    <subfield code="a">19830101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">452342104:121133907</subfield>
+    <subfield code="a">20121108</subfield>
+    <subfield code="b">17:55:33.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">452342305:18720652X</subfield>
+    <subfield code="b">452342305</subfield>
+    <subfield code="a">[6G]</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">452342305:18720652X</subfield>
+    <subfield code="a">12</subfield>
+    <subfield code="i">1929</subfield>
+    <subfield code="a">14</subfield>
+    <subfield code="i">1931</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">452342305:18720652X</subfield>
+    <subfield code="a">16</subfield>
+    <subfield code="i">1933</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">452342305:18720652X</subfield>
+    <subfield code="a">18</subfield>
+    <subfield code="i">1935</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">452342305:18720652X</subfield>
+    <subfield code="a">25</subfield>
+    <subfield code="i">1942</subfield>
+    <subfield code="a">26</subfield>
+    <subfield code="i">1943</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">452342305:18720652X</subfield>
+    <subfield code="a">29</subfield>
+    <subfield code="i">1946</subfield>
+    <subfield code="a">33</subfield>
+    <subfield code="i">1950</subfield>
+    <subfield code="r">vol. 12 (1929) - vol. 14 (1931) ; vol. 16 (1933) ; vol. 18 (1935) ; vol. 25 (1942) - vol. 26 (1943) ; vol. 29 (1946) - vol. 33 (1950)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">452342305:18720652X</subfield>
+    <subfield code="a">20031113</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">452342305:18720652X</subfield>
+    <subfield code="a">20121108</subfield>
+    <subfield code="b">17:55:33.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">861942102:121134407</subfield>
+    <subfield code="b">861942102</subfield>
+    <subfield code="a">CP 170</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">861942102:121134407</subfield>
+    <subfield code="b">7</subfield>
+    <subfield code="i">1952</subfield>
+    <subfield code="a">82</subfield>
+    <subfield code="i">1999</subfield>
+    <subfield code="r">no. 7 (1952) - vol. 82 (1999)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">861942102:121134407</subfield>
+    <subfield code="a">19830101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">861942102:121134407</subfield>
+    <subfield code="a">20030721</subfield>
+    <subfield code="b">13:07:58.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">514542101:121133923</subfield>
+    <subfield code="b">514542101</subfield>
+    <subfield code="a">CP 24</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">514542101:121133923</subfield>
+    <subfield code="a">14</subfield>
+    <subfield code="i">1931</subfield>
+    <subfield code="a">76</subfield>
+    <subfield code="b">4</subfield>
+    <subfield code="j">dec</subfield>
+    <subfield code="i">1993</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">514542101:121133923</subfield>
+    <subfield code="a">77</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="j">jan</subfield>
+    <subfield code="i">1994</subfield>
+    <subfield code="a">85</subfield>
+    <subfield code="b">12</subfield>
+    <subfield code="j">dec</subfield>
+    <subfield code="i">2002</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">514542101:121133923</subfield>
+    <subfield code="a">88</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="j">jan</subfield>
+    <subfield code="i">2005</subfield>
+    <subfield code="a">88</subfield>
+    <subfield code="b">2</subfield>
+    <subfield code="j">fev</subfield>
+    <subfield code="i">2005</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">514542101:121133923</subfield>
+    <subfield code="a">90</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="j">jan</subfield>
+    <subfield code="i">2007</subfield>
+    <subfield code="a">94</subfield>
+    <subfield code="b">12</subfield>
+    <subfield code="j">dec</subfield>
+    <subfield code="i">2011</subfield>
+    <subfield code="r">vol. 14 (1931) - vol. 76 no. 4 (dec-1993) ; vol. 77 no. 1 (jan-1994) - vol. 85 no. 12 (dec-2002) ; vol. 88 no. 1 (jan-2005) - vol. 88 no. 2 (fev-2005) ; vol. 90 no. 1 (jan-2007) - vol. 94 no. 12 (dec-2011)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">514542101:121133923</subfield>
+    <subfield code="a">19940101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">514542101:121133923</subfield>
+    <subfield code="a">20160511</subfield>
+    <subfield code="b">14:54:51.000</subfield>
+  </datafield>
+  <datafield tag="990" ind1=" " ind2=" ">
+    <subfield code="5">514542101:121133923</subfield>
+    <subfield code="a">Toute la collection est en Magasin</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">352382102:121133893</subfield>
+    <subfield code="b">352382102</subfield>
+    <subfield code="a">182208</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">352382102:121133893</subfield>
+    <subfield code="a">18</subfield>
+    <subfield code="i">1935</subfield>
+    <subfield code="a">93</subfield>
+    <subfield code="i">2010</subfield>
+    <subfield code="r">vol. 18 (1935) - vol. 93 (2010)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">352382102:121133893</subfield>
+    <subfield code="a">19860101</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">352382102:121133893</subfield>
+    <subfield code="a">20110315</subfield>
+    <subfield code="b">16:25:02.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">765752101:313920222</subfield>
+    <subfield code="b">765752101</subfield>
+    <subfield code="a">CP 140</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">765752101:313920222</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">71</subfield>
+    <subfield code="b">8</subfield>
+    <subfield code="i">1988</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 71 no. 8 (1988)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">765752101:313920222</subfield>
+    <subfield code="a">20070822</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">765752101:313920222</subfield>
+    <subfield code="a">20140306</subfield>
+    <subfield code="b">14:34:42.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">674822138:121133818</subfield>
+    <subfield code="b">674822138</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="p">Membre du plan de conservation</subfield>
+    <subfield code="a">H500185</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">674822138:121133818</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">91</subfield>
+    <subfield code="i">2008</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 91 (2008)</subfield>
+  </datafield>
+  <datafield tag="957" ind1="4" ind2="1">
+    <subfield code="5">674822138:121133818</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">30</subfield>
+    <subfield code="i">1947</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 30 (1947)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">674822138:121133818</subfield>
+    <subfield code="a">19830101</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">674822138:121133818</subfield>
+    <subfield code="a">20210220</subfield>
+    <subfield code="b">16:06:21.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">315552104:12113427X</subfield>
+    <subfield code="b">315552104</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="p">Membre du plan de conservation</subfield>
+    <subfield code="a">191.941</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">315552104:12113427X</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">60</subfield>
+    <subfield code="i">1977</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 60 (1977)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">315552104:12113427X</subfield>
+    <subfield code="a">19830101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">315552104:12113427X</subfield>
+    <subfield code="a">20190604</subfield>
+    <subfield code="b">12:14:07.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">315552325:12113430X</subfield>
+    <subfield code="b">315552325</subfield>
+    <subfield code="a">PER A7</subfield>
+    <subfield code="j">g</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">315552325:12113430X</subfield>
+    <subfield code="i">1928</subfield>
+    <subfield code="i">1989</subfield>
+    <subfield code="r">(1928) - (1989)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">315552325:12113430X</subfield>
+    <subfield code="a">19981105</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">315552325:12113430X</subfield>
+    <subfield code="a">20180905</subfield>
+    <subfield code="b">15:50:24.000</subfield>
+  </datafield>
+  <datafield tag="915" ind1=" " ind2=" ">
+    <subfield code="5">786462101:121134067</subfield>
+    <subfield code="b">1320360357</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">786462101:121134067</subfield>
+    <subfield code="b">786462101</subfield>
+    <subfield code="c">Fonds Meudon</subfield>
+    <subfield code="a">MB 380</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">786462101:121134067</subfield>
+    <subfield code="a">34</subfield>
+    <subfield code="i">1951</subfield>
+    <subfield code="a">62</subfield>
+    <subfield code="b">8</subfield>
+    <subfield code="i">1979</subfield>
+    <subfield code="r">vol. 34 (1951) - vol. 62 no. 8 (1979)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">786462101:121134067</subfield>
+    <subfield code="a">19880101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">786462101:121134067</subfield>
+    <subfield code="a">20130524</subfield>
+    <subfield code="b">10:37:44.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">751052113:121134091</subfield>
+    <subfield code="b">751052113</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="p">Membre du plan de conservation</subfield>
+    <subfield code="a">C076</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">751052113:121134091</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">86</subfield>
+    <subfield code="b">3</subfield>
+    <subfield code="i">2003</subfield>
+    <subfield code="w">Lacunes</subfield>
+    <subfield code="r">vol. 1 no. 1 (1918) - vol. 86 no. 3 (2003) [Lacunes]</subfield>
+  </datafield>
+  <datafield tag="959" ind1=" " ind2=" ">
+    <subfield code="5">751052113:121134091</subfield>
+    <subfield code="d">78</subfield>
+    <subfield code="a">1995</subfield>
+    <subfield code="r">vol. 78 (1995) </subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">751052113:121134091</subfield>
+    <subfield code="a">19960101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">751052113:121134091</subfield>
+    <subfield code="a">20201204</subfield>
+    <subfield code="b">03:30:40.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">914712101:121134121</subfield>
+    <subfield code="b">914712101</subfield>
+    <subfield code="e">Maison de la Chimie</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="p">Pôle de conservation</subfield>
+    <subfield code="a">CPm 13</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">914712101:121134121</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">98</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">2015</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 98 no. 1 (2015)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">914712101:121134121</subfield>
+    <subfield code="a">19830101</subfield>
+    <subfield code="b">rO</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">914712101:121134121</subfield>
+    <subfield code="a">20190902</subfield>
+    <subfield code="b">10:22:59.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">940732301:121134059</subfield>
+    <subfield code="b">940732301</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">940732301:121134059</subfield>
+    <subfield code="a">34</subfield>
+    <subfield code="i">1951</subfield>
+    <subfield code="a">81</subfield>
+    <subfield code="i">1998</subfield>
+    <subfield code="r">vol. 34 (1951) - vol. 81 (1998)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">940732301:121134059</subfield>
+    <subfield code="a">19830101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">940732301:121134059</subfield>
+    <subfield code="a">20070209</subfield>
+    <subfield code="b">15:12:13.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">751062107:121133990</subfield>
+    <subfield code="b">751062107</subfield>
+    <subfield code="a">P 30147</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">751062107:121133990</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">95</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">2012</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 95 no. 1 (2012)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">751062107:121133990</subfield>
+    <subfield code="a">19830101</subfield>
+    <subfield code="b">rO</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">751062107:121133990</subfield>
+    <subfield code="a">20120614</subfield>
+    <subfield code="b">12:50:23.000</subfield>
+  </datafield>
+  <datafield tag="999" ind1=" " ind2=" ">
+    <subfield code="5">751062107:121133990</subfield>
+    <subfield code="a">P</subfield>
+    <subfield code="b">MAG2P</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">751063001:121133958</subfield>
+    <subfield code="b">751063001</subfield>
+    <subfield code="a">8°AA 2909 CTL</subfield>
+    <subfield code="j">g</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">751063001:121133958</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">77</subfield>
+    <subfield code="i">1994</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 77 (1994)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">751063001:121133958</subfield>
+    <subfield code="a">19830101</subfield>
+    <subfield code="b">rO</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">751063001:121133958</subfield>
+    <subfield code="a">20210416</subfield>
+    <subfield code="b">09:24:29.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">751055214:121133966</subfield>
+    <subfield code="b">751055214</subfield>
+    <subfield code="j">s</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">751055214:121133966</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="i">1993</subfield>
+    <subfield code="r">(1918) - (1993)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">751055214:121133966</subfield>
+    <subfield code="a">19900101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">751055214:121133966</subfield>
+    <subfield code="a">20190523</subfield>
+    <subfield code="b">05:39:44.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">751155402:121133982</subfield>
+    <subfield code="b">751155402</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="p">Membre du plan de conservation</subfield>
+    <subfield code="a">1250</subfield>
+    <subfield code="j">g</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">751155402:121133982</subfield>
+    <subfield code="a">14</subfield>
+    <subfield code="i">1931</subfield>
+    <subfield code="a">71</subfield>
+    <subfield code="b">7</subfield>
+    <subfield code="i">1988</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">751155402:121133982</subfield>
+    <subfield code="a">72</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1989</subfield>
+    <subfield code="a">72</subfield>
+    <subfield code="b">4</subfield>
+    <subfield code="i">1990</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">751155402:121133982</subfield>
+    <subfield code="a">72</subfield>
+    <subfield code="b">6</subfield>
+    <subfield code="i">1989</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">751155402:121133982</subfield>
+    <subfield code="a">72</subfield>
+    <subfield code="b">8</subfield>
+    <subfield code="i">1989</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">751155402:121133982</subfield>
+    <subfield code="a">73</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1990</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">751155402:121133982</subfield>
+    <subfield code="a">73</subfield>
+    <subfield code="b">3</subfield>
+    <subfield code="i">1990</subfield>
+    <subfield code="a">73</subfield>
+    <subfield code="b">8</subfield>
+    <subfield code="i">1990</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">751155402:121133982</subfield>
+    <subfield code="a">74</subfield>
+    <subfield code="i">1991</subfield>
+    <subfield code="a">89</subfield>
+    <subfield code="i">2006</subfield>
+    <subfield code="r">vol. 14 (1931) - vol. 71 no. 7 (1988) ; vol. 72 no. 1 (1989) - vol. 72 no. 4 (1990) ; vol. 72 no. 6 (1989) ; vol. 72 - no. 8 (1989) ; vol. 73 no. 1 (1990) ; vol. 73 no. 3 (1990) - vol. 73 no. 8 (1990) ; vol. 74 (1991) - vol. 89 (2006)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">751155402:121133982</subfield>
+    <subfield code="a">19950101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">751155402:121133982</subfield>
+    <subfield code="a">20180920</subfield>
+    <subfield code="b">16:52:27.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">765752301:121134334</subfield>
+    <subfield code="b">765752301</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">765752301:121134334</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">94</subfield>
+    <subfield code="b">12</subfield>
+    <subfield code="i">2011</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 94 no. 12 (2011)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">765752301:121134334</subfield>
+    <subfield code="a">19850101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">765752301:121134334</subfield>
+    <subfield code="a">20130107</subfield>
+    <subfield code="b">18:34:12.000</subfield>
+  </datafield>
+  <datafield tag="915" ind1=" " ind2=" ">
+    <subfield code="5">751052352:561063443</subfield>
+    <subfield code="b">.c13010384</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">751052352:561063443</subfield>
+    <subfield code="b">751052352</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="p">Membre du plan de conservation</subfield>
+    <subfield code="j">g</subfield>
+  </datafield>
+  <datafield tag="931" ind1=" " ind2=" ">
+    <subfield code="5">751052352:561063443</subfield>
+    <subfield code="b">751052352</subfield>
+    <subfield code="c">vx0</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">751052352:561063443</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">90</subfield>
+    <subfield code="b">12</subfield>
+    <subfield code="i">2007</subfield>
+    <subfield code="w">Lacunes</subfield>
+    <subfield code="r">vol. 1 no. 1 (1918) - vol. 90 no. 12 (2007) [Lacunes]</subfield>
+  </datafield>
+  <datafield tag="959" ind1=" " ind2=" ">
+    <subfield code="5">751052352:561063443</subfield>
+    <subfield code="d">90</subfield>
+    <subfield code="e">7</subfield>
+    <subfield code="a">2007</subfield>
+    <subfield code="r">vol. 90 no.7 (2007) </subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">751052352:561063443</subfield>
+    <subfield code="a">20160901</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">751052352:561063443</subfield>
+    <subfield code="a">20180626</subfield>
+    <subfield code="b">15:20:47.000</subfield>
+  </datafield>
+  <datafield tag="990" ind1=" " ind2=" ">
+    <subfield code="5">751052352:561063443</subfield>
+    <subfield code="a">cip</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">751062310:121134040</subfield>
+    <subfield code="b">751062310</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="p">Membre du plan de conservation</subfield>
+    <subfield code="a">EMP 90505 F</subfield>
+    <subfield code="j">g</subfield>
+    <subfield code="f">Collection déposée à la bibliothèque de Fontainebleau (RCR 771862302)</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">751062310:121134040</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">77</subfield>
+    <subfield code="b">8</subfield>
+    <subfield code="i">1994</subfield>
+    <subfield code="w">Lacunes</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 77 no. 8 (1994) [Lacunes]</subfield>
+  </datafield>
+  <datafield tag="959" ind1=" " ind2=" ">
+    <subfield code="5">751062310:121134040</subfield>
+    <subfield code="d">68</subfield>
+    <subfield code="e">8</subfield>
+    <subfield code="a">1985</subfield>
+    <subfield code="0"/>
+    <subfield code="d">76</subfield>
+    <subfield code="e">6</subfield>
+    <subfield code="a">1993</subfield>
+    <subfield code="r">vol. 68 no.8 (1985) ; vol. 76 no.6 (1993) </subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">751062310:121134040</subfield>
+    <subfield code="a">19850101</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">751062310:121134040</subfield>
+    <subfield code="a">20210825</subfield>
+    <subfield code="b">12:55:30.000</subfield>
+  </datafield>
+  <datafield tag="991" ind1=" " ind2=" ">
+    <subfield code="5">751062310:121134040</subfield>
+    <subfield code="a">Exemplaire modifié automatiquement. le 03-03-2021 18:52</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">751052205:121134024</subfield>
+    <subfield code="b">751052205</subfield>
+    <subfield code="c">Et.M niv 2-4; Et.19 niv4-10</subfield>
+    <subfield code="z">PCChimie</subfield>
+    <subfield code="p">Membre du plan de conservation</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">751052205:121134024</subfield>
+    <subfield code="a">2</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1919</subfield>
+    <subfield code="a">85</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">2002</subfield>
+    <subfield code="w">Lacunes</subfield>
+    <subfield code="r">vol. 2 no. 1 (1919) - vol. 85 no. 1 (2002) [Lacunes]</subfield>
+  </datafield>
+  <datafield tag="959" ind1=" " ind2=" ">
+    <subfield code="5">751052205:121134024</subfield>
+    <subfield code="d">68</subfield>
+    <subfield code="e">6</subfield>
+    <subfield code="a">1985</subfield>
+    <subfield code="0"/>
+    <subfield code="d">70</subfield>
+    <subfield code="e">4</subfield>
+    <subfield code="a">1987</subfield>
+    <subfield code="0"/>
+    <subfield code="d">83</subfield>
+    <subfield code="e">6;8;11</subfield>
+    <subfield code="a">2000</subfield>
+    <subfield code="0"/>
+    <subfield code="d">84</subfield>
+    <subfield code="e">3</subfield>
+    <subfield code="a">2001</subfield>
+    <subfield code="r">vol. 68 no.6 (1985) ; vol. 70 no.4 (1987) ; vol. 83 no.6;8;11 (2000) ; vol. 84 no.3 (2001) </subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">751052205:121134024</subfield>
+    <subfield code="a">19800101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">751052205:121134024</subfield>
+    <subfield code="a">20210614</subfield>
+    <subfield code="b">10:32:45.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">751055219:14448096401</subfield>
+    <subfield code="b">751055219</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">751055219:14448096402</subfield>
+    <subfield code="b">751055219</subfield>
+    <subfield code="j">s</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">751055219:14448096401</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="i"/>
+    <subfield code="j"/>
+    <subfield code="k"/>
+    <subfield code="a"/>
+    <subfield code="b"/>
+    <subfield code="c"/>
+    <subfield code="r">vol. 1 (1918)-....</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">751055219:14448096402</subfield>
+    <subfield code="a">68</subfield>
+    <subfield code="i">1985</subfield>
+    <subfield code="a">82</subfield>
+    <subfield code="b">10</subfield>
+    <subfield code="i">1999</subfield>
+    <subfield code="r">vol. 68 (1985) - vol. 82 no. 10 (1999)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">751055219:14448096401</subfield>
+    <subfield code="a">20011113</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">751055219:14448096401</subfield>
+    <subfield code="a">20210429</subfield>
+    <subfield code="b">13:56:30.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">751062214:54523033001</subfield>
+    <subfield code="b">751062214</subfield>
+    <subfield code="a">entresol</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">751062214:54523033001</subfield>
+    <subfield code="i">1957</subfield>
+    <subfield code="i"/>
+    <subfield code="j"/>
+    <subfield code="k"/>
+    <subfield code="a"/>
+    <subfield code="b"/>
+    <subfield code="c"/>
+    <subfield code="r">(1957)-....</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">751062214:54523033001</subfield>
+    <subfield code="a">19990326</subfield>
+    <subfield code="b">rO</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">751062214:54523033001</subfield>
+    <subfield code="a">20160113</subfield>
+    <subfield code="b">10:04:58.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">912722303:12113410501</subfield>
+    <subfield code="b">912722303</subfield>
+    <subfield code="a">SN</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">912722303:12113410501</subfield>
+    <subfield code="a">1</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="a">94</subfield>
+    <subfield code="i">2011</subfield>
+    <subfield code="r">vol. 1 (1918) - vol. 94 (2011)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">912722303:12113410501</subfield>
+    <subfield code="a">19810101</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">912722303:12113410501</subfield>
+    <subfield code="a">20120418</subfield>
+    <subfield code="b">14:46:43.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">912725101:12113411301</subfield>
+    <subfield code="b">912725101</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">912725101:12113411301</subfield>
+    <subfield code="a">30</subfield>
+    <subfield code="i">1947</subfield>
+    <subfield code="a">90</subfield>
+    <subfield code="i">2007</subfield>
+    <subfield code="w">Lacunes : v.47(6-8), 1964</subfield>
+    <subfield code="r">vol. 30 (1947) - vol. 90 (2007) [Lacunes : v.47(6-8), 1964]</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">912725101:12113411301</subfield>
+    <subfield code="a">19850101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">912725101:12113411301</subfield>
+    <subfield code="a">20170601</subfield>
+    <subfield code="b">14:45:29.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">783225201:12113415601</subfield>
+    <subfield code="b">783225201</subfield>
+    <subfield code="a">2/P</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">783225201:12113415601</subfield>
+    <subfield code="a">32</subfield>
+    <subfield code="i">1949</subfield>
+    <subfield code="a">49</subfield>
+    <subfield code="i">1966</subfield>
+    <subfield code="r">vol. 32 (1949) - vol. 49 (1966)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">783225201:12113415601</subfield>
+    <subfield code="a">19940101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">783225201:12113415601</subfield>
+    <subfield code="a">20051031</subfield>
+    <subfield code="b">12:49:34.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">786465201:12113416401</subfield>
+    <subfield code="b">786465201</subfield>
+    <subfield code="a">Doc P243</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">786465201:12113416401</subfield>
+    <subfield code="i">1950</subfield>
+    <subfield code="i"/>
+    <subfield code="j"/>
+    <subfield code="k"/>
+    <subfield code="a"/>
+    <subfield code="b"/>
+    <subfield code="c"/>
+    <subfield code="r">(1950)-....</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">786465201:12113416401</subfield>
+    <subfield code="a">19920101</subfield>
+    <subfield code="b">rO</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">786465201:12113416401</subfield>
+    <subfield code="a">20051031</subfield>
+    <subfield code="b">12:49:34.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">300285201:20702786201</subfield>
+    <subfield code="b">300285201</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">300285201:20702786201</subfield>
+    <subfield code="a">39</subfield>
+    <subfield code="i">1956</subfield>
+    <subfield code="a">50</subfield>
+    <subfield code="i">1967</subfield>
+    <subfield code="r">vol. 39 (1956) - vol. 50 (1967)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">300285201:20702786201</subfield>
+    <subfield code="a">20040603</subfield>
+    <subfield code="b">xF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">300285201:20702786201</subfield>
+    <subfield code="a">20100324</subfield>
+    <subfield code="b">18:14:11.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">341722307:12113420201</subfield>
+    <subfield code="b">341722307</subfield>
+    <subfield code="a">CD_PA 67</subfield>
+    <subfield code="j">b</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">341722307:12113420201</subfield>
+    <subfield code="a">46</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1963</subfield>
+    <subfield code="a">57</subfield>
+    <subfield code="b">8</subfield>
+    <subfield code="i">1974</subfield>
+    <subfield code="r">vol. 46 no. 1 (1963) - vol. 57 no. 8 (1974)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">341722307:12113420201</subfield>
+    <subfield code="a">20041216</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">341722307:12113420201</subfield>
+    <subfield code="a">20110427</subfield>
+    <subfield code="b">14:37:55.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">315552235:12113428801</subfield>
+    <subfield code="b">315552235</subfield>
+    <subfield code="a">1250 CH</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">315552235:12113428801</subfield>
+    <subfield code="i">1918</subfield>
+    <subfield code="i">1920</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">315552235:12113428801</subfield>
+    <subfield code="i">1965</subfield>
+    <subfield code="i">1983</subfield>
+    <subfield code="r">(1918) - (1920) ; (1965) - (1983)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">315552235:12113428801</subfield>
+    <subfield code="a">19850101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">315552235:12113428801</subfield>
+    <subfield code="a">20170706</subfield>
+    <subfield code="b">09:47:06.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">606705401:12113438501</subfield>
+    <subfield code="b">606705401</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">606705401:12113438501</subfield>
+    <subfield code="i">1958</subfield>
+    <subfield code="i">1979</subfield>
+    <subfield code="r">(1958) - (1979)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">606705401:12113438501</subfield>
+    <subfield code="a">19850101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">606705401:12113438501</subfield>
+    <subfield code="a">20010619</subfield>
+    <subfield code="b">14:46:32.854</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">692662302:12113451201</subfield>
+    <subfield code="b">692662302</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">692662302:12113451201</subfield>
+    <subfield code="i">1927</subfield>
+    <subfield code="i"/>
+    <subfield code="j"/>
+    <subfield code="k"/>
+    <subfield code="a"/>
+    <subfield code="b"/>
+    <subfield code="c"/>
+    <subfield code="r">(1927)-....</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">692662302:12113451201</subfield>
+    <subfield code="a">19960101</subfield>
+    <subfield code="b">rO</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">692662302:12113451201</subfield>
+    <subfield code="a">20050302</subfield>
+    <subfield code="b">10:14:15.000</subfield>
+  </datafield>
+  <datafield tag="930" ind1=" " ind2=" ">
+    <subfield code="5">914772301:12113413X</subfield>
+    <subfield code="b">914772301</subfield>
+    <subfield code="a">W4C 5</subfield>
+    <subfield code="j">f</subfield>
+  </datafield>
+  <datafield tag="955" ind1="4" ind2="1">
+    <subfield code="5">914772301:12113413X</subfield>
+    <subfield code="a">38</subfield>
+    <subfield code="b">2</subfield>
+    <subfield code="i">1955</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">914772301:12113413X</subfield>
+    <subfield code="a">46</subfield>
+    <subfield code="b">5</subfield>
+    <subfield code="i">1963</subfield>
+  </datafield>
+  <datafield tag="955" ind1=" " ind2=" ">
+    <subfield code="5">914772301:12113413X</subfield>
+    <subfield code="a">48</subfield>
+    <subfield code="b">1</subfield>
+    <subfield code="i">1965</subfield>
+    <subfield code="a">65</subfield>
+    <subfield code="b">8</subfield>
+    <subfield code="i">1982</subfield>
+    <subfield code="r">vol. 38 no. 2 (1955) ; vol. 46 no. 5 (1963) ; vol. 48 no. 1 (1965) - vol. 65 no. 8 (1982)</subfield>
+  </datafield>
+  <datafield tag="940" ind1=" " ind2=" ">
+    <subfield code="5">914772301:12113413X</subfield>
+    <subfield code="a">19850101</subfield>
+    <subfield code="b">rF</subfield>
+  </datafield>
+  <datafield tag="941" ind1=" " ind2=" ">
+    <subfield code="5">914772301:12113413X</subfield>
+    <subfield code="a">20160720</subfield>
+    <subfield code="b">15:37:07.000</subfield>
+  </datafield>
+</record>

@@ -1,0 +1,46 @@
+*.properties
+hibernate.cfg.xml
+HELP.md
+target/
+!.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**
+!**/src/test/**
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+*.gdsl
+
+### NetBeans ###
+/nbproject/private/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+build/
+
+### VS Code ###
+.vscode/
+/batch/src/main/resources/application.properties
+/core/src/test/resources/hibernate.cfg.xml
+
+### Logs ###
+/logs/
+
+## APPLICATION PROPERTIES -> JENKINS ##
+## Ce fichier en local ne doit jamais être poussé sur le dépot il contient les identifiants mdp, le demander en interne pour la configuration
+**/resources/application-localhost.properties
+
+## Fichier de propriétés de test contenant les identifiants / mdp
+**/test/resources/application.properties
