@@ -503,7 +503,7 @@ node {
                             try {
                                 echo "Deploy to ${batchTargetHostnames[i]}"
                                 echo "--------------------------"
-                                sh "ssh -tt ${username}@${hostname} \"rm -rf ${batchTargetDir}${backApplicationFileName}.jar\""
+                                sh "ssh -vtt ${username}@${hostname} \"rm -rf ${batchTargetDir}${backApplicationFileName}.jar\""
                                 sh "scp ${candidateModules[moduleIndex]}/target/*.jar ${username}@${hostname}:${batchTargetDir}"
                             } catch (e) {
                                 currentBuild.result = hudson.model.Result.FAILURE.toString()
