@@ -40,6 +40,7 @@ public class PeriscopeAPIApplication extends SpringBootServletInitializer implem
 		List<GrantedAuthority> roles = new ArrayList<>();
 		roles.add(new SimpleGrantedAuthority("ANONYMOUS"));
 		String token = tokenProvider.generateToken();
+		System.out.println(token);
 		Authentication auth = new AnonymousAuthenticationToken(token, user, roles);
 		SecurityContextHolder.getContext().setAuthentication(auth);
 	}

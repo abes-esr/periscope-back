@@ -445,7 +445,7 @@ public class NoticeSolRMapper {
                 } catch (NullPointerException ex) {
                     throw new MappingException(Arrays.asList(new ErrorMessage("NoticeSolr has null field")));
                 } catch (Exception ex) {
-                    throw new MappingException(Arrays.asList(new ErrorMessage(ex.getMessage())));
+                    throw new MappingException(Arrays.asList(new ErrorMessage("PPN" + source.getPpn() + " : " + ex.getMessage())));
                 }
 
             }

@@ -38,7 +38,11 @@ public class NoticeXml {
 
     @Override
     public String toString() {
-        return "Notice {"+ "leader="+ leader+"}";
+        return "Notice {"+ "leader="+ leader + ", ppn="+getPpn()+"}";
+    }
+
+    public String getPpn() {
+        return this.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().get().getValue();
     }
 
 }
