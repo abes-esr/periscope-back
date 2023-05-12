@@ -30,8 +30,6 @@
         <finalName>periscope-${project.artifactId}-${project.version}</finalName>
         <name>periscope</name>
         <warName>periscope-api</warName>
-        <webBaseDir>./target/</webBaseDir>
-        <batchBaseDir>./target</batchBaseDir>
     </properties>
 
     <!-- =========================================================== -->
@@ -110,6 +108,11 @@
             <groupId>com.fasterxml.jackson.dataformat</groupId>
             <artifactId>jackson-dataformat-xml</artifactId>
             <version>2.9.9</version>
+        </dependency>
+        <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>4.4.1</version>
         </dependency>
         <dependency>
             <groupId>org.modelmapper</groupId>

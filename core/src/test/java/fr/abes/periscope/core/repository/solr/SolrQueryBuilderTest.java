@@ -62,7 +62,7 @@ public class SolrQueryBuilderTest {
 
         query = builderQuery.constructFacetQuery(new LinkedList<>(), criteresExemp);
         actualQuery = dqp.getQueryString(query, null);
-        assertEquals(actualQuery, "{!parent which=notice_type:notice}pcpList:PCAq OR pcpList:PCAuv AND rcrList:123456789");
+        assertEquals(actualQuery, "{!parent which=notice_type:notice}pcpList:PCAq OR pcpList:PCAuv AND (rcrList:123456789)");
     }
 
     @Test

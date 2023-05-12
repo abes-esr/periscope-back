@@ -185,7 +185,7 @@ public class NoticeSolRMapper {
                             while (subFieldIterator.hasNext()) {
                                 SubField subField = subFieldIterator.next();
                                 // zone 011-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                if (subField.getCode().equals("a")) {
                                     target.setIssn(subField.getValue());
                                 }
                             }
@@ -196,7 +196,7 @@ public class NoticeSolRMapper {
                             Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
                             while (subFieldIterator.hasNext()) {
                                 SubField subField = subFieldIterator.next();
-                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                if (subField.getCode().equals("a")) {
                                     target.addExternalUrl(subField.getValue());
                                 }
                             }
@@ -208,7 +208,7 @@ public class NoticeSolRMapper {
                                 SubField subField = subFieldIterator.next();
 
                                 // zone 100-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                if (subField.getCode().equals("a")) {
                                     String value = subField.getValue();
                                     target.setProcessingGlobalData(value);
 
@@ -242,7 +242,7 @@ public class NoticeSolRMapper {
                                 SubField subField = subFieldIterator.next();
 
                                 // zone 101-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                if (subField.getCode().equals("a")) {
                                     if (target.getLanguageForDisplay() == null) {
                                         target.setLanguageForDisplay(subField.getValue());
                                     }
@@ -258,7 +258,7 @@ public class NoticeSolRMapper {
                                 SubField subField = subFieldIterator.next();
 
                                 // zone 102-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                if (subField.getCode().equals("a")) {
                                     if (target.getCountryForDisplay() == null) {
                                         target.setCountryForDisplay(subField.getValue());
                                     }
@@ -274,7 +274,7 @@ public class NoticeSolRMapper {
                                 SubField subField = subFieldIterator.next();
 
                                 // zone 110-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                if (subField.getCode().equals("a")) {
                                     target.setContinuousType(extractOnGoingResourceType(subField.getValue()));
                                 }
                             }
@@ -288,7 +288,7 @@ public class NoticeSolRMapper {
                                 SubField subField = subFieldIterator.next();
 
                                 // zone 200-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                if (subField.getCode().equals("a")) {
                                     if (target.getProperTitleForDisplay() == null) {
                                         target.setProperTitleForDisplay(subField.getValue());
                                     }
@@ -296,7 +296,7 @@ public class NoticeSolRMapper {
                                 }
 
                                 // zone 200-c
-                                if (subField.getCode().equalsIgnoreCase("c")) {
+                                if (subField.getCode().equals("c")) {
                                     if (target.getTitleFromDifferentAuthorForDisplay() == null) {
                                         target.setTitleFromDifferentAuthorForDisplay(subField.getValue());
                                     }
@@ -304,7 +304,7 @@ public class NoticeSolRMapper {
                                 }
 
                                 // zone 200-d
-                                if (subField.getCode().equalsIgnoreCase("d")) {
+                                if (subField.getCode().equals("d")) {
                                     if (target.getParallelTitleForDisplay() == null) {
                                         target.setParallelTitleForDisplay(subField.getValue());
                                     }
@@ -312,7 +312,7 @@ public class NoticeSolRMapper {
                                 }
 
                                 // zone 200-e
-                                if (subField.getCode().equalsIgnoreCase("e")) {
+                                if (subField.getCode().equals("e")) {
                                     if (target.getTitleComplementForDisplay() == null) {
                                         target.setTitleComplementForDisplay(subField.getValue());
                                     }
@@ -320,7 +320,7 @@ public class NoticeSolRMapper {
                                 }
 
                                 // zone 200-i
-                                if (subField.getCode().equalsIgnoreCase("i")) {
+                                if (subField.getCode().equals("i")) {
                                     if (target.getSectionTitleForDisplay()==null) {
                                         target.setSectionTitleForDisplay(subField.getValue());
                                     }
@@ -337,7 +337,7 @@ public class NoticeSolRMapper {
                                 SubField subField = subFieldIterator.next();
 
                                 // zone 210-c
-                                if (subField.getCode().equalsIgnoreCase("c")) {
+                                if (subField.getCode().equals("c")) {
                                     if (target.getEditorForDisplay() == null) {
                                         target.setEditorForDisplay(subField.getValue());
                                     }
@@ -354,12 +354,12 @@ public class NoticeSolRMapper {
                                 SubField subField = subFieldIterator.next();
 
                                 // zone 530-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                if (subField.getCode().equals("a")) {
                                     target.setKeyTitle(subField.getValue());
                                 }
 
                                 // zone 530-b
-                                if (subField.getCode().equalsIgnoreCase("b")) {
+                                if (subField.getCode().equals("b")) {
                                     target.setKeyTitleQualifer(subField.getValue());
                                 }
                             }
@@ -375,7 +375,7 @@ public class NoticeSolRMapper {
                                     target.setKeyShortedTitleForDisplay(subField.getValue());
                                 }
                                 // zone 531-a
-                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                if (subField.getCode().equals("a")) {
                                     target.addKeyShortedTitle(subField.getValue());
                                 }
                             }
@@ -409,15 +409,15 @@ public class NoticeSolRMapper {
                                 SubField subField = subFieldIterator.next();
 
                                 if (dataField.getTag().equalsIgnoreCase("930")) {
-                                    if (subField.getCode().equalsIgnoreCase("b")) {
+                                    if (subField.getCode().equals("b")) {
                                         itemSolr.setRcr(subField.getValue());
                                         target.addRcr(subField.getValue());
                                     }
-                                    if (subField.getCode().equalsIgnoreCase("z")) {
+                                    if (subField.getCode().equals("z")) {
                                         itemSolr.addPcp(subField.getValue());
                                         target.addPcp(subField.getValue());
                                     }
-                                    if (subField.getCode().equalsIgnoreCase("p")) {
+                                    if (subField.getCode().equals("p")) {
                                         if (subField.getValue().equalsIgnoreCase("Membre du plan de conservation")) {
                                             itemSolr.setStatutBibliotheque("PA");
                                             target.addStatut("PA");
@@ -445,7 +445,7 @@ public class NoticeSolRMapper {
                 } catch (NullPointerException ex) {
                     throw new MappingException(Arrays.asList(new ErrorMessage("NoticeSolr has null field")));
                 } catch (Exception ex) {
-                    throw new MappingException(Arrays.asList(new ErrorMessage(ex.getMessage())));
+                    throw new MappingException(Arrays.asList(new ErrorMessage("PPN" + source.getPpn() + " : " + ex.getMessage())));
                 }
 
             }

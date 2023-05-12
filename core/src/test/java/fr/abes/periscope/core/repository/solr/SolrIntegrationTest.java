@@ -1,16 +1,13 @@
 package fr.abes.periscope.core.repository.solr;
 
-import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
-import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.EnableOnIntegrationTest;
+import fr.abes.periscope.core.TestUtils;
 import fr.abes.periscope.core.entity.solr.NoticeSolr;
-import fr.abes.periscope.core.entity.xml.NoticeXml;
 import fr.abes.periscope.core.service.NoticeStoreService;
 import fr.abes.periscope.core.service.NoticesBibioService;
 import fr.abes.periscope.core.util.BaseXMLConfiguration;
 import fr.abes.periscope.core.util.UtilsMapper;
-import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
 
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -47,34 +42,26 @@ class SolrIntegrationTest {
     @Value(("classpath:noticeXml/999999999.xml"))
     private Resource xmlFile2;
 
-    private NoticeSolr getNoticeFromFile(Resource file) throws IOException {
-        String xml = IOUtils.toString(new FileInputStream(file.getFile()), StandardCharsets.UTF_8);
 
-        JacksonXmlModule module = new JacksonXmlModule();
-        module.setDefaultUseWrapper(false);
-        XmlMapper xmlMapper = new XmlMapper(module);
-        NoticeXml notice = xmlMapper.readValue(xml, NoticeXml.class);
-        return noticeMapper.map(notice, NoticeSolr.class);
-    }
 
     @Test
     @DisplayName("ajout d'une notice avec exemplaire")
     public void addNoticeToSolr() throws IOException {
-        NoticeSolr notice = getNoticeFromFile(xmlFile1);
+        NoticeSolr notice = TestUtils.getNoticeFromFile(xmlFile1, noticeMapper);
         noticeService.save(notice);
     }
 
     @Test
     @DisplayName("supression d'une notice avec exemplaire")
     public void deleteNoticeToSolr() throws IOException {
-        NoticeSolr notice = getNoticeFromFile(xmlFile1);
+        NoticeSolr notice = TestUtils.getNoticeFromFile(xmlFile1, noticeMapper);
         noticeService.delete(notice);
     }
 
     @Test
     @DisplayName("test indexation champs notice")
     public void indexChampsNotice() throws IOException {
-        NoticeSolr notice = getNoticeFromFile(xmlFile1);
+        NoticeSolr notice = TestUtils.getNoticeFromFile(xmlFile1, noticeMapper);
         noticeService.save(notice);
         NoticeSolr noticesolrOut = noticeService.findByPpn("13282261X");
 
@@ -111,7 +98,7 @@ class SolrIntegrationTest {
     @Test
     @DisplayName("test indexation PCP")
     public void indexPCP() throws IOException {
-        NoticeSolr notice = getNoticeFromFile(xmlFile2);
+        NoticeSolr notice = TestUtils.getNoticeFromFile(xmlFile2, noticeMapper);
         noticeService.save(notice);
         NoticeSolr noticesolrOut = noticeService.findByPpn("999999999");
 

@@ -24,7 +24,7 @@ public class SolrItemWriter extends AbstractItemStreamItemWriter<NoticeSolr>
         long startTime = System.currentTimeMillis();
         List<NoticeSolr> listToSave = new ArrayList<>();
         listToSave.addAll(list);
-        service.saveOrDelete(listToSave);
+        service.saveOrDeleteList(listToSave);
         long endTime = System.currentTimeMillis();
         log.debug("Temps d'écriture Solr : " + (endTime - startTime) + "ms");
     }

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import fr.abes.periscope.core.exception.IllegalCriterionException;
 import fr.abes.periscope.core.exception.IllegalPpnException;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.solr.client.solrj.impl.BaseHttpSolrClient;
 import org.apache.solr.client.solrj.impl.HttpSolrClient;
 import org.modelmapper.MappingException;
 import org.springframework.core.Ordered;
@@ -45,6 +46,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
 
     /**
      * Erreur de lecture / décodage des paramètres d'une requête HTTP
+     *
      * @param ex
      * @param headers
      * @param status
@@ -60,10 +62,10 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
             String targetType = ((MismatchedInputException) ex.getCause()).getTargetType().getSimpleName();
 
             List<JsonMappingException.Reference> errors = ((MismatchedInputException) ex.getCause()).getPath();
-            String property = errors.get(errors.size()-1).getFieldName();
+            String property = errors.get(errors.size() - 1).getFieldName();
 
             log.error(ex.getLocalizedMessage());
-            return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, new MismatchedJsonTypeException(property+" need to be type of '"+targetType+"'")));
+            return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, new MismatchedJsonTypeException(property + " need to be type of '" + targetType + "'")));
         }
 
         log.error(ex.getLocalizedMessage());
@@ -72,6 +74,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
 
     /**
      * Vérifier les méthodes correspondent avec les URI dans le controller
+     *
      * @param ex
      * @param headers
      * @param status
@@ -87,6 +90,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
 
     /**
      * Vérifier la validité (@Valid) des paramètres de la requête
+     *
      * @param ex
      * @param headers
      * @param status
@@ -99,8 +103,8 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         BindingResult result = ex.getBindingResult();
         List<FieldError> fieldErrors = result.getFieldErrors();
         String msg = "";
-        for (FieldError fieldError: fieldErrors) {
-            msg += fieldError.getDefaultMessage()+ " ";
+        for (FieldError fieldError : fieldErrors) {
+            msg += fieldError.getDefaultMessage() + " ";
         }
         log.error(msg);
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, new IllegalCriterionException(msg)));
@@ -108,6 +112,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
 
     /**
      * Page 404
+     *
      * @param ex
      * @param headers
      * @param status
@@ -123,6 +128,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
 
     /**
      * Erreur de paramètre
+     *
      * @param ex
      * @param headers
      * @param status
@@ -149,8 +155,10 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
         }
         return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, errorMessage, ex));
     }
+
     /**
      * Si la transformation DTO a échoué
+     *
      * @param ex MappingException
      * @return
      */
@@ -163,6 +171,7 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
 
     /**
      * Si le critère de recherche est malformé
+     *
      * @param ex IllegalCriterionException
      * @return
      */
@@ -176,14 +185,27 @@ public class ExceptionControllerHandler extends ResponseEntityExceptionHandler {
     /**
      * Si la connexion / requête avec le SolR a echoué, on loggue l'exception
      * et on renvoit une erreur standard à l'API pour masquer l'URL du serveur SolR
+     *
      * @param ex
      * @return
      */
-    @ExceptionHandler(HttpSolrClient.RemoteSolrException.class)
-    protected ResponseEntity<Object> handleRemoteSolrException(HttpSolrClient.RemoteSolrException ex) {
+    @ExceptionHandler(BaseHttpSolrClient.RemoteSolrException.class)
+    protected ResponseEntity<Object> handleRemoteSolrException(BaseHttpSolrClient.RemoteSolrException ex) {
         String error = "SolR server error";
         log.error(ex.getLocalizedMessage());
         return buildResponseEntity(new ApiReturnError(HttpStatus.INTERNAL_SERVER_ERROR, error, new Exception("Something was wrong with the database server")));
+    }
+
+    /**
+     * Si un mauvais argument est passé en paramètre d'une requête
+     * @param ex
+     * @return
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    protected ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
+        String error = "Argument incorrect";
+        log.error("Argument incorrect : " + ex.getLocalizedMessage());
+        return buildResponseEntity(new ApiReturnError(HttpStatus.BAD_REQUEST, error, ex));
     }
 
     @ExceptionHandler(IllegalPpnException.class)
