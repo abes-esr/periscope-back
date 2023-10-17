@@ -457,12 +457,24 @@ public class NoticeFormatExportMapper {
                 return OnGoingResourceType.B;
             case "c":
                 return OnGoingResourceType.C;
+            case "d":
+                return OnGoingResourceType.D;
             case "e":
                 return OnGoingResourceType.E;
             case "f":
                 return OnGoingResourceType.F;
             case "g":
                 return OnGoingResourceType.G;
+            case "h":
+                return OnGoingResourceType.H;
+            case "i":
+                return OnGoingResourceType.I;
+            case "j":
+                return OnGoingResourceType.J;
+            case "m":
+                return OnGoingResourceType.M;
+            case "n":
+                return OnGoingResourceType.N;
             case "z":
                 return OnGoingResourceType.Z;
             default:
