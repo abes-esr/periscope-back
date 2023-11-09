@@ -138,12 +138,24 @@ public class NoticeSolRMapper {
                 return OnGoingResourceType.B;
             case "c":
                 return OnGoingResourceType.C;
+            case "d":
+                return OnGoingResourceType.D;
             case "e":
                 return OnGoingResourceType.E;
             case "f":
                 return OnGoingResourceType.F;
             case "g":
                 return OnGoingResourceType.G;
+            case "h":
+                return OnGoingResourceType.H;
+            case "i":
+                return OnGoingResourceType.I;
+            case "j":
+                return OnGoingResourceType.J;
+            case "m":
+                return OnGoingResourceType.M;
+            case "n":
+                return OnGoingResourceType.N;
             case "z":
                 return OnGoingResourceType.Z;
             default:
@@ -445,7 +457,7 @@ public class NoticeSolRMapper {
                 } catch (NullPointerException ex) {
                     throw new MappingException(Arrays.asList(new ErrorMessage("NoticeSolr has null field")));
                 } catch (Exception ex) {
-                    throw new MappingException(Arrays.asList(new ErrorMessage(ex.getMessage())));
+                    throw new MappingException(Arrays.asList(new ErrorMessage("PPN" + source.getPpn() + " : " + ex.getMessage())));
                 }
 
             }
