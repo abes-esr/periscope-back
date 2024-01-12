@@ -101,7 +101,7 @@ public class SolrQueryBuilder {
             switch (criterion.getBlocOperator()) {
                 case LogicalOperator.AND:criteria.and(criteriaToChain);break;
                 case LogicalOperator.OR:criteria.or(criteriaToChain);break;
-                case LogicalOperator.EXCEPT:criteria.or(criteriaToChain.notOperator());
+                case LogicalOperator.EXCEPT:criteria.and(criteriaToChain.notOperator());
             }
         }
         return criteria;
