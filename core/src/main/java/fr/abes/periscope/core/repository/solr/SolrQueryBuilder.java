@@ -104,7 +104,7 @@ public class SolrQueryBuilder {
                 case LogicalOperator.EXCEPT:criteria.and(criteriaToChain.notOperator());
             }
         }
-        return criteria;
+        return criteria.connect();
     }
 
     private Criteria buildPpnParentQuery(CriterionPpnParent criterion) {
