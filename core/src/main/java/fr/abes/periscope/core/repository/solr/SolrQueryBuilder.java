@@ -23,75 +23,88 @@ public class SolrQueryBuilder {
     /**
      * Construit la requête SolR à partir des critères de recherche
      *
-     * @param criteria Critères de recherche
+     * @param criterions Critères de recherche
      * @return Criteria Requête SolR
      */
-    public Criteria buildQuery(List<Criterion> criteria) {
-        FilterQuery filterQuery = new SimpleFilterQuery();
-
-        criteria.stream().forEach(criterion -> {
-
+    public Criteria buildQuery(List<Criterion> criterions) {
+        Criteria criteria = null;
+        for (Criterion criterion : criterions) {
             // Bloc de critère PCP
             if (criterion instanceof CriterionPcp) {
                 Criteria pcpQuery = buildPcpQuery((CriterionPcp) criterion);
-                filterQuery.addCriteria(pcpQuery);
+                criteria = chainCriteria(criteria, pcpQuery, criterion);
             }
 
             // Bloc de critère RCR
             if (criterion instanceof CriterionRcr) {
                 Criteria rcrQuery = buildRcrQuery((CriterionRcr) criterion);
-                filterQuery.addCriteria(rcrQuery);
+                criteria = chainCriteria(criteria, rcrQuery, criterion);
             }
 
             // Bloc de critère Mots du titre
             if (criterion instanceof CriterionTitleWords) {
                 Criteria titleWordsQuery = buildTitleWordsQuery((CriterionTitleWords) criterion);
-                filterQuery.addCriteria(titleWordsQuery);
+                criteria = chainCriteria(criteria, titleWordsQuery, criterion);
+
             }
 
             //Bloc de critère PPN
             if (criterion instanceof CriterionPpn) {
                 Criteria ppnQuery = buildPpnQuery((CriterionPpn) criterion);
-                filterQuery.addCriteria(ppnQuery);
+                criteria = chainCriteria(criteria, ppnQuery, criterion);
             }
 
             if (criterion instanceof CriterionPpnParent) {
                 Criteria ppnParentQuery = buildPpnParentQuery((CriterionPpnParent) criterion);
-                filterQuery.addCriteria(ppnParentQuery);
+                criteria = chainCriteria(criteria, ppnParentQuery, criterion);
             }
 
             //Bloc de critère pays
             if (criterion instanceof CriterionCountry) {
                 Criteria countryQuery = buildCountryQuery((CriterionCountry) criterion);
-                filterQuery.addCriteria(countryQuery);
+                criteria = chainCriteria(criteria, countryQuery, criterion);
             }
 
             //Bloc de critère code langue
             if (criterion instanceof CriterionLanguage) {
                 Criteria languageQuery = buildLanguageQuery((CriterionLanguage) criterion);
-                filterQuery.addCriteria(languageQuery);
+                criteria =  chainCriteria(criteria, languageQuery, criterion);
             }
 
             //Bloc de critère éditeur
             if (criterion instanceof CriterionEditor) {
-                Criteria countryQuery = buildEditorQuery((CriterionEditor) criterion);
-                filterQuery.addCriteria(countryQuery);
+                Criteria editorQuery = buildEditorQuery((CriterionEditor) criterion);
+                criteria =  chainCriteria(criteria, editorQuery, criterion);
             }
 
             // bloc de critère ISSN
             if (criterion instanceof CriterionIssn) {
                 Criteria issnQuery = buildIssnQuery((CriterionIssn) criterion);
-                filterQuery.addCriteria(issnQuery);
+                criteria =  chainCriteria(criteria, issnQuery, criterion);
             }
 
             //bloc de critère Statut de la bibliothèque
             if (criterion instanceof CriterionStatutBib) {
                 Criteria statutBibQuery = buildStatutBibQuery((CriterionStatutBib) criterion);
-                filterQuery.addCriteria(statutBibQuery);
+                criteria =  chainCriteria(criteria, statutBibQuery, criterion);
             }
-        });
+        }
 
-        return filterQuery.getCriteria();
+        return criteria;
+    }
+
+    private Criteria chainCriteria(Criteria criteria, Criteria criteriaToChain, Criterion criterion) {
+        if (criteria == null) {
+            criteria = criteriaToChain;
+        }
+        else {
+            switch (criterion.getBlocOperator()) {
+                case LogicalOperator.AND:criteria.and(criteriaToChain);break;
+                case LogicalOperator.OR:criteria.or(criteriaToChain);break;
+                case LogicalOperator.EXCEPT:criteria.and(criteriaToChain.notOperator());
+            }
+        }
+        return criteria.connect();
     }
 
     private Criteria buildPpnParentQuery(CriterionPpnParent criterion) {
@@ -109,7 +122,7 @@ public class SolrQueryBuilder {
             myCriteria = myCriteria.or(ItemSolrField.PPN_PARENT).is(value);
         }
 
-        return getBlocOperator(criterion, myCriteria);
+        return myCriteria.connect();
     }
 
     /**
@@ -129,7 +142,7 @@ public class SolrQueryBuilder {
         Criteria myCriteria;
 
         // 1er critère
-        myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? new Criteria(NoticeSolrField.PCP_LIST).is(pcpCode).connect() : new Criteria(NoticeSolrField.PCP).is(pcpCode).connect());
+        myCriteria = (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO) ? Criteria.where(NoticeSolrField.PCP_LIST).is(pcpCode).connect() : Criteria.where(NoticeSolrField.PCP).is(pcpCode).connect());
 
         Criteria criteria;
         // les autres
@@ -140,32 +153,32 @@ public class SolrQueryBuilder {
             switch (pcpOperator) {
                 case LogicalOperator.AND:
                     if (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO)) {
-                        criteria = new Criteria(NoticeSolrField.PCP_LIST).is(pcpCode);
+                        criteria = Criteria.where(NoticeSolrField.PCP_LIST).is(pcpCode);
                     } else {
-                        criteria = new Criteria(NoticeSolrField.PCP).is(pcpCode);
+                        criteria = Criteria.where(NoticeSolrField.PCP).is(pcpCode);
                     }
                     myCriteria.and(criteria);
                     break;
                 case LogicalOperator.OR:
                     if (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO)) {
-                        criteria = new Criteria(NoticeSolrField.PCP_LIST).is(pcpCode);
+                        criteria = Criteria.where(NoticeSolrField.PCP_LIST).is(pcpCode);
                     } else {
-                        criteria = new Criteria(NoticeSolrField.PCP).is(pcpCode);
+                        criteria = Criteria.where(NoticeSolrField.PCP).is(pcpCode);
                     }
                     myCriteria.or(criteria);
                     break;
                 case LogicalOperator.EXCEPT:
                     if (criterion.getTypeNotice().equals(TYPE_NOTICE.BIBLIO)) {
-                        criteria = new Criteria(NoticeSolrField.PCP_LIST).is(pcpCode).connect().notOperator();
+                        criteria = Criteria.where(NoticeSolrField.PCP_LIST).is(pcpCode).connect().notOperator();
                     } else {
-                        criteria = new Criteria(NoticeSolrField.PCP).is(pcpCode).connect().notOperator();
+                        criteria = Criteria.where(NoticeSolrField.PCP).is(pcpCode).connect().notOperator();
                     }
                     myCriteria.and(criteria);
                     break;
             }
         }
 
-        return getBlocOperator(criterion, myCriteria);
+        return myCriteria.connect();
     }
 
     /**
@@ -221,7 +234,7 @@ public class SolrQueryBuilder {
             }
         }
 
-        return getBlocOperator(criterion, myCriteria);
+        return myCriteria.connect();
     }
 
     /**
@@ -241,7 +254,7 @@ public class SolrQueryBuilder {
         operatorIterator.next();
 
         //1er critère
-        myCriteria = new Criteria(NoticeSolrField.KEY_TITLE).is(value).
+        myCriteria = Criteria.where(NoticeSolrField.KEY_TITLE).is(value).
                 or(NoticeSolrField.KEY_SHORTED_TITLE).is(value).
                 or(NoticeSolrField.PROPER_TITLE).is(value).
                 or(NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
@@ -258,7 +271,7 @@ public class SolrQueryBuilder {
 
             switch (titleOperator) {
                 case LogicalOperator.AND:
-                    criteria = new Criteria(NoticeSolrField.KEY_TITLE).is(value).
+                    criteria = Criteria.where(NoticeSolrField.KEY_TITLE).is(value).
                             or(NoticeSolrField.KEY_SHORTED_TITLE).is(value).
                             or(NoticeSolrField.PROPER_TITLE).is(value).
                             or(NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
@@ -269,7 +282,7 @@ public class SolrQueryBuilder {
                     myCriteria.and(criteria);
                     break;
                 case LogicalOperator.OR:
-                    criteria = new Criteria(NoticeSolrField.KEY_TITLE).is(value).
+                    criteria = Criteria.where(NoticeSolrField.KEY_TITLE).is(value).
                             or(NoticeSolrField.KEY_SHORTED_TITLE).is(value).
                             or(NoticeSolrField.PROPER_TITLE).is(value).
                             or(NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
@@ -280,7 +293,7 @@ public class SolrQueryBuilder {
                     myCriteria.or(criteria);
                     break;
                 case LogicalOperator.EXCEPT:
-                    criteria = new Criteria(NoticeSolrField.KEY_TITLE).is(value).
+                    criteria = Criteria.where(NoticeSolrField.KEY_TITLE).is(value).
                             or(NoticeSolrField.KEY_SHORTED_TITLE).is(value).
                             or(NoticeSolrField.PROPER_TITLE).is(value).
                             or(NoticeSolrField.TITLE_FROM_DIFFERENT_AUTHOR).is(value).
@@ -292,7 +305,7 @@ public class SolrQueryBuilder {
             }
         }
 
-        return getBlocOperator(criterion, myCriteria);
+        return myCriteria.connect();
     }
 
     /**
@@ -336,7 +349,7 @@ public class SolrQueryBuilder {
             }
         }
 
-        return getBlocOperator(criterion, myCriteria);
+        return myCriteria.connect();
     }
 
     /**
@@ -361,7 +374,7 @@ public class SolrQueryBuilder {
             myCriteria = myCriteria.or(NoticeSolrField.PPN).is(value);
         }
 
-        return getBlocOperator(criterion, myCriteria);
+        return myCriteria.connect();
     }
 
     /**
@@ -403,7 +416,7 @@ public class SolrQueryBuilder {
             }
         }
 
-        return getBlocOperator(criterion, myCriteria);
+        return myCriteria.connect();
     }
 
     /**
@@ -447,7 +460,7 @@ public class SolrQueryBuilder {
             }
         }
 
-        return getBlocOperator(criterion, myCriteria);
+        return myCriteria.connect();
     }
 
     /**
@@ -471,7 +484,7 @@ public class SolrQueryBuilder {
             myCriteria = myCriteria.or(NoticeSolrField.ISSN).is(value);
         }
 
-        return getBlocOperator(criterion, myCriteria);
+        return myCriteria.connect();
     }
 
     /**
@@ -513,23 +526,9 @@ public class SolrQueryBuilder {
                     break;
             }
         }
-        return getBlocOperator(criterion, myCriteria);
+        return myCriteria.connect();
     }
 
-    private Criteria getBlocOperator(Criterion criterion, Criteria myCriteria) {
-        switch (criterion.getBlocOperator()) {
-            case LogicalOperator.AND:
-                break;
-            case LogicalOperator.OR:
-                myCriteria.setPartIsOr(true);
-                break;
-            case LogicalOperator.EXCEPT:
-                myCriteria = myCriteria.notOperator();
-                break;
-        }
-
-        return myCriteria;
-    }
 
     /**
      * Méthode permettant d'ajouter une liste de facette sur des zones de la notices biblio à la requête

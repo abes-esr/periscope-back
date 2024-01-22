@@ -25,6 +25,7 @@ public class SolrConfig {
     @Value("${solr.baseurl}")
     private String baseURL;
 
+
     @Bean
     public SolrClient solrClient() {
 
