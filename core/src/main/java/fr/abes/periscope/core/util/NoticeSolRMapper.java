@@ -357,6 +357,7 @@ public class NoticeSolRMapper {
                                 }
                             }
                         }
+                        // todo verifier si pas de 210-c sur 214-c
 
                         // Zone 530
                         if (dataField.getTag().equalsIgnoreCase("530")) {
