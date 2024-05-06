@@ -382,14 +382,7 @@ public class NoticeSolRMapper {
                         if (dataField.getTag().startsWith("9")) {
 
                             // On cherche la sous-zone 5 qui contient le EPN
-                            SubField specimenIdField = dataField.getSubFields().stream().filter(elm -> elm.getCode().equalsIgnoreCase("5"))
-                                    .findAny().orElse(null);
-
-                            if (specimenIdField == null) {
-                                throw new MissingFieldException("Zone " + dataField.getTag() + " doesn't have a subfield code=\"5\"");
-                            }
-
-                            String epn = specimenIdField.getValue().split(":")[1];
+                            String epn = NoticeFormatExportMapper.findEpnInSubfield5(dataField);
 
                             // On récupère l'exemplaire ou on le crée s'il n'existe pas
                             ItemSolr itemSolr = target.getItems().stream().filter(elm -> elm.getId().equalsIgnoreCase(epn))
