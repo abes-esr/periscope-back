@@ -14,14 +14,12 @@ import fr.abes.periscope.core.exception.MissingFieldException;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.Converter;
 import org.modelmapper.MappingException;
-import org.modelmapper.ModelMapper;
 import org.modelmapper.spi.ErrorMessage;
 import org.modelmapper.spi.MappingContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
-import java.time.Period;
 import java.util.*;
 
 /**
@@ -48,180 +46,168 @@ public class NoticeFormatExportMapper {
             public NoticeVisu convert(MappingContext<NoticeXml, NoticeVisu> context) {
                 NoticeXml source = context.getSource();
                 NoticeVisu target = new NoticeVisu();
-                int maxPass = 1;
                 try {
                     // Champ type de support
                     target.setSupportType(extractSupportType(source.getLeader().substring(6, 7)));
                     // Champs PPN
                     target.setPpn(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().get().getValue());
 
-                    for (int currentPass = 1; currentPass < maxPass + 1; currentPass++) {
+                    // Champs data fields
+                    for (DataField dataField : source.getDataFields()) {
+                        // Zone 011
+                        if (dataField.getTag().equalsIgnoreCase("011")) {
 
-                        // Champs data fields
-                        for (DataField dataField : source.getDataFields()) {
-                            // Zone 011
-                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("011")) {
+                            for (SubField subField : dataField.getSubFields()) {
+                                // zone 011-a
+                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                    target.setIssn(subField.getValue());
+                                }
+                            }
+                        }
 
+                        // Zone 100
+                        if (dataField.getTag().equalsIgnoreCase("100")) {
+                            for (SubField subField : dataField.getSubFields()) {
+                                // zone 100-a
+                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                    String value = subField.getValue();
+
+                                    // Extraction de la date de début
+                                    try {
+                                        PublicationYear year = utilsMapper.buildStartPublicationYear(value);
+                                        target.setStartYear(year);
+                                    } catch (IllegalPublicationYearException e) {
+                                        log.debug("Unable to parse start publication year :" + e.getLocalizedMessage());
+                                        target.setStartYear(null);
+                                    }
+
+                                    // Extraction de la date de fin
+                                    try {
+                                        PublicationYear year = utilsMapper.buildEndPublicationYear(value);
+                                        target.setEndYear(year);
+                                    } catch (IllegalPublicationYearException e) {
+                                        log.debug("Unable to parse end publication year :" + e.getLocalizedMessage());
+                                        target.setEndYear(null);
+                                    }
+                                }
+                            }
+                        }
+
+                        // Zone 110
+                        if (dataField.getTag().equalsIgnoreCase("110")) {
+                            for (SubField subField : dataField.getSubFields()) {
+                                // zone 110-a
+                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                    target.setContinuousType(extractOnGoingResourceType(subField.getValue()));
+                                    target.setFrequency(extractFrequency(subField.getValue().substring(1, 2)));
+                                }
+                            }
+                        }
+
+                        // Zone 200
+                        if (dataField.getTag().equalsIgnoreCase("200")) {
+
+                            for (SubField subField : dataField.getSubFields()) {
+                                // zone 200-a
+                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                    if (target.getProperTitle() == null) {
+                                        target.setProperTitle(subField.getValue());
+                                    }
+                                }
+
+                                // zone 200-c
+                                if (subField.getCode().equalsIgnoreCase("c")) {
+                                    if (target.getTitleFromDifferentAuthor() == null) {
+                                        target.setTitleFromDifferentAuthor(subField.getValue());
+                                    }
+                                }
+
+                                // zone 200-d
+                                if (subField.getCode().equalsIgnoreCase("d") && (target.getParallelTitle() == null)) {
+                                    target.setParallelTitle(subField.getValue());
+                                }
+
+                                // zone 200-e
+                                if (subField.getCode().equalsIgnoreCase("e") && (target.getTitleComplement() == null)) {
+                                    target.setTitleComplement(subField.getValue());
+                                }
+
+                                // zone 200-i
+                                if (subField.getCode().equalsIgnoreCase("i") && (target.getSectionTitle() == null)) {
+                                    target.setSectionTitle(subField.getValue());
+                                }
+                            }
+                        }
+
+                        // Zone 210
+                        if (dataField.getTag().equalsIgnoreCase("210")) {
+                            extractPublisherAndCity(target, dataField);
+                        }
+
+                        //Zone 214
+                        if (dataField.getTag().equalsIgnoreCase("214")) {
+                            extractPublisherAndCity(target, dataField);
+                        }
+                        // Zone 530
+                        if (dataField.getTag().equalsIgnoreCase("530")) {
+
+                            for (SubField subField : dataField.getSubFields()) {
+                                // zone 530-a
+                                if (subField.getCode().equalsIgnoreCase("a")) {
+                                    target.setKeyTitle(subField.getValue());
+                                }
+
+                                // zone 530-b
+                                if (subField.getCode().equalsIgnoreCase("b")) {
+                                    target.setKeyTitleQualifer(subField.getValue());
+                                }
+                            }
+                        }
+
+                        // Zone 531
+                        if (dataField.getTag().equalsIgnoreCase("531")) {
+
+                            for (SubField subField : dataField.getSubFields()) {
+                                if (target.getKeyShortedTitle() == null) {
+                                    target.setKeyShortedTitle(subField.getValue());
+                                }
+                            }
+                        }
+
+                        // Zone 9XX
+                        if (dataField.getTag().startsWith("9")) {
+
+                            // On cherche la sous-zone 5 qui contient le EPN
+                            String epn = findEpnInSubfield5(dataField);
+
+
+                            // On récupère l'exemplaire ou on le crée s'il n'existe pas
+                            Holding holding = target.getHoldings().stream().filter(elm -> elm.getEpn().equalsIgnoreCase(epn))
+                                    .findAny().orElse(null);
+
+                            if (holding == null) {
+                                holding = new Holding(epn);
+                            }
+
+                            if (dataField.getTag().equalsIgnoreCase("955")) {
+                                processEtatCollection(holding, dataField);
+                            } else if (dataField.getTag().equalsIgnoreCase("959")) {
+                                // On traite les lacunes dans la deuxième passe
+                                processLacunes(holding, dataField);
+                            } else {
+                                // On itère sur les autres sous-zone
                                 for (SubField subField : dataField.getSubFields()) {
-                                    // zone 011-a
-                                    if (subField.getCode().equalsIgnoreCase("a")) {
-                                        target.setIssn(subField.getValue());
+                                    if (dataField.getTag().equalsIgnoreCase("930") && (subField.getCode().equalsIgnoreCase("b"))) {
+                                        holding.setRcr(subField.getValue());
                                     }
                                 }
                             }
-
-                            // Zone 100
-                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("100")) {
-                                for (SubField subField : dataField.getSubFields()) {
-                                    // zone 100-a
-                                    if (subField.getCode().equalsIgnoreCase("a")) {
-                                        String value = subField.getValue();
-
-                                        // Extraction de la date de début
-                                        try {
-                                            PublicationYear year = utilsMapper.buildStartPublicationYear(value);
-                                            target.setStartYear(year);
-                                        } catch (IllegalPublicationYearException e) {
-                                            log.debug("Unable to parse start publication year :" + e.getLocalizedMessage());
-                                            target.setStartYear(null);
-                                        }
-
-                                        // Extraction de la date de fin
-                                        try {
-                                            PublicationYear year = utilsMapper.buildEndPublicationYear(value);
-                                            target.setEndYear(year);
-                                        } catch (IllegalPublicationYearException e) {
-                                            log.debug("Unable to parse end publication year :" + e.getLocalizedMessage());
-                                            target.setEndYear(null);
-                                        }
-                                    }
-                                }
-                            }
-
-                            // Zone 110
-                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("110")) {
-                                for (SubField subField : dataField.getSubFields()) {
-                                    // zone 110-a
-                                    if (subField.getCode().equalsIgnoreCase("a")) {
-                                        target.setContinuousType(extractOnGoingResourceType(subField.getValue()));
-                                        target.setFrequency(extractFrequency(subField.getValue().substring(1, 2)));
-                                    }
-                                }
-                            }
-
-                            // Zone 200
-                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("200")) {
-
-                                for (SubField subField : dataField.getSubFields()) {
-                                    // zone 200-a
-                                    if (subField.getCode().equalsIgnoreCase("a")) {
-                                        if (target.getProperTitle() == null) {
-                                            target.setProperTitle(subField.getValue());
-                                        }
-                                    }
-
-                                    // zone 200-c
-                                    if (subField.getCode().equalsIgnoreCase("c")) {
-                                        if (target.getTitleFromDifferentAuthor() == null) {
-                                            target.setTitleFromDifferentAuthor(subField.getValue());
-                                        }
-                                    }
-
-                                    // zone 200-d
-                                    if (subField.getCode().equalsIgnoreCase("d") && (target.getParallelTitle() == null)) {
-                                        target.setParallelTitle(subField.getValue());
-                                    }
-
-                                    // zone 200-e
-                                    if (subField.getCode().equalsIgnoreCase("e") && (target.getTitleComplement() == null)) {
-                                        target.setTitleComplement(subField.getValue());
-                                    }
-
-                                    // zone 200-i
-                                    if (subField.getCode().equalsIgnoreCase("i") && (target.getSectionTitle() == null)) {
-                                        target.setSectionTitle(subField.getValue());
-                                    }
-                                }
-                            }
-
-                            // Zone 210
-                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("210")) {
-                                extractPublisherAndCity(target, dataField);
-                            }
-
-                            //Zone 214
-                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("214")) {
-                                extractPublisherAndCity(target, dataField);
-                            }
-                            // Zone 530
-                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("530")) {
-
-                                for (SubField subField : dataField.getSubFields()) {
-                                    // zone 530-a
-                                    if (subField.getCode().equalsIgnoreCase("a")) {
-                                        target.setKeyTitle(subField.getValue());
-                                    }
-
-                                    // zone 530-b
-                                    if (subField.getCode().equalsIgnoreCase("b")) {
-                                        target.setKeyTitleQualifer(subField.getValue());
-                                    }
-                                }
-                            }
-
-                            // Zone 531
-                            if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("531")) {
-
-                                for (SubField subField : dataField.getSubFields()) {
-                                    if (target.getKeyShortedTitle() == null) {
-                                        target.setKeyShortedTitle(subField.getValue());
-                                    }
-                                }
-                            }
-
-                            // Zone 9XX
-                            if (dataField.getTag().startsWith("9")) {
-
-                                // On cherche la sous-zone 5 qui contient le EPN
-                                SubField specimenIdField = dataField.getSubFields().stream().filter(elm -> elm.getCode().equalsIgnoreCase("5"))
-                                        .findAny().orElse(null);
-
-                                if (specimenIdField == null) {
-                                    throw new MissingFieldException("Zone " + dataField.getTag() + " doesn't have a subfield code=\"5\"");
-                                }
-
-                                String epn = specimenIdField.getValue().split(":")[1];
-
-                                // On récupère l'exemplaire ou on le crée s'il n'existe pas
-                                Holding holding = target.getHoldings().stream().filter(elm -> elm.getEpn().equalsIgnoreCase(epn))
-                                        .findAny().orElse(null);
-
-                                if (holding == null) {
-                                    holding = new Holding(epn);
-                                }
-
-                                if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("955")) {
-                                    processEtatCollection(holding, dataField);
-                                } else if (currentPass == 1 && dataField.getTag().equalsIgnoreCase("959")) {
-                                    // On traite les lacunes dans la deuxième passe
-                                    processLacunes(holding, dataField);
-                                } else if (currentPass == 1) {
-                                    // On itère sur les autres sous-zone
-                                    for (SubField subField : dataField.getSubFields()) {
-                                        if (dataField.getTag().equalsIgnoreCase("930") && (subField.getCode().equalsIgnoreCase("b"))) {
-                                            holding.setRcr(subField.getValue());
-                                        }
-                                    }
-                                }
-                                target.addHolding(holding);
-                            }
+                            target.addHolding(holding);
                         }
                     }
                     return target;
                 } catch (NullPointerException ex) {
                     throw new MappingException(Collections.singletonList(new ErrorMessage("Notice has null field")));
-                } catch (IllegalHoldingException ex) {
-                    throw new MappingException(Collections.singletonList(new ErrorMessage(ex.getLocalizedMessage())));
                 } catch (Exception ex) {
                     throw new MappingException(Collections.singletonList(new ErrorMessage(ex.getLocalizedMessage())));
                 }
@@ -229,6 +215,17 @@ public class NoticeFormatExportMapper {
             }
         };
         utilsMapper.addConverter(myConverter);
+    }
+
+    static String findEpnInSubfield5(DataField dataField) throws MissingFieldException {
+        SubField specimenIdField = dataField.getSubFields().stream().filter(elm -> elm.getCode().equalsIgnoreCase("5"))
+                .findAny().orElse(null);
+
+        if (specimenIdField == null) {
+            throw new MissingFieldException("Zone " + dataField.getTag() + " doesn't have a subfield code=\"5\"");
+        }
+
+        return specimenIdField.getValue().split(":")[1];
     }
 
     /**
