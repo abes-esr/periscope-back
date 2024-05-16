@@ -1,13 +1,10 @@
 package fr.abes.periscope.core.repository.solr;
 
-import fr.abes.periscope.core.CoreTestConfiguration;
 import fr.abes.periscope.core.criterion.*;
 import fr.abes.periscope.core.entity.solr.NoticeSolrField;
 import org.assertj.core.util.Lists;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.solr.core.DefaultQueryParser;
 import org.springframework.data.solr.core.query.Criteria;
@@ -17,12 +14,13 @@ import org.springframework.data.solr.core.query.SimpleField;
 
 import java.util.*;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {CoreTestConfiguration.class})
+
 public class SolrQueryBuilderTest {
-    @Autowired
-    private SolrQueryBuilder builderQuery;
+
+    private SolrQueryBuilder builderQuery = new SolrQueryBuilder();
 
     @Test
     @DisplayName("Test construction requête à facettes avec une zone biblio")
@@ -53,7 +51,7 @@ public class SolrQueryBuilderTest {
         FacetQuery query = builderQuery.constructFacetQuery(new LinkedList<>(), criteresExemp);
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(query, null);
-        assertEquals(actualQuery, "{!parent which=notice_type:notice}pcpList:PCAq OR pcpList:PCAuv");
+        assertEquals(actualQuery, "{!parent which=notice_type:notice}(pcpList:PCAq OR pcpList:PCAuv)");
 
         List<String> rcr = Arrays.asList("123456789");
         List<String> rcrOperators = Arrays.asList("ET");
@@ -62,7 +60,7 @@ public class SolrQueryBuilderTest {
 
         query = builderQuery.constructFacetQuery(new LinkedList<>(), criteresExemp);
         actualQuery = dqp.getQueryString(query, null);
-        assertEquals(actualQuery, "{!parent which=notice_type:notice}pcpList:PCAq OR pcpList:PCAuv AND (rcrList:123456789)");
+        assertEquals(actualQuery, "{!parent which=notice_type:notice}(pcpList:PCAq OR pcpList:PCAuv) AND ((rcrList:123456789))");
     }
 
     @Test
@@ -85,7 +83,7 @@ public class SolrQueryBuilderTest {
         FacetQuery query = builderQuery.constructFacetQuery(criteresNotices, criteresExemp);
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(query, null);
-        assertEquals("zone_001:123456789 AND (pcpList:PCAq AND pcpList:PCAuv)", actualQuery);
+        assertEquals("zone_001:123456789 AND ((pcpList:PCAq AND pcpList:PCAuv))", actualQuery);
 
     }
 
