@@ -175,7 +175,7 @@ public class NoticeSolRMapper {
                 NoticeXml source = context.getSource();
                 NoticeSolr target = new NoticeSolr();
                 try {
-                    boolean deleteFlag = source.getLeader().substring(5,6).equalsIgnoreCase("d")?true:false;
+                    boolean deleteFlag = source.getLeader().substring(5, 6).equalsIgnoreCase("d");
                     target.setToDelete(deleteFlag);
                     // Champ type de support
                     target.setSupportType(utilsMapper.extractSupportType(source.getLeader().substring(6,7)));
@@ -186,16 +186,11 @@ public class NoticeSolRMapper {
                     target.setPpn(source.getControlFields().stream().filter(elm -> elm.getTag().equalsIgnoreCase("001")).findFirst().get().getValue());
 
                     // Champs data fields
-                    Iterator<DataField> iterator = source.getDataFields().iterator();
-                    while (iterator.hasNext()) {
-                        DataField dataField = iterator.next();
-
+                    for (DataField dataField : source.getDataFields()) {
                         // Zone 011
                         if (dataField.getTag().equalsIgnoreCase("011")) {
 
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 011-a
                                 if (subField.getCode().equals("a")) {
                                     target.setIssn(subField.getValue());
@@ -205,9 +200,7 @@ public class NoticeSolRMapper {
 
                         //zone 033
                         if (dataField.getTag().equalsIgnoreCase("033")) {
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
+                            for (SubField subField : dataField.getSubFields()) {
                                 if (subField.getCode().equals("a")) {
                                     target.addExternalUrl(subField.getValue());
                                 }
@@ -215,10 +208,7 @@ public class NoticeSolRMapper {
                         }
                         // Zone 100
                         if (dataField.getTag().equalsIgnoreCase("100")) {
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 100-a
                                 if (subField.getCode().equals("a")) {
                                     String value = subField.getValue();
@@ -249,10 +239,7 @@ public class NoticeSolRMapper {
 
                         // Zone 101
                         if (dataField.getTag().equalsIgnoreCase("101")) {
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 101-a
                                 if (subField.getCode().equals("a")) {
                                     if (target.getLanguageForDisplay() == null) {
@@ -265,10 +252,7 @@ public class NoticeSolRMapper {
 
                         // Zone 102
                         if (dataField.getTag().equalsIgnoreCase("102")) {
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 102-a
                                 if (subField.getCode().equals("a")) {
                                     if (target.getCountryForDisplay() == null) {
@@ -281,10 +265,7 @@ public class NoticeSolRMapper {
 
                         // Zone 110
                         if (dataField.getTag().equalsIgnoreCase("110")) {
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 110-a
                                 if (subField.getCode().equals("a")) {
                                     target.setContinuousType(extractOnGoingResourceType(subField.getValue()));
@@ -295,10 +276,7 @@ public class NoticeSolRMapper {
                         // Zone 200
                         if (dataField.getTag().equalsIgnoreCase("200")) {
 
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 200-a
                                 if (subField.getCode().equals("a")) {
                                     if (target.getProperTitleForDisplay() == null) {
@@ -333,7 +311,7 @@ public class NoticeSolRMapper {
 
                                 // zone 200-i
                                 if (subField.getCode().equals("i")) {
-                                    if (target.getSectionTitleForDisplay()==null) {
+                                    if (target.getSectionTitleForDisplay() == null) {
                                         target.setSectionTitleForDisplay(subField.getValue());
                                     }
                                     target.addSectionTitle(subField.getValue());
@@ -344,11 +322,23 @@ public class NoticeSolRMapper {
                         // Zone 210
                         if (dataField.getTag().equalsIgnoreCase("210")) {
 
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 210-c
+                                if (subField.getCode().equals("c")) {
+                                    if (target.getEditorForDisplay() == null) {
+                                        target.setEditorForDisplay(subField.getValue());
+                                    }
+                                    target.addEditor(subField.getValue());
+                                }
+                            }
+                        }
+                        // todo verifier si pas de 210-c sur 214-c
+
+                        // Zone 214
+                        if (dataField.getTag().equalsIgnoreCase("214")) {
+
+                            for (SubField subField : dataField.getSubFields()) {
+                                // zone 214-c
                                 if (subField.getCode().equals("c")) {
                                     if (target.getEditorForDisplay() == null) {
                                         target.setEditorForDisplay(subField.getValue());
@@ -361,10 +351,7 @@ public class NoticeSolRMapper {
                         // Zone 530
                         if (dataField.getTag().equalsIgnoreCase("530")) {
 
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 // zone 530-a
                                 if (subField.getCode().equals("a")) {
                                     target.setKeyTitle(subField.getValue());
@@ -380,9 +367,7 @@ public class NoticeSolRMapper {
                         // Zone 531
                         if (dataField.getTag().equalsIgnoreCase("531")) {
 
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
+                            for (SubField subField : dataField.getSubFields()) {
                                 if (target.getKeyShortedTitleForDisplay() == null) {
                                     target.setKeyShortedTitleForDisplay(subField.getValue());
                                 }
@@ -398,28 +383,18 @@ public class NoticeSolRMapper {
                         if (dataField.getTag().startsWith("9")) {
 
                             // On cherche la sous-zone 5 qui contient le EPN
-                            SubField specimenIdField = dataField.getSubFields().stream().filter(elm -> elm.getCode().equalsIgnoreCase("5"))
-                                    .findAny().orElse(null);
-
-                            if (specimenIdField == null) {
-                                throw new MissingFieldException("Zone "+dataField.getTag()+" doesn't have a subfield code=\"5\"");
-                            }
-
-                            String epn = specimenIdField.getValue().split(":")[1];
+                            String epn = NoticeFormatExportMapper.findEpnInSubfield5(dataField);
 
                             // On récupère l'exemplaire ou on le crée s'il n'existe pas
                             ItemSolr itemSolr = target.getItems().stream().filter(elm -> elm.getId().equalsIgnoreCase(epn))
                                     .findAny().orElse(null);
 
                             if (itemSolr == null) {
-                                itemSolr = new ItemSolr(target.getPpn(),epn);
+                                itemSolr = new ItemSolr(target.getPpn(), epn);
                             }
 
                             // On itère sur les autres sous-zone
-                            Iterator<SubField> subFieldIterator = dataField.getSubFields().iterator();
-                            while (subFieldIterator.hasNext()) {
-                                SubField subField = subFieldIterator.next();
-
+                            for (SubField subField : dataField.getSubFields()) {
                                 if (dataField.getTag().equalsIgnoreCase("930")) {
                                     if (subField.getCode().equals("b")) {
                                         itemSolr.setRcr(subField.getValue());
@@ -433,8 +408,7 @@ public class NoticeSolRMapper {
                                         if (subField.getValue().equalsIgnoreCase("Membre du plan de conservation")) {
                                             itemSolr.setStatutBibliotheque("PA");
                                             target.addStatut("PA");
-                                        }
-                                        else {
+                                        } else {
                                             itemSolr.setStatutBibliotheque("PC");
                                             target.addStatut("PC");
                                         }
@@ -446,7 +420,7 @@ public class NoticeSolRMapper {
                             target.addItem(itemSolr);
                         }
                     }
-                    if (target.getPcpList().size() != 0 && target.getStatutList().size() == 0) {
+                    if (!target.getPcpList().isEmpty() && target.getStatutList().isEmpty()) {
                         target.addStatut("Orphelin");
                     }
                     target.setNbLocation(target.getRcrList().size());
