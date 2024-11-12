@@ -1,40 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- =======================================================================
-        Fichier de configuration du projet Maven
-
-        Abes-hello-back
-     ======================================================================= -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.4.13</version>
-        <relativePath /> <!-- lookup parent from repository -->
-    </parent>
-
-    <!-- ===================================================== -->
-    <!--     Description du projet                             -->
-    <!-- ===================================================== -->
     <groupId>fr.abes.periscope</groupId>
     <artifactId>periscope-backoffice</artifactId>
     <version>1.0.0-SNAPSHOT</version>
-    <name>Periscope Back</name>
-    <description>Back office du projet Periscope (v2)</description>
-
-    <!-- ===================================================== -->
-    <!--     Proprietes du projet                              -->
-    <!-- ===================================================== -->
-    <properties>
-        <finalName>periscope-${project.artifactId}-${project.version}</finalName>
-        <name>periscope</name>
-        <warName>periscope-api</warName>
-    </properties>
-
-    <!-- =========================================================== -->
-    <!--     Description des modules                                 -->
-    <!-- =========================================================== -->
     <modules>
         <module>core</module>
         <module>web</module>
@@ -42,6 +12,17 @@
     </modules>
     <packaging>pom</packaging>
 
+    <name>periscope</name>
+    <description>Application de consultation de periodique</description>
+    <properties>
+        <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <warName>periscope-api</warName>
+        <webBaseDir>./target</webBaseDir>
+        <batchBaseDir>./target</batchBaseDir>
+        <projet.build.sourceEncoding>UTF-8</projet.build.sourceEncoding>
+    </properties>
     <!-- =========================================================== -->
     <!--     Profile                                                 -->
     <!-- =========================================================== -->
@@ -74,77 +55,70 @@
             </properties>
         </profile>
     </profiles>
-
-    <!-- =========================================================== -->
-    <!--     Gestion des dependances                                 -->
-    <!-- =========================================================== -->
-
     <dependencyManagement>
         <dependencies>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-starter-parent</artifactId>
-                <version>2.4.13</version>
+                <artifactId>spring-boot-dependencies</artifactId>
+                <version>3.2.5</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>
 
-    <!-- =========================================================== -->
-    <!--     Dependances heritees pour tous les modules.             -->
-    <!-- =========================================================== -->
     <dependencies>
-        <!--- === Annotations === -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>3.2.5</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>fr.abes.api-communes</groupId>
+            <artifactId>AccesCbs</artifactId>
+            <version>2.5.62</version>
+        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.18</version>
+            <version>1.18.24</version>
             <scope>provided</scope>
         </dependency>
 
-        <!-- === Mapping === -->
         <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-xml</artifactId>
-            <version>2.9.9</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.woodstox</groupId>
-            <artifactId>woodstox-core-asl</artifactId>
-            <version>4.4.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.modelmapper</groupId>
-            <artifactId>modelmapper</artifactId>
-            <version>2.3.5</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-logging</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
-        <!-- === Log === -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-log4j2</artifactId>
-            <version>2.5.12</version>
         </dependency>
 
-        <!-- === Timing === -->
         <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjrt</artifactId>
-            <version>1.9.6</version>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-mail</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>activation</artifactId>
+                    <groupId>javax.activation</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.aspectj</groupId>
-            <artifactId>aspectjweaver</artifactId>
-            <version>1.9.6</version>
-            <scope>runtime</scope>
-        </dependency>
-
-        <!-- === Tests === -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <!-- Exclude JUnit 4 from starter-test (and all other related
+                test-starter, i.e those for security and project reactor -->
             <exclusions>
                 <exclusion>
                     <groupId>junit</groupId>
@@ -156,24 +130,23 @@
                 </exclusion>
             </exclusions>
         </dependency>
+        <!-- Mapping -->
         <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter</artifactId>
-            <version>5.5.2</version>
-            <scope>test</scope>
+            <groupId>org.modelmapper</groupId>
+            <artifactId>modelmapper</artifactId>
+            <version>3.1.1</version>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>2.23.4</version>
-            <scope>test</scope>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.7</version>
         </dependency>
         <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <version>3.9.0</version>
-            <scope>test</scope>
+            <groupId>org.apache.maven</groupId>
+            <artifactId>maven-model</artifactId>
+            <version>3.6.3</version>
         </dependency>
+
     </dependencies>
 
     <distributionManagement>
@@ -183,41 +156,53 @@
         </site>
     </distributionManagement>
 
-    <repositories>
-        <repository>
-            <id>artifactory-public</id>
-            <name>artifactory-public</name>
-            <url>https://artifactory.abes.fr/artifactory/maven-public/</url>
-        </repository>
-    </repositories>
-
-    <pluginRepositories>
-        <pluginRepository>
-            <id>artifactory-public</id>
-            <name>artifactory-public</name>
-            <url>https://artifactory.abes.fr/artifactory/maven-public/</url>
-        </pluginRepository>
-    </pluginRepositories>
-
-    <!-- =========================================================== -->
-    <!--     Configuration de la compilation                         -->
-    <!-- =========================================================== -->
     <build>
-        <finalName>${finalName}</finalName>
-        <plugins>
-            <plugin>
-                <artifactId>maven-release-plugin</artifactId>
-                <version>3.0.0-M5</version>
-                <configuration>
-                    <pushChanges>no</pushChanges>
-                    <scmReleaseCommitComment>@{prefix} Version @{releaseLabel}</scmReleaseCommitComment>
-                    <scmCommentPrefix>[maven-release-plugin] [no ci]</scmCommentPrefix>
-                </configuration>
-            </plugin>
-        </plugins>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <artifactId>maven-war-plugin</artifactId>
+                    <version>3.3.1</version>
+                    <configuration>
+                        <failOnMissingWebXml>false</failOnMissingWebXml>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>3.0.0-M5</version>
+                    <configuration>
+                        <pushChanges>false</pushChanges>
+                        <scmReleaseCommitComment>@{prefix} Version @{releaseLabel}</scmReleaseCommitComment>
+                        <scmCommentPrefix>[maven-release-plugin] [no ci]</scmCommentPrefix>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.0.0-M5</version>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.junit.jupiter</groupId>
+                            <artifactId>junit-jupiter-api</artifactId>
+                            <version>5.7.2</version>
+                        </dependency>
+                    </dependencies>
+                </plugin>
+                <plugin>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-maven-plugin</artifactId>
+                    <version>2.3.5.RELEASE</version>
+                    <configuration>
+                        <mainClass>fr.abes.periscope.PeriscopeAPIApplication</mainClass>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>repackage</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
+            </plugins>
+        </pluginManagement>
     </build>
-    <scm>
-        <connection>scm:git:https://github.com/abes-esr/periscope-back.git</connection>
-        <tag>HEAD</tag>
-    </scm>
 </project>

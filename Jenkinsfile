@@ -359,18 +359,18 @@ node {
 
                     if ("${candidateModules[moduleIndex]}" == 'web') {
 
-                        downloadSpec = """{                    
+                        downloadSpec = """{
                          "files": [
-                          {  
+                          {
                               "aql": {
                                     "items.find": {
                                     "archive.item.artifact.module.build.name": {"\$eq":"${artifactoryBuildName}"},
                                     "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
                                     "name":{"\$match":"${candidateModules[moduleIndex]}*.war"}
-                                    }                              
+                                    }
                                 },
                               "target": "${candidateModules[moduleIndex]}/target/",
-                              "flat": true                      
+                              "flat": true
                             }
                          ]
                         }"""
@@ -382,18 +382,18 @@ node {
 
                     if ("${candidateModules[moduleIndex]}" == 'batch') {
 
-                        downloadSpec = """{                    
+                        downloadSpec = """{
                          "files": [
-                          {  
+                          {
                               "aql": {
                                     "items.find": {
                                     "archive.item.artifact.module.build.name": {"\$eq":"${artifactoryBuildName}"},
                                     "archive.item.artifact.module.build.number":{"\$eq":"${buildNumber}"},
                                     "name":{"\$match":"${candidateModules[moduleIndex]}*.jar"}
-                                    }                              
+                                    }
                                 },
                               "target": "${candidateModules[moduleIndex]}/target/",
-                              "flat": true                      
+                              "flat": true
                             }
                          ]
                         }"""
