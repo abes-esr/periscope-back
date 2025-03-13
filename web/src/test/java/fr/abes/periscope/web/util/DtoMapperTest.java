@@ -102,7 +102,7 @@ public class DtoMapperTest {
         Assertions.assertEquals("111111111", noticeWebV2Dto.getPpn());
         Assertions.assertEquals("1111-1111", noticeWebV2Dto.getIssn());
         Assertions.assertEquals("test éditeur", noticeWebV2Dto.getEditeur());
-        Assertions.assertEquals("https://www-test.sudoc.fr/111111111", noticeWebV2Dto.getSudocURL());
+        Assertions.assertEquals(Constant.SUDOC_URL + "111111111", noticeWebV2Dto.getSudocURL());
         Assertions.assertEquals("test keyTitle test keyTitleQualifier", noticeWebV2Dto.getTitre());
         Assertions.assertEquals(Integer.valueOf(1), noticeWebV2Dto.getNbLocation());
         Assertions.assertEquals(1, noticeWebV2Dto.getPcpList().size());

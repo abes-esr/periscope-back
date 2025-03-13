@@ -27,8 +27,6 @@ import java.util.*;
 @Service
 @Slf4j
 public class DtoMapper {
-    @Value("${url.sudoc}")
-    private String SUDOC_URL;
 
     private UtilsMapper utilsMapper;
 
@@ -95,7 +93,7 @@ public class DtoMapper {
                 noticeWeb.setPcpList(notice.getPcpList());
 
                 if (notice.getNbLocation() != 0)
-                    noticeWeb.setSudocURL(SUDOC_URL + notice.getPpn());
+                    noticeWeb.setSudocURL(Constant.SUDOC_URL + notice.getPpn());
 
                 notice.getItems().forEach(i -> noticeWeb.addRcr(i.getRcr()));
                 Collections.sort(noticeWeb.getRcrList());
