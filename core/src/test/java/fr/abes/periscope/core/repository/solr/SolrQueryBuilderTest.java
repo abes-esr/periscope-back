@@ -35,7 +35,7 @@ public class SolrQueryBuilderTest {
         FacetQuery query = builderQuery.constructFacetQuery(criteresNotices, new LinkedList<>());
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(query, null);
-        assertEquals(actualQuery, "zone_001:123456789");
+        assertEquals(actualQuery, "(zone_001:123456789)");
     }
 
     @Test
@@ -51,7 +51,7 @@ public class SolrQueryBuilderTest {
         FacetQuery query = builderQuery.constructFacetQuery(new LinkedList<>(), criteresExemp);
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(query, null);
-        assertEquals(actualQuery, "{!parent which=notice_type:notice}(pcpList:PCAq OR pcpList:PCAuv)");
+        assertEquals(actualQuery, "{!parent which=notice_type:notice}((pcpList:PCAq OR pcpList:PCAuv))");
 
         List<String> rcr = Arrays.asList("123456789");
         List<String> rcrOperators = Arrays.asList("ET");
@@ -60,7 +60,7 @@ public class SolrQueryBuilderTest {
 
         query = builderQuery.constructFacetQuery(new LinkedList<>(), criteresExemp);
         actualQuery = dqp.getQueryString(query, null);
-        assertEquals(actualQuery, "{!parent which=notice_type:notice}(pcpList:PCAq OR pcpList:PCAuv) AND ((rcrList:123456789))");
+        assertEquals(actualQuery, "{!parent which=notice_type:notice}(((pcpList:PCAq OR pcpList:PCAuv)) AND ((rcrList:123456789)))");
     }
 
     @Test
@@ -83,7 +83,7 @@ public class SolrQueryBuilderTest {
         FacetQuery query = builderQuery.constructFacetQuery(criteresNotices, criteresExemp);
         DefaultQueryParser dqp = new DefaultQueryParser(null);
         String actualQuery = dqp.getQueryString(query, null);
-        assertEquals("zone_001:123456789 AND ((pcpList:PCAq AND pcpList:PCAuv))", actualQuery);
+        assertEquals("((zone_001:123456789) AND ((pcpList:PCAq AND pcpList:PCAuv)))", actualQuery);
 
     }
 
