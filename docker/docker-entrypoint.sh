@@ -10,7 +10,6 @@ LANG=en_US.UTF-8" > /etc/environment
 # Force le démarrage du batch au démarrage du conteneur
 if [ "$PERISCOPE_BATCH_AT_STARTUP" = "1" ]; then
   echo "-> Lancement de run_batch.sh au démarrage du conteneur"
-  ls -la /
   ./run_batch.sh
 fi
 
