@@ -43,7 +43,6 @@ ENTRYPOINT ["java", "-XX:MaxRAMPercentage=95","-jar","/app/periscope.jar"]
 # Image pour le module batch
 FROM rockylinux:8 as batch-image
 WORKDIR /scripts/
-RUN yum install -y procps
 # Le JAR et le script pour le batch de LN
 RUN dnf install -y java-11-openjdk
 COPY --from=build-image /build/batch/target/*.jar /scripts/periscope-batch.jar
