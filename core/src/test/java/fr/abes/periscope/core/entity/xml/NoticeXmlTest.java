@@ -2,24 +2,18 @@ package fr.abes.periscope.core.entity.xml;
 
 import com.fasterxml.jackson.dataformat.xml.JacksonXmlModule;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
-import fr.abes.periscope.core.CoreTestConfiguration;
-import fr.abes.periscope.core.EnableOnIntegrationTest;
-import fr.abes.periscope.core.util.BaseXMLConfiguration;
 import org.apache.commons.io.IOUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.io.Resource;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
-@EnableOnIntegrationTest
-@SpringBootTest(classes = {CoreTestConfiguration.class})
-@ComponentScan(excludeFilters = @ComponentScan.Filter(BaseXMLConfiguration.class))
+@SpringBootTest(classes = NoticeXmlTest.class)
 public class NoticeXmlTest {
 
     @Value("classpath:noticeXml/13282261X.xml")
@@ -27,7 +21,7 @@ public class NoticeXmlTest {
 
     @Test
     void getPpnTest() throws IOException {
-        String xml = IOUtils.toString(new FileInputStream(noticeXml.getFile()), StandardCharsets.UTF_8);
+        String xml = IOUtils.toString(Files.newInputStream(noticeXml.getFile().toPath()), StandardCharsets.UTF_8);
 
         JacksonXmlModule module = new JacksonXmlModule();
         module.setDefaultUseWrapper(false);
@@ -39,7 +33,7 @@ public class NoticeXmlTest {
 
     @Test
     void toStringTest() throws IOException {
-        String xml = IOUtils.toString(new FileInputStream(noticeXml.getFile()), StandardCharsets.UTF_8);
+        String xml = IOUtils.toString(Files.newInputStream(noticeXml.getFile().toPath()), StandardCharsets.UTF_8);
 
         JacksonXmlModule module = new JacksonXmlModule();
         module.setDefaultUseWrapper(false);
