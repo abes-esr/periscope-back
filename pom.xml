@@ -11,7 +11,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>2.4.13</version>
-        <relativePath /> <!-- lookup parent from repository -->
+        <relativePath/> <!-- lookup parent from repository -->
     </parent>
 
     <!-- ===================================================== -->
@@ -19,7 +19,7 @@
     <!-- ===================================================== -->
     <groupId>fr.abes.periscope</groupId>
     <artifactId>periscope-backoffice</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.1.0</version>
     <name>Periscope Back</name>
     <description>Back office du projet Periscope (v2)</description>
 
