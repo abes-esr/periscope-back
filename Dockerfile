@@ -43,14 +43,18 @@ ENTRYPOINT ["java", "-XX:MaxRAMPercentage=95","-jar","/app/periscope.jar"]
 # Image pour le module batch
 FROM rockylinux:8 as batch-image
 WORKDIR /scripts/
+ENV TZ=Europe/Paris
+ENV LANG fr_FR.UTF-8
+ENV LANGUAGE fr_FR:fr
+ENV LC_ALL fr_FR.UTF-8
+
 # Le JAR et le script pour le batch de LN
 RUN dnf install -y java-11-openjdk
+RUN dnf install -y at
 COPY --from=build-image /build/batch/target/*.jar /scripts/periscope-batch.jar
 RUN chmod +x /scripts/periscope-batch.jar
 
-COPY ./docker/docker-entrypoint.sh /docker-entrypoint.sh
-RUN chmod +x /docker-entrypoint.sh
-
 COPY ./docker/run_batch.sh /scripts/run_batch.sh
 RUN chmod +x /scripts/run_batch.sh
-ENTRYPOINT ["/docker-entrypoint.sh"]
+
+CMD ["tail", "-f", "/dev/null"]
