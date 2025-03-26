@@ -50,9 +50,10 @@ ENV LC_ALL fr_FR.UTF-8
 
 # Le JAR et le script pour le batch de LN
 RUN dnf install -y java-11-openjdk
-RUN dnf install -y at  # Correction : utilisation de dnf
-RUN dnf install -y glibc-langpack-fr #ajout des langue française.
-RUN localedef -i fr_FR -f UTF-8 fr_FR.UTF-8 # creation de la locale.
+RUN dnf install -y at
+RUN dnf install -y glibc-langpack-fr
+RUN dnf install -y glibc-common # Ajout de glibc-common
+RUN localedef -i fr_FR -f UTF-8 fr_FR.UTF-8
 COPY --from=build-image /build/batch/target/*.jar /scripts/periscope-batch.jar
 RUN chmod +x /scripts/periscope-batch.jar
 
