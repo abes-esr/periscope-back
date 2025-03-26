@@ -50,7 +50,7 @@ ENV LC_ALL fr_FR.UTF-8
 
 # Le JAR et le script pour le batch de LN
 RUN dnf install -y java-11-openjdk
-RUN sudo apt update
+RUN apt update
 RUN apt install at
 COPY --from=build-image /build/batch/target/*.jar /scripts/periscope-batch.jar
 RUN chmod +x /scripts/periscope-batch.jar
