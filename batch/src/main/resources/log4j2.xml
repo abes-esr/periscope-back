@@ -7,13 +7,23 @@
             <PatternLayout
                     pattern="%style{%d{ISO8601}}{white} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{dark,yellow}: %msg%n%throwable" />
         </Console>
+        <RollingFile name="FileAppender" fileName="app.log" filePattern="app-%d{yyyy-MM-dd}-%i.log">
+            <PatternLayout pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{dark,yellow}: %msg%n%throwable" />
+            <Policies>
+                <SizeBasedTriggeringPolicy size="10MB" />
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+            </Policies>
+            <DefaultRolloverStrategy max="1"/>
+        </RollingFile>
     </Appenders>
     <Loggers>
         <Root level="info">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
         </Root>
         <Logger name="fr.abes.item" level="debug" additivity="false">
             <AppenderRef ref="Console"/>
+            <AppenderRef ref="FileAppender"/>
         </Logger>
     </Loggers>
 </Configuration>
