@@ -56,5 +56,6 @@ RUN chmod +x /scripts/periscope-batch.jar
 
 COPY ./docker/run_batch.sh /scripts/run_batch.sh
 RUN chmod +x /scripts/run_batch.sh
+RUN touch /scripts/app.log
 
-CMD ["tail", "-f", "/dev/null"]
+CMD ["tail", "-f", "/scripts/app.log"]
