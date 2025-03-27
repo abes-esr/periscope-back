@@ -54,8 +54,11 @@ RUN dnf install -y java-11-openjdk
 COPY --from=build-image /build/batch/target/*.jar /scripts/periscope-batch.jar
 RUN chmod +x /scripts/periscope-batch.jar
 
+COPY ./docker/docker-entrypoint.sh /scripts/docker-entrypoint.sh
+RUN chmod +x /scripts/docker-entrypoint.sh
+
 COPY ./docker/run_batch.sh /scripts/run_batch.sh
 RUN chmod +x /scripts/run_batch.sh
 RUN touch /scripts/app.log
 
-CMD ["./docker-entrypoint.sh"]
+CMD ["/scripts/docker-entrypoint.sh"]
