@@ -49,7 +49,7 @@ ENV LANGUAGE fr_FR:fr
 ENV LC_ALL fr_FR.UTF-8
 
 # Installer les paquets nécessaires
-RUN dnf install -y java-11-openjdk at && atd
+RUN dnf install -y java-11-openjdk at
 
 COPY --from=build-image /build/batch/target/*.jar /scripts/periscope-batch.jar
 RUN chmod +x /scripts/periscope-batch.jar
@@ -58,4 +58,6 @@ COPY ./docker/run_batch.sh /scripts/run_batch.sh
 RUN chmod +x /scripts/run_batch.sh
 RUN touch /scripts/app.log
 
-CMD ["atd", "&&", "tail", "-f", "/scripts/app.log"]
+RUN atd
+
+CMD ["tail", "-f", "/scripts/app.log"]
