@@ -48,9 +48,9 @@ ENV LANG fr_FR.UTF-8
 ENV LANGUAGE fr_FR:fr
 ENV LC_ALL fr_FR.UTF-8
 
-# Le JAR et le script pour le batch de LN
-RUN dnf install -y java-11-openjdk
-RUN dnf install -y at
+# Installer les paquets nécessaires
+RUN dnf install -y java-11-openjdk at && atd
+
 COPY --from=build-image /build/batch/target/*.jar /scripts/periscope-batch.jar
 RUN chmod +x /scripts/periscope-batch.jar
 
@@ -58,4 +58,4 @@ COPY ./docker/run_batch.sh /scripts/run_batch.sh
 RUN chmod +x /scripts/run_batch.sh
 RUN touch /scripts/app.log
 
-CMD ["tail", "-f", "/scripts/app.log"]
+CMD tail -f /scripts/app.log
