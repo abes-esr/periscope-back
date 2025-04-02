@@ -58,4 +58,4 @@ COPY ./docker/run_batch.sh /scripts/run_batch.sh
 RUN chmod +x /scripts/run_batch.sh
 RUN touch /scripts/app.log
 
-CMD ["tail", "-f", "/scripts/app.log"]
+CMD ["atd", "&&", "tail", "-f", "/scripts/app.log"]
