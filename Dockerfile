@@ -49,17 +49,19 @@ ENV LANGUAGE fr_FR:fr
 ENV LC_ALL fr_FR.UTF-8
 
 # Installer les paquets nécessaires
-RUN dnf install -y java-11-openjdk cronie procps &&  \
+RUN dnf install -y java-11-openjdk cronie procps gettext &&  \
        crond -V && rm -rf /etc/cron.*/*
 
 COPY --from=build-image /build/batch/target/*.jar /scripts/periscope-batch.jar
 RUN chmod +x /scripts/periscope-batch.jar
 
 COPY ./docker/run_batch.sh /scripts/run_batch.sh
+RUN sed -i 's/\r$//' /scripts/run_batch.sh
 RUN chmod +x /scripts/run_batch.sh
 RUN touch /var/log/cron.log
+COPY ./docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
 
-RUN echo "00 22 * * * /scripts/run_batch.sh > /var/log/cron.log 2>&1 && crontab -r" > /etc/cron.d/one-time-job
-RUN crontab /etc/cron.d/one-time-job
+ENTRYPOINT ["/entrypoint.sh"]
 
 CMD crond -n & tail -f /var/log/cron.log
