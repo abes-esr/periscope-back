@@ -32,9 +32,6 @@ FROM eclipse-temurin:11-jre as api-image
 WORKDIR /app/
 COPY --from=build-image /build/web/target/*.jar /app/periscope.jar
 ENV TZ=Europe/Paris
-ENV LANG fr_FR.UTF-8
-ENV LANGUAGE fr_FR:fr
-ENV LC_ALL fr_FR.UTF-8
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 ENTRYPOINT ["java", "-XX:MaxRAMPercentage=95","-jar","/app/periscope.jar"]
 
@@ -43,10 +40,6 @@ ENTRYPOINT ["java", "-XX:MaxRAMPercentage=95","-jar","/app/periscope.jar"]
 # Image pour le module batch
 FROM rockylinux:8 as batch-image
 WORKDIR /scripts/
-ENV TZ=Europe/Paris
-ENV LANG fr_FR.UTF-8
-ENV LANGUAGE fr_FR:fr
-ENV LC_ALL fr_FR.UTF-8
 
 # Installer les paquets nécessaires
 RUN dnf install -y java-11-openjdk cronie procps gettext &&  \
