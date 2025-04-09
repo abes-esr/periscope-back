@@ -42,8 +42,7 @@ FROM rockylinux:8 as batch-image
 WORKDIR /scripts/
 
 # Installer les paquets nécessaires
-RUN dnf install -y java-11-openjdk cronie procps gettext &&  \
-       crond -V && rm -rf /etc/cron.*/*
+RUN dnf install -y java-11-openjdk cronie procps gettext
 
 COPY --from=build-image /build/batch/target/*.jar /scripts/periscope-batch.jar
 RUN chmod +x /scripts/periscope-batch.jar
@@ -57,4 +56,4 @@ RUN chmod +x /entrypoint.sh
 
 ENTRYPOINT ["/entrypoint.sh"]
 
-CMD crond -n & tail -f /var/log/cron.log
+CMD tail -f /var/log/cron.log

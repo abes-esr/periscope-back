@@ -8,5 +8,5 @@ echo "00 22 * * * /scripts/run_batch.sh >> /var/log/cron.log 2>&1 && crontab -r"
 echo "-> Installation des crontab :"
 cat /etc/cron.d/one-time-job
 crontab /etc/cron.d/one-time-job
-
+crond -n &
 exec "$@"
