@@ -19,7 +19,7 @@
     <!-- ===================================================== -->
     <groupId>fr.abes.periscope</groupId>
     <artifactId>periscope-backoffice</artifactId>
-    <version>1.1.5-SNAPSHOT</version>
+    <version>1.1.5</version>
     <name>Periscope Back</name>
     <description>Back office du projet Periscope (v2)</description>
 
