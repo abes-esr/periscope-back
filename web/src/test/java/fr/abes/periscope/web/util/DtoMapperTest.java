@@ -14,6 +14,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -30,6 +31,9 @@ public class DtoMapperTest {
 
     private Notice notice1;
     private Notice notice2;
+
+    @Value("${url.sudoc}")
+    private String sudocLink;
 
     @BeforeEach
     void init() {
@@ -102,7 +106,7 @@ public class DtoMapperTest {
         Assertions.assertEquals("111111111", noticeWebV2Dto.getPpn());
         Assertions.assertEquals("1111-1111", noticeWebV2Dto.getIssn());
         Assertions.assertEquals("test éditeur", noticeWebV2Dto.getEditeur());
-        Assertions.assertEquals(Constant.SUDOC_URL + "111111111", noticeWebV2Dto.getSudocURL());
+        Assertions.assertEquals(this.sudocLink + "111111111", noticeWebV2Dto.getSudocURL());
         Assertions.assertEquals("test keyTitle test keyTitleQualifier", noticeWebV2Dto.getTitre());
         Assertions.assertEquals(Integer.valueOf(1), noticeWebV2Dto.getNbLocation());
         Assertions.assertEquals(1, noticeWebV2Dto.getPcpList().size());

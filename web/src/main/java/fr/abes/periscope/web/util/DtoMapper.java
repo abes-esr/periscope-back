@@ -30,6 +30,9 @@ public class DtoMapper {
 
     private UtilsMapper utilsMapper;
 
+    @Value("${url.sudoc}")
+    private String sudocLink;
+
     @Autowired
     public DtoMapper(UtilsMapper utilsMapper) { this.utilsMapper = utilsMapper; }
 
@@ -93,7 +96,7 @@ public class DtoMapper {
                 noticeWeb.setPcpList(notice.getPcpList());
 
                 if (notice.getNbLocation() != 0)
-                    noticeWeb.setSudocURL(Constant.SUDOC_URL + notice.getPpn());
+                    noticeWeb.setSudocURL(sudocLink + notice.getPpn());
 
                 notice.getItems().forEach(i -> noticeWeb.addRcr(i.getRcr()));
                 Collections.sort(noticeWeb.getRcrList());
